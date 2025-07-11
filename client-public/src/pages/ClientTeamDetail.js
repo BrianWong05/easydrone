@@ -54,6 +54,49 @@ const ClientTeamDetail = () => {
     fetchTeamDetail();
   }, [teamId]);
 
+  const calculateTeamStats = (matches) => {
+    let totalMatches = 0;
+    let wins = 0;
+    let draws = 0;
+    let losses = 0;
+    let goalsFor = 0;
+    let goalsAgainst = 0;
+    let points = 0;
+
+    matches.forEach(match => {
+      if (match.match_status === 'completed') {
+        totalMatches++;
+        
+        const isTeam1 = match.team1_id === parseInt(teamId);
+        const teamScore = isTeam1 ? match.team1_score : match.team2_score;
+        const opponentScore = isTeam1 ? match.team2_score : match.team1_score;
+        
+        goalsFor += teamScore || 0;
+        goalsAgainst += opponentScore || 0;
+        
+        if (teamScore > opponentScore) {
+          wins++;
+          points += 3;
+        } else if (teamScore === opponentScore) {
+          draws++;
+          points += 1;
+        } else {
+          losses++;
+        }
+      }
+    });
+
+    return {
+      totalMatches,
+      wins,
+      draws,
+      losses,
+      goalsFor,
+      goalsAgainst,
+      points
+    };
+  };
+
   const fetchTeamDetail = async () => {
     try {
       setLoading(true);
@@ -80,39 +123,40 @@ const ClientTeamDetail = () => {
       setTournament(tournamentData);
       const tournamentId = tournamentData.tournament_id;
 
-      // Fetch team details
-      const teamResponse = await axios.get(`/api/tournaments/${tournamentId}/teams/${teamId}`);
+      // Fetch team details using direct team endpoint
+      const teamResponse = await axios.get(`/api/teams/${teamId}`);
       if (teamResponse.data.success) {
         const teamData = teamResponse.data.data;
-        setTeam(teamData);
+        // Handle nested team structure from API
+        const team = teamData.team || teamData;
+        setTeam(team);
         
-        // Calculate team statistics
+        // Calculate team statistics from matches data (will be calculated from actual matches)
         const teamStats = {
-          totalMatches: teamData.total_matches || 0,
-          wins: teamData.wins || 0,
-          draws: teamData.draws || 0,
-          losses: teamData.losses || 0,
-          goalsFor: teamData.goals_for || 0,
-          goalsAgainst: teamData.goals_against || 0,
-          points: teamData.points || 0
+          totalMatches: 0,
+          wins: 0,
+          draws: 0,
+          losses: 0,
+          goalsFor: 0,
+          goalsAgainst: 0,
+          points: 0
         };
         setStats(teamStats);
       }
 
-      // Fetch team athletes
-      const athletesResponse = await axios.get(`/api/tournaments/${tournamentId}/teams/${teamId}/athletes`);
-      if (athletesResponse.data.success) {
-        const athletesData = athletesResponse.data.data;
-        const athletesList = Array.isArray(athletesData) ? athletesData : (athletesData.athletes || []);
-        setAthletes(athletesList);
+      // Set athletes from team data (already included in team response)
+      if (teamResponse.data.success && teamResponse.data.data.athletes) {
+        setAthletes(teamResponse.data.data.athletes);
       }
 
-      // Fetch team matches
-      const matchesResponse = await axios.get(`/api/tournaments/${tournamentId}/teams/${teamId}/matches`);
-      if (matchesResponse.data.success) {
-        const matchesData = matchesResponse.data.data;
-        const matchesList = Array.isArray(matchesData) ? matchesData : (matchesData.matches || []);
-        setMatches(matchesList);
+      // Set matches from team data and calculate statistics
+      if (teamResponse.data.success && teamResponse.data.data.matches) {
+        const teamMatches = teamResponse.data.data.matches;
+        setMatches(teamMatches);
+        
+        // Calculate team statistics from actual match data
+        const calculatedStats = calculateTeamStats(teamMatches);
+        setStats(calculatedStats);
       }
 
     } catch (error) {
