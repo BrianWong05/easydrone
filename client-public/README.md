@@ -55,8 +55,8 @@ client-public/
 │   │       └── ClientLayout.js   # 客戶端佈局組件
 │   └── pages/
 │       ├── ClientLeaderboard.js  # 積分榜頁面 ✅
-│       ├── ClientTeamList.js     # 隊伍列表頁面
-│       ├── ClientTeamDetail.js   # 隊伍詳情頁面
+│       ├── ClientTeamList.js     # 隊伍列表頁面 ✅
+│       ├── ClientTeamDetail.js   # 隊伍詳情頁面 ✅
 │       ├── ClientGroupList.js    # 小組列表頁面
 │       ├── ClientGroupDetail.js  # 小組詳情頁面
 │       ├── ClientMatchList.js    # 比賽列表頁面
@@ -67,6 +67,8 @@ client-public/
 ## 開發狀態
 
 - ✅ **ClientLeaderboard.js**: 已完成 - 顯示總積分榜和小組積分榜
+- ✅ **ClientTeamList.js**: 已完成 - 顯示參賽隊伍列表和統計資訊
+- ✅ **ClientTeamDetail.js**: 已完成 - 顯示隊伍詳細資訊、成員和比賽記錄
 - ⏳ **其他頁面**: 待實現
 
 ## 特點
