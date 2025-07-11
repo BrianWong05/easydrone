@@ -30,10 +30,13 @@ CREATE TABLE IF NOT EXISTS team_groups (
     group_name VARCHAR(50) NOT NULL,
     max_teams INT DEFAULT 4 NOT NULL,
     tournament_id INT NULL,
+    display_name VARCHAR(10) NULL,
+    description TEXT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (tournament_id) REFERENCES tournaments(tournament_id) ON DELETE CASCADE,
-    UNIQUE KEY unique_tournament_group (tournament_id, group_name)
+    UNIQUE KEY unique_tournament_group (tournament_id, group_name),
+    INDEX idx_team_groups_tournament_id (tournament_id)
 );
 
 -- 隊伍表 (錦標賽範圍)
@@ -48,7 +51,8 @@ CREATE TABLE IF NOT EXISTS teams (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (group_id) REFERENCES team_groups(group_id) ON DELETE SET NULL,
     FOREIGN KEY (tournament_id) REFERENCES tournaments(tournament_id) ON DELETE CASCADE,
-    UNIQUE KEY unique_tournament_team (tournament_id, team_name)
+    UNIQUE KEY unique_tournament_team (tournament_id, team_name),
+    INDEX idx_teams_tournament_id (tournament_id)
 );
 
 -- 運動員表 - 無人機足球隊伍結構：1名進攻手，3-5名防守人員
@@ -84,6 +88,7 @@ CREATE TABLE IF NOT EXISTS matches (
     match_type VARCHAR(50) NULL,
     tournament_stage VARCHAR(50) NULL,
     group_id INT NULL,
+    tournament_id INT NULL,
     winner_id INT NULL,
     win_reason ENUM('score', 'fouls', 'draw', 'referee') DEFAULT NULL,
     overtime_time INT NULL,
@@ -94,7 +99,9 @@ CREATE TABLE IF NOT EXISTS matches (
     FOREIGN KEY (team1_id) REFERENCES teams(team_id) ON DELETE SET NULL,
     FOREIGN KEY (team2_id) REFERENCES teams(team_id) ON DELETE SET NULL,
     FOREIGN KEY (group_id) REFERENCES team_groups(group_id) ON DELETE SET NULL,
-    FOREIGN KEY (winner_id) REFERENCES teams(team_id) ON DELETE SET NULL
+    FOREIGN KEY (tournament_id) REFERENCES tournaments(tournament_id) ON DELETE CASCADE,
+    FOREIGN KEY (winner_id) REFERENCES teams(team_id) ON DELETE SET NULL,
+    INDEX idx_matches_tournament_id (tournament_id)
 );
 
 -- 比賽事件表
@@ -113,8 +120,6 @@ CREATE TABLE IF NOT EXISTS match_events (
     FOREIGN KEY (athlete_id) REFERENCES athletes(athlete_id) ON DELETE SET NULL
 );
 
--- 比賽類型表已移到前面
-
 -- 小組積分表 (錦標賽範圍)
 CREATE TABLE IF NOT EXISTS group_standings (
     standing_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -132,7 +137,8 @@ CREATE TABLE IF NOT EXISTS group_standings (
     FOREIGN KEY (group_id) REFERENCES team_groups(group_id) ON DELETE CASCADE,
     FOREIGN KEY (team_id) REFERENCES teams(team_id) ON DELETE CASCADE,
     FOREIGN KEY (tournament_id) REFERENCES tournaments(tournament_id) ON DELETE CASCADE,
-    UNIQUE KEY unique_tournament_group_team (tournament_id, group_id, team_id)
+    UNIQUE KEY unique_tournament_group_team (tournament_id, group_id, team_id),
+    INDEX idx_group_standings_tournament_id (tournament_id)
 );
 
 -- 淘汰賽結構表
@@ -154,44 +160,6 @@ CREATE TABLE IF NOT EXISTS knockout_brackets (
 -- 插入默認管理員賬號 (密碼: admin123)
 INSERT IGNORE INTO admins (username, password, email) VALUES 
 ('admin', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin@dronesoccer.com');
-
--- 插入示例錦標賽
-INSERT IGNORE INTO tournaments (tournament_name, tournament_type, start_date, end_date, status) VALUES 
-('2024春季無人機足球錦標賽', 'group', '2024-03-01', '2024-03-15', 'pending');
-
--- 插入示例小組 (錦標賽範圍)
-INSERT INTO team_groups (group_name, max_teams, tournament_id) VALUES 
-('A_1', 4, 1),
-('B_1', 4, 1),
-('C_1', 4, 1),
-('D_1', 4, 1);
-
--- 插入示例隊伍 (錦標賽範圍)
-INSERT INTO teams (team_name, group_id, team_color, tournament_id) VALUES 
-('雷霆無人機隊_1', 1, '#FF0000', 1),
-('閃電飛行隊_1', 1, '#0000FF', 1),
-('風暴戰士_1', 2, '#00FF00', 1),
-('天空獵鷹_1', 2, '#FFFF00', 1),
-('極速飛鷹_1', 3, '#FF00FF', 1),
-('銀翼戰隊_1', 3, '#00FFFF', 1),
-('烈火鳳凰_1', 4, '#FFA500', 1),
-('冰霜巨龍_1', 4, '#800080', 1);
-
--- 插入示例運動員
-INSERT INTO athletes (team_id, name, jersey_number, position, age) VALUES 
--- 雷霆無人機隊
-(1, '張偉明', 1, 'attacker', 25),
-(1, '李小華', 2, 'defender', 23),
-(1, '王大力', 3, 'defender', 27),
-(1, '陳美玲', 4, 'defender', 22),
-(1, '劉志強', 5, 'substitute', 24),
-
--- 閃電飛行隊
-(2, '黃金龍', 1, 'attacker', 26),
-(2, '林雅婷', 2, 'defender', 21),
-(2, '吳建國', 3, 'defender', 28),
-(2, '蔡佳慧', 4, 'defender', 20),
-(2, '許文豪', 5, 'substitute', 23);
 
 -- 初始化小組積分表 (錦標賽範圍)
 INSERT INTO group_standings (group_id, team_id, tournament_id) 
