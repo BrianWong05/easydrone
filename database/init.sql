@@ -12,6 +12,18 @@ CREATE TABLE IF NOT EXISTS admins (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+-- 比賽類型表 (必須先創建，因為其他表會引用它)
+CREATE TABLE IF NOT EXISTS tournaments (
+    tournament_id INT AUTO_INCREMENT PRIMARY KEY,
+    tournament_name VARCHAR(100) NOT NULL,
+    tournament_type ENUM('group', 'knockout', 'mixed') NOT NULL,
+    start_date DATE,
+    end_date DATE,
+    status ENUM('pending', 'active', 'completed') DEFAULT 'pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
 -- 小組表 (錦標賽範圍)
 CREATE TABLE IF NOT EXISTS team_groups (
     group_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -101,17 +113,7 @@ CREATE TABLE IF NOT EXISTS match_events (
     FOREIGN KEY (athlete_id) REFERENCES athletes(athlete_id) ON DELETE SET NULL
 );
 
--- 比賽類型表
-CREATE TABLE IF NOT EXISTS tournaments (
-    tournament_id INT AUTO_INCREMENT PRIMARY KEY,
-    tournament_name VARCHAR(100) NOT NULL,
-    tournament_type ENUM('group', 'knockout', 'mixed') NOT NULL,
-    start_date DATE,
-    end_date DATE,
-    status ENUM('pending', 'active', 'completed') DEFAULT 'pending',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
+-- 比賽類型表已移到前面
 
 -- 小組積分表 (錦標賽範圍)
 CREATE TABLE IF NOT EXISTS group_standings (
