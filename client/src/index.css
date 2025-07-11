@@ -1,0 +1,361 @@
+/* 全局樣式重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 根元素樣式 */
+html, body {
+  height: 100%;
+  font-family: 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5715;
+  color: rgba(0, 0, 0, 0.85);
+  background-color: #f0f2f5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  height: 100%;
+}
+
+/* 滾動條樣式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 通用工具類 */
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.mb-16 {
+  margin-bottom: 16px;
+}
+
+.mb-24 {
+  margin-bottom: 24px;
+}
+
+.mt-16 {
+  margin-top: 16px;
+}
+
+.mt-24 {
+  margin-top: 24px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+/* 響應式網格 */
+.grid {
+  display: grid;
+  gap: 16px;
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+@media (max-width: 768px) {
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 卡片陰影效果 */
+.card-shadow {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.card-shadow:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* 動畫效果 */
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-in-right {
+  animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* 狀態指示器 */
+.status-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.status-pending {
+  background-color: #faad14;
+}
+
+.status-active {
+  background-color: #52c41a;
+  animation: pulse 2s infinite;
+}
+
+.status-completed {
+  background-color: #1890ff;
+}
+
+.status-overtime {
+  background-color: #ff4d4f;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* 隊伍顏色條 */
+.team-color-bar {
+  width: 4px;
+  height: 100%;
+  border-radius: 2px;
+  margin-right: 12px;
+}
+
+/* 比分顯示 */
+.score-display {
+  font-size: 24px;
+  font-weight: bold;
+  color: #1890ff;
+}
+
+.score-large {
+  font-size: 48px;
+  font-weight: bold;
+}
+
+/* 勝利者高亮 */
+.winner-highlight {
+  background: linear-gradient(90deg, #52c41a, #73d13d);
+  color: white;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-weight: bold;
+}
+
+/* 載入動畫 */
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #f3f3f3;
+  border-radius: 50%;
+  border-top-color: #1890ff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 錯誤狀態 */
+.error-message {
+  color: #ff4d4f;
+  background-color: #fff2f0;
+  border: 1px solid #ffccc7;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 16px 0;
+}
+
+/* 成功狀態 */
+.success-message {
+  color: #52c41a;
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 16px 0;
+}
+
+/* 警告狀態 */
+.warning-message {
+  color: #faad14;
+  background-color: #fffbe6;
+  border: 1px solid #ffe58f;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin: 16px 0;
+}
+
+/* 空狀態 */
+.empty-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.empty-state-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.3;
+}
+
+.empty-state-text {
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+
+/* 響應式設計 */
+@media (max-width: 576px) {
+  .score-large {
+    font-size: 32px;
+  }
+  
+  .grid {
+    gap: 12px;
+  }
+  
+  .empty-state {
+    padding: 32px 16px;
+  }
+  
+  .empty-state-icon {
+    font-size: 48px;
+  }
+}
+
+/* 打印樣式 */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+  }
+  
+  .card-shadow {
+    box-shadow: none !important;
+    border: 1px solid #d9d9d9 !important;
+  }
+}
+
+/* 高對比度模式支持 */
+@media (prefers-contrast: high) {
+  .status-indicator {
+    border: 2px solid currentColor;
+  }
+  
+  .team-color-bar {
+    border: 1px solid #000;
+  }
+}
+
+/* 減少動畫模式支持 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
