@@ -163,15 +163,21 @@ const ClientLeaderboard = () => {
       render: (name, record) => (
         <Space>
           <Avatar 
-            style={{ backgroundColor: '#1890ff' }} 
+            style={{ 
+              backgroundColor: record.team_color || '#1890ff',
+              border: `2px solid ${record.team_color || '#1890ff'}`,
+              color: '#fff'
+            }} 
             icon={<TeamOutlined />} 
           />
           <div>
-            <Text strong style={{ fontSize: 16 }}>{name}</Text>
+            <Text strong style={{ fontSize: 16, color: record.team_color || '#000' }}>
+              {name}
+            </Text>
             {record.group_name && (
               <div>
                 <Text type="secondary" style={{ fontSize: 12 }}>
-                  {record.group_name}
+                  小組 {record.group_name}
                 </Text>
               </div>
             )}
@@ -185,7 +191,7 @@ const ClientLeaderboard = () => {
       key: 'points',
       width: 100,
       render: (points) => (
-        <Text strong style={{ fontSize: 18, color: '#52c41a' }}>
+        <Text strong style={{ fontSize: 18, color: '#1890ff', fontWeight: 'bold' }}>
           {points || 0}
         </Text>
       ),
@@ -236,7 +242,7 @@ const ClientLeaderboard = () => {
           key: 'goals_for',
           width: 50,
           align: 'center',
-          render: (goals) => <Text style={{ color: '#52c41a' }}>{goals || 0}</Text>
+          render: (goals) => <Text strong style={{ color: '#000' }}>{goals || 0}</Text>
         },
         {
           title: '失',
@@ -244,7 +250,7 @@ const ClientLeaderboard = () => {
           key: 'goals_against',
           width: 50,
           align: 'center',
-          render: (goals) => <Text style={{ color: '#ff4d4f' }}>{goals || 0}</Text>
+          render: (goals) => <Text style={{ color: '#000' }}>{goals || 0}</Text>
         },
         {
           title: '差',
