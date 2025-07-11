@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   # MySQL Database
@@ -60,7 +60,7 @@ services:
     networks:
       - drone-soccer-network
     environment:
-      REACT_APP_API_URL: http://localhost:8001/api
+      REACT_APP_API_URL: http://localhost:8001
 
   # React Frontend (Public Client)
   client-public:

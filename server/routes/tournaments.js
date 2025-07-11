@@ -327,9 +327,14 @@ router.get('/:id', async (req, res) => {
 // 創建新錦標賽 (temporarily remove auth for development)
 router.post('/', async (req, res) => {
   try {
+    console.log('🔍 POST /tournaments - Received request body:', JSON.stringify(req.body, null, 2));
+    console.log('🔍 Request headers:', JSON.stringify(req.headers, null, 2));
+    
     // 驗證輸入數據
     const { error, value } = tournamentSchema.validate(req.body);
     if (error) {
+      console.log('❌ Validation error:', error.details[0].message);
+      console.log('❌ Validation details:', JSON.stringify(error.details, null, 2));
       return res.status(400).json({
         success: false,
         message: error.details[0].message

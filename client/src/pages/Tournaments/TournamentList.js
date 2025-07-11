@@ -133,7 +133,7 @@ const TournamentList = () => {
   // 刪除錦標賽
   const handleDelete = async (tournamentId) => {
     try {
-      const response = await axios.delete(`/tournaments/${tournamentId}`);
+      const response = await axios.delete(`/api/tournaments/${tournamentId}`);
       if (response.data.success) {
         message.success('錦標賽刪除成功');
         fetchTournaments(pagination.current, pagination.pageSize);
