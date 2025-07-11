@@ -57,8 +57,8 @@ client-public/
 │       ├── ClientLeaderboard.js  # 積分榜頁面 ✅
 │       ├── ClientTeamList.js     # 隊伍列表頁面 ✅
 │       ├── ClientTeamDetail.js   # 隊伍詳情頁面 ✅
-│       ├── ClientGroupList.js    # 小組列表頁面
-│       ├── ClientGroupDetail.js  # 小組詳情頁面
+│       ├── ClientGroupList.js    # 小組列表頁面 ✅
+│       ├── ClientGroupDetail.js  # 小組詳情頁面 ✅
 │       ├── ClientMatchList.js    # 比賽列表頁面
 │       ├── ClientMatchDetail.js  # 比賽詳情頁面
 │       └── ClientKnockoutBracket.js # 淘汰賽對戰表
@@ -69,6 +69,8 @@ client-public/
 - ✅ **ClientLeaderboard.js**: 已完成 - 顯示總積分榜和小組積分榜
 - ✅ **ClientTeamList.js**: 已完成 - 顯示參賽隊伍列表和統計資訊
 - ✅ **ClientTeamDetail.js**: 已完成 - 顯示隊伍詳細資訊、成員和比賽記錄
+- ✅ **ClientGroupList.js**: 已完成 - 顯示小組列表、隊伍數量和比賽進度
+- ✅ **ClientGroupDetail.js**: 已完成 - 顯示小組詳細資訊、積分榜和賽程
 - ⏳ **其他頁面**: 待實現
 
 ## 特點
@@ -87,6 +89,8 @@ client-public/
 - `GET /api/tournaments/:id/leaderboard/overall` - 總積分榜
 - `GET /api/tournaments/:id/leaderboard/groups` - 小組積分榜
 - `GET /api/tournaments/:id/teams` - 隊伍列表
+- `GET /api/tournaments/:id/groups` - 小組列表
+- `GET /api/groups/:id` - 小組詳情
 - `GET /api/tournaments/:id/matches` - 比賽列表
 - 其他相關 API...
 
