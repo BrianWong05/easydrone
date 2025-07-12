@@ -99,6 +99,15 @@ const ClientKnockoutBracket = () => {
           let totalMatches = 0;
           let completedMatches = 0;
           let champion = null;
+          let maxRoundNumber = 0;
+          
+          // First pass: find the maximum round number (final round)
+          Object.keys(bracketData).forEach(roundKey => {
+            const roundNumber = parseInt(roundKey);
+            if (roundNumber > maxRoundNumber) {
+              maxRoundNumber = roundNumber;
+            }
+          });
           
           Object.values(bracketData).forEach(roundMatches => {
             roundMatches.forEach(match => {
@@ -106,8 +115,8 @@ const ClientKnockoutBracket = () => {
               if (match.match_status === 'completed') {
                 completedMatches++;
                 
-                // Check if this is the final match (round 1 in knockout structure)
-                if (match.round_number === 1 && match.winner_name) {
+                // Check if this is the final match (highest round number)
+                if (match.round_number === maxRoundNumber && match.winner_name) {
                   champion = {
                     name: getDisplayTeamName(match.winner_name),
                     color: match.winner_id === match.team1_id ? match.team1_color : match.team2_color
@@ -427,7 +436,7 @@ const ClientKnockoutBracket = () => {
             <div style={{ overflowX: 'auto', padding: '16px 0' }}>
               <Row gutter={[24, 16]} style={{ minWidth: '800px' }}>
                 {Object.keys(brackets)
-                  .sort((a, b) => parseInt(b) - parseInt(a)) // Sort rounds in descending order (latest first)
+                  .sort((a, b) => parseInt(a) - parseInt(b)) // Sort rounds in ascending order (final on the right)
                   .map(roundNumber => {
                     const roundMatches = brackets[roundNumber];
                     const roundName = getRoundName(parseInt(roundNumber), stats.totalRounds);
