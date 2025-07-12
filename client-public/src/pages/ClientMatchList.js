@@ -315,7 +315,7 @@ const ClientMatchList = () => {
       key: 'group_name',
       width: 120,
       render: (groupName) => groupName ? (
-        <Tag color="cyan">{groupName}</Tag>
+        <Tag color="cyan">{getDisplayGroupName(groupName)}</Tag>
       ) : (
         <Text type="secondary">-</Text>
       ),
@@ -487,7 +487,7 @@ const ClientMatchList = () => {
             >
               {groups.map(group => (
                 <Option key={group.group_id} value={group.group_id}>
-                  {group.group_name}
+                  {getDisplayGroupName(group.group_name)}
                 </Option>
               ))}
             </Select>
