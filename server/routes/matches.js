@@ -80,20 +80,29 @@ router.put('/batch-postpone', authenticateToken, async (req, res) => {
     await transaction(async (connection) => {
       for (const matchId of matchIds) {
         try {
+          console.log(`🔍 Processing match ${matchId}...`);
+          
           // 檢查比賽是否存在且狀態允許延期
           const [matches] = await connection.execute(
             'SELECT match_id, match_status FROM matches WHERE match_id = ?',
             [matchId]
           );
 
+          console.log(`📊 Match ${matchId} query result:`, matches);
+
           if (matches.length === 0) {
+            console.log(`❌ Match ${matchId} not found`);
             errors.push(`比賽 ${matchId} 不存在`);
             errorCount++;
             continue;
           }
 
           const match = matches[0];
-          if (!['pending', 'active'].includes(match.match_status)) {
+          console.log(`📋 Match ${matchId} status: ${match.match_status}`);
+          
+          // Allow postponing pending, active, and already postponed matches
+          if (!['pending', 'active', 'postponed'].includes(match.match_status)) {
+            console.log(`❌ Match ${matchId} status not allowed for postpone: ${match.match_status}`);
             errors.push(`比賽 ${matchId} 狀態不允許延期 (當前狀態: ${match.match_status})`);
             errorCount++;
             continue;
