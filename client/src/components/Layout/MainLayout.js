@@ -10,6 +10,7 @@ import {
   BarChartOutlined,
   CalendarOutlined,
   LogoutOutlined,
+  LockOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from "@ant-design/icons";
@@ -250,6 +251,14 @@ const MainLayout = ({ children }) => {
                     key: 'profile',
                     icon: <UserOutlined />,
                     label: '個人資料',
+                  },
+                  {
+                    key: 'change-password',
+                    icon: <LockOutlined />,
+                    label: '修改密碼',
+                    onClick: () => {
+                      navigate('/change-password');
+                    },
                   },
                   {
                     type: 'divider',

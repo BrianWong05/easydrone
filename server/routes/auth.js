@@ -206,4 +206,72 @@ router.get('/profile', authenticateToken, async (req, res) => {
   }
 });
 
+// 修改密碼
+router.put('/change-password', authenticateToken, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    // 驗證輸入
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: '請提供目前密碼和新密碼'
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: '新密碼至少需要6個字符'
+      });
+    }
+
+    // 獲取當前用戶信息
+    const users = await query(
+      'SELECT admin_id, username, password FROM admins WHERE admin_id = ?',
+      [req.user.adminId]
+    );
+
+    if (users.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: '用戶不存在'
+      });
+    }
+
+    const user = users[0];
+
+    // 驗證目前密碼
+    const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+    if (!isValidPassword) {
+      return res.status(401).json({
+        success: false,
+        message: '目前密碼錯誤'
+      });
+    }
+
+    // 加密新密碼
+    const saltRounds = 10;
+    const hashedNewPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    // 更新密碼
+    await query(
+      'UPDATE admins SET password = ?, updated_at = CURRENT_TIMESTAMP WHERE admin_id = ?',
+      [hashedNewPassword, req.user.adminId]
+    );
+
+    res.json({
+      success: true,
+      message: '密碼修改成功'
+    });
+
+  } catch (error) {
+    console.error('修改密碼錯誤:', error);
+    res.status(500).json({
+      success: false,
+      message: '修改密碼過程中發生錯誤'
+    });
+  }
+});
+
 module.exports = router;

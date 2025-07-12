@@ -6,6 +6,7 @@ import MainLayout from "./components/Layout/MainLayout";
 import TournamentLayout from "./components/Layout/TournamentLayout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import LoginPage from "./pages/Auth/LoginPage";
+import ChangePasswordPage from "./pages/Auth/ChangePasswordPage";
 import { useAuthStore } from "./stores/authStore";
 import TournamentGroupCreate from "./pages/Tournaments/TournamentGroupCreate";
 import TournamentGroupDetail from "./pages/Tournaments/TournamentGroupDetail";
@@ -74,6 +75,16 @@ function App() {
         <Route 
           path="/login" 
           element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />} 
+        />
+        
+        {/* 修改密碼頁面 - 需要登入保護 */}
+        <Route 
+          path="/change-password" 
+          element={
+            <ProtectedRoute>
+              <ChangePasswordPage />
+            </ProtectedRoute>
+          } 
         />
         
         {/* 所有管理功能都需要登入保護 */}
