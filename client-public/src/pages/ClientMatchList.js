@@ -37,6 +37,35 @@ const { RangePicker } = DatePicker;
 const ClientMatchList = () => {
   const navigate = useNavigate();
   const [tournament, setTournament] = useState(null);
+
+  // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    const lastUnderscoreIndex = teamName.lastIndexOf('_');
+    if (lastUnderscoreIndex !== -1) {
+      const beforeUnderscore = teamName.substring(0, lastUnderscoreIndex);
+      const afterUnderscore = teamName.substring(lastUnderscoreIndex + 1);
+      if (/^\d+$/.test(afterUnderscore)) {
+        return beforeUnderscore;
+      }
+    }
+    return teamName;
+  };
+
+  // 清理小組名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayGroupName = (groupName) => {
+    if (!groupName) return '';
+    const lastUnderscoreIndex = groupName.lastIndexOf('_');
+    if (lastUnderscoreIndex !== -1) {
+      const beforeUnderscore = groupName.substring(0, lastUnderscoreIndex);
+      const afterUnderscore = groupName.substring(lastUnderscoreIndex + 1);
+      if (/^\d+$/.test(afterUnderscore)) {
+        return beforeUnderscore;
+      }
+    }
+    return groupName;
+  };
+
   const [matches, setMatches] = useState([]);
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -131,10 +160,10 @@ const ClientMatchList = () => {
         if (filters.search) {
           const searchTerm = filters.search.toLowerCase();
           matchesList = matchesList.filter(match => 
-            match.team1_name?.toLowerCase().includes(searchTerm) ||
-            match.team2_name?.toLowerCase().includes(searchTerm) ||
+            getDisplayTeamName(match.team1_name)?.toLowerCase().includes(searchTerm) ||
+            getDisplayTeamName(match.team2_name)?.toLowerCase().includes(searchTerm) ||
             match.match_number?.toLowerCase().includes(searchTerm) ||
-            match.group_name?.toLowerCase().includes(searchTerm)
+            getDisplayGroupName(match.group_name)?.toLowerCase().includes(searchTerm)
           );
         }
         
@@ -230,7 +259,7 @@ const ClientMatchList = () => {
                 borderRadius: '50%'
               }}
             />
-            <Text strong>{record.team1_name}</Text>
+            <Text strong>{getDisplayTeamName(record.team1_name)}</Text>
             <Text type="secondary">vs</Text>
             <div 
               style={{ 
@@ -240,7 +269,7 @@ const ClientMatchList = () => {
                 borderRadius: '50%'
               }}
             />
-            <Text strong>{record.team2_name}</Text>
+            <Text strong>{getDisplayTeamName(record.team2_name)}</Text>
           </Space>
           {record.match_status === 'completed' && (
             <Text style={{ fontSize: '16px', fontWeight: 'bold', color: '#1890ff' }}>

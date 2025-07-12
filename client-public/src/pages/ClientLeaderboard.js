@@ -28,6 +28,34 @@ const { Title, Text } = Typography;
 const { TabPane } = Tabs;
 
 const ClientLeaderboard = () => {
+  // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    const lastUnderscoreIndex = teamName.lastIndexOf('_');
+    if (lastUnderscoreIndex !== -1) {
+      const beforeUnderscore = teamName.substring(0, lastUnderscoreIndex);
+      const afterUnderscore = teamName.substring(lastUnderscoreIndex + 1);
+      if (/^\d+$/.test(afterUnderscore)) {
+        return beforeUnderscore;
+      }
+    }
+    return teamName;
+  };
+
+  // 清理小組名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayGroupName = (groupName) => {
+    if (!groupName) return '';
+    const lastUnderscoreIndex = groupName.lastIndexOf('_');
+    if (lastUnderscoreIndex !== -1) {
+      const beforeUnderscore = groupName.substring(0, lastUnderscoreIndex);
+      const afterUnderscore = groupName.substring(lastUnderscoreIndex + 1);
+      if (/^\d+$/.test(afterUnderscore)) {
+        return beforeUnderscore;
+      }
+    }
+    return groupName;
+  };
+
   const [tournament, setTournament] = useState(null);
   const [overallLeaderboard, setOverallLeaderboard] = useState([]);
   const [groupLeaderboards, setGroupLeaderboards] = useState([]);
@@ -172,12 +200,12 @@ const ClientLeaderboard = () => {
           />
           <div>
             <Text strong style={{ fontSize: 16, color: record.team_color || '#000' }}>
-              {name}
+              {getDisplayTeamName(name)}
             </Text>
             {record.group_name && (
               <div>
                 <Text type="secondary" style={{ fontSize: 12 }}>
-                  小組 {record.group_name}
+                  小組 {getDisplayGroupName(record.group_name)}
                 </Text>
               </div>
             )}
@@ -382,7 +410,7 @@ const ClientLeaderboard = () => {
             </TabPane>
             
             {groupLeaderboards.map((group) => (
-              <TabPane tab={group.group_name} key={group.group_id}>
+              <TabPane tab={getDisplayGroupName(group.group_name)} key={group.group_id}>
                 <Table
                   columns={overallColumns.filter(col => col.key !== 'group_name')}
                   dataSource={group.teams || []}
@@ -394,7 +422,7 @@ const ClientLeaderboard = () => {
                         <TeamOutlined style={{ fontSize: 48, color: '#d9d9d9', marginBottom: 16 }} />
                         <div>
                           <Text type="secondary" style={{ fontSize: 16 }}>
-                            {group.group_name} 暫無隊伍資料
+                            {getDisplayGroupName(group.group_name)} 暫無隊伍資料
                           </Text>
                         </div>
                       </div>

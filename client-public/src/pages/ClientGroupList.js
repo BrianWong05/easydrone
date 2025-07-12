@@ -28,6 +28,21 @@ const { Title, Text } = Typography;
 
 const ClientGroupList = () => {
   const navigate = useNavigate();
+  
+  // 清理小組名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayGroupName = (groupName) => {
+    if (!groupName) return '';
+    const lastUnderscoreIndex = groupName.lastIndexOf('_');
+    if (lastUnderscoreIndex !== -1) {
+      const beforeUnderscore = groupName.substring(0, lastUnderscoreIndex);
+      const afterUnderscore = groupName.substring(lastUnderscoreIndex + 1);
+      if (/^\d+$/.test(afterUnderscore)) {
+        return beforeUnderscore;
+      }
+    }
+    return groupName;
+  };
+
   const [tournament, setTournament] = useState(null);
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -138,7 +153,7 @@ const ClientGroupList = () => {
       key: 'group_name',
       render: (name, record) => (
         <Space direction="vertical" size="small">
-          <Text strong style={{ fontSize: '16px' }}>{name}</Text>
+          <Text strong style={{ fontSize: '16px' }}>{getDisplayGroupName(name)}</Text>
           {record.tournament_name && (
             <Text type="secondary" style={{ fontSize: '12px' }}>
               {record.tournament_name}

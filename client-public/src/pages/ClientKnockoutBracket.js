@@ -32,6 +32,21 @@ const { Title, Text } = Typography;
 
 const ClientKnockoutBracket = () => {
   const navigate = useNavigate();
+  
+  // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    const lastUnderscoreIndex = teamName.lastIndexOf('_');
+    if (lastUnderscoreIndex !== -1) {
+      const beforeUnderscore = teamName.substring(0, lastUnderscoreIndex);
+      const afterUnderscore = teamName.substring(lastUnderscoreIndex + 1);
+      if (/^\d+$/.test(afterUnderscore)) {
+        return beforeUnderscore;
+      }
+    }
+    return teamName;
+  };
+
   const [tournament, setTournament] = useState(null);
   const [brackets, setBrackets] = useState({});
   const [loading, setLoading] = useState(true);
@@ -94,7 +109,7 @@ const ClientKnockoutBracket = () => {
                 // Check if this is the final match (round 1 in knockout structure)
                 if (match.round_number === 1 && match.winner_name) {
                   champion = {
-                    name: match.winner_name,
+                    name: getDisplayTeamName(match.winner_name),
                     color: match.winner_id === match.team1_id ? match.team1_color : match.team2_color
                   };
                 }
@@ -157,7 +172,7 @@ const ClientKnockoutBracket = () => {
 
   const getTeamDisplayName = (match, teamKey) => {
     const teamName = match[`${teamKey}_name`];
-    if (teamName) return teamName;
+    if (teamName) return getDisplayTeamName(teamName);
     
     // Show placeholder for teams that haven't advanced yet
     const teamId = match[`${teamKey}_id`];

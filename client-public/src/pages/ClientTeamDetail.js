@@ -35,6 +35,37 @@ const ClientTeamDetail = () => {
   const navigate = useNavigate();
   const { teamId } = useParams();
   const [tournament, setTournament] = useState(null);
+
+  // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    // 檢查是否包含下劃線，如果是則移除最後一個下劃線及其後的內容
+    const lastUnderscoreIndex = teamName.lastIndexOf('_');
+    if (lastUnderscoreIndex !== -1) {
+      const beforeUnderscore = teamName.substring(0, lastUnderscoreIndex);
+      const afterUnderscore = teamName.substring(lastUnderscoreIndex + 1);
+      // 如果下劃線後面是純數字，則認為是tournament_id，需要移除
+      if (/^\d+$/.test(afterUnderscore)) {
+        return beforeUnderscore;
+      }
+    }
+    return teamName;
+  };
+
+  // 清理小組名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayGroupName = (groupName) => {
+    if (!groupName) return '';
+    const lastUnderscoreIndex = groupName.lastIndexOf('_');
+    if (lastUnderscoreIndex !== -1) {
+      const beforeUnderscore = groupName.substring(0, lastUnderscoreIndex);
+      const afterUnderscore = groupName.substring(lastUnderscoreIndex + 1);
+      if (/^\d+$/.test(afterUnderscore)) {
+        return beforeUnderscore;
+      }
+    }
+    return groupName;
+  };
+
   const [team, setTeam] = useState(null);
   const [athletes, setAthletes] = useState([]);
   const [matches, setMatches] = useState([]);
@@ -302,12 +333,12 @@ const ClientTeamDetail = () => {
                   />
                   <div>
                     <Title level={2} style={{ margin: 0, color: team.team_color || '#000' }}>
-                      {team.team_name}
+                      {getDisplayTeamName(team.team_name)}
                     </Title>
                     <Space>
                       {team.group_name && (
                         <Tag color="blue" style={{ fontSize: 14 }}>
-                          小組 {team.group_name}
+                          小組 {getDisplayGroupName(team.group_name)}
                         </Tag>
                       )}
                       <Text type="secondary">
@@ -388,7 +419,7 @@ const ClientTeamDetail = () => {
         {/* Team Information */}
         <Card title="隊伍資訊">
           <Descriptions column={2} bordered>
-            <Descriptions.Item label="隊伍名稱">{team.team_name}</Descriptions.Item>
+            <Descriptions.Item label="隊伍名稱">{getDisplayTeamName(team.team_name)}</Descriptions.Item>
             <Descriptions.Item label="隊伍顏色">
               <Space>
                 <div 
@@ -404,7 +435,7 @@ const ClientTeamDetail = () => {
               </Space>
             </Descriptions.Item>
             <Descriptions.Item label="所屬小組">
-              {team.group_name ? `小組 ${team.group_name}` : '未分配'}
+              {team.group_name ? `小組 ${getDisplayGroupName(team.group_name)}` : '未分配'}
             </Descriptions.Item>
             <Descriptions.Item label="成員數量">{athletes.length} 人</Descriptions.Item>
             <Descriptions.Item label="創建時間">
@@ -472,7 +503,7 @@ const ClientTeamDetail = () => {
                     }
                     title={
                       <Space>
-                        <Text strong>{team.team_name} vs {opponent}</Text>
+                        <Text strong>{getDisplayTeamName(team.team_name)} vs {getDisplayTeamName(opponent)}</Text>
                         {match.match_status === 'completed' && (
                           <Text>
                             {teamScore} - {opponentScore}
@@ -487,7 +518,7 @@ const ClientTeamDetail = () => {
                         </Text>
                         {match.group_name && (
                           <Tag color="blue" size="small">
-                            小組 {match.group_name}
+                            小組 {getDisplayGroupName(match.group_name)}
                           </Tag>
                         )}
                       </Space>

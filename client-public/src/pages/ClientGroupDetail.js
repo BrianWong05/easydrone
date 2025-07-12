@@ -37,6 +37,36 @@ const ClientGroupDetail = () => {
   const navigate = useNavigate();
   const { groupId } = useParams();
   const [tournament, setTournament] = useState(null);
+
+  // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    // 檢查是否包含下劃線，如果是則移除最後一個下劃線及其後的內容
+    const lastUnderscoreIndex = teamName.lastIndexOf('_');
+    if (lastUnderscoreIndex !== -1) {
+      const beforeUnderscore = teamName.substring(0, lastUnderscoreIndex);
+      const afterUnderscore = teamName.substring(lastUnderscoreIndex + 1);
+      // 如果下劃線後面是純數字，則認為是tournament_id，需要移除
+      if (/^\d+$/.test(afterUnderscore)) {
+        return beforeUnderscore;
+      }
+    }
+    return teamName;
+  };
+
+  // 清理小組名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayGroupName = (groupName) => {
+    if (!groupName) return '';
+    const lastUnderscoreIndex = groupName.lastIndexOf('_');
+    if (lastUnderscoreIndex !== -1) {
+      const beforeUnderscore = groupName.substring(0, lastUnderscoreIndex);
+      const afterUnderscore = groupName.substring(lastUnderscoreIndex + 1);
+      if (/^\d+$/.test(afterUnderscore)) {
+        return beforeUnderscore;
+      }
+    }
+    return groupName;
+  };
   const [group, setGroup] = useState(null);
   const [teams, setTeams] = useState([]);
   const [matches, setMatches] = useState([]);
@@ -164,7 +194,7 @@ const ClientGroupDetail = () => {
               borderRadius: '50%'
             }}
           />
-          <Text strong>{name}</Text>
+          <Text strong>{getDisplayTeamName(name)}</Text>
         </Space>
       ),
     },
@@ -249,9 +279,9 @@ const ClientGroupDetail = () => {
       render: (_, record) => (
         <Space direction="vertical" size="small">
           <Space>
-            <Text strong>{record.team1_name}</Text>
+            <Text strong>{getDisplayTeamName(record.team1_name)}</Text>
             <Text type="secondary">vs</Text>
-            <Text strong>{record.team2_name}</Text>
+            <Text strong>{getDisplayTeamName(record.team2_name)}</Text>
           </Space>
           {record.match_status === 'completed' && (
             <Text style={{ fontSize: '18px', fontWeight: 'bold', color: '#1890ff' }}>
@@ -354,7 +384,7 @@ const ClientGroupDetail = () => {
             <Space direction="vertical" size="small">
               <Title level={2} style={{ margin: 0 }}>
                 <UsergroupAddOutlined style={{ marginRight: 8, color: '#1890ff' }} />
-                {group.group_name}
+                {getDisplayGroupName(group.group_name)}
               </Title>
               {tournament && (
                 <Text type="secondary">{tournament.tournament_name}</Text>

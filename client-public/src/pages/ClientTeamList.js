@@ -28,6 +28,37 @@ const ClientTeamList = () => {
   const navigate = useNavigate();
   const [tournament, setTournament] = useState(null);
   const [teams, setTeams] = useState([]);
+
+  // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    // 檢查是否包含下劃線，如果是則移除最後一個下劃線及其後的內容
+    const lastUnderscoreIndex = teamName.lastIndexOf('_');
+    if (lastUnderscoreIndex !== -1) {
+      const beforeUnderscore = teamName.substring(0, lastUnderscoreIndex);
+      const afterUnderscore = teamName.substring(lastUnderscoreIndex + 1);
+      // 如果下劃線後面是純數字，則認為是tournament_id，需要移除
+      if (/^\d+$/.test(afterUnderscore)) {
+        return beforeUnderscore;
+      }
+    }
+    return teamName;
+  };
+
+  // 清理小組名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayGroupName = (groupName) => {
+    if (!groupName) return '';
+    const lastUnderscoreIndex = groupName.lastIndexOf('_');
+    if (lastUnderscoreIndex !== -1) {
+      const beforeUnderscore = groupName.substring(0, lastUnderscoreIndex);
+      const afterUnderscore = groupName.substring(lastUnderscoreIndex + 1);
+      if (/^\d+$/.test(afterUnderscore)) {
+        return beforeUnderscore;
+      }
+    }
+    return groupName;
+  };
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [stats, setStats] = useState({
@@ -110,12 +141,12 @@ const ClientTeamList = () => {
           />
           <div>
             <Text strong style={{ fontSize: 16, color: record.team_color || '#000' }}>
-              {name}
+              {getDisplayTeamName(name)}
             </Text>
             {record.group_name && (
               <div>
                 <Tag color="blue" style={{ marginTop: 4 }}>
-                  小組 {record.group_name}
+                  小組 {getDisplayGroupName(record.group_name)}
                 </Tag>
               </div>
             )}

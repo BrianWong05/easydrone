@@ -38,6 +38,35 @@ const { Title, Text } = Typography;
 const ClientMatchDetail = () => {
   const navigate = useNavigate();
   const { matchId } = useParams();
+
+  // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    const lastUnderscoreIndex = teamName.lastIndexOf('_');
+    if (lastUnderscoreIndex !== -1) {
+      const beforeUnderscore = teamName.substring(0, lastUnderscoreIndex);
+      const afterUnderscore = teamName.substring(lastUnderscoreIndex + 1);
+      if (/^\d+$/.test(afterUnderscore)) {
+        return beforeUnderscore;
+      }
+    }
+    return teamName;
+  };
+
+  // 清理小組名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayGroupName = (groupName) => {
+    if (!groupName) return '';
+    const lastUnderscoreIndex = groupName.lastIndexOf('_');
+    if (lastUnderscoreIndex !== -1) {
+      const beforeUnderscore = groupName.substring(0, lastUnderscoreIndex);
+      const afterUnderscore = groupName.substring(lastUnderscoreIndex + 1);
+      if (/^\d+$/.test(afterUnderscore)) {
+        return beforeUnderscore;
+      }
+    }
+    return groupName;
+  };
+
   const [match, setMatch] = useState(null);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -100,7 +129,7 @@ const ClientMatchDetail = () => {
       return null;
     }
 
-    const winnerName = match.winner_id === match.team1_id ? match.team1_name : match.team2_name;
+    const winnerName = match.winner_id === match.team1_id ? getDisplayTeamName(match.team1_name) : getDisplayTeamName(match.team2_name);
     const winnerColor = match.winner_id === match.team1_id ? match.team1_color : match.team2_color;
     
     const winReasonMap = {
@@ -233,16 +262,16 @@ const ClientMatchDetail = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  border: winnerInfo && winnerInfo.name === match.team1_name ? '4px solid #faad14' : 'none'
+                  border: winnerInfo && winnerInfo.name === getDisplayTeamName(match.team1_name) ? '4px solid #faad14' : 'none'
                 }}
               >
                 <TeamOutlined style={{ fontSize: '32px', color: 'white' }} />
               </div>
               <div>
                 <Title level={3} style={{ margin: 0 }}>
-                  {match.team1_name}
+                  {getDisplayTeamName(match.team1_name)}
                 </Title>
-                {winnerInfo && winnerInfo.name === match.team1_name && (
+                {winnerInfo && winnerInfo.name === getDisplayTeamName(match.team1_name) && (
                   <Tag color="gold" icon={<TrophyOutlined />} style={{ marginTop: 8 }}>
                     獲勝
                   </Tag>
@@ -296,16 +325,16 @@ const ClientMatchDetail = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  border: winnerInfo && winnerInfo.name === match.team2_name ? '4px solid #faad14' : 'none'
+                  border: winnerInfo && winnerInfo.name === getDisplayTeamName(match.team2_name) ? '4px solid #faad14' : 'none'
                 }}
               >
                 <TeamOutlined style={{ fontSize: '32px', color: 'white' }} />
               </div>
               <div>
                 <Title level={3} style={{ margin: 0 }}>
-                  {match.team2_name}
+                  {getDisplayTeamName(match.team2_name)}
                 </Title>
-                {winnerInfo && winnerInfo.name === match.team2_name && (
+                {winnerInfo && winnerInfo.name === getDisplayTeamName(match.team2_name) && (
                   <Tag color="gold" icon={<TrophyOutlined />} style={{ marginTop: 8 }}>
                     獲勝
                   </Tag>
@@ -367,7 +396,7 @@ const ClientMatchDetail = () => {
               <Col span={12}>
                 <Card size="small">
                   <Statistic
-                    title={match.team1_name}
+                    title={getDisplayTeamName(match.team1_name)}
                     value={match.team1_score || 0}
                     prefix={<TrophyOutlined style={{ color: match.team1_color || '#1890ff' }} />}
                     valueStyle={{ color: match.team1_color || '#1890ff' }}
@@ -378,7 +407,7 @@ const ClientMatchDetail = () => {
               <Col span={12}>
                 <Card size="small">
                   <Statistic
-                    title={match.team2_name}
+                    title={getDisplayTeamName(match.team2_name)}
                     value={match.team2_score || 0}
                     prefix={<TrophyOutlined style={{ color: match.team2_color || '#52c41a' }} />}
                     valueStyle={{ color: match.team2_color || '#52c41a' }}
@@ -427,7 +456,7 @@ const ClientMatchDetail = () => {
               >
                 <Space direction="vertical" size="small">
                   <Text strong>
-                    {event.team_name} - {event.event_type}
+                    {getDisplayTeamName(event.team_name)} - {event.event_type}
                   </Text>
                   {event.athlete_name && (
                     <Text type="secondary">球員: {event.athlete_name}</Text>
@@ -451,14 +480,14 @@ const ClientMatchDetail = () => {
             icon={<TeamOutlined />}
             onClick={() => navigate(`/teams/${match.team1_id}`)}
           >
-            查看 {match.team1_name}
+            查看 {getDisplayTeamName(match.team1_name)}
           </Button>
           <Button 
             type="primary" 
             icon={<TeamOutlined />}
             onClick={() => navigate(`/teams/${match.team2_id}`)}
           >
-            查看 {match.team2_name}
+            查看 {getDisplayTeamName(match.team2_name)}
           </Button>
           {match.group_id && (
             <Button 
