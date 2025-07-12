@@ -418,7 +418,7 @@ const ClientMatchDetail = () => {
               <Col span={12}>
                 <Card size="small">
                   <Statistic
-                    title="犯規次數"
+                    title={`${getDisplayTeamName(match.team1_name)} 犯規次數`}
                     value={match.team1_fouls || 0}
                     prefix={<FlagOutlined style={{ color: '#f5222d' }} />}
                     valueStyle={{ color: '#f5222d' }}
@@ -428,7 +428,7 @@ const ClientMatchDetail = () => {
               <Col span={12}>
                 <Card size="small">
                   <Statistic
-                    title="犯規次數"
+                    title={`${getDisplayTeamName(match.team2_name)} 犯規次數`}
                     value={match.team2_fouls || 0}
                     prefix={<FlagOutlined style={{ color: '#f5222d' }} />}
                     valueStyle={{ color: '#f5222d' }}
