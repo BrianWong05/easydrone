@@ -444,6 +444,11 @@ const ClientTeamDetail = () => {
             <Descriptions.Item label="最後更新">
               {moment(team.updated_at).format('YYYY-MM-DD HH:mm')}
             </Descriptions.Item>
+            {team.description && (
+              <Descriptions.Item label="隊伍描述" span={2}>
+                <Text>{team.description}</Text>
+              </Descriptions.Item>
+            )}
           </Descriptions>
         </Card>
 
