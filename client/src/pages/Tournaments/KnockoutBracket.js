@@ -29,6 +29,17 @@ const KnockoutBracket = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
 
+  // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    // 檢查是否以 _{tournamentId} 結尾，如果是則移除
+    const suffix = `_${tournamentId}`;
+    if (teamName.endsWith(suffix)) {
+      return teamName.slice(0, -suffix.length);
+    }
+    return teamName;
+  };
+
   const [tournament, setTournament] = useState(null);
   const [brackets, setBrackets] = useState({});
   const [loading, setLoading] = useState(false);
@@ -238,7 +249,7 @@ const KnockoutBracket = () => {
                             {match.team1_score || 0} : {match.team2_score || 0}
                           </div>
                           <div style={{ fontSize: "12px", color: "#52c41a", marginTop: "2px" }}>
-                            勝者: {match.winner_name}
+                            勝者: {getDisplayTeamName(match.winner_name)}
                           </div>
                         </>
                       )}
@@ -303,7 +314,7 @@ const KnockoutBracket = () => {
     const teamName = teamPosition === "team1" ? match.team1_name : match.team2_name;
 
     if (teamName) {
-      return teamName;
+      return getDisplayTeamName(teamName);
     }
 
     // 如果沒有隊伍名稱，查找來源比賽

@@ -36,6 +36,17 @@ const TournamentMatchList = () => {
   const { id: tournamentId } = useParams();
   const navigate = useNavigate();
 
+  // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    // 檢查是否以 _{tournamentId} 結尾，如果是則移除
+    const suffix = `_${tournamentId}`;
+    if (teamName.endsWith(suffix)) {
+      return teamName.slice(0, -suffix.length);
+    }
+    return teamName;
+  };
+
   const [allMatches, setAllMatches] = useState([]);
   const [matches, setMatches] = useState([]);
   const [tournament, setTournament] = useState(null);
@@ -298,7 +309,7 @@ const TournamentMatchList = () => {
     const teamName = teamPosition === 'team1' ? record.team1_name : record.team2_name;
     
     if (teamName) {
-      return teamName;
+      return getDisplayTeamName(teamName);
     }
     
     // 如果沒有隊伍名稱且是淘汰賽，嘗試生成來源比賽的勝者顯示
@@ -626,7 +637,7 @@ const TournamentMatchList = () => {
                 <Option value="all">全部隊伍</Option>
                 {teams.map((team) => (
                   <Option key={team.team_id} value={team.team_id}>
-                    {team.team_name?.includes("_") ? team.team_name.split("_")[0] : team.team_name}
+                    {getDisplayTeamName(team.team_name)}
                   </Option>
                 ))}
               </Select>
