@@ -103,13 +103,13 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// API路由
+// API路由 - 注意順序：更具體的路由要放在前面
 app.use('/api/auth', authRoutes);
+app.use('/api/tournaments', tournamentRoutes);
 app.use('/api/teams', teamRoutes);
 app.use('/api/groups', groupRoutes);
 app.use('/api/matches', matchRoutes);
 app.use('/api/athletes', athleteRoutes);
-app.use('/api/tournaments', tournamentRoutes);
 app.use('/api/stats', statsRoutes);
 // Migration routes removed for clean deployment
 

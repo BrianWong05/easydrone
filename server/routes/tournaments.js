@@ -1815,8 +1815,9 @@ router.delete('/:id/groups/:groupId', async (req, res) => {
 });
 
 // 更新錦標賽隊伍
-router.put('/:id/teams/:teamId', async (req, res) => {
+router.put('/:id/teams/:teamId', authenticateToken, async (req, res) => {
   try {
+    console.log('🔧 Tournament team update endpoint hit:', { tournamentId: req.params.id, teamId: req.params.teamId });
     const tournamentId = req.params.id;
     const teamId = req.params.teamId;
     const { team_name, group_id, team_color, is_virtual, description } = req.body;
@@ -1864,15 +1865,20 @@ router.put('/:id/teams/:teamId', async (req, res) => {
       [teamId, teamId, tournamentId]
     );
 
-    if (activeMatches[0].count > 0) {
-      return res.status(400).json({
-        success: false,
-        message: '無法修改隊伍：該隊伍已參與已開始或已完成的比賽'
-      });
+    const hasActiveMatches = activeMatches[0].count > 0;
+
+    // 如果有活躍比賽，只限制小組變更，允許修改名稱、顏色、描述等
+    if (hasActiveMatches) {
+      if (group_id !== undefined && group_id !== existingTeam[0].group_id) {
+        return res.status(400).json({
+          success: false,
+          message: '無法更改隊伍小組：該隊伍已參與已開始或已完成的比賽'
+        });
+      }
     }
 
-    // 如果要更改小組分配
-    if (group_id !== undefined && group_id !== existingTeam[0].group_id) {
+    // 如果要更改小組分配（只在沒有活躍比賽時檢查）
+    if (!hasActiveMatches && group_id !== undefined && group_id !== existingTeam[0].group_id) {
       // 檢查新小組是否屬於該錦標賽
       if (group_id) {
         const targetGroup = await query(

@@ -293,6 +293,7 @@ router.post('/', async (req, res) => {
 // 更新隊伍
 router.put('/:id', async (req, res) => {
   try {
+    console.log('🚨 Teams route hit instead of tournaments route! TeamId:', req.params.id);
     const teamId = req.params.id;
     
     // 驗證輸入數據
