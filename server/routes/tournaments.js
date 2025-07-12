@@ -3350,6 +3350,61 @@ router.delete('/:id/knockout', async (req, res) => {
   }
 });
 
+// 更新錦標賽狀態
+router.put('/:id/status', async (req, res) => {
+  try {
+    const tournamentId = req.params.id;
+    const { status } = req.body;
+
+    // 驗證狀態值
+    const validStatuses = ['pending', 'active', 'completed'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({
+        success: false,
+        message: '無效的狀態值。允許的狀態: pending, active, completed'
+      });
+    }
+
+    // 如果要設置為 active，先將其他錦標賽設為 pending
+    if (status === 'active') {
+      await query('UPDATE tournaments SET status = ? WHERE status = ?', ['pending', 'active']);
+      console.log('🔄 已將其他活躍錦標賽設為待開始狀態');
+    }
+
+    // 更新指定錦標賽的狀態
+    const result = await query(
+      'UPDATE tournaments SET status = ?, updated_at = NOW() WHERE tournament_id = ?',
+      [status, tournamentId]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        message: '錦標賽不存在'
+      });
+    }
+
+    console.log(`✅ 錦標賽 ${tournamentId} 狀態已更新為: ${status}`);
+
+    res.json({
+      success: true,
+      message: `錦標賽狀態已更新為 ${status}`,
+      data: {
+        tournament_id: tournamentId,
+        status: status
+      }
+    });
+
+  } catch (error) {
+    console.error('❌ 更新錦標賽狀態失敗:', error);
+    res.status(500).json({
+      success: false,
+      message: '更新錦標賽狀態失敗',
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;
 // 自動推進所有可推進的淘汰賽比賽
 router.post('/:id/knockout/auto-advance', async (req, res) => {

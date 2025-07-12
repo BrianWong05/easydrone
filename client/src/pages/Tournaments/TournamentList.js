@@ -147,7 +147,7 @@ const TournamentList = () => {
   // 更新錦標賽狀態
   const handleStatusUpdate = async (tournamentId, status) => {
     try {
-      const response = await axios.put(`/tournaments/${tournamentId}/status`, { status });
+      const response = await axios.put(`/api/tournaments/${tournamentId}/status`, { status });
       if (response.data.success) {
         message.success('錦標賽狀態更新成功');
         fetchTournaments(pagination.current, pagination.pageSize);
@@ -161,13 +161,18 @@ const TournamentList = () => {
   // 獲取狀態標籤
   const getStatusTag = (status) => {
     const statusConfig = {
-      pending: { color: 'orange', text: '待開始' },
-      active: { color: 'green', text: '進行中' },
+      pending: { color: 'orange', text: '待激活' },
+      active: { color: 'green', text: '公開顯示中' },
       completed: { color: 'blue', text: '已完成' }
     };
     
     const config = statusConfig[status] || { color: 'default', text: status };
-    return <Tag color={config.color}>{config.text}</Tag>;
+    return (
+      <Tag color={config.color}>
+        {config.text}
+        {status === 'active' && <span style={{ marginLeft: 4 }}>🌐</span>}
+      </Tag>
+    );
   };
 
   // 獲取類型標籤
@@ -195,8 +200,14 @@ const TournamentList = () => {
       key: 'tournament_name',
       render: (text, record) => (
         <Space>
-          <TrophyOutlined style={{ color: '#faad14' }} />
-          <span style={{ fontWeight: 'bold' }}>{text}</span>
+          <TrophyOutlined style={{ color: record.status === 'active' ? '#52c41a' : '#faad14' }} />
+          <span style={{ 
+            fontWeight: 'bold',
+            color: record.status === 'active' ? '#52c41a' : 'inherit'
+          }}>
+            {text}
+            {record.status === 'active' && <span style={{ marginLeft: 8, fontSize: '12px' }}>(公開中)</span>}
+          </span>
         </Space>
       )
     },
@@ -287,25 +298,37 @@ const TournamentList = () => {
           </Tooltip>
           
           {record.status === 'pending' && (
-            <Tooltip title="開始錦標賽">
+            <Tooltip title="激活錦標賽 (設為公開顯示)">
               <Button 
                 type="text" 
                 style={{ color: '#52c41a' }}
                 onClick={() => handleStatusUpdate(record.tournament_id, 'active')}
               >
-                開始
+                激活
               </Button>
             </Tooltip>
           )}
           
           {record.status === 'active' && (
-            <Tooltip title="結束錦標賽">
+            <Tooltip title="停用錦標賽 (從公開顯示中移除)">
               <Button 
                 type="text" 
                 style={{ color: '#faad14' }}
-                onClick={() => handleStatusUpdate(record.tournament_id, 'completed')}
+                onClick={() => handleStatusUpdate(record.tournament_id, 'pending')}
               >
-                結束
+                停用
+              </Button>
+            </Tooltip>
+          )}
+          
+          {record.status === 'completed' && (
+            <Tooltip title="重新激活錦標賽">
+              <Button 
+                type="text" 
+                style={{ color: '#1890ff' }}
+                onClick={() => handleStatusUpdate(record.tournament_id, 'active')}
+              >
+                重新激活
               </Button>
             </Tooltip>
           )}
