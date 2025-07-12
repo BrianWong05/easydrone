@@ -408,7 +408,7 @@ router.post('/:id/teams', async (req, res) => {
 
     // 檢查小組是否存在
     const groups = await query(
-      'SELECT group_id, max_teams FROM team_groups WHERE group_id = ?',
+      'SELECT group_id, max_teams, tournament_id FROM team_groups WHERE group_id = ?',
       [groupId]
     );
 
@@ -485,8 +485,8 @@ router.post('/:id/teams', async (req, res) => {
 
       // 添加到積分表
       await connection.execute(
-        'INSERT INTO group_standings (group_id, team_id) VALUES (?, ?)',
-        [groupId, team_id]
+        'INSERT INTO group_standings (group_id, team_id, tournament_id) VALUES (?, ?, ?)',
+        [groupId, team_id, groups[0].tournament_id]
       );
     });
 

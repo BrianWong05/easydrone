@@ -141,9 +141,9 @@ router.post('/group-standings/initialize', async (req, res) => {
       
       if (existing.length === 0) {
         await query(`
-          INSERT INTO group_standings (group_id, team_id, played, won, drawn, lost, goals_for, goals_against, points)
-          VALUES (?, ?, 0, 0, 0, 0, 0, 0, 0)
-        `, [team.group_id, team.team_id]);
+          INSERT INTO group_standings (group_id, team_id, tournament_id, played, won, drawn, lost, goals_for, goals_against, points)
+          VALUES (?, ?, ?, 0, 0, 0, 0, 0, 0)
+        `, [team.group_id, team.team_id, team.tournament_id]);
         console.log(`✅ Created standing for ${team.team_name}`);
       }
     }
@@ -198,9 +198,9 @@ router.post('/calculate-all-group-standings', async (req, res) => {
         if (existing.length === 0) {
           // Insert new standing
           await query(`
-            INSERT INTO group_standings (group_id, team_id, played, won, drawn, lost, goals_for, goals_against, points)
-            VALUES (?, ?, 0, 0, 0, 0, 0, 0, 0)
-          `, [group.group_id, team.team_id]);
+            INSERT INTO group_standings (group_id, team_id, tournament_id, played, won, drawn, lost, goals_for, goals_against, points)
+            VALUES (?, ?, ?, 0, 0, 0, 0, 0, 0)
+          `, [group.group_id, team.team_id, group.tournament_id]);
         } else {
           // Reset existing standing
           await query(`

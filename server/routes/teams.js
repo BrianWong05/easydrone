@@ -268,8 +268,8 @@ router.post('/', async (req, res) => {
     // 如果分配了小組，更新小組積分表
     if (finalGroupId) {
       await query(
-        'INSERT INTO group_standings (group_id, team_id) VALUES (?, ?)',
-        [finalGroupId, result.insertId]
+        'INSERT INTO group_standings (group_id, team_id, tournament_id) VALUES (?, ?, ?)',
+        [finalGroupId, result.insertId, tournament_id]
       );
     }
 
@@ -470,8 +470,8 @@ router.put('/:id', async (req, res) => {
           }
 
           await connection.execute(
-            'INSERT INTO group_standings (group_id, team_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE team_id = team_id',
-            [finalGroupId, teamId]
+            'INSERT INTO group_standings (group_id, team_id, tournament_id) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE team_id = team_id',
+            [finalGroupId, teamId, tournament_id]
           );
         }
       }
