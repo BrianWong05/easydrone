@@ -140,7 +140,16 @@ const ClientTeamList = () => {
             icon={<TeamOutlined />} 
           />
           <div>
-            <Text strong style={{ fontSize: 16, color: record.team_color || '#000' }}>
+            <Text 
+              strong 
+              style={{ 
+                fontSize: 16, 
+                color: record.team_color || '#1890ff',
+                cursor: 'pointer',
+                textDecoration: 'underline'
+              }}
+              onClick={() => navigate(`/teams/${record.team_id}`)}
+            >
               {getDisplayTeamName(name)}
             </Text>
             {record.group_name && (
