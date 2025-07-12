@@ -266,8 +266,8 @@ const TournamentMatchGenerator = () => {
 
             matches.push(match);
 
-            // 下一場比賽時間
-            currentTime.add(matchDuration + breakDuration, "seconds");
+            // 下一場比賽時間 - 只加上比賽間隔
+            currentTime.add(breakDuration, "seconds");
           }
         }
       }
