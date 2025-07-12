@@ -146,10 +146,14 @@ const TournamentMatchGenerator = () => {
   const [startTime, setStartTime] = useState(moment("09:00", "HH:mm"));
   const [matchMinutes, setMatchMinutes] = useState(10);
   const [matchSeconds, setMatchSeconds] = useState(0);
-  const [breakDuration, setBreakDuration] = useState(300);
+  const [breakMinutes, setBreakMinutes] = useState(5);
+  const [breakSeconds, setBreakSeconds] = useState(0);
 
   // Calculate total match duration in seconds
   const matchDuration = matchMinutes * 60 + matchSeconds;
+  
+  // Calculate total break duration in seconds
+  const breakDuration = breakMinutes * 60 + breakSeconds;
 
   useEffect(() => {
     fetchTournament();
@@ -198,7 +202,7 @@ const TournamentMatchGenerator = () => {
     return {
       totalMatches,
       selectedGroups: selectedGroupsData.length,
-      estimatedDuration: (totalMatches * (matchDuration + breakDuration)) / 60, // 分鐘
+      estimatedDuration: ((totalMatches - 1) * breakDuration) / 60, // 分鐘 - 只計算比賽間隔
     };
   };
 
@@ -404,17 +408,34 @@ const TournamentMatchGenerator = () => {
               </Col>
               <Col span={12}>
                 <div style={{ marginBottom: 16 }}>
-                  <Text strong>比賽間隔（秒）</Text>
-                  <InputNumber
-                    value={breakDuration}
-                    onChange={setBreakDuration}
-                    min={60}
-                    max={1800}
-                    step={60}
-                    style={{ width: "100%", marginTop: 8 }}
-                    formatter={(value) => `${value} 秒 (${Math.floor(value / 60)} 分鐘)`}
-                    parser={(value) => value.replace(/[^\d]/g, "")}
-                  />
+                  <Text strong>比賽間隔</Text>
+                  <Row gutter={8} style={{ marginTop: 8 }}>
+                    <Col span={12}>
+                      <InputNumber
+                        value={breakMinutes}
+                        onChange={setBreakMinutes}
+                        min={0}
+                        max={30}
+                        style={{ width: "100%" }}
+                        placeholder="分鐘"
+                        addonAfter="分"
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <InputNumber
+                        value={breakSeconds}
+                        onChange={setBreakSeconds}
+                        min={0}
+                        max={59}
+                        style={{ width: "100%" }}
+                        placeholder="秒"
+                        addonAfter="秒"
+                      />
+                    </Col>
+                  </Row>
+                  <div style={{ fontSize: "12px", color: "#666", marginTop: "4px" }}>
+                    總間隔: {breakDuration} 秒 ({Math.floor(breakDuration / 60)}分{breakDuration % 60}秒)
+                  </div>
                 </div>
               </Col>
             </Row>
