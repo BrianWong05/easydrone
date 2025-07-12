@@ -1603,18 +1603,35 @@ router.post('/:id/teams', async (req, res) => {
         [parseInt(tournamentId), team_name, safeGroupId, team_color, safeIsVirtual ? 1 : 0, description || null]
       );
 
+      console.log('🔧 隊伍插入結果:', {
+        insertId: result.insertId,
+        affectedRows: result.affectedRows,
+        result: result
+      });
+
+      const teamId = result.insertId || result[0]?.insertId;
+      if (!teamId) {
+        throw new Error('隊伍創建失敗：未獲得有效的隊伍ID');
+      }
+
       // 如果分配了小組，更新小組積分表
       if (group_id) {
+        console.log('🔧 準備插入小組積分表數據:', {
+          tournament_id: parseInt(tournamentId),
+          group_id: group_id,
+          team_id: teamId
+        });
+        
         await connection.execute(
-          'INSERT INTO group_standings (tournament_id, group_id, team_id) VALUES (?, ?, ?)',
-          [tournamentId, group_id, result.insertId]
+          'INSERT INTO group_standings (tournament_id, group_id, team_id, played, won, drawn, lost, goals_for, goals_against, points) VALUES (?, ?, ?, 0, 0, 0, 0, 0, 0, 0)',
+          [parseInt(tournamentId), group_id, teamId]
         );
       }
 
       res.status(201).json({
         success: true,
         message: '隊伍創建成功',
-        data: { team_id: result.insertId }
+        data: { team_id: teamId }
       });
     });
 
