@@ -559,7 +559,11 @@ const TournamentGroupDetail = () => {
                   <Card
                     size="small"
                     actions={[
-                      <Button type="link" icon={<EyeOutlined />} onClick={() => navigate(`/teams/${team.team_id}`)}>
+                      <Button
+                        type="link"
+                        icon={<EyeOutlined />}
+                        onClick={() => navigate(`/tournaments/${tournamentId}/teams/${team.team_id}`)}
+                      >
                         詳情
                       </Button>,
                       <Popconfirm
