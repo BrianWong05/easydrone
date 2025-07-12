@@ -27,6 +27,9 @@ const io = socketIo(server, {
 
 const PORT = process.env.PORT || 5000;
 
+// 開發環境下更寬鬆的CORS設置
+const isDevelopment = process.env.NODE_ENV !== 'production';
+
 // 信任代理設置（用於nginx反向代理）
 app.set('trust proxy', 1);
 
@@ -37,17 +40,38 @@ app.use(helmet());
 console.log('🔓 速率限制已完全禁用');
 
 // CORS設置
-app.use(cors({
-  origin: [
+const corsOptions = {
+  origin: isDevelopment ? true : [  // 開發環境允許所有來源
     process.env.CLIENT_URL || "http://localhost:3000",
     "http://localhost:8080",
     "http://localhost:8888",
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "http://localhost:8001"  // 添加8001端口支持
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
-}));
+};
+
+console.log('🌐 CORS配置:', {
+  isDevelopment,
+  allowedOrigins: corsOptions.origin
+});
+
+app.use(cors(corsOptions));
+
+// 請求日誌中間件（用於調試CORS問題）
+app.use((req, res, next) => {
+  const origin = req.get('Origin');
+  const method = req.method;
+  const url = req.url;
+  
+  if (isDevelopment && (method === 'OPTIONS' || origin)) {
+    console.log(`🌐 ${method} ${url} - Origin: ${origin || 'none'}`);
+  }
+  
+  next();
+});
 
 // 設置字符編碼
 app.use((req, res, next) => {
