@@ -8,6 +8,33 @@ import axios from 'axios';
 const { Title, Text } = Typography;
 
 const TournamentTeamDetail = () => {
+  // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    const lastUnderscoreIndex = teamName.lastIndexOf('_');
+    if (lastUnderscoreIndex !== -1) {
+      const beforeUnderscore = teamName.substring(0, lastUnderscoreIndex);
+      const afterUnderscore = teamName.substring(lastUnderscoreIndex + 1);
+      if (/^\d+$/.test(afterUnderscore)) {
+        return beforeUnderscore;
+      }
+    }
+    return teamName;
+  };
+
+  // 清理小組名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayGroupName = (groupName) => {
+    if (!groupName) return '';
+    const lastUnderscoreIndex = groupName.lastIndexOf('_');
+    if (lastUnderscoreIndex !== -1) {
+      const beforeUnderscore = groupName.substring(0, lastUnderscoreIndex);
+      const afterUnderscore = groupName.substring(lastUnderscoreIndex + 1);
+      if (/^\d+$/.test(afterUnderscore)) {
+        return beforeUnderscore;
+      }
+    }
+    return groupName;
+  };
   const navigate = useNavigate();
   const { id: tournamentId, teamId } = useParams();
   const [loading, setLoading] = useState(true);
@@ -178,7 +205,7 @@ const TournamentTeamDetail = () => {
   const handleDeleteTeam = () => {
     Modal.confirm({
       title: '確認刪除',
-      content: `確定要刪除隊伍 "${teamData.team_name}" 嗎？此操作將同時刪除所有相關的運動員和比賽記錄，且無法撤銷。`,
+      content: `確定要刪除隊伍 "${getDisplayTeamName(teamData.team_name)}" 嗎？此操作將同時刪除所有相關的運動員和比賽記錄，且無法撤銷。`,
       okText: '確定',
       cancelText: '取消',
       onOk: async () => {
@@ -380,7 +407,7 @@ const TournamentTeamDetail = () => {
             }}
             onClick={() => navigate(`/tournaments/${tournamentId}/teams/${opponentId}`)}
           >
-            {opponentName}
+            {getDisplayTeamName(opponentName)}
           </span>
         );
       },
@@ -536,10 +563,10 @@ const TournamentTeamDetail = () => {
                 }}
               />
               <TeamOutlined />
-              <span>{teamData.team_name}</span>
+              <span>{getDisplayTeamName(teamData.team_name)}</span>
               {teamData.group_name && (
                 <Tag color="blue">
-                  小組 {teamData.group_name}
+                  小組 {getDisplayGroupName(teamData.group_name)}
                 </Tag>
               )}
             </Space>
@@ -581,7 +608,7 @@ const TournamentTeamDetail = () => {
         <Card title="隊伍詳情" extra={<TeamOutlined />}>
           <Descriptions bordered column={2}>
             <Descriptions.Item label="隊伍名稱">
-              {teamData.team_name}
+              {getDisplayTeamName(teamData.team_name)}
             </Descriptions.Item>
             <Descriptions.Item label="隊伍顏色">
               <Space>
@@ -599,7 +626,7 @@ const TournamentTeamDetail = () => {
             </Descriptions.Item>
             <Descriptions.Item label="所屬小組">
               {teamData.group_name ? (
-                <Tag color="blue">小組 {teamData.group_name}</Tag>
+                <Tag color="blue">小組 {getDisplayGroupName(teamData.group_name)}</Tag>
               ) : (
                 <Text type="secondary">未分配</Text>
               )}
