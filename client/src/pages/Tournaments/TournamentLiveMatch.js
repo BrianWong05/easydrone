@@ -281,6 +281,15 @@ const TournamentLiveMatch = () => {
           setIsRunning(false);
           setRemainingTime(0);
           console.log("比賽已完成 - 剩餘時間: 0秒");
+        } else if (match.match_status === "postponed") {
+          // postponed 狀態，和 pending 一樣處理
+          setMatchStarted(false);
+          setIsRunning(false);
+          setCurrentHalf(1);
+          setIsHalfTime(false);
+          setIsOvertime(false);
+          setRemainingTime(totalSeconds);
+          console.log(`比賽已延期 - 設置剩餘時間: ${totalSeconds}秒`);
         } else {
           // pending 狀態，設置為完整時間
           setMatchStarted(false);
@@ -575,7 +584,7 @@ const TournamentLiveMatch = () => {
           </div>
 
           <Space>
-            {!matchStarted && matchData.match_status === "pending" && (
+            {!matchStarted && (matchData.match_status === "pending" || matchData.match_status === "postponed") && (
               <Button type="primary" size="large" icon={<PlayCircleOutlined />} onClick={handleStartMatch}>
                 開始比賽
               </Button>
@@ -680,6 +689,8 @@ const TournamentLiveMatch = () => {
                   style={{ fontSize: "14px", padding: "4px 12px" }}
                 >
                   {matchData.match_status === "pending"
+                    ? "待開始"
+                    : matchData.match_status === "postponed"
                     ? "待開始"
                     : matchData.match_status === "active"
                     ? "進行中"

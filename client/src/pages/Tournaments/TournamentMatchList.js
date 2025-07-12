@@ -318,6 +318,7 @@ const TournamentMatchList = () => {
     postponeForm.resetFields();
   };
 
+
   const handleTableChange = (paginationConfig) => {
     const { current, pageSize } = paginationConfig;
     setPagination((prev) => ({
@@ -559,6 +560,18 @@ const TournamentMatchList = () => {
               onClick={() => navigate(`/tournaments/${tournamentId}/matches/${record.match_id}/live`)}
             >
               繼續
+            </Button>
+          )}
+          {record.match_status === "postponed" && (
+            <Button
+              type="link"
+              icon={<PlayCircleOutlined />}
+              style={{ color: "#fa8c16" }}
+              onClick={() => navigate(`/tournaments/${tournamentId}/matches/${record.match_id}/live`)}
+              disabled={!record.team1_name || !record.team2_name}
+              title={!record.team1_name || !record.team2_name ? "比賽隊伍尚未確定，無法開始比賽" : "開始延期的比賽"}
+            >
+              開始
             </Button>
           )}
           {record.match_status === "pending" && (

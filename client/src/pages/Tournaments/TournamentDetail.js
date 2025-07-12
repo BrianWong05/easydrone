@@ -39,6 +39,17 @@ const TournamentDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [tournament, setTournament] = useState(null);
+
+  // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    // 檢查是否以 _{tournamentId} 結尾，如果是則移除
+    const suffix = `_${id}`;
+    if (teamName.endsWith(suffix)) {
+      return teamName.slice(0, -suffix.length);
+    }
+    return teamName;
+  };
   const [stats, setStats] = useState({
     totalTeams: 0,
     totalGroups: 0,
@@ -380,7 +391,7 @@ const TournamentDetail = () => {
                     description={
                       <Space direction="vertical" size="small">
                         <Text>
-                          {match.team1_name} vs {match.team2_name}
+                          {getDisplayTeamName(match.team1_name)} vs {getDisplayTeamName(match.team2_name)}
                         </Text>
                         <Text type="secondary">{moment(match.match_date).format("YYYY-MM-DD HH:mm")}</Text>
                         {match.match_status === "completed" && (

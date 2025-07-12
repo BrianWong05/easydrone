@@ -76,6 +76,7 @@ const MatchDetail = () => {
     navigate(`/tournaments/${tournamentId}/matches/${matchId}/live`);
   };
 
+
   const handleDeleteMatch = () => {
     Modal.confirm({
       title: "確認刪除",
@@ -178,6 +179,17 @@ const MatchDetail = () => {
       return teamName.slice(0, -suffix.length);
     }
     return teamName;
+  };
+
+  // 清理小組名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayGroupName = (groupName) => {
+    if (!groupName) return '';
+    // 檢查是否以 _{tournamentId} 結尾，如果是則移除
+    const suffix = `_${tournamentId}`;
+    if (groupName.endsWith(suffix)) {
+      return groupName.slice(0, -suffix.length);
+    }
+    return groupName;
   };
 
   // 獲取隊伍顯示名稱，如果沒有隊伍則顯示來源比賽的勝者
@@ -314,6 +326,18 @@ const MatchDetail = () => {
             <Button danger icon={<DeleteOutlined />} onClick={handleDeleteMatch}>
               刪除比賽
             </Button>
+            {matchData.match_status === "postponed" && (
+              <Button
+                type="primary"
+                icon={<PlayCircleOutlined />}
+                onClick={handleStartMatch}
+                disabled={!matchData.team1_name || !matchData.team2_name}
+                title={!matchData.team1_name || !matchData.team2_name ? "比賽隊伍尚未確定，無法開始比賽" : "開始延期的比賽"}
+                style={{ backgroundColor: "#fa8c16" }}
+              >
+                開始比賽
+              </Button>
+            )}
             {matchData.match_status === "active" && (
               <Button
                 type="primary"
@@ -360,7 +384,7 @@ const MatchDetail = () => {
                   </Tag>
                   {matchData.group_name && (
                     <Tag color="blue" style={{ fontSize: "14px", padding: "4px 12px", marginLeft: 8 }}>
-                      小組 {matchData.group_name}
+                      小組 {getDisplayGroupName(matchData.group_name)}
                     </Tag>
                   )}
                 </div>

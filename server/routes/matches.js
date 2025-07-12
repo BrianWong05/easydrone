@@ -563,10 +563,11 @@ router.post('/:id/start', async (req, res) => {
       });
     }
 
-    if (matches[0].match_status !== 'pending') {
+    // Allow starting both pending and postponed matches
+    if (!['pending', 'postponed'].includes(matches[0].match_status)) {
       return res.status(400).json({
         success: false,
-        message: '比賽已經開始或已結束'
+        message: '只能開始待開始或延期的比賽'
       });
     }
 
