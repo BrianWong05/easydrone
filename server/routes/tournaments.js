@@ -1523,7 +1523,7 @@ router.post('/:id/groups', async (req, res) => {
 router.post('/:id/teams', async (req, res) => {
   try {
     const tournamentId = req.params.id;
-    const { team_name, group_id, team_color = '#FFFFFF', is_virtual = false } = req.body;
+    const { team_name, group_id, team_color = '#FFFFFF', is_virtual = false, description } = req.body;
 
     // 檢查錦標賽是否存在
     const tournament = await query('SELECT tournament_id FROM tournaments WHERE tournament_id = ?', [tournamentId]);
@@ -1585,12 +1585,13 @@ router.post('/:id/teams', async (req, res) => {
         team_name,
         group_id: safeGroupId,
         team_color,
-        is_virtual: safeIsVirtual
+        is_virtual: safeIsVirtual,
+        description: description || null
       });
       
       const result = await connection.execute(
-        'INSERT INTO teams (tournament_id, team_name, group_id, team_color, is_virtual) VALUES (?, ?, ?, ?, ?)',
-        [parseInt(tournamentId), team_name, safeGroupId, team_color, safeIsVirtual ? 1 : 0]
+        'INSERT INTO teams (tournament_id, team_name, group_id, team_color, is_virtual, description) VALUES (?, ?, ?, ?, ?, ?)',
+        [parseInt(tournamentId), team_name, safeGroupId, team_color, safeIsVirtual ? 1 : 0, description || null]
       );
 
       // 如果分配了小組，更新小組積分表
@@ -1818,7 +1819,7 @@ router.put('/:id/teams/:teamId', async (req, res) => {
   try {
     const tournamentId = req.params.id;
     const teamId = req.params.teamId;
-    const { team_name, group_id, team_color, is_virtual } = req.body;
+    const { team_name, group_id, team_color, is_virtual, description } = req.body;
 
     // 檢查錦標賽是否存在
     const tournament = await query('SELECT tournament_id FROM tournaments WHERE tournament_id = ?', [tournamentId]);
@@ -1953,6 +1954,11 @@ router.put('/:id/teams/:teamId', async (req, res) => {
       if (is_virtual !== undefined) {
         updateFields.push('is_virtual = ?');
         updateParams.push(is_virtual);
+      }
+
+      if (description !== undefined) {
+        updateFields.push('description = ?');
+        updateParams.push(description);
       }
 
       if (updateFields.length > 0) {

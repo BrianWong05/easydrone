@@ -657,6 +657,11 @@ const TournamentTeamDetail = () => {
             <Descriptions.Item label="更新時間">
               {moment(teamData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
             </Descriptions.Item>
+            {teamData.description && (
+              <Descriptions.Item label="隊伍描述" span={2}>
+                {teamData.description}
+              </Descriptions.Item>
+            )}
           </Descriptions>
         </Card>
 
