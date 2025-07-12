@@ -98,16 +98,35 @@ const ClientLeaderboard = () => {
       setTournament(tournamentData);
       const tournamentId = tournamentData.tournament_id;
 
-      // Fetch overall leaderboard
+      // Fetch overall leaderboard for this tournament
       const overallResponse = await axios.get(`/api/tournaments/${tournamentId}/stats/overall-leaderboard`);
       if (overallResponse.data.success) {
         setOverallLeaderboard(overallResponse.data.data.leaderboard || []);
       }
 
-      // Fetch group leaderboards  
-      const groupsResponse = await axios.get(`/api/stats/group-standings`);
+      // Fetch group leaderboards for this tournament only
+      const groupsResponse = await axios.get(`/api/tournaments/${tournamentId}/groups`);
       if (groupsResponse.data.success) {
-        setGroupLeaderboards(groupsResponse.data.data.standings || []);
+        const tournamentGroups = groupsResponse.data.data?.groups || groupsResponse.data.data || [];
+        
+        // For each group, get its standings
+        const groupLeaderboards = [];
+        for (const group of tournamentGroups) {
+          try {
+            const standingsResponse = await axios.get(`/api/stats/group-standings?group_id=${group.group_id}`);
+            if (standingsResponse.data.success) {
+              const groupStandings = standingsResponse.data.data.standings || [];
+              // Find the group that matches our current group
+              const matchingGroup = groupStandings.find(g => g.group_id === group.group_id);
+              if (matchingGroup) {
+                groupLeaderboards.push(matchingGroup);
+              }
+            }
+          } catch (error) {
+            console.warn(`Failed to fetch standings for group ${group.group_id}:`, error);
+          }
+        }
+        setGroupLeaderboards(groupLeaderboards);
       }
 
       // Calculate statistics
