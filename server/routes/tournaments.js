@@ -3186,10 +3186,25 @@ router.get('/:id/stats/overall-leaderboard', async (req, res) => {
       if (!teamsByGroup[groupKey]) {
         teamsByGroup[groupKey] = [];
       }
+      
+      const cleanedTeamName = cleanTeamName(team.team_name);
+      const goalDifference = team.goals_for - team.goals_against;
+      
+      // Debug logging for specific team
+      if (cleanedTeamName.toLowerCase().includes('ba') || team.team_name.toLowerCase().includes('ba')) {
+        console.log(`🔍 Debug team "${cleanedTeamName}":`, {
+          original_name: team.team_name,
+          goals_for: team.goals_for,
+          goals_against: team.goals_against,
+          calculated_goal_difference: goalDifference,
+          group_name: team.group_name
+        });
+      }
+      
       teamsByGroup[groupKey].push({
         ...team,
-        team_name: cleanTeamName(team.team_name), // Clean the team name
-        goal_difference: team.goals_for - team.goals_against,
+        team_name: cleanedTeamName,
+        goal_difference: goalDifference,
         win_rate: team.played > 0 ? ((team.won / team.played) * 100).toFixed(1) : 0,
         points_per_game: team.played > 0 ? (team.points / team.played).toFixed(2) : 0
       });

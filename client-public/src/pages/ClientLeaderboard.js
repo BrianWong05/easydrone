@@ -87,6 +87,15 @@ const ClientLeaderboard = () => {
       setTournament(tournamentData);
       const tournamentId = tournamentData.tournament_id;
 
+      // 先重新計算積分榜以確保數據是最新的
+      try {
+        await axios.post("/api/stats/calculate-all-group-standings");
+        console.log('✅ Group standings recalculated for client leaderboard');
+      } catch (calcError) {
+        console.warn('⚠️ Failed to recalculate standings:', calcError);
+        // 繼續執行，即使計算失敗也要顯示現有數據
+      }
+
       // Fetch overall leaderboard for this tournament
       const overallResponse = await axios.get(`/api/tournaments/${tournamentId}/stats/overall-leaderboard`);
       if (overallResponse.data.success) {
