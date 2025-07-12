@@ -45,7 +45,7 @@ const TournamentGroupDetail = () => {
 
   // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
   const getDisplayTeamName = (teamName) => {
-    if (!teamName) return '';
+    if (!teamName) return "";
     // 檢查是否以 _{tournamentId} 結尾，如果是則移除
     const suffix = `_${tournamentId}`;
     if (teamName.endsWith(suffix)) {
@@ -69,11 +69,11 @@ const TournamentGroupDetail = () => {
   // Listen for match result updates and refresh data
   useEffect(() => {
     const handleStorageChange = () => {
-      const matchResultUpdated = localStorage.getItem('matchResultUpdated');
+      const matchResultUpdated = localStorage.getItem("matchResultUpdated");
       if (matchResultUpdated) {
         // Clear the flag and refresh data
-        localStorage.removeItem('matchResultUpdated');
-        console.log('🔄 Match result was updated, refreshing group standings...');
+        localStorage.removeItem("matchResultUpdated");
+        console.log("🔄 Match result was updated, refreshing group standings...");
         fetchGroupDetail();
       }
     };
@@ -82,14 +82,14 @@ const TournamentGroupDetail = () => {
     handleStorageChange();
 
     // Listen for storage changes (when user navigates back from result edit)
-    window.addEventListener('storage', handleStorageChange);
-    
+    window.addEventListener("storage", handleStorageChange);
+
     // Also check when the window gains focus (when user returns to this tab)
-    window.addEventListener('focus', handleStorageChange);
+    window.addEventListener("focus", handleStorageChange);
 
     return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('focus', handleStorageChange);
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("focus", handleStorageChange);
     };
   }, []);
 
@@ -138,23 +138,23 @@ const TournamentGroupDetail = () => {
     try {
       // 獲取錦標賽中未分配小組的隊伍
       const response = await axios.get(`/api/tournaments/${tournamentId}/teams`);
-      console.log('API Response for available teams:', response.data);
-      
+      console.log("API Response for available teams:", response.data);
+
       if (response.data.success) {
         // Handle different possible response structures
         let allTeams = [];
         if (response.data.data) {
           if (Array.isArray(response.data.data)) {
             allTeams = response.data.data;
-            console.log('Teams found in response.data.data (array):', allTeams.length);
+            console.log("Teams found in response.data.data (array):", allTeams.length);
           } else if (response.data.data.teams && Array.isArray(response.data.data.teams)) {
             allTeams = response.data.data.teams;
-            console.log('Teams found in response.data.data.teams:', allTeams.length);
+            console.log("Teams found in response.data.data.teams:", allTeams.length);
           } else {
-            console.log('Unexpected data structure:', response.data.data);
+            console.log("Unexpected data structure:", response.data.data);
           }
         }
-        
+
         // 過濾出未分配小組的隊伍
         const unassignedTeams = allTeams.filter((team) => !team.group_id);
         setAvailableTeams(unassignedTeams);
@@ -210,7 +210,7 @@ const TournamentGroupDetail = () => {
   };
 
   const handleGenerateMatches = () => {
-    navigate(`/groups/${groupId}/generate-matches`);
+    navigate(`/tournaments/${tournamentId}/matches/generate`);
   };
 
   const openAddTeamModal = () => {
@@ -362,11 +362,7 @@ const TournamentGroupDetail = () => {
       key: "won",
       align: "center",
       width: 50,
-      render: (won) => (
-        <Text style={{ color: "#52c41a", fontWeight: "bold" }}>
-          {won}
-        </Text>
-      ),
+      render: (won) => <Text style={{ color: "#52c41a", fontWeight: "bold" }}>{won}</Text>,
     },
     {
       title: "平",
@@ -374,11 +370,7 @@ const TournamentGroupDetail = () => {
       key: "drawn",
       align: "center",
       width: 50,
-      render: (drawn) => (
-        <Text style={{ color: "#faad14", fontWeight: "bold" }}>
-          {drawn}
-        </Text>
-      ),
+      render: (drawn) => <Text style={{ color: "#faad14", fontWeight: "bold" }}>{drawn}</Text>,
     },
     {
       title: "負",
@@ -386,11 +378,7 @@ const TournamentGroupDetail = () => {
       key: "lost",
       align: "center",
       width: 50,
-      render: (lost) => (
-        <Text style={{ color: "#ff4d4f", fontWeight: "bold" }}>
-          {lost}
-        </Text>
-      ),
+      render: (lost) => <Text style={{ color: "#ff4d4f", fontWeight: "bold" }}>{lost}</Text>,
     },
     {
       title: "進球",
