@@ -42,6 +42,17 @@ const TournamentGroupDetail = () => {
   const { id: tournamentId, groupId } = useParams();
   const [group, setGroup] = useState(null);
   const [teams, setTeams] = useState([]);
+
+  // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    // 檢查是否以 _{tournamentId} 結尾，如果是則移除
+    const suffix = `_${tournamentId}`;
+    if (teamName.endsWith(suffix)) {
+      return teamName.slice(0, -suffix.length);
+    }
+    return teamName;
+  };
   const [matches, setMatches] = useState([]);
   const [standings, setStandings] = useState([]);
   const [tournament, setTournament] = useState(null);
@@ -211,7 +222,7 @@ const TournamentGroupDetail = () => {
               border: "1px solid #d9d9d9",
             }}
           />
-          <Text>{record.team1_name}</Text>
+          <Text>{getDisplayTeamName(record.team1_name)}</Text>
         </Space>
       ),
     },
@@ -239,7 +250,7 @@ const TournamentGroupDetail = () => {
               border: "1px solid #d9d9d9",
             }}
           />
-          <Text>{record.team2_name}</Text>
+          <Text>{getDisplayTeamName(record.team2_name)}</Text>
         </Space>
       ),
     },
@@ -316,7 +327,7 @@ const TournamentGroupDetail = () => {
               border: "1px solid #d9d9d9",
             }}
           />
-          <Text strong>{record.team_name}</Text>
+          <Text strong>{getDisplayTeamName(record.team_name)}</Text>
         </Space>
       ),
     },
@@ -559,7 +570,7 @@ const TournamentGroupDetail = () => {
                   >
                     <Card.Meta
                       avatar={<Avatar style={{ backgroundColor: team.team_color }} icon={<TeamOutlined />} />}
-                      title={team.team_name}
+                      title={getDisplayTeamName(team.team_name)}
                       description={`隊伍顏色: ${team.team_color}`}
                     />
                   </Card>
@@ -639,7 +650,7 @@ const TournamentGroupDetail = () => {
                           border: "1px solid #d9d9d9",
                         }}
                       />
-                      {team.team_name}
+                      {getDisplayTeamName(team.team_name)}
                     </Space>
                   </Option>
                 ))}

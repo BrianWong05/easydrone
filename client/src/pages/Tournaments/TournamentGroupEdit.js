@@ -48,6 +48,17 @@ const TournamentGroupEdit = () => {
   const [addTeamModalVisible, setAddTeamModalVisible] = useState(false);
   const [canEdit, setCanEdit] = useState(true);
 
+  // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    // 檢查是否以 _{tournamentId} 結尾，如果是則移除
+    const suffix = `_${tournamentId}`;
+    if (teamName.endsWith(suffix)) {
+      return teamName.slice(0, -suffix.length);
+    }
+    return teamName;
+  };
+
   // 獲取錦標賽信息
   const fetchTournament = async () => {
     try {
@@ -199,9 +210,9 @@ const TournamentGroupEdit = () => {
     if (!Array.isArray(allTeams) || !Array.isArray(teams)) {
       return [];
     }
-    const currentTeamIds = teams.map(team => team.team_id);
+    // 只顯示未分配到任何小組的隊伍（group_id 為 null 或 undefined）
     return allTeams.filter(team => 
-      !team.group_id || !currentTeamIds.includes(team.team_id)
+      !team.group_id || team.group_id === null || team.group_id === undefined
     );
   };
 
@@ -436,12 +447,12 @@ const TournamentGroupEdit = () => {
                           fontWeight: 'bold'
                         }}
                       >
-                        {team.team_name.charAt(0)}
+                        {getDisplayTeamName(team.team_name).charAt(0)}
                       </div>
                     }
                     title={
                       <Space>
-                        <Text strong>{team.team_name}</Text>
+                        <Text strong>{getDisplayTeamName(team.team_name)}</Text>
                         {team.is_virtual && <Tag color="orange">虛擬</Tag>}
                       </Space>
                     }
@@ -516,7 +527,7 @@ const TournamentGroupEdit = () => {
           cancelText="取消"
           okType="danger"
         >
-          <p>確定要將 <strong>{teamToRemove?.team_name}</strong> 從小組 {displayGroupName} 中移除嗎？</p>
+          <p>確定要將 <strong>{getDisplayTeamName(teamToRemove?.team_name)}</strong> 從小組 {displayGroupName} 中移除嗎？</p>
           <p>移除後，該隊伍將不再屬於任何小組。</p>
         </Modal>
 
@@ -544,19 +555,24 @@ const TournamentGroupEdit = () => {
           }
           width={600}
         >
-          <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Text>選擇要添加到小組 {displayGroupName} 的隊伍：</Text>
-            <Button 
-              type="dashed"
-              size="small"
-              icon={<PlusOutlined />}
-              onClick={() => {
-                setAddTeamModalVisible(false);
-                navigate(`/tournaments/${tournamentId}/teams/create`);
-              }}
-            >
-              創建隊伍
-            </Button>
+          <div style={{ marginBottom: '16px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+              <Text>選擇要添加到小組 {displayGroupName} 的隊伍：</Text>
+              <Button 
+                type="dashed"
+                size="small"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  setAddTeamModalVisible(false);
+                  navigate(`/tournaments/${tournamentId}/teams/create`);
+                }}
+              >
+                創建隊伍
+              </Button>
+            </div>
+            <Text type="secondary" style={{ fontSize: '12px' }}>
+              顯示錦標賽中尚未分配到任何小組的隊伍 ({availableTeams.length} 支可用)
+            </Text>
           </div>
           
           {availableTeams.length > 0 ? (
@@ -591,16 +607,14 @@ const TournamentGroupEdit = () => {
                           fontSize: '12px'
                         }}
                       >
-                        {team.team_name.charAt(0)}
+                        {getDisplayTeamName(team.team_name).charAt(0)}
                       </div>
                     }
                     title={
                       <Space>
-                        <Text strong>{team.team_name}</Text>
+                        <Text strong>{getDisplayTeamName(team.team_name)}</Text>
                         {team.is_virtual && <Tag color="orange" size="small">虛擬</Tag>}
-                        {team.group_id && team.group_id !== parseInt(groupId) && (
-                          <Tag color="red" size="small">已在其他小組</Tag>
-                        )}
+                        <Tag color="green" size="small">可添加</Tag>
                       </Space>
                     }
                     description={`隊伍顏色: ${team.team_color}`}

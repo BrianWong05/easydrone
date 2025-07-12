@@ -12,6 +12,17 @@ const TournamentGroupList = () => {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    // 檢查是否以 _{tournamentId} 結尾，如果是則移除
+    const suffix = `_${tournamentId}`;
+    if (teamName.endsWith(suffix)) {
+      return teamName.slice(0, -suffix.length);
+    }
+    return teamName;
+  };
+
   useEffect(() => {
     fetchGroups();
   }, [tournamentId]);
@@ -110,7 +121,7 @@ const TournamentGroupList = () => {
               }
             }}
           >
-            {name}
+            {getDisplayTeamName(name)}
           </span>
         </Space>
       ),
