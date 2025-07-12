@@ -432,7 +432,10 @@ const ClientLeaderboard = () => {
               <TabPane tab={getDisplayGroupName(group.group_name)} key={group.group_id}>
                 <Table
                   columns={overallColumns.filter(col => col.key !== 'group_name')}
-                  dataSource={group.teams || []}
+                  dataSource={(group.teams || []).map((team, index) => ({
+                    ...team,
+                    rank: index + 1
+                  }))}
                   rowKey="team_id"
                   pagination={false}
                   locale={{
