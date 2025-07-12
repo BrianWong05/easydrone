@@ -463,7 +463,7 @@ const TournamentMatchList = () => {
       dataIndex: "winner_name",
       key: "winner_name",
       width: 120,
-      render: (winner) => (winner ? <Tag color="gold">{winner}</Tag> : "-"),
+      render: (winner) => (winner ? <Tag color="gold">{getDisplayTeamName(winner)}</Tag> : "-"),
     },
     {
       title: "操作",

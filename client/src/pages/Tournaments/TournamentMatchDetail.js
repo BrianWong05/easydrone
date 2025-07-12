@@ -176,7 +176,8 @@ const MatchDetail = () => {
     const teamName = teamPosition === 'team1' ? matchData.team1_name : matchData.team2_name;
     
     if (teamName) {
-      return teamName;
+      // 移除隊伍名稱中的錦標賽ID後綴（例如：TeamName_1 -> TeamName）
+      return teamName.includes('_') ? teamName.split('_')[0] : teamName;
     }
     
     // 如果沒有隊伍名稱且是淘汰賽，嘗試生成來源比賽的勝者顯示
@@ -246,6 +247,7 @@ const MatchDetail = () => {
       dataIndex: "team_name",
       key: "team_name",
       width: 150,
+      render: (teamName) => teamName && teamName.includes('_') ? teamName.split('_')[0] : teamName,
     },
     {
       title: "球員",
@@ -367,7 +369,7 @@ const MatchDetail = () => {
                 <div style={{ marginTop: 16, textAlign: "center" }}>
                   <TrophyOutlined style={{ color: "#faad14", fontSize: "20px", marginRight: 8 }} />
                   <Text strong style={{ fontSize: "16px" }}>
-                    獲勝者：{matchData.winner_name}
+                    獲勝者：{matchData.winner_name.includes('_') ? matchData.winner_name.split('_')[0] : matchData.winner_name}
                   </Text>
                 </div>
               )}

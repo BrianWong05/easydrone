@@ -39,6 +39,20 @@ const TournamentLiveMatch = () => {
   const navigate = useNavigate();
   const { matchId } = useParams();
 
+  // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    const lastUnderscoreIndex = teamName.lastIndexOf('_');
+    if (lastUnderscoreIndex !== -1) {
+      const beforeUnderscore = teamName.substring(0, lastUnderscoreIndex);
+      const afterUnderscore = teamName.substring(lastUnderscoreIndex + 1);
+      if (/^\d+$/.test(afterUnderscore)) {
+        return beforeUnderscore;
+      }
+    }
+    return teamName;
+  };
+
   // 比賽數據狀態
   const [matchData, setMatchData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -203,7 +217,7 @@ const TournamentLiveMatch = () => {
                 console.log("下半場結束，比賽平局，需要延長賽");
               } else {
                 // 有獲勝者
-                const winnerName = winnerId === matchData.team1_id ? matchData.team1_name : matchData.team2_name;
+                const winnerName = winnerId === matchData.team1_id ? getDisplayTeamName(matchData.team1_name) : getDisplayTeamName(matchData.team2_name);
                 const reasonText = getWinReasonText(reason);
                 message.success(`比賽結束！${winnerName} ${reasonText}！`);
                 console.log(`下半場結束，${winnerName} ${reasonText}`);
@@ -480,7 +494,7 @@ const TournamentLiveMatch = () => {
         setMatchStarted(false);
 
         if (winnerId) {
-          const winnerName = winnerId === matchData.team1_id ? matchData.team1_name : matchData.team2_name;
+          const winnerName = winnerId === matchData.team1_id ? getDisplayTeamName(matchData.team1_name) : getDisplayTeamName(matchData.team2_name);
           const reasonText = getWinReasonText(reason);
           message.success(`比賽已結束！${winnerName} ${reasonText}！`);
         } else {
@@ -681,7 +695,7 @@ const TournamentLiveMatch = () => {
           <Col xs={24} lg={12}>
             <Card
               title={
-                <div style={{ textAlign: "center", fontSize: "18px", fontWeight: "bold" }}>{matchData.team1_name}</div>
+                <div style={{ textAlign: "center", fontSize: "18px", fontWeight: "bold" }}>{getDisplayTeamName(matchData.team1_name)}</div>
               }
               style={{ height: "350px" }}
             >
@@ -740,7 +754,7 @@ const TournamentLiveMatch = () => {
           <Col xs={24} lg={12}>
             <Card
               title={
-                <div style={{ textAlign: "center", fontSize: "18px", fontWeight: "bold" }}>{matchData.team2_name}</div>
+                <div style={{ textAlign: "center", fontSize: "18px", fontWeight: "bold" }}>{getDisplayTeamName(matchData.team2_name)}</div>
               }
               style={{ height: "350px" }}
             >
@@ -839,22 +853,22 @@ const TournamentLiveMatch = () => {
             <Row gutter={[16, 8]} style={{ color: "#fff" }}>
               <Col xs={12} sm={6}>
                 <Text style={{ color: "#fff" }}>
-                  <kbd>Q</kbd>/<kbd>W</kbd>: {matchData.team1_name} 得分 +/-
+                  <kbd>Q</kbd>/<kbd>W</kbd>: {getDisplayTeamName(matchData.team1_name)} 得分 +/-
                 </Text>
               </Col>
               <Col xs={12} sm={6}>
                 <Text style={{ color: "#fff" }}>
-                  <kbd>O</kbd>/<kbd>P</kbd>: {matchData.team2_name} 得分 +/-
+                  <kbd>O</kbd>/<kbd>P</kbd>: {getDisplayTeamName(matchData.team2_name)} 得分 +/-
                 </Text>
               </Col>
               <Col xs={12} sm={6}>
                 <Text style={{ color: "#fff" }}>
-                  <kbd>A</kbd>/<kbd>S</kbd>: {matchData.team1_name} 犯規 +/-
+                  <kbd>A</kbd>/<kbd>S</kbd>: {getDisplayTeamName(matchData.team1_name)} 犯規 +/-
                 </Text>
               </Col>
               <Col xs={12} sm={6}>
                 <Text style={{ color: "#fff" }}>
-                  <kbd>K</kbd>/<kbd>L</kbd>: {matchData.team2_name} 犯規 +/-
+                  <kbd>K</kbd>/<kbd>L</kbd>: {getDisplayTeamName(matchData.team2_name)} 犯規 +/-
                 </Text>
               </Col>
               <Col xs={24} sm={24} style={{ textAlign: "center", marginTop: 8 }}>
@@ -904,7 +918,7 @@ const TournamentLiveMatch = () => {
             <Title level={3}>⏰ 中場休息</Title>
             <p>上半場已結束，當前比分：</p>
             <p style={{ fontSize: "24px", fontWeight: "bold", color: "#1890ff" }}>
-              {matchData.team1_name} {team1Score} : {team2Score} {matchData.team2_name}
+              {getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score} {getDisplayTeamName(matchData.team2_name)}
             </p>
             <p style={{ color: "#666" }}>準備好開始下半場了嗎？</p>
           </div>
@@ -926,7 +940,7 @@ const TournamentLiveMatch = () => {
             <p>比賽結果平局，需要延長賽決定勝負！</p>
             <p>當前比分：</p>
             <p style={{ fontSize: "24px", fontWeight: "bold", color: "#1890ff" }}>
-              {matchData.team1_name} {team1Score} : {team2Score} {matchData.team2_name}
+              {getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score} {getDisplayTeamName(matchData.team2_name)}
             </p>
             <p>
               犯規數：{team1Fouls} : {team2Fouls}
@@ -985,7 +999,7 @@ const TournamentLiveMatch = () => {
           <p>⚠️ 確定要強制結束這場比賽嗎？</p>
           <p>這將立即結束整場比賽，無論當前是哪個階段。</p>
           <p>
-            當前比分：{matchData.team1_name} {team1Score} : {team2Score} {matchData.team2_name}
+            當前比分：{getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score} {getDisplayTeamName(matchData.team2_name)}
           </p>
           <p>當前階段：{currentHalf === 1 ? "上半場" : currentHalf === 2 ? "下半場" : "延長賽"}</p>
           <p>
@@ -1013,7 +1027,7 @@ const TournamentLiveMatch = () => {
               matchData.team2_id,
             );
             if (winnerId) {
-              const winnerName = winnerId === matchData.team1_id ? matchData.team1_name : matchData.team2_name;
+              const winnerName = winnerId === matchData.team1_id ? getDisplayTeamName(matchData.team1_name) : getDisplayTeamName(matchData.team2_name);
               const reasonText = getWinReasonText(reason);
               return (
                 <p style={{ color: "#52c41a", fontWeight: "bold" }}>
@@ -1042,7 +1056,7 @@ const TournamentLiveMatch = () => {
         >
           <p>確定要{currentHalf === 1 ? "結束上半場" : currentHalf === 2 ? "結束下半場" : "結束延長賽"}嗎？</p>
           <p>
-            當前比分：{matchData.team1_name} {team1Score} : {team2Score} {matchData.team2_name}
+            當前比分：{getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score} {getDisplayTeamName(matchData.team2_name)}
           </p>
           <p>
             剩餘時間：{Math.floor(remainingTime / 60)}:{(remainingTime % 60).toString().padStart(2, "0")}
