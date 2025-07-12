@@ -138,15 +138,33 @@ const TournamentGroupDetail = () => {
     try {
       // 獲取錦標賽中未分配小組的隊伍
       const response = await axios.get(`/api/tournaments/${tournamentId}/teams`);
+      console.log('API Response for available teams:', response.data);
+      
       if (response.data.success) {
-        const allTeams = response.data.data || [];
+        // Handle different possible response structures
+        let allTeams = [];
+        if (response.data.data) {
+          if (Array.isArray(response.data.data)) {
+            allTeams = response.data.data;
+            console.log('Teams found in response.data.data (array):', allTeams.length);
+          } else if (response.data.data.teams && Array.isArray(response.data.data.teams)) {
+            allTeams = response.data.data.teams;
+            console.log('Teams found in response.data.data.teams:', allTeams.length);
+          } else {
+            console.log('Unexpected data structure:', response.data.data);
+          }
+        }
+        
         // 過濾出未分配小組的隊伍
         const unassignedTeams = allTeams.filter((team) => !team.group_id);
         setAvailableTeams(unassignedTeams);
+      } else {
+        setAvailableTeams([]);
       }
     } catch (error) {
       console.error("Error fetching available teams:", error);
       message.error("獲取可用隊伍失敗");
+      setAvailableTeams([]);
     }
   };
 
