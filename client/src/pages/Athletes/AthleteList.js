@@ -51,7 +51,7 @@ const AthleteList = () => {
         params.append('search', searchText);
       }
       
-      const response = await axios.get(`http://localhost:8001/api/athletes?${params.toString()}`);
+      const response = await axios.get(`/api/athletes?${params.toString()}`);
       
       if (response.data.success) {
         const athletesData = response.data.data.athletes || [];
@@ -76,7 +76,7 @@ const AthleteList = () => {
 
   const fetchTeams = async () => {
     try {
-      const response = await axios.get('/api/http://localhost:8001/api/teams');
+      const response = await axios.get('/api/teams');
       if (response.data.success) {
         const teamsData = response.data.data.teams || [];
         setTeams(teamsData);
@@ -89,7 +89,7 @@ const AthleteList = () => {
   const handleDelete = async (athleteId) => {
     try {
       console.log('🗑️ 刪除運動員，ID:', athleteId);
-      const response = await axios.delete(`http://localhost:8001/api/athletes/${athleteId}`);
+      const response = await axios.delete(`/api/athletes/${athleteId}`);
       
       if (response.data.success) {
         message.success('運動員刪除成功');

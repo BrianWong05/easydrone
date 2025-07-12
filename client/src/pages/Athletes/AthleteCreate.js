@@ -23,7 +23,7 @@ const AthleteCreate = () => {
     try {
       setTeamsLoading(true);
       console.log('🏈 獲取隊伍列表...');
-      const response = await axios.get('/api/http://localhost:8001/api/teams');
+      const response = await axios.get('/api/teams');
       
       if (response.data.success) {
         const teamsData = response.data.data.teams || [];
@@ -58,7 +58,7 @@ const AthleteCreate = () => {
       console.log('👤 發送到後端的數據:', athleteData);
       
       // 調用後端API創建運動員
-      const response = await axios.post('/api/http://localhost:8001/api/athletes', athleteData);
+      const response = await axios.post('/api/athletes', athleteData);
       
       if (response.data.success) {
         console.log('✅ 運動員創建成功:', response.data);

@@ -3,8 +3,32 @@ import { persist } from "zustand/middleware";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-// 配置 axios 默認設置
-axios.defaults.baseURL = process.env.REACT_APP_API_URL || "http://localhost:8001";
+// 配置 axios 默認設置 - 動態根據當前域名設置API URL
+const getApiBaseURL = () => {
+  // 如果有環境變量設置，優先使用
+  if (process.env.REACT_APP_API_URL) {
+    return process.env.REACT_APP_API_URL;
+  }
+  
+  // 根據當前域名動態設置API URL
+  const currentHost = window.location.hostname;
+  const currentPort = window.location.port;
+  const currentProtocol = window.location.protocol;
+  
+  if (currentHost === 'www.gocasm.org') {
+    // 生產環境 - 使用相同域名但端口8001
+    return `${currentProtocol}//${currentHost}:8001`;
+  } else if (currentHost === 'localhost') {
+    // 本地開發環境
+    return "http://localhost:8001";
+  } else {
+    // 其他情況，嘗試使用相同域名和端口
+    return `${currentProtocol}//${currentHost}${currentPort ? ':' + currentPort : ''}`;
+  }
+};
+
+axios.defaults.baseURL = getApiBaseURL();
+console.log('🌐 API Base URL:', axios.defaults.baseURL);
 
 const useAuthStore = create(
   persist(

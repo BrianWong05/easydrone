@@ -56,10 +56,10 @@ const Dashboard = () => {
         
         // 獲取統計數據 - 分別處理每個API調用
         const apiCalls = [
-          { name: 'teams', url: 'http://localhost:8001/api/teams' },
-          { name: 'matches', url: 'http://localhost:8001/api/matches?page=1&limit=1000' }, // 獲取所有比賽
-          { name: 'athletes', url: 'http://localhost:8001/api/athletes' },
-          { name: 'tournaments', url: 'http://localhost:8001/api/tournaments' }
+          { name: 'teams', url: '/api/teams' },
+          { name: 'matches', url: '/api/matches?page=1&limit=1000' }, // 獲取所有比賽
+          { name: 'athletes', url: '/api/athletes' },
+          { name: 'tournaments', url: '/api/tournaments' }
         ];
 
         const results = {};

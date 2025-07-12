@@ -20,7 +20,7 @@ const AthleteDetail = () => {
   const fetchAthleteData = async () => {
     try {
       console.log('🔍 獲取運動員數據，ID:', id);
-      const response = await axios.get(`http://localhost:8001/api/athletes/${id}`);
+      const response = await axios.get(`/api/athletes/${id}`);
       console.log('📡 API 響應:', response.data);
       
       if (response.data.success) {
@@ -50,7 +50,7 @@ const AthleteDetail = () => {
 
   const fetchTeamMatches = async (teamId) => {
     try {
-      const response = await axios.get(`http://localhost:8001/api/matches?team_id=${teamId}`);
+      const response = await axios.get(`/api/matches?team_id=${teamId}`);
       if (response.data.success) {
         const matchesData = response.data.data.matches || [];
         setMatches(matchesData.slice(0, 5)); // 只顯示最近5場比賽

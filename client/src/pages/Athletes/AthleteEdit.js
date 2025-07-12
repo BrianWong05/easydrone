@@ -29,7 +29,7 @@ const AthleteEdit = () => {
   const fetchTeams = async () => {
     try {
       setTeamsLoading(true);
-      const response = await axios.get('/api/http://localhost:8001/api/teams');
+      const response = await axios.get('/api/teams');
       
       if (response.data.success) {
         const teamsData = response.data.data.teams || [];
@@ -48,7 +48,7 @@ const AthleteEdit = () => {
   const fetchAthleteData = async () => {
     try {
       console.log('🔍 獲取運動員數據，ID:', id);
-      const response = await axios.get(`http://localhost:8001/api/athletes/${id}`);
+      const response = await axios.get(`/api/athletes/${id}`);
       console.log('📡 API 響應:', response.data);
       
       if (response.data.success) {
@@ -105,7 +105,7 @@ const AthleteEdit = () => {
       console.log('👤 發送到後端的數據:', athleteData);
       
       // 調用後端API更新運動員
-      const response = await axios.put(`http://localhost:8001/api/athletes/${id}`, athleteData);
+      const response = await axios.put(`/api/athletes/${id}`, athleteData);
       
       if (response.data.success) {
         console.log('✅ 運動員更新成功:', response.data);

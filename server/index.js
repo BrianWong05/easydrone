@@ -46,7 +46,11 @@ const corsOptions = {
     "http://localhost:8080",
     "http://localhost:8888",
     "http://localhost:3000",
-    "http://localhost:8001"  // 添加8001端口支持
+    "http://localhost:8001",  // 添加8001端口支持
+    "http://www.gocasm.org:8888",  // 添加生產域名支持
+    "https://www.gocasm.org:8888", // 添加HTTPS支持
+    "http://www.gocasm.org",       // 添加主域名支持
+    "https://www.gocasm.org"       // 添加HTTPS主域名支持
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
