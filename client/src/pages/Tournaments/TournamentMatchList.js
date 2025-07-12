@@ -368,6 +368,15 @@ const TournamentMatchList = () => {
       sorter: (a, b) => sortMatchNumbers(a, b),
       sortDirections: ["ascend", "descend"],
       defaultSortOrder: "ascend",
+      render: (matchNumber, record) => (
+        <Button
+          type="link"
+          style={{ padding: 0, height: "auto", fontWeight: "normal" }}
+          onClick={() => navigate(`/tournaments/${tournamentId}/matches/${record.match_id}`)}
+        >
+          {matchNumber}
+        </Button>
+      ),
     },
     {
       title: "隊伍對戰",

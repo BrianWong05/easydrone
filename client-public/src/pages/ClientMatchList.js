@@ -243,7 +243,15 @@ const ClientMatchList = () => {
       dataIndex: 'match_number',
       key: 'match_number',
       width: 100,
-      render: (number) => <Text strong>{number}</Text>,
+      render: (number, record) => (
+        <Button
+          type="link"
+          style={{ padding: 0, height: "auto", fontWeight: "bold" }}
+          onClick={() => navigate(`/matches/${record.match_id}`)}
+        >
+          {number}
+        </Button>
+      ),
     },
     {
       title: '對戰隊伍',
