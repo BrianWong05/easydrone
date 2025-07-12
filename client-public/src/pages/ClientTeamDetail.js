@@ -503,7 +503,17 @@ const ClientTeamDetail = () => {
                     }
                     title={
                       <Space>
-                        <Text strong>{getDisplayTeamName(team.team_name)} vs {getDisplayTeamName(opponent)}</Text>
+                        <Text 
+                          strong 
+                          style={{ 
+                            color: '#1890ff', 
+                            cursor: 'pointer',
+                            textDecoration: 'underline'
+                          }}
+                          onClick={() => navigate(`/matches/${match.match_id}`)}
+                        >
+                          {getDisplayTeamName(team.team_name)} vs {getDisplayTeamName(opponent)}
+                        </Text>
                         {match.match_status === 'completed' && (
                           <Text>
                             {teamScore} - {opponentScore}
