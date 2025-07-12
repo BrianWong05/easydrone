@@ -41,8 +41,8 @@ const TournamentLiveMatch = () => {
 
   // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
   const getDisplayTeamName = (teamName) => {
-    if (!teamName) return '';
-    const lastUnderscoreIndex = teamName.lastIndexOf('_');
+    if (!teamName) return "";
+    const lastUnderscoreIndex = teamName.lastIndexOf("_");
     if (lastUnderscoreIndex !== -1) {
       const beforeUnderscore = teamName.substring(0, lastUnderscoreIndex);
       const afterUnderscore = teamName.substring(lastUnderscoreIndex + 1);
@@ -104,9 +104,20 @@ const TournamentLiveMatch = () => {
       }
 
       // Enter 鍵開始比賽（只在比賽未開始時有效）
-      if (event.key === "Enter" && !matchStarted && (matchData?.match_status === "pending" || matchData?.match_status === "postponed")) {
+      if (
+        event.key === "Enter" &&
+        !matchStarted &&
+        (matchData?.match_status === "pending" || matchData?.match_status === "postponed")
+      ) {
         event.preventDefault();
         handleStartMatch();
+        return;
+      }
+
+      // Enter 鍵開始下半場（只在中場休息時有效）
+      if (event.key === "Enter" && isHalfTime) {
+        event.preventDefault();
+        handleStartSecondHalf();
         return;
       }
 
@@ -217,7 +228,10 @@ const TournamentLiveMatch = () => {
                 console.log("下半場結束，比賽平局，需要延長賽");
               } else {
                 // 有獲勝者
-                const winnerName = winnerId === matchData.team1_id ? getDisplayTeamName(matchData.team1_name) : getDisplayTeamName(matchData.team2_name);
+                const winnerName =
+                  winnerId === matchData.team1_id
+                    ? getDisplayTeamName(matchData.team1_name)
+                    : getDisplayTeamName(matchData.team2_name);
                 const reasonText = getWinReasonText(reason);
                 message.success(`比賽結束！${winnerName} ${reasonText}！`);
                 console.log(`下半場結束，${winnerName} ${reasonText}`);
@@ -503,7 +517,10 @@ const TournamentLiveMatch = () => {
         setMatchStarted(false);
 
         if (winnerId) {
-          const winnerName = winnerId === matchData.team1_id ? getDisplayTeamName(matchData.team1_name) : getDisplayTeamName(matchData.team2_name);
+          const winnerName =
+            winnerId === matchData.team1_id
+              ? getDisplayTeamName(matchData.team1_name)
+              : getDisplayTeamName(matchData.team2_name);
           const reasonText = getWinReasonText(reason);
           message.success(`比賽已結束！${winnerName} ${reasonText}！`);
         } else {
@@ -539,7 +556,34 @@ const TournamentLiveMatch = () => {
   };
 
   const handleBack = () => {
-    navigate(-1);
+    // 如果比賽正在進行中，顯示確認對話框
+    if (matchStarted && matchData?.match_status === "active") {
+      Modal.confirm({
+        title: "確認離開比賽",
+        content: "比賽正在進行中，確定要離開嗎？離開後比賽將繼續進行，但您將無法控制比賽。",
+        okText: "確認離開",
+        cancelText: "取消",
+        okType: "danger",
+        onOk: () => {
+          navigate(-1);
+        },
+      });
+    } else if (matchStarted && (isHalfTime || isOvertime)) {
+      // 如果在中場休息或延長賽準備階段
+      Modal.confirm({
+        title: "確認離開比賽",
+        content: "比賽處於中場休息或延長賽準備階段，確定要離開嗎？",
+        okText: "確認離開",
+        cancelText: "取消",
+        okType: "warning",
+        onOk: () => {
+          navigate(-1);
+        },
+      });
+    } else {
+      // 比賽未開始或已結束，直接返回
+      navigate(-1);
+    }
   };
 
   if (loading) {
@@ -706,7 +750,9 @@ const TournamentLiveMatch = () => {
           <Col xs={24} lg={12}>
             <Card
               title={
-                <div style={{ textAlign: "center", fontSize: "18px", fontWeight: "bold" }}>{getDisplayTeamName(matchData.team1_name)}</div>
+                <div style={{ textAlign: "center", fontSize: "48px", fontWeight: "bold" }}>
+                  {getDisplayTeamName(matchData.team1_name)}
+                </div>
               }
               style={{ height: "350px" }}
             >
@@ -765,7 +811,9 @@ const TournamentLiveMatch = () => {
           <Col xs={24} lg={12}>
             <Card
               title={
-                <div style={{ textAlign: "center", fontSize: "18px", fontWeight: "bold" }}>{getDisplayTeamName(matchData.team2_name)}</div>
+                <div style={{ textAlign: "center", fontSize: "48px", fontWeight: "bold" }}>
+                  {getDisplayTeamName(matchData.team2_name)}
+                </div>
               }
               style={{ height: "350px" }}
             >
@@ -851,6 +899,35 @@ const TournamentLiveMatch = () => {
           </Card>
         )}
 
+        {/* 中場休息時的鍵盤快捷鍵說明 */}
+        {isHalfTime && (
+          <Card
+            title="🎮 鍵盤快捷鍵"
+            size="small"
+            style={{
+              background: "linear-gradient(135deg, #fa8c16 0%, #d46b08 100%)",
+              border: "none",
+              color: "#fff",
+            }}
+          >
+            <div style={{ textAlign: "center", padding: "8px 0" }}>
+              <Text style={{ color: "#fff", fontSize: "16px" }}>
+                <kbd
+                  style={{
+                    fontSize: "16px",
+                    padding: "6px 12px",
+                    backgroundColor: "rgba(255,255,255,0.2)",
+                    borderRadius: "4px",
+                  }}
+                >
+                  Enter
+                </kbd>
+                : 開始下半場
+              </Text>
+            </div>
+          </Card>
+        )}
+
         {matchStarted && matchData.match_status === "active" && (
           <Card
             title="🎮 鍵盤快捷鍵"
@@ -929,7 +1006,8 @@ const TournamentLiveMatch = () => {
             <Title level={3}>⏰ 中場休息</Title>
             <p>上半場已結束，當前比分：</p>
             <p style={{ fontSize: "24px", fontWeight: "bold", color: "#1890ff" }}>
-              {getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score} {getDisplayTeamName(matchData.team2_name)}
+              {getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score}{" "}
+              {getDisplayTeamName(matchData.team2_name)}
             </p>
             <p style={{ color: "#666" }}>準備好開始下半場了嗎？</p>
           </div>
@@ -951,7 +1029,8 @@ const TournamentLiveMatch = () => {
             <p>比賽結果平局，需要延長賽決定勝負！</p>
             <p>當前比分：</p>
             <p style={{ fontSize: "24px", fontWeight: "bold", color: "#1890ff" }}>
-              {getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score} {getDisplayTeamName(matchData.team2_name)}
+              {getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score}{" "}
+              {getDisplayTeamName(matchData.team2_name)}
             </p>
             <p>
               犯規數：{team1Fouls} : {team2Fouls}
@@ -1010,7 +1089,8 @@ const TournamentLiveMatch = () => {
           <p>⚠️ 確定要強制結束這場比賽嗎？</p>
           <p>這將立即結束整場比賽，無論當前是哪個階段。</p>
           <p>
-            當前比分：{getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score} {getDisplayTeamName(matchData.team2_name)}
+            當前比分：{getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score}{" "}
+            {getDisplayTeamName(matchData.team2_name)}
           </p>
           <p>當前階段：{currentHalf === 1 ? "上半場" : currentHalf === 2 ? "下半場" : "延長賽"}</p>
           <p>
@@ -1038,7 +1118,10 @@ const TournamentLiveMatch = () => {
               matchData.team2_id,
             );
             if (winnerId) {
-              const winnerName = winnerId === matchData.team1_id ? getDisplayTeamName(matchData.team1_name) : getDisplayTeamName(matchData.team2_name);
+              const winnerName =
+                winnerId === matchData.team1_id
+                  ? getDisplayTeamName(matchData.team1_name)
+                  : getDisplayTeamName(matchData.team2_name);
               const reasonText = getWinReasonText(reason);
               return (
                 <p style={{ color: "#52c41a", fontWeight: "bold" }}>
@@ -1067,7 +1150,8 @@ const TournamentLiveMatch = () => {
         >
           <p>確定要{currentHalf === 1 ? "結束上半場" : currentHalf === 2 ? "結束下半場" : "結束延長賽"}嗎？</p>
           <p>
-            當前比分：{getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score} {getDisplayTeamName(matchData.team2_name)}
+            當前比分：{getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score}{" "}
+            {getDisplayTeamName(matchData.team2_name)}
           </p>
           <p>
             剩餘時間：{Math.floor(remainingTime / 60)}:{(remainingTime % 60).toString().padStart(2, "0")}
