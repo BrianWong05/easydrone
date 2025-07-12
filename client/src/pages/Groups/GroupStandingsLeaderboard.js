@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Typography, Table, Tag, Row, Col, Space, Progress, message } from 'antd';
-import { TrophyOutlined, TeamOutlined } from '@ant-design/icons';
+import { Card, Typography, Table, Tag, Row, Col, Space, Progress, message, Button } from 'antd';
+import { TrophyOutlined, TeamOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
@@ -197,6 +197,14 @@ const GroupStandingsLeaderboard = () => {
       <Space direction="vertical" size="large" style={{ width: "100%" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Title level={2}>小組排行榜</Title>
+          <Button 
+            icon={<ReloadOutlined />} 
+            onClick={fetchGroups}
+            loading={loading}
+            type="primary"
+          >
+            刷新
+          </Button>
         </div>
 
         <Row gutter={[16, 16]}>
