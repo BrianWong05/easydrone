@@ -376,11 +376,11 @@ router.put('/:id', async (req, res) => {
       });
     }
 
-    // 只允許編輯未開始的比賽
-    if (existingMatch[0].match_status !== 'pending') {
+    // 只允許編輯未開始或延期的比賽
+    if (!['pending', 'postponed'].includes(existingMatch[0].match_status)) {
       return res.status(400).json({
         success: false,
-        message: '只能編輯未開始的比賽'
+        message: '只能編輯未開始或延期的比賽'
       });
     }
 

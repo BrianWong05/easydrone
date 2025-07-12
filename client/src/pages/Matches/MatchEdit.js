@@ -179,11 +179,11 @@ const MatchEdit = () => {
   }
 
   // 檢查比賽狀態
-  if (matchData.match_status !== 'pending') {
+  if (!['pending', 'postponed'].includes(matchData.match_status)) {
     return (
       <div style={{ padding: '24px', textAlign: 'center' }}>
         <Title level={3}>無法編輯</Title>
-        <p>只能編輯未開始的比賽</p>
+        <p>只能編輯未開始或延期的比賽</p>
         <Button onClick={handleCancel}>返回</Button>
       </div>
     );

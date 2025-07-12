@@ -585,6 +585,18 @@ const TournamentMatchList = () => {
               編輯
             </Button>
           )}
+          {record.match_status === "postponed" && (
+            <Button
+              type="link"
+              icon={<EditOutlined />}
+              onClick={() => navigate(`/tournaments/${tournamentId}/matches/${record.match_id}/edit`)}
+              disabled={!record.team1_name || !record.team2_name}
+              title={!record.team1_name || !record.team2_name ? "比賽隊伍尚未確定，無法編輯比賽" : "編輯延期比賽"}
+              style={{ color: "#fa8c16" }}
+            >
+              編輯
+            </Button>
+          )}
           <Popconfirm
             title="確認刪除比賽"
             description="確定要刪除這場比賽嗎？"

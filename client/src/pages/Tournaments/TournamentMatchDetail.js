@@ -327,16 +327,27 @@ const MatchDetail = () => {
               刪除比賽
             </Button>
             {matchData.match_status === "postponed" && (
-              <Button
-                type="primary"
-                icon={<PlayCircleOutlined />}
-                onClick={handleStartMatch}
-                disabled={!matchData.team1_name || !matchData.team2_name}
-                title={!matchData.team1_name || !matchData.team2_name ? "比賽隊伍尚未確定，無法開始比賽" : "開始延期的比賽"}
-                style={{ backgroundColor: "#fa8c16" }}
-              >
-                開始比賽
-              </Button>
+              <>
+                <Button
+                  icon={<EditOutlined />}
+                  onClick={handleEdit}
+                  disabled={!matchData.team1_name || !matchData.team2_name}
+                  title={!matchData.team1_name || !matchData.team2_name ? "比賽隊伍尚未確定，無法編輯比賽" : "編輯延期比賽"}
+                  style={{ color: "#fa8c16", borderColor: "#fa8c16" }}
+                >
+                  編輯比賽
+                </Button>
+                <Button
+                  type="primary"
+                  icon={<PlayCircleOutlined />}
+                  onClick={handleStartMatch}
+                  disabled={!matchData.team1_name || !matchData.team2_name}
+                  title={!matchData.team1_name || !matchData.team2_name ? "比賽隊伍尚未確定，無法開始比賽" : "開始延期的比賽"}
+                  style={{ backgroundColor: "#fa8c16" }}
+                >
+                  開始比賽
+                </Button>
+              </>
             )}
             {matchData.match_status === "active" && (
               <Button

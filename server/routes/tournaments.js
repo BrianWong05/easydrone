@@ -2811,11 +2811,11 @@ router.put('/:id/matches/:matchId', async (req, res) => {
       });
     }
 
-    // 檢查比賽狀態 - 只能編輯待開始的比賽
-    if (existingMatch[0].match_status !== 'pending') {
+    // 檢查比賽狀態 - 只能編輯待開始或延期的比賽
+    if (!['pending', 'postponed'].includes(existingMatch[0].match_status)) {
       return res.status(400).json({
         success: false,
-        message: '只能編輯待開始的比賽'
+        message: '只能編輯待開始或延期的比賽'
       });
     }
 
