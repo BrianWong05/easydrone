@@ -1411,7 +1411,7 @@ router.get('/:id/teams/stats', async (req, res) => {
 router.get('/:id/teams', async (req, res) => {
   try {
     const tournamentId = req.params.id;
-    const { group_id, page = 1, limit = 50 } = req.query;
+    const { group_id, page = 1, limit = 50, search, unassigned } = req.query;
 
     // 檢查錦標賽是否存在
     const tournament = await query('SELECT tournament_id FROM tournaments WHERE tournament_id = ?', [tournamentId]);
@@ -1425,9 +1425,18 @@ router.get('/:id/teams', async (req, res) => {
     let whereClause = 'WHERE t.tournament_id = ?';
     let params = [tournamentId];
 
+    // Add search functionality
+    if (search && search.trim()) {
+      whereClause += ' AND t.team_name LIKE ?';
+      params.push(`%${search.trim()}%`);
+    }
+
+    // Add group filtering
     if (group_id) {
       whereClause += ' AND t.group_id = ?';
       params.push(group_id);
+    } else if (unassigned === 'true') {
+      whereClause += ' AND t.group_id IS NULL';
     }
 
     const offset = (page - 1) * limit;

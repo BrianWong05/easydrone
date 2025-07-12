@@ -43,6 +43,15 @@ const TournamentTeamList = () => {
     fetchTeamStats();
   }, [tournamentId]);
 
+  // Add effect to handle search and filter changes
+  useEffect(() => {
+    const delayTimer = setTimeout(() => {
+      fetchTeams(1, pagination.pageSize); // Reset to first page when searching
+    }, 500); // Debounce search by 500ms
+
+    return () => clearTimeout(delayTimer);
+  }, [searchText, filterGroup]);
+
   const fetchTournament = async () => {
     try {
       const response = await axios.get(`/api/tournaments/${tournamentId}`);
@@ -57,7 +66,28 @@ const TournamentTeamList = () => {
   const fetchTeams = async (page = 1, pageSize = 30) => {
     try {
       setLoading(true);
-      const response = await axios.get(`/api/tournaments/${tournamentId}/teams?page=${page}&limit=${pageSize}`);
+      
+      // Build query parameters
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: pageSize.toString()
+      });
+      
+      // Add search parameter if search text exists
+      if (searchText.trim()) {
+        params.append('search', searchText.trim());
+      }
+      
+      // Add group filter if not "all"
+      if (filterGroup !== 'all') {
+        if (filterGroup === 'unassigned') {
+          params.append('unassigned', 'true');
+        } else {
+          params.append('group_id', filterGroup);
+        }
+      }
+      
+      const response = await axios.get(`/api/tournaments/${tournamentId}/teams?${params}`);
       console.log("🔍 Teams API Response:", response.data); // Debug log
       if (response.data.success) {
         // Fix: Access teams from response.data.data.teams, not response.data.data
