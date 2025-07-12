@@ -104,7 +104,7 @@ const TournamentLiveMatch = () => {
       }
 
       // Enter 鍵開始比賽（只在比賽未開始時有效）
-      if (event.key === "Enter" && !matchStarted && matchData?.match_status === "pending") {
+      if (event.key === "Enter" && !matchStarted && (matchData?.match_status === "pending" || matchData?.match_status === "postponed")) {
         event.preventDefault();
         handleStartMatch();
         return;
