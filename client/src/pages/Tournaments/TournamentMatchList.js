@@ -510,19 +510,17 @@ const TournamentMatchList = () => {
               編輯
             </Button>
           )}
-          {record.match_status === "pending" && (
-            <Popconfirm
-              title="確認刪除比賽"
-              description="確定要刪除這場比賽嗎？"
-              onConfirm={() => handleDelete(record.match_id)}
-              okText="確認"
-              cancelText="取消"
-            >
-              <Button type="link" danger icon={<DeleteOutlined />}>
-                刪除
-              </Button>
-            </Popconfirm>
-          )}
+          <Popconfirm
+            title="確認刪除比賽"
+            description="確定要刪除這場比賽嗎？"
+            onConfirm={() => handleDelete(record.match_id)}
+            okText="確認"
+            cancelText="取消"
+          >
+            <Button type="link" danger icon={<DeleteOutlined />}>
+              刪除
+            </Button>
+          </Popconfirm>
         </Space>
       ),
     },
@@ -694,9 +692,6 @@ const TournamentMatchList = () => {
           rowSelection={{
             selectedRowKeys,
             onChange: setSelectedRowKeys,
-            getCheckboxProps: (record) => ({
-              disabled: record.match_status !== "pending", // 只允許選擇待開始的比賽
-            }),
           }}
           pagination={{
             current: pagination.current,

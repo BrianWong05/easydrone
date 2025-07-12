@@ -53,12 +53,12 @@ const MatchDetail = () => {
         setEvents(response.data.data.events || []);
       } else {
         message.error("獲取比賽詳情失敗");
-        navigate("/matches");
+        navigate(`/tournaments/${tournamentId}/matches`);
       }
     } catch (error) {
       console.error("獲取比賽詳情錯誤:", error);
       message.error("獲取比賽詳情失敗");
-      navigate("/matches");
+      navigate(`/tournaments/${tournamentId}/matches`);
     } finally {
       setLoading(false);
     }
@@ -89,7 +89,7 @@ const MatchDetail = () => {
 
           if (response.data.success) {
             message.success("比賽刪除成功！");
-            navigate("/matches");
+            navigate(`/tournaments/${tournamentId}/matches`);
           } else {
             message.error(response.data.message || "刪除失敗");
           }
@@ -171,37 +171,37 @@ const MatchDetail = () => {
 
   // 獲取隊伍顯示名稱，如果沒有隊伍則顯示來源比賽的勝者
   const getTeamDisplayName = (teamPosition) => {
-    if (!matchData) return '待定';
-    
-    const teamName = teamPosition === 'team1' ? matchData.team1_name : matchData.team2_name;
-    
+    if (!matchData) return "待定";
+
+    const teamName = teamPosition === "team1" ? matchData.team1_name : matchData.team2_name;
+
     if (teamName) {
       // 移除隊伍名稱中的錦標賽ID後綴（例如：TeamName_1 -> TeamName）
-      return teamName.includes('_') ? teamName.split('_')[0] : teamName;
+      return teamName.includes("_") ? teamName.split("_")[0] : teamName;
     }
-    
+
     // 如果沒有隊伍名稱且是淘汰賽，嘗試生成來源比賽的勝者顯示
-    if (matchData.match_type === 'knockout' && matchData.match_number) {
+    if (matchData.match_type === "knockout" && matchData.match_number) {
       // 根據比賽編號推斷來源比賽
       const matchNum = matchData.match_number;
-      
+
       // SE05, SE06 來自 QU01-QU04
-      if (matchNum === 'SE05') {
-        return teamPosition === 'team1' ? 'QU01勝者' : 'QU02勝者';
-      } else if (matchNum === 'SE06') {
-        return teamPosition === 'team1' ? 'QU03勝者' : 'QU04勝者';
+      if (matchNum === "SE05") {
+        return teamPosition === "team1" ? "QU01勝者" : "QU02勝者";
+      } else if (matchNum === "SE06") {
+        return teamPosition === "team1" ? "QU03勝者" : "QU04勝者";
       }
       // FI07 來自 SE05, SE06
-      else if (matchNum === 'FI07') {
-        return teamPosition === 'team1' ? 'SE05勝者' : 'SE06勝者';
+      else if (matchNum === "FI07") {
+        return teamPosition === "team1" ? "SE05勝者" : "SE06勝者";
       }
       // 其他淘汰賽比賽的通用邏輯
-      else if (matchNum.startsWith('QU')) {
-        return '待定';
+      else if (matchNum.startsWith("QU")) {
+        return "待定";
       }
     }
-    
-    return '待定';
+
+    return "待定";
   };
 
   if (loading) {
@@ -247,7 +247,7 @@ const MatchDetail = () => {
       dataIndex: "team_name",
       key: "team_name",
       width: 150,
-      render: (teamName) => teamName && teamName.includes('_') ? teamName.split('_')[0] : teamName,
+      render: (teamName) => (teamName && teamName.includes("_") ? teamName.split("_")[0] : teamName),
     },
     {
       title: "球員",
@@ -281,17 +281,17 @@ const MatchDetail = () => {
           <Space>
             {matchData.match_status === "pending" && (
               <>
-                <Button 
-                  icon={<EditOutlined />} 
+                <Button
+                  icon={<EditOutlined />}
                   onClick={handleEdit}
                   disabled={!matchData.team1_name || !matchData.team2_name}
                   title={!matchData.team1_name || !matchData.team2_name ? "比賽隊伍尚未確定，無法編輯比賽" : "編輯比賽"}
                 >
                   編輯比賽
                 </Button>
-                <Button 
-                  type="primary" 
-                  icon={<PlayCircleOutlined />} 
+                <Button
+                  type="primary"
+                  icon={<PlayCircleOutlined />}
                   onClick={handleStartMatch}
                   disabled={!matchData.team1_name || !matchData.team2_name}
                   title={!matchData.team1_name || !matchData.team2_name ? "比賽隊伍尚未確定，無法開始比賽" : "開始比賽"}
@@ -334,9 +334,9 @@ const MatchDetail = () => {
                   {matchData.match_number}
                 </Title>
                 <div style={{ fontSize: "24px", fontWeight: "bold", marginBottom: 16 }}>
-                  <span style={{ color: "#1890ff" }}>{getTeamDisplayName('team1')}</span>
+                  <span style={{ color: "#1890ff" }}>{getTeamDisplayName("team1")}</span>
                   <span style={{ margin: "0 16px", color: "#666" }}>VS</span>
-                  <span style={{ color: "#1890ff" }}>{getTeamDisplayName('team2')}</span>
+                  <span style={{ color: "#1890ff" }}>{getTeamDisplayName("team2")}</span>
                 </div>
                 {matchData.match_status !== "pending" && (
                   <div style={{ fontSize: "32px", fontWeight: "bold", color: "#f5222d" }}>
@@ -359,17 +359,18 @@ const MatchDetail = () => {
             <Col xs={24} lg={12}>
               <Row gutter={16}>
                 <Col span={12}>
-                  <Statistic title={`${getTeamDisplayName('team1')} 犯規`} value={matchData.team1_fouls} prefix="🟨" />
+                  <Statistic title={`${getTeamDisplayName("team1")} 犯規`} value={matchData.team1_fouls} prefix="🟨" />
                 </Col>
                 <Col span={12}>
-                  <Statistic title={`${getTeamDisplayName('team2')} 犯規`} value={matchData.team2_fouls} prefix="🟨" />
+                  <Statistic title={`${getTeamDisplayName("team2")} 犯規`} value={matchData.team2_fouls} prefix="🟨" />
                 </Col>
               </Row>
               {matchData.winner_name && (
                 <div style={{ marginTop: 16, textAlign: "center" }}>
                   <TrophyOutlined style={{ color: "#faad14", fontSize: "20px", marginRight: 8 }} />
                   <Text strong style={{ fontSize: "16px" }}>
-                    獲勝者：{matchData.winner_name.includes('_') ? matchData.winner_name.split('_')[0] : matchData.winner_name}
+                    獲勝者：
+                    {matchData.winner_name.includes("_") ? matchData.winner_name.split("_")[0] : matchData.winner_name}
                   </Text>
                 </div>
               )}
