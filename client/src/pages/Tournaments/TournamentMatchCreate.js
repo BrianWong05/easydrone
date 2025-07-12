@@ -75,6 +75,7 @@ const TournamentMatchCreate = () => {
       }
     } catch (error) {
       console.error("Error fetching teams:", error);
+      message.error("獲取隊伍列表失敗");
     }
   };
 
@@ -101,6 +102,12 @@ const TournamentMatchCreate = () => {
   };
 
   const getFilteredTeams = () => {
+    // For non-group matches (knockout, friendly), show all teams regardless of group assignment
+    if (matchType !== "group") {
+      return teams;
+    }
+    
+    // For group matches, apply group filtering
     if (selectedGroup === null) {
       // Show teams with no group assignment
       return teams.filter((team) => !team.group_id);

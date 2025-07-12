@@ -2670,7 +2670,7 @@ router.post('/:id/matches', async (req, res) => {
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         tournamentId, match_number, team1_id, team2_id, match_date,
-        match_time, match_type, tournament_stage, group_id
+        match_time, match_type, tournament_stage || null, group_id || null
       ]
     );
 
