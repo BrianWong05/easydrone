@@ -117,22 +117,15 @@ const useAuthStore = create(
           // 設置 axios header
           axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-          // 暫時跳過後端驗證，直接設置為已認證狀態
-          // TODO: 實現後端 /auth/verify 端點
+          // 使用後端驗證端點
+          const response = await axios.get('/api/auth/verify');
+          const { user } = response.data.data;
+          
           set({
-            user: { username: "admin" }, // 臨時用戶
+            user,
             isAuthenticated: true,
             isLoading: false,
           });
-
-          // 註釋掉的後端驗證代碼
-          // const response = await axios.get('/api/auth/verify');
-          // const { user } = response.data.data;
-          // set({
-          //   user,
-          //   isAuthenticated: true,
-          //   isLoading: false,
-          // });
         } catch (error) {
           console.error("Token verification failed:", error);
 
@@ -157,12 +150,8 @@ const useAuthStore = create(
 
       // 初始化
       initialize: () => {
-        // 暫時跳過自動驗證，直接設置為未載入狀態
-        set({ isLoading: false });
-
-        // 註釋掉自動驗證，讓用戶手動登入
-        // const { verifyToken } = get();
-        // verifyToken();
+        const { verifyToken } = get();
+        verifyToken();
       },
     }),
     {

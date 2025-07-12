@@ -17,6 +17,7 @@ import {
   ThunderboltOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
+import { useAuthStore } from "../../stores/authStore";
 
 const { Header, Sider } = Layout;
 
@@ -26,6 +27,7 @@ const TournamentLayout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { id } = useParams();
+  const { logout, user } = useAuthStore();
 
   // Fetch tournament data
   useEffect(() => {
@@ -270,6 +272,37 @@ const TournamentLayout = ({ children }) => {
 
           <Space>
             <span style={{ color: "#666" }}>{tournament ? `${tournament.tournament_name} 管理` : "錦標賽管理"}</span>
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    key: 'profile',
+                    icon: <UserOutlined />,
+                    label: '個人資料',
+                  },
+                  {
+                    type: 'divider',
+                  },
+                  {
+                    key: 'logout',
+                    icon: <LogoutOutlined />,
+                    label: '登出',
+                    onClick: () => {
+                      logout();
+                      navigate('/login');
+                    },
+                  },
+                ],
+              }}
+              placement="bottomRight"
+            >
+              <Button type="text" style={{ height: 'auto', padding: '8px 12px' }}>
+                <Space>
+                  <Avatar size="small" icon={<UserOutlined />} />
+                  <span>{user?.username || 'Admin'}</span>
+                </Space>
+              </Button>
+            </Dropdown>
           </Space>
         </Header>
         {children}

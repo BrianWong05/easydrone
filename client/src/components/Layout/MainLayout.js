@@ -13,7 +13,7 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from "@ant-design/icons";
-// 移除認證相關導入
+import { useAuthStore } from "../../stores/authStore";
 
 const { Header, Sider } = Layout;
 
@@ -21,6 +21,7 @@ const MainLayout = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { logout, user } = useAuthStore();
 
   // Check if current page is dashboard or any non-tournament page to hide sidebar
   // const shouldHideSidebar = location.pathname === "/" || !location.pathname.startsWith("/tournaments");
@@ -242,6 +243,37 @@ const MainLayout = ({ children }) => {
 
           <Space>
             <span style={{ color: "#666" }}>無人機足球管理系統</span>
+            <Dropdown
+              menu={{
+                items: [
+                  {
+                    key: 'profile',
+                    icon: <UserOutlined />,
+                    label: '個人資料',
+                  },
+                  {
+                    type: 'divider',
+                  },
+                  {
+                    key: 'logout',
+                    icon: <LogoutOutlined />,
+                    label: '登出',
+                    onClick: () => {
+                      logout();
+                      navigate('/login');
+                    },
+                  },
+                ],
+              }}
+              placement="bottomRight"
+            >
+              <Button type="text" style={{ height: 'auto', padding: '8px 12px' }}>
+                <Space>
+                  <Avatar size="small" icon={<UserOutlined />} />
+                  <span>{user?.username || 'Admin'}</span>
+                </Space>
+              </Button>
+            </Dropdown>
           </Space>
         </Header>
         {children}

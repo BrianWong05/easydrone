@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Layout } from "antd";
 
 import MainLayout from "./components/Layout/MainLayout";
 import TournamentLayout from "./components/Layout/TournamentLayout";
+import ProtectedRoute from "./components/ProtectedRoute";
+import LoginPage from "./pages/Auth/LoginPage";
+import { useAuthStore } from "./stores/authStore";
 import TournamentGroupCreate from "./pages/Tournaments/TournamentGroupCreate";
 import TournamentGroupDetail from "./pages/Tournaments/TournamentGroupDetail";
 import TournamentGroupEdit from "./pages/Tournaments/TournamentGroupEdit";
@@ -58,44 +61,62 @@ import TournamentLiveMatch from "./pages/Tournaments/TournamentLiveMatch";
 const { Content } = Layout;
 
 function App() {
+  const { initialize, isAuthenticated } = useAuthStore();
+
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
+
   return (
     <div className="App">
       <Routes>
-        {/* 直接訪問主要路由，無需登入 */}
+        {/* 登入頁面 - 如果已登入則重定向到首頁 */}
+        <Route 
+          path="/login" 
+          element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />} 
+        />
+        
+        {/* 所有管理功能都需要登入保護 */}
+        {/* 主要管理路由 - 需要登入保護 */}
         <Route
           path="/*"
           element={
-            <MainLayout>
-              <Content className="main-content">
-                <Routes>
-                  {/* 儀表板 */}
-                  <Route path="/" element={<TournamentList />} />
+            <ProtectedRoute>
+              <MainLayout>
+                <Content className="main-content">
+                  <Routes>
+                    {/* 儀表板 */}
+                    <Route path="/" element={<TournamentList />} />
 
-                  {/* 404 頁面 */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Content>
-            </MainLayout>
+                    {/* 404 頁面 */}
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Content>
+              </MainLayout>
+            </ProtectedRoute>
           }
         />
 
-        {/* Tournament Create Route (must come before dynamic :id route) */}
+        {/* Tournament Create Route (must come before dynamic :id route) - 需要登入保護 */}
         <Route
           path="/tournaments/create"
           element={
-            <MainLayout>
-              <Content className="main-content">
-                <TournamentCreate />
-              </Content>
-            </MainLayout>
+            <ProtectedRoute>
+              <MainLayout>
+                <Content className="main-content">
+                  <TournamentCreate />
+                </Content>
+              </MainLayout>
+            </ProtectedRoute>
           }
         />
 
-        {/* Tournament-specific routes with TournamentLayout */}
+        {/* Tournament-specific routes with TournamentLayout - 需要登入保護 */}
         <Route
           path="/tournaments/:id/*"
           element={
-            <TournamentLayout>
+            <ProtectedRoute>
+              <TournamentLayout>
               <Routes>
                 {/* Tournament Overview */}
                 <Route path="/" element={<TournamentDetail />} />
@@ -138,6 +159,7 @@ function App() {
                 <Route path="/bracket" element={<KnockoutBracket />} />
               </Routes>
             </TournamentLayout>
+            </ProtectedRoute>
           }
         />
       </Routes>
