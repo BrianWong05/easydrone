@@ -103,6 +103,12 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Request logging middleware
+app.use((req, res, next) => {
+  console.log(`📝 ${req.method} ${req.path} - Body:`, req.body);
+  next();
+});
+
 // API路由 - 注意順序：更具體的路由要放在前面
 app.use('/api/auth', authRoutes);
 app.use('/api/tournaments', tournamentRoutes);

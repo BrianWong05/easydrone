@@ -50,6 +50,98 @@ const completedMatchEditSchema = Joi.object({
   referee_decision: Joi.boolean().default(false)
 });
 
+// 批量延期比賽 - MUST BE BEFORE /:id ROUTES
+router.put('/batch-postpone', authenticateToken, async (req, res) => {
+  try {
+    console.log('🔄 Batch postpone request received:', req.body);
+    const { matchIds, delayMinutes = 0 } = req.body;
+    console.log('📋 Parsed data:', { matchIds, delayMinutes });
+
+    if (!matchIds || !Array.isArray(matchIds) || matchIds.length === 0) {
+      console.log('❌ Invalid matchIds:', matchIds);
+      return res.status(400).json({
+        success: false,
+        message: '請提供要延期的比賽ID列表'
+      });
+    }
+
+    // 驗證延期時間
+    if (delayMinutes < 0 || delayMinutes > 1440) { // 最多延期24小時
+      return res.status(400).json({
+        success: false,
+        message: '延期時間必須在0-1440分鐘之間'
+      });
+    }
+
+    let successCount = 0;
+    let errorCount = 0;
+    const errors = [];
+
+    await transaction(async (connection) => {
+      for (const matchId of matchIds) {
+        try {
+          // 檢查比賽是否存在且狀態允許延期
+          const [matches] = await connection.execute(
+            'SELECT match_id, match_status FROM matches WHERE match_id = ?',
+            [matchId]
+          );
+
+          if (matches.length === 0) {
+            errors.push(`比賽 ${matchId} 不存在`);
+            errorCount++;
+            continue;
+          }
+
+          const match = matches[0];
+          if (!['pending', 'active'].includes(match.match_status)) {
+            errors.push(`比賽 ${matchId} 狀態不允許延期 (當前狀態: ${match.match_status})`);
+            errorCount++;
+            continue;
+          }
+
+          // 獲取當前比賽時間
+          const [matchDetails] = await connection.execute(
+            'SELECT match_date FROM matches WHERE match_id = ?',
+            [matchId]
+          );
+
+          const currentMatchDate = new Date(matchDetails[0].match_date);
+          const newMatchDate = new Date(currentMatchDate.getTime() + delayMinutes * 60 * 1000);
+
+          // 更新比賽狀態為延期並調整時間
+          await connection.execute(
+            'UPDATE matches SET match_status = ?, match_date = ? WHERE match_id = ?',
+            ['postponed', newMatchDate, matchId]
+          );
+
+          successCount++;
+        } catch (error) {
+          console.error(`Error postponing match ${matchId}:`, error);
+          errors.push(`比賽 ${matchId} 延期失敗: ${error.message}`);
+          errorCount++;
+        }
+      }
+    });
+
+    res.json({
+      success: true,
+      message: `成功延期 ${successCount} 場比賽${errorCount > 0 ? `，${errorCount} 場失敗` : ''}`,
+      data: {
+        successCount,
+        errorCount,
+        errors: errorCount > 0 ? errors : undefined
+      }
+    });
+
+  } catch (error) {
+    console.error('批量延期比賽錯誤:', error);
+    res.status(500).json({
+      success: false,
+      message: '批量延期比賽失敗'
+    });
+  }
+});
+
 // 獲取所有比賽
 router.get('/', async (req, res) => {
   try {
@@ -849,6 +941,96 @@ async function updateGroupStandings(connection, groupId, team1Id, team2Id, team1
     WHERE group_id = ? AND team_id = ?
   `, [team2Won, team2Drawn, team2Lost, team2Score, team1Score, team2Points, groupId, team2Id]);
 }
+
+// 批量延期比賽 - MOVED TO TOP TO AVOID ROUTE CONFLICTS
+router.put('/batch-postpone', async (req, res) => {
+  try {
+    console.log('🔄 Batch postpone request received:', req.body);
+    const { matchIds, delayMinutes = 0 } = req.body;
+
+    if (!matchIds || !Array.isArray(matchIds) || matchIds.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: '請提供要延期的比賽ID列表'
+      });
+    }
+
+    // 驗證延期時間
+    if (delayMinutes < 0 || delayMinutes > 1440) { // 最多延期24小時
+      return res.status(400).json({
+        success: false,
+        message: '延期時間必須在0-1440分鐘之間'
+      });
+    }
+
+    let successCount = 0;
+    let errorCount = 0;
+    const errors = [];
+
+    await transaction(async (connection) => {
+      for (const matchId of matchIds) {
+        try {
+          // 檢查比賽是否存在且狀態允許延期
+          const [matches] = await connection.execute(
+            'SELECT match_id, match_status FROM matches WHERE match_id = ?',
+            [matchId]
+          );
+
+          if (matches.length === 0) {
+            errors.push(`比賽 ${matchId} 不存在`);
+            errorCount++;
+            continue;
+          }
+
+          const match = matches[0];
+          if (!['pending', 'active'].includes(match.match_status)) {
+            errors.push(`比賽 ${matchId} 狀態不允許延期 (當前狀態: ${match.match_status})`);
+            errorCount++;
+            continue;
+          }
+
+          // 獲取當前比賽時間
+          const [matchDetails] = await connection.execute(
+            'SELECT match_date FROM matches WHERE match_id = ?',
+            [matchId]
+          );
+
+          const currentMatchDate = new Date(matchDetails[0].match_date);
+          const newMatchDate = new Date(currentMatchDate.getTime() + delayMinutes * 60 * 1000);
+
+          // 更新比賽狀態為延期並調整時間
+          await connection.execute(
+            'UPDATE matches SET match_status = ?, match_date = ? WHERE match_id = ?',
+            ['postponed', newMatchDate, matchId]
+          );
+
+          successCount++;
+        } catch (error) {
+          console.error(`Error postponing match ${matchId}:`, error);
+          errors.push(`比賽 ${matchId} 延期失敗: ${error.message}`);
+          errorCount++;
+        }
+      }
+    });
+
+    res.json({
+      success: true,
+      message: `成功延期 ${successCount} 場比賽${errorCount > 0 ? `，${errorCount} 場失敗` : ''}`,
+      data: {
+        successCount,
+        errorCount,
+        errors: errorCount > 0 ? errors : undefined
+      }
+    });
+
+  } catch (error) {
+    console.error('批量延期比賽錯誤:', error);
+    res.status(500).json({
+      success: false,
+      message: '批量延期比賽失敗'
+    });
+  }
+});
 
 // 刪除比賽
 router.delete('/:id', async (req, res) => {

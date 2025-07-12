@@ -15,6 +15,9 @@ import {
   Col,
   Statistic,
   Popconfirm,
+  Modal,
+  InputNumber,
+  Form,
 } from "antd";
 import {
   PlusOutlined,
@@ -24,6 +27,7 @@ import {
   PlayCircleOutlined,
   SearchOutlined,
   FilterOutlined,
+  ClockCircleOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
 import moment from "moment";
@@ -66,6 +70,9 @@ const TournamentMatchList = () => {
   });
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [batchDeleteLoading, setBatchDeleteLoading] = useState(false);
+  const [batchPostponeLoading, setBatchPostponeLoading] = useState(false);
+  const [postponeModalVisible, setPostponeModalVisible] = useState(false);
+  const [postponeForm] = Form.useForm();
 
   useEffect(() => {
     fetchTournament();
@@ -266,6 +273,51 @@ const TournamentMatchList = () => {
     }
   };
 
+  const handleBatchPostpone = async (values) => {
+    if (selectedRowKeys.length === 0) {
+      message.warning("請選擇要延期的比賽");
+      return;
+    }
+
+    try {
+      setBatchPostponeLoading(true);
+      
+      const response = await axios.put('/api/matches/batch-postpone', {
+        matchIds: selectedRowKeys,
+        delayMinutes: values.delayMinutes || 0
+      });
+
+      if (response.data.success) {
+        message.success(response.data.message);
+        setSelectedRowKeys([]);
+        setPostponeModalVisible(false);
+        postponeForm.resetFields();
+        fetchAllMatches(); // Refresh all matches
+      } else {
+        message.error(response.data.message || "批量延期失敗");
+      }
+    } catch (error) {
+      console.error("Error in batch postpone:", error);
+      const errorMessage = error.response?.data?.message || "批量延期失敗";
+      message.error(errorMessage);
+    } finally {
+      setBatchPostponeLoading(false);
+    }
+  };
+
+  const showPostponeModal = () => {
+    if (selectedRowKeys.length === 0) {
+      message.warning("請選擇要延期的比賽");
+      return;
+    }
+    setPostponeModalVisible(true);
+  };
+
+  const handlePostponeCancel = () => {
+    setPostponeModalVisible(false);
+    postponeForm.resetFields();
+  };
+
   const handleTableChange = (paginationConfig) => {
     const { current, pageSize } = paginationConfig;
     setPagination((prev) => ({
@@ -342,6 +394,7 @@ const TournamentMatchList = () => {
       active: { color: "processing", text: "進行中" },
       overtime: { color: "warning", text: "延長賽" },
       completed: { color: "success", text: "已完成" },
+      postponed: { color: "orange", text: "已延期" },
     };
     const config = statusConfig[status] || { color: "default", text: status };
     return <Tag color={config.color}>{config.text}</Tag>;
@@ -448,7 +501,7 @@ const TournamentMatchList = () => {
       width: 100,
       render: (status) => getStatusTag(status),
       sorter: (a, b) => {
-        const statusOrder = { pending: 1, active: 2, overtime: 3, completed: 4 };
+        const statusOrder = { pending: 1, active: 2, overtime: 3, completed: 4, postponed: 5 };
         const aOrder = statusOrder[a.match_status] || 0;
         const bOrder = statusOrder[b.match_status] || 0;
         return aOrder - bOrder;
@@ -541,6 +594,7 @@ const TournamentMatchList = () => {
     pending: allMatches.filter((m) => m.match_status === "pending").length,
     active: allMatches.filter((m) => m.match_status === "active").length,
     completed: allMatches.filter((m) => m.match_status === "completed").length,
+    postponed: allMatches.filter((m) => m.match_status === "postponed").length,
   };
 
   return (
@@ -552,24 +606,34 @@ const TournamentMatchList = () => {
 
       {/* 統計卡片 */}
       <Row gutter={16} style={{ marginBottom: 24 }}>
-        <Col span={6}>
+        <Col span={4}>
           <Card>
             <Statistic title="總比賽數" value={pagination.total} />
           </Card>
         </Col>
-        <Col span={6}>
+        <Col span={4}>
           <Card>
             <Statistic title="待開始" value={stats.pending} valueStyle={{ color: "#666" }} />
           </Card>
         </Col>
-        <Col span={6}>
+        <Col span={4}>
           <Card>
             <Statistic title="進行中" value={stats.active} valueStyle={{ color: "#1890ff" }} />
           </Card>
         </Col>
-        <Col span={6}>
+        <Col span={4}>
           <Card>
             <Statistic title="已完成" value={stats.completed} valueStyle={{ color: "#52c41a" }} />
+          </Card>
+        </Col>
+        <Col span={4}>
+          <Card>
+            <Statistic title="已延期" value={stats.postponed} valueStyle={{ color: "#fa8c16" }} />
+          </Card>
+        </Col>
+        <Col span={4}>
+          <Card>
+            <Statistic title="其他" value={stats.total - stats.pending - stats.active - stats.completed - stats.postponed} valueStyle={{ color: "#999" }} />
           </Card>
         </Col>
       </Row>
@@ -599,6 +663,7 @@ const TournamentMatchList = () => {
                 <Option value="pending">待開始</Option>
                 <Option value="active">進行中</Option>
                 <Option value="completed">已完成</Option>
+                <Option value="postponed">已延期</Option>
               </Select>
               <Select
                 placeholder="比賽類型"
@@ -674,17 +739,26 @@ const TournamentMatchList = () => {
                 生成比賽
               </Button>
               {selectedRowKeys.length > 0 && (
-                <Popconfirm
-                  title="批量刪除比賽"
-                  description={`確定要刪除選中的 ${selectedRowKeys.length} 場比賽嗎？`}
-                  onConfirm={handleBatchDelete}
-                  okText="確認"
-                  cancelText="取消"
-                >
-                  <Button danger icon={<DeleteOutlined />} loading={batchDeleteLoading}>
-                    批量刪除 ({selectedRowKeys.length})
+                <>
+                  <Button 
+                    icon={<ClockCircleOutlined />} 
+                    loading={batchPostponeLoading}
+                    onClick={showPostponeModal}
+                  >
+                    批量延期 ({selectedRowKeys.length})
                   </Button>
-                </Popconfirm>
+                  <Popconfirm
+                    title="批量刪除比賽"
+                    description={`確定要刪除選中的 ${selectedRowKeys.length} 場比賽嗎？`}
+                    onConfirm={handleBatchDelete}
+                    okText="確認"
+                    cancelText="取消"
+                  >
+                    <Button danger icon={<DeleteOutlined />} loading={batchDeleteLoading}>
+                      批量刪除 ({selectedRowKeys.length})
+                    </Button>
+                  </Popconfirm>
+                </>
               )}
             </Space>
           </Col>
@@ -715,6 +789,59 @@ const TournamentMatchList = () => {
           scroll={{ x: 1200 }}
         />
       </Card>
+
+      {/* 延期比賽模態框 */}
+      <Modal
+        title="批量延期比賽"
+        open={postponeModalVisible}
+        onCancel={handlePostponeCancel}
+        footer={null}
+        width={400}
+      >
+        <Form
+          form={postponeForm}
+          layout="vertical"
+          onFinish={handleBatchPostpone}
+          initialValues={{ delayMinutes: 30 }}
+        >
+          <p>選中的比賽數量: <strong>{selectedRowKeys.length}</strong></p>
+          
+          <Form.Item
+            label="延期時間 (分鐘)"
+            name="delayMinutes"
+            rules={[
+              { required: true, message: '請輸入延期時間' },
+              { type: 'number', min: 0, max: 1440, message: '延期時間必須在0-1440分鐘之間' }
+            ]}
+            extra="輸入0表示只更改狀態為延期，不調整時間"
+          >
+            <InputNumber
+              style={{ width: '100%' }}
+              placeholder="請輸入延期分鐘數"
+              min={0}
+              max={1440}
+              step={15}
+              addonAfter="分鐘"
+            />
+          </Form.Item>
+
+          <div style={{ textAlign: 'right', marginTop: 24 }}>
+            <Space>
+              <Button onClick={handlePostponeCancel}>
+                取消
+              </Button>
+              <Button 
+                type="primary" 
+                htmlType="submit" 
+                loading={batchPostponeLoading}
+                icon={<ClockCircleOutlined />}
+              >
+                確認延期
+              </Button>
+            </Space>
+          </div>
+        </Form>
+      </Modal>
     </div>
   );
 };

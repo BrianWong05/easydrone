@@ -6,10 +6,12 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-jwt-key-here';
 // 驗證JWT令牌
 const authenticateToken = async (req, res, next) => {
   try {
+    console.log('🔐 Auth check - Headers:', req.headers['authorization']);
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
 
     if (!token) {
+      console.log('❌ No token provided');
       return res.status(401).json({
         success: false,
         message: '未提供訪問令牌'
