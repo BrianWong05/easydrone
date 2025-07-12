@@ -68,7 +68,7 @@ router.get('/', async (req, res) => {
     // 獲取隊伍列表 - 使用簡化查詢避免參數綁定問題
     const sql = `
       SELECT t.team_id, t.team_name, t.group_id, t.team_color, t.is_virtual, 
-             t.created_at, t.updated_at, g.group_name
+             t.description, t.created_at, t.updated_at, g.group_name
       FROM teams t
       LEFT JOIN team_groups g ON t.group_id = g.group_id
       ${whereClause}
@@ -198,7 +198,10 @@ router.post('/', async (req, res) => {
       });
     }
 
-    const { team_name, group_id, team_color, is_virtual } = value;
+    const { team_name, group_id, team_color, is_virtual, description } = value;
+    
+    // Ensure group_id is null if not provided
+    const finalGroupId = group_id || null;
 
     // 檢查隊伍名稱是否已存在
     const existingTeams = await query(
@@ -216,7 +219,7 @@ router.post('/', async (req, res) => {
     console.log('🔍 驗證小組信息，group_id:', group_id);
     
     // 如果指定了小組，檢查小組是否存在且未滿
-    if (group_id) {
+    if (finalGroupId) {
       console.log('📋 檢查小組是否存在...');
       
       // 先檢查所有可用的小組
@@ -225,7 +228,7 @@ router.post('/', async (req, res) => {
       
       const groups = await query(
         'SELECT group_id, group_name, max_teams FROM team_groups WHERE group_id = ?',
-        [group_id]
+        [finalGroupId]
       );
       
       console.log('📋 查詢到的目標小組:', groups);
@@ -233,13 +236,13 @@ router.post('/', async (req, res) => {
       if (groups.length === 0) {
         return res.status(404).json({
           success: false,
-          message: `指定的小組不存在 (ID: ${group_id})。可用小組: ${allGroups.map(g => `${g.group_name}組(ID:${g.group_id})`).join(', ')}`
+          message: `指定的小組不存在 (ID: ${finalGroupId})。可用小組: ${allGroups.map(g => `${g.group_name}組(ID:${g.group_id})`).join(', ')}`
         });
       }
 
       const teamCount = await query(
         'SELECT COUNT(*) as count FROM teams WHERE group_id = ?',
-        [group_id]
+        [finalGroupId]
       );
       
       console.log(`📋 小組 ${groups[0].group_name} 當前隊伍數: ${teamCount[0].count}/${groups[0].max_teams}`);
@@ -258,15 +261,15 @@ router.post('/', async (req, res) => {
 
     // 創建隊伍
     const result = await query(
-      'INSERT INTO teams (team_name, group_id, team_color, is_virtual) VALUES (?, ?, ?, ?)',
-      [team_name, group_id, team_color, is_virtual]
+      'INSERT INTO teams (team_name, group_id, team_color, is_virtual, description) VALUES (?, ?, ?, ?, ?)',
+      [team_name, finalGroupId, team_color, is_virtual, description]
     );
 
     // 如果分配了小組，更新小組積分表
-    if (group_id) {
+    if (finalGroupId) {
       await query(
         'INSERT INTO group_standings (group_id, team_id) VALUES (?, ?)',
-        [group_id, result.insertId]
+        [finalGroupId, result.insertId]
       );
     }
 
@@ -301,7 +304,10 @@ router.put('/:id', async (req, res) => {
       });
     }
 
-    const { team_name, group_id, team_color, is_virtual } = value;
+    const { team_name, group_id, team_color, is_virtual, description } = value;
+    
+    // Ensure group_id is null if not provided
+    const finalGroupId = group_id || null;
 
     // 檢查隊伍是否存在
     const existingTeams = await query(
@@ -332,7 +338,7 @@ router.put('/:id', async (req, res) => {
     }
 
     // 如果要更改小組，需要檢查小組比賽狀態
-    if (oldGroupId !== group_id) {
+    if (oldGroupId !== finalGroupId) {
       // 檢查舊小組的比賽狀態
       if (oldGroupId) {
         const oldGroupMatches = await query(
@@ -352,10 +358,10 @@ router.put('/:id', async (req, res) => {
       }
 
       // 檢查新小組的比賽狀態
-      if (group_id) {
+      if (finalGroupId) {
         const newGroupMatches = await query(
           'SELECT match_id, match_status FROM matches WHERE group_id = ?',
-          [group_id]
+          [finalGroupId]
         );
 
         if (newGroupMatches.length > 0) {
@@ -371,7 +377,7 @@ router.put('/:id', async (req, res) => {
         // 檢查目標小組是否已滿
         const targetGroupInfo = await query(
           'SELECT group_name, max_teams FROM team_groups WHERE group_id = ?',
-          [group_id]
+          [finalGroupId]
         );
 
         if (targetGroupInfo.length === 0) {
@@ -383,7 +389,7 @@ router.put('/:id', async (req, res) => {
 
         const currentTeamCount = await query(
           'SELECT COUNT(*) as count FROM teams WHERE group_id = ?',
-          [group_id]
+          [finalGroupId]
         );
 
         if (currentTeamCount[0].count >= targetGroupInfo[0].max_teams) {
@@ -397,7 +403,7 @@ router.put('/:id', async (req, res) => {
 
     await transaction(async (connection) => {
       // 處理小組變更
-      if (oldGroupId !== group_id) {
+      if (oldGroupId !== finalGroupId) {
         // 如果從舊小組移除，需要刪除舊小組的所有pending比賽
         if (oldGroupId) {
           const oldGroupMatches = await query(
@@ -434,10 +440,10 @@ router.put('/:id', async (req, res) => {
         }
 
         // 如果移動到新小組，需要刪除新小組的所有pending比賽
-        if (group_id) {
+        if (finalGroupId) {
           const newGroupMatches = await query(
             'SELECT match_id FROM matches WHERE group_id = ?',
-            [group_id]
+            [finalGroupId]
           );
 
           if (newGroupMatches.length > 0) {
@@ -456,23 +462,23 @@ router.put('/:id', async (req, res) => {
             // 刪除所有新小組比賽
             await connection.execute(
               'DELETE FROM matches WHERE group_id = ?',
-              [group_id]
+              [finalGroupId]
             );
 
-            console.log(`✅ 已刪除新小組 ${group_id} 的所有 ${newGroupMatches.length} 場比賽`);
+            console.log(`✅ 已刪除新小組 ${finalGroupId} 的所有 ${newGroupMatches.length} 場比賽`);
           }
 
           await connection.execute(
             'INSERT INTO group_standings (group_id, team_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE team_id = team_id',
-            [group_id, teamId]
+            [finalGroupId, teamId]
           );
         }
       }
 
       // 更新隊伍信息
       await connection.execute(
-        'UPDATE teams SET team_name = ?, group_id = ?, team_color = ?, is_virtual = ? WHERE team_id = ?',
-        [team_name, group_id, team_color, is_virtual, teamId]
+        'UPDATE teams SET team_name = ?, group_id = ?, team_color = ?, is_virtual = ?, description = ? WHERE team_id = ?',
+        [team_name, finalGroupId, team_color, is_virtual, description, teamId]
       );
     });
 

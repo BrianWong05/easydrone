@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS teams (
     group_id INT NULL,
     team_color VARCHAR(20) DEFAULT '#FFFFFF',
     is_virtual TINYINT(1) DEFAULT 0,
+    description TEXT NULL COMMENT '隊伍描述',
     tournament_id INT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -53,7 +54,7 @@ CREATE TABLE IF NOT EXISTS teams (
     FOREIGN KEY (tournament_id) REFERENCES tournaments(tournament_id) ON DELETE CASCADE,
     UNIQUE KEY unique_tournament_team (tournament_id, team_name),
     INDEX idx_teams_tournament_id (tournament_id)
-);
+) COMMENT = '隊伍表 - 包含隊伍基本信息和描述';
 
 -- 運動員表 - 無人機足球隊伍結構：1名進攻手，3-5名防守人員
 CREATE TABLE IF NOT EXISTS athletes (
