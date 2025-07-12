@@ -85,7 +85,7 @@ CREATE TABLE IF NOT EXISTS matches (
     match_time INT DEFAULT 600, -- Time in seconds (600 = 10 minutes)
     start_time DATETIME NULL,
     end_time DATETIME NULL,
-    match_status ENUM('pending', 'active', 'overtime', 'completed') DEFAULT 'pending',
+    match_status ENUM('pending', 'active', 'overtime', 'completed', 'postponed') DEFAULT 'pending',
     match_type VARCHAR(50) NULL,
     tournament_stage VARCHAR(50) NULL,
     group_id INT NULL,
