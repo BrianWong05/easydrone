@@ -115,6 +115,7 @@ const TournamentMatchList = () => {
       // Fetch all matches without pagination
       const params = new URLSearchParams({
         limit: "1000", // Large number to get all matches
+        _t: Date.now(), // Add timestamp to prevent caching
       });
 
       console.log("🔍 Fetching all matches for tournament:", tournamentId);
@@ -124,6 +125,7 @@ const TournamentMatchList = () => {
 
       if (response.data.success) {
         const matchesData = response.data.data?.matches || [];
+        console.log("🔍 Setting matches data:", matchesData.length, "matches");
         setAllMatches(matchesData);
         console.log("✅ Fetched all matches:", matchesData.length);
       } else {
@@ -227,9 +229,25 @@ const TournamentMatchList = () => {
 
   const handleDelete = async (matchId) => {
     try {
+      console.log('🗑️ Deleting match:', matchId);
+      console.log('🗑️ Current matches count before delete:', allMatches.length);
+      
       await axios.delete(`/api/matches/${matchId}`);
       message.success("比賽刪除成功");
-      fetchAllMatches(); // Refresh all matches
+      
+      // Immediately remove the deleted match from local state for instant UI update
+      setAllMatches(prevMatches => {
+        const filteredMatches = prevMatches.filter(match => match.match_id !== matchId);
+        console.log('🗑️ Matches count after local filter:', filteredMatches.length);
+        return filteredMatches;
+      });
+      
+      // Force a complete refresh after a short delay to ensure server sync
+      setTimeout(async () => {
+        console.log('🔄 Refreshing matches from server...');
+        await fetchAllMatches();
+      }, 500);
+      
     } catch (error) {
       console.error("Error deleting match:", error);
       const errorMessage = error.response?.data?.message || "刪除比賽失敗";
@@ -260,8 +278,21 @@ const TournamentMatchList = () => {
 
       if (successCount > 0) {
         message.success(`成功刪除 ${successCount} 場比賽${errorCount > 0 ? `，${errorCount} 場失敗` : ""}`);
+        
+        // Immediately remove deleted matches from local state for instant UI update
+        setAllMatches(prevMatches => {
+          const filteredMatches = prevMatches.filter(match => !selectedRowKeys.includes(match.match_id));
+          console.log('🗑️ Batch delete - matches count after local filter:', filteredMatches.length);
+          return filteredMatches;
+        });
+        
         setSelectedRowKeys([]);
-        fetchAllMatches(); // Refresh all matches
+        
+        // Force a complete refresh after a short delay to ensure server sync
+        setTimeout(async () => {
+          console.log('🔄 Batch delete - refreshing matches from server...');
+          await fetchAllMatches();
+        }, 500);
       } else {
         message.error("批量刪除失敗");
       }
@@ -292,7 +323,11 @@ const TournamentMatchList = () => {
         setSelectedRowKeys([]);
         setPostponeModalVisible(false);
         postponeForm.resetFields();
-        fetchAllMatches(); // Refresh all matches
+        // Force refresh after postpone
+        setTimeout(async () => {
+          console.log('🔄 Postpone - refreshing matches from server...');
+          await fetchAllMatches();
+        }, 500);
       } else {
         message.error(response.data.message || "批量延期失敗");
       }

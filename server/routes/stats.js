@@ -242,9 +242,30 @@ router.post('/calculate-all-group-standings', async (req, res) => {
           WHERE group_id = ? AND team_id = ?
         `, [team2Score, team1Score, group.group_id, match.team2_id]);
         
-        // Update win/draw/loss and points
-        if (team1Score > team2Score) {
-          // Team1 wins
+        // Update win/draw/loss and points - Consider winner_id for alternative win conditions
+        if (match.winner_id) {
+          // There's a declared winner (could be due to score, fouls, referee decision, etc.)
+          const winnerId = match.winner_id;
+          const loserId = winnerId === match.team1_id ? match.team2_id : match.team1_id;
+          
+          // Winner gets 3 points
+          await query(`
+            UPDATE group_standings 
+            SET won = won + 1, points = points + 3
+            WHERE group_id = ? AND team_id = ?
+          `, [group.group_id, winnerId]);
+          
+          // Loser gets 0 points
+          await query(`
+            UPDATE group_standings 
+            SET lost = lost + 1
+            WHERE group_id = ? AND team_id = ?
+          `, [group.group_id, loserId]);
+          
+          console.log(`📊 Winner determined: ${winnerId === match.team1_id ? match.team1_name : match.team2_name} (ID: ${winnerId}) beats ${winnerId === match.team1_id ? match.team2_name : match.team1_name} (ID: ${loserId})`);
+          
+        } else if (team1Score > team2Score) {
+          // Team1 wins by score
           await query(`
             UPDATE group_standings 
             SET won = won + 1, points = points + 3
@@ -258,7 +279,7 @@ router.post('/calculate-all-group-standings', async (req, res) => {
           `, [group.group_id, match.team2_id]);
           
         } else if (team2Score > team1Score) {
-          // Team2 wins
+          // Team2 wins by score
           await query(`
             UPDATE group_standings 
             SET won = won + 1, points = points + 3
@@ -272,7 +293,7 @@ router.post('/calculate-all-group-standings', async (req, res) => {
           `, [group.group_id, match.team1_id]);
           
         } else {
-          // Draw
+          // True draw (no winner declared and scores are equal)
           await query(`
             UPDATE group_standings 
             SET drawn = drawn + 1, points = points + 1
