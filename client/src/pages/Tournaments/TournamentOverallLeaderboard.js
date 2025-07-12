@@ -82,7 +82,13 @@ const TournamentOverallLeaderboard = () => {
 
   // Helper function to clean team names (remove tournament suffix)
   const getDisplayTeamName = (teamName) => {
-    return teamName?.includes("_") ? teamName.split("_")[0] : teamName;
+    if (!teamName) return '';
+    // 檢查是否以 _{tournamentId} 結尾，如果是則移除
+    const suffix = `_${tournamentId}`;
+    if (teamName.endsWith(suffix)) {
+      return teamName.slice(0, -suffix.length);
+    }
+    return teamName;
   };
 
   const leaderboardColumns = [

@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Typography, Table, Tag, Row, Col, Space, Progress, message } from 'antd';
 import { TrophyOutlined, TeamOutlined } from '@ant-design/icons';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 const { Title, Text } = Typography;
 
 const GroupStandingsLeaderboard = () => {
+  const { id: tournamentId } = useParams();
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    // 檢查是否以 _{tournamentId} 結尾，如果是則移除
+    const suffix = `_${tournamentId}`;
+    if (teamName.endsWith(suffix)) {
+      return teamName.slice(0, -suffix.length);
+    }
+    return teamName;
+  };
 
   useEffect(() => {
     fetchGroups();
@@ -34,7 +47,7 @@ const GroupStandingsLeaderboard = () => {
             .sort((a, b) => b.points - a.points)
             .map((team) => ({
               team_id: team.team_id,
-              name: team.team_name,
+              name: getDisplayTeamName(team.team_name),
               points: team.points,
               played: team.played,
               won: team.won,
