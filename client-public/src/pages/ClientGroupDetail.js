@@ -194,7 +194,17 @@ const ClientGroupDetail = () => {
               borderRadius: '50%'
             }}
           />
-          <Text strong>{getDisplayTeamName(name)}</Text>
+          <Text 
+            strong 
+            style={{ 
+              color: '#1890ff', 
+              cursor: 'pointer',
+              textDecoration: 'underline'
+            }}
+            onClick={() => navigate(`/teams/${record.team_id}`)}
+          >
+            {getDisplayTeamName(name)}
+          </Text>
         </Space>
       ),
     },
@@ -272,6 +282,19 @@ const ClientGroupDetail = () => {
       key: 'match_number',
       width: 80,
       align: 'center',
+      render: (matchNumber, record) => (
+        <Text 
+          strong 
+          style={{ 
+            color: '#1890ff', 
+            cursor: 'pointer',
+            textDecoration: 'underline'
+          }}
+          onClick={() => navigate(`/matches/${record.match_id}`)}
+        >
+          {matchNumber}
+        </Text>
+      ),
     },
     {
       title: '對戰',
