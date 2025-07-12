@@ -30,6 +30,15 @@ const GroupStandingsLeaderboard = () => {
     try {
       setLoading(true);
 
+      // 先重新計算積分榜以確保數據是最新的
+      try {
+        await axios.post("/api/stats/calculate-all-group-standings");
+        console.log('✅ Group standings recalculated');
+      } catch (calcError) {
+        console.warn('⚠️ Failed to recalculate standings:', calcError);
+        // 繼續執行，即使計算失敗也要顯示現有數據
+      }
+
       // 使用與錦標賽小組頁面相同的API調用方式
       const [groupsRes, statsRes] = await Promise.all([
         axios.get('/api/groups'),

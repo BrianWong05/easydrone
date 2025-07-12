@@ -65,6 +65,17 @@ const OverallLeaderboard = () => {
     return '#666';
   };
 
+  // Helper function to clean team names (remove tournament suffix)
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    // 檢查是否包含 _{number} 格式的後綴，如果是則移除
+    const match = teamName.match(/^(.+)_\d+$/);
+    if (match) {
+      return match[1];
+    }
+    return teamName;
+  };
+
   const leaderboardColumns = [
     {
       title: '排名',
@@ -108,7 +119,7 @@ const OverallLeaderboard = () => {
               }}
               onClick={() => navigate(`/teams/${record.team_id}`)}
             >
-              {record.team_name}
+              {getDisplayTeamName(record.team_name)}
             </div>
             <Text type="secondary" style={{ fontSize: '12px' }}>
               {record.group_name ? (

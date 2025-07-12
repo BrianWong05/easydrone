@@ -73,6 +73,17 @@ const AllGroupStandings = () => {
     }
   };
 
+  // Helper function to clean team names (remove tournament suffix)
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    // 檢查是否包含 _{number} 格式的後綴，如果是則移除
+    const match = teamName.match(/^(.+)_\d+$/);
+    if (match) {
+      return match[1];
+    }
+    return teamName;
+  };
+
   const calculateStats = (standingsData) => {
     let totalTeams = 0;
     let totalMatches = 0;
@@ -141,7 +152,7 @@ const AllGroupStandings = () => {
             }}
             onClick={() => navigate(`/teams/${record.team_id}`)}
           >
-            {record.team_name}
+            {getDisplayTeamName(record.team_name)}
           </span>
         </div>
       ),

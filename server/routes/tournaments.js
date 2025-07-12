@@ -3169,6 +3169,16 @@ router.get('/:id/stats/overall-leaderboard', async (req, res) => {
       WHERE t.tournament_id = ?
     `, [tournamentId, tournamentId, tournamentId]);
     
+    // Clean team names by removing tournament suffix
+    const cleanTeamName = (teamName) => {
+      if (!teamName) return '';
+      const suffix = `_${tournamentId}`;
+      if (teamName.endsWith(suffix)) {
+        return teamName.slice(0, -suffix.length);
+      }
+      return teamName;
+    };
+    
     // First, group teams by their groups and sort within each group
     const teamsByGroup = {};
     allTeamsStats.forEach(team => {
@@ -3178,6 +3188,7 @@ router.get('/:id/stats/overall-leaderboard', async (req, res) => {
       }
       teamsByGroup[groupKey].push({
         ...team,
+        team_name: cleanTeamName(team.team_name), // Clean the team name
         goal_difference: team.goals_for - team.goals_against,
         win_rate: team.played > 0 ? ((team.won / team.played) * 100).toFixed(1) : 0,
         points_per_game: team.played > 0 ? (team.points / team.played).toFixed(2) : 0

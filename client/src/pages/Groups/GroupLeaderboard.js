@@ -12,6 +12,17 @@ const GroupLeaderboard = () => {
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    // 檢查是否以 _{tournamentId} 結尾，如果是則移除
+    const suffix = `_${tournamentId}`;
+    if (teamName.endsWith(suffix)) {
+      return teamName.slice(0, -suffix.length);
+    }
+    return teamName;
+  };
+
   useEffect(() => {
     fetchGroups();
   }, [tournamentId]);
@@ -19,6 +30,15 @@ const GroupLeaderboard = () => {
   const fetchGroups = async () => {
     try {
       setLoading(true);
+
+      // 先重新計算積分榜以確保數據是最新的
+      try {
+        await axios.post("/api/stats/calculate-all-group-standings");
+        console.log('✅ Group standings recalculated');
+      } catch (calcError) {
+        console.warn('⚠️ Failed to recalculate standings:', calcError);
+        // 繼續執行，即使計算失敗也要顯示現有數據
+      }
 
       // 使用與錦標賽小組頁面相同的API調用方式
       const [groupsRes, statsRes] = await Promise.all([
@@ -37,7 +57,7 @@ const GroupLeaderboard = () => {
             .sort((a, b) => b.points - a.points)
             .map((team) => ({
               team_id: team.team_id,
-              name: team.team_name,
+              name: getDisplayTeamName(team.team_name),
               points: team.points,
               played: team.played,
               won: team.won,
