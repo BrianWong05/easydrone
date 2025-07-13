@@ -211,18 +211,17 @@ const TournamentMatchGenerator = () => {
       setLoading(true);
 
       const selectedGroupsData = groups.filter((g) => selectedGroups.includes(g.group_id));
-      const matches = [];
+      
       // 確保使用DatePicker的日期和TimePicker的時間
       const dateString = startDate.format('YYYY-MM-DD');
       const timeString = startTime.format('HH:mm');
-      let currentTime = moment(`${dateString} ${timeString}`, 'YYYY-MM-DD HH:mm');
+      const currentTime = moment(`${dateString} ${timeString}`, 'YYYY-MM-DD HH:mm');
       
       console.log('🔍 Tournament Match Generator - Date string:', dateString);
       console.log('🔍 Tournament Match Generator - Time string:', timeString);
       console.log('🔍 Tournament Match Generator - Start time:', currentTime.format('YYYY-MM-DD HH:mm:ss'));
 
-      // 首先獲取所有小組的隊伍數據
-      const groupsWithTeams = [];
+      // 驗證所有選中的小組都有足夠的隊伍
       for (const group of selectedGroupsData) {
         const teamsResponse = await axios.get(
           `/api/tournaments/${tournamentId}/teams?group_id=${group.group_id}&limit=100`,
@@ -231,73 +230,44 @@ const TournamentMatchGenerator = () => {
 
         if (teams.length < 2) {
           message.warning(`小組 ${group.group_name} 隊伍不足，跳過生成比賽`);
-          continue;
+          return;
         }
+      }
 
-        // 生成該小組的優化對陣組合
-        const optimizedMatches = generateOptimizedMatches(teams);
-        const groupMatches = optimizedMatches.map(match => ({
-          team1: match.team1,
-          team2: match.team2,
-          groupData: group
-        }));
-
-        groupsWithTeams.push({
-          group,
-          matches: groupMatches
+      // 使用優化的批量生成端點 (圓桌法確保主客場平衡)
+      try {
+        console.log('🎯 使用優化的圓桌法算法生成比賽...');
+        
+        const response = await axios.post(`/api/tournaments/${tournamentId}/matches/generate`, {
+          selected_groups: selectedGroupsData.map(g => g.group_id),
+          match_date: currentTime.format("YYYY-MM-DD HH:mm:ss"),
+          match_time: matchDuration,
+          match_interval: Math.max(10, Math.ceil(breakDuration / 60)), // Convert seconds to minutes, minimum 10
+          optimize_schedule: true
         });
-      }
 
-      // 計算每組最大比賽數，用於循環生成
-      const maxMatchesPerGroup = Math.max(...groupsWithTeams.map(g => g.matches.length));
-      
-      // 按輪次循環生成比賽 (A01, B01, C01, D01, A02, B02, C02, D02...)
-      for (let round = 0; round < maxMatchesPerGroup; round++) {
-        for (const groupData of groupsWithTeams) {
-          if (round < groupData.matches.length) {
-            const matchData = groupData.matches[round];
-            const groupLetter = groupData.group.group_name?.includes("_") 
-              ? groupData.group.group_name.split("_")[0] 
-              : groupData.group.group_name;
-            
-            const match = {
-              match_number: `${groupLetter}${(round + 1).toString().padStart(2, '0')}`,
-              team1_id: matchData.team1.team_id,
-              team2_id: matchData.team2.team_id,
-              match_date: currentTime.format("YYYY-MM-DD HH:mm:ss"),
-              match_time: matchDuration,
-              match_type: "group",
-              tournament_stage: `小組${groupLetter}循環賽`,
-              group_id: groupData.group.group_id,
-            };
-
-            matches.push(match);
-
-            // 下一場比賽時間 - 只加上比賽間隔
-            currentTime.add(breakDuration, "seconds");
-          }
+        if (response.data.success) {
+          const successCount = response.data.data.total_matches;
+          const groupResults = response.data.data.group_results || [];
+          
+          console.log('✅ 圓桌法生成成功:', response.data.data);
+          
+          // 顯示主客場平衡信息
+          let balanceInfo = '';
+          groupResults.forEach(group => {
+            if (group.homeAwayAnalysis && group.homeAwayAnalysis.isWellBalanced) {
+              balanceInfo += `小組${group.group_name}: 主客場平衡良好; `;
+            }
+          });
+          
+          message.success(`成功生成 ${successCount} 場比賽！${balanceInfo}使用圓桌法確保完美主客場平衡`);
+          navigate(`/tournaments/${tournamentId}/matches`);
+        } else {
+          message.error(response.data.message || "比賽生成失敗");
         }
-      }
-
-      // 批量創建比賽
-      let successCount = 0;
-      let errorCount = 0;
-
-      for (const match of matches) {
-        try {
-          await axios.post(`/api/tournaments/${tournamentId}/matches`, match);
-          successCount++;
-        } catch (error) {
-          console.error("Error creating match:", error);
-          errorCount++;
-        }
-      }
-
-      if (successCount > 0) {
-        message.success(`成功生成 ${successCount} 場比賽${errorCount > 0 ? `，${errorCount} 場失敗` : ""}`);
-        navigate(`/tournaments/${tournamentId}/matches`);
-      } else {
-        message.error("比賽生成失敗");
+      } catch (error) {
+        console.error("Error generating matches with optimized algorithm:", error);
+        message.error(`比賽生成失敗: ${error.response?.data?.message || error.message}`);
       }
     } catch (error) {
       console.error("Error generating matches:", error);

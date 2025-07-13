@@ -1,5 +1,6 @@
 const express = require('express');
 const Joi = require('joi');
+const moment = require('moment');
 const { query, transaction } = require('../config/database');
 const { authenticateToken } = require('../middleware/auth');
 
@@ -2628,6 +2629,199 @@ router.get('/:id/matches', async (req, res) => {
 });
 
 // 為錦標賽創建比賽
+// 批量生成錦標賽小組比賽 (使用優化的主客場平衡算法)
+router.post('/:id/matches/generate', async (req, res) => {
+  try {
+    const tournamentId = req.params.id;
+    const { 
+      selected_groups = [], 
+      match_date, 
+      match_time = 600, 
+      match_interval = 30,
+      optimize_schedule = true
+    } = req.body;
+
+    // Import the optimized utility functions
+    const { 
+      generateGroupMatches, 
+      validateGroupMatchConfig, 
+      optimizeMatchSchedule,
+      generateMatchStatistics,
+      analyzeBackToBackMatches,
+      analyzeHomeAwayBalance
+    } = require('../utils/groupMatchGenerator');
+
+    // 檢查錦標賽是否存在
+    const tournament = await query('SELECT tournament_id, tournament_name FROM tournaments WHERE tournament_id = ?', [tournamentId]);
+    if (tournament.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: '錦標賽不存在'
+      });
+    }
+
+    if (!selected_groups || selected_groups.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: '請選擇至少一個小組'
+      });
+    }
+
+    // 驗證配置
+    const validation = validateGroupMatchConfig({
+      groupId: selected_groups[0], // 使用第一個小組ID進行基本驗證
+      matchDate: match_date,
+      matchTime: match_time,
+      matchInterval: match_interval
+    });
+
+    if (!validation.isValid) {
+      return res.status(400).json({
+        success: false,
+        message: '配置驗證失敗',
+        errors: validation.errors
+      });
+    }
+
+    const allMatches = [];
+    const groupResults = [];
+    let currentTime = moment(match_date);
+
+    // 為每個選中的小組生成比賽
+    for (const groupId of selected_groups) {
+      // 獲取小組信息
+      const groups = await query(
+        'SELECT group_id, group_name FROM team_groups WHERE group_id = ? AND tournament_id = ?',
+        [groupId, tournamentId]
+      );
+
+      if (groups.length === 0) {
+        console.warn(`小組 ${groupId} 不存在或不屬於錦標賽 ${tournamentId}`);
+        continue;
+      }
+
+      // 獲取小組隊伍
+      const teams = await query(
+        'SELECT team_id, team_name FROM teams WHERE group_id = ? AND tournament_id = ? ORDER BY team_name',
+        [groupId, tournamentId]
+      );
+
+      if (teams.length < 2) {
+        console.warn(`小組 ${groups[0].group_name} 隊伍不足，跳過生成比賽`);
+        continue;
+      }
+
+      // 檢查是否已有比賽
+      const existingMatches = await query(
+        'SELECT match_id FROM matches WHERE group_id = ? AND tournament_id = ?',
+        [groupId, tournamentId]
+      );
+
+      if (existingMatches.length > 0) {
+        console.warn(`小組 ${groups[0].group_name} 已有比賽，跳過生成`);
+        continue;
+      }
+
+      // 清理小組名稱，移除錦標賽ID後綴 (例如: "A_18" → "A")
+      const cleanGroupName = groups[0].group_name.includes('_') 
+        ? groups[0].group_name.split('_')[0] 
+        : groups[0].group_name;
+
+      // 使用優化的比賽生成器
+      let matches = generateGroupMatches(teams, {
+        groupName: cleanGroupName,
+        matchDate: currentTime.format('YYYY-MM-DD HH:mm:ss'),
+        matchTime: match_time,
+        matchInterval: match_interval,
+        matchType: 'group',
+        groupId: groupId
+      });
+
+      // 如果啟用優化，則優化比賽時間表
+      if (optimize_schedule) {
+        matches = optimizeMatchSchedule(matches, match_interval);
+      }
+
+      // 添加錦標賽ID
+      matches.forEach(match => {
+        match.tournament_id = tournamentId;
+        match.tournament_stage = `小組${cleanGroupName}循環賽`;
+      });
+
+      // 分析結果
+      const homeAwayAnalysis = analyzeHomeAwayBalance(matches, teams);
+      const backToBackAnalysis = analyzeBackToBackMatches(matches);
+
+      groupResults.push({
+        group_id: groupId,
+        group_name: groups[0].group_name,
+        team_count: teams.length,
+        matches_generated: matches.length,
+        homeAwayAnalysis,
+        backToBackAnalysis
+      });
+
+      allMatches.push(...matches);
+
+      // 更新下一個小組的開始時間
+      if (matches.length > 0) {
+        const lastMatchTime = moment(matches[matches.length - 1].match_date);
+        currentTime = lastMatchTime.add(match_interval * 2, 'minutes'); // 小組間額外間隔
+      }
+    }
+
+    if (allMatches.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: '沒有生成任何比賽，請檢查小組設置'
+      });
+    }
+
+    // 批量插入比賽到數據庫
+    await transaction(async (connection) => {
+      for (const match of allMatches) {
+        await connection.execute(`
+          INSERT INTO matches (
+            match_number, team1_id, team2_id, match_date, match_time,
+            match_type, group_id, tournament_id, tournament_stage, match_status
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `, [
+          match.match_number,
+          match.team1_id,
+          match.team2_id,
+          match.match_date,
+          match.match_time,
+          match.match_type,
+          match.group_id,
+          match.tournament_id,
+          match.tournament_stage,
+          match.match_status
+        ]);
+      }
+    });
+
+    res.status(201).json({
+      success: true,
+      message: `錦標賽 ${tournament[0].tournament_name} 比賽生成成功`,
+      data: {
+        tournament_name: tournament[0].tournament_name,
+        total_matches: allMatches.length,
+        groups_processed: groupResults.length,
+        group_results: groupResults,
+        optimization_enabled: optimize_schedule
+      }
+    });
+
+  } catch (error) {
+    console.error('生成錦標賽比賽錯誤:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || '生成錦標賽比賽失敗'
+    });
+  }
+});
+
+// 創建單個錦標賽比賽
 router.post('/:id/matches', async (req, res) => {
   try {
     const tournamentId = req.params.id;

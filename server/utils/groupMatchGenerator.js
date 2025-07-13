@@ -37,40 +37,46 @@ function generateGroupMatches(teams, options = {}) {
   let matchNumber = 1;
   const baseDate = moment(matchDate);
 
-  // 生成循環賽對陣 (Round Robin Algorithm)
-  // 每兩支隊伍之間進行一場比賽
-  for (let i = 0; i < teams.length; i++) {
-    for (let j = i + 1; j < teams.length; j++) {
-      const team1 = teams[i];
-      const team2 = teams[j];
+  // 生成循環賽對陣 (Circle Method Round Robin with Perfect Home/Away Balance)
+  // 使用圓桌法確保數學上完美的主客場平衡
+  
+  const n = teams.length;
+  
+  // 使用圓桌法生成比賽對陣
+  const roundRobinMatches = generateCircleMethodMatches(teams);
+  
+  console.log(`🏠 使用圓桌法生成 ${roundRobinMatches.length} 場比賽，確保完美主客場平衡`);
+  
+  // 生成比賽對象
+  for (let i = 0; i < roundRobinMatches.length; i++) {
+    const matchPair = roundRobinMatches[i];
+    
+    // 計算比賽時間
+    const matchDateTime = baseDate.clone().add((matchNumber - 1) * matchInterval, 'minutes');
+    
+    // 生成比賽編號
+    const matchNumberStr = `${groupName}${matchNumber.toString().padStart(2, '0')}`;
 
-      // 計算比賽時間 (每場比賽間隔指定分鐘數)
-      const matchDateTime = baseDate.clone().add((matchNumber - 1) * matchInterval, 'minutes');
-      
-      // 生成比賽編號 (格式: A01, A02, B01, B02...)
-      const matchNumberStr = `${groupName}${matchNumber.toString().padStart(2, '0')}`;
+    const match = {
+      match_number: matchNumberStr,
+      team1_id: matchPair.homeTeam.team_id,
+      team2_id: matchPair.awayTeam.team_id,
+      team1_name: matchPair.homeTeam.team_name,
+      team2_name: matchPair.awayTeam.team_name,
+      match_date: matchDateTime.format('YYYY-MM-DD HH:mm:ss'),
+      match_time: matchTime,
+      match_type: matchType,
+      group_id: groupId,
+      tournament_stage: null,
+      match_status: 'pending',
+      team1_score: 0,
+      team2_score: 0,
+      team1_fouls: 0,
+      team2_fouls: 0
+    };
 
-      const match = {
-        match_number: matchNumberStr,
-        team1_id: team1.team_id,
-        team2_id: team2.team_id,
-        team1_name: team1.team_name,
-        team2_name: team2.team_name,
-        match_date: matchDateTime.format('YYYY-MM-DD HH:mm:ss'),
-        match_time: matchTime,
-        match_type: matchType,
-        group_id: groupId,
-        tournament_stage: null,
-        match_status: 'pending',
-        team1_score: 0,
-        team2_score: 0,
-        team1_fouls: 0,
-        team2_fouls: 0
-      };
-
-      matches.push(match);
-      matchNumber++;
-    }
+    matches.push(match);
+    matchNumber++;
   }
 
   return matches;
@@ -268,6 +274,112 @@ function verifyNoBackToBack(matches) {
 }
 
 /**
+ * 使用圓桌法生成完美平衡的循環賽對陣
+ * Generate perfectly balanced round-robin matches using circle method
+ * 
+ * @param {Array} teams - 隊伍列表 Array of teams
+ * @returns {Array} 比賽對陣列表 Array of match pairings with home/away assignments
+ */
+function generateCircleMethodMatches(teams) {
+  const n = teams.length;
+  
+  if (n < 2) return [];
+  
+  // 創建隊伍索引數組
+  const teamIndices = Array.from({ length: n }, (_, i) => i);
+  
+  // 如果是奇數隊伍，添加一個虛擬隊伍（輪空）
+  const isOdd = n % 2 === 1;
+  if (isOdd) {
+    teamIndices.push(-1); // -1 表示輪空
+  }
+  
+  const totalTeams = teamIndices.length;
+  const rounds = totalTeams - 1;
+  const matchesPerRound = totalTeams / 2;
+  
+  const allMatches = [];
+  const homeAwayBalance = new Map();
+  
+  // 初始化主客場統計
+  teams.forEach(team => {
+    homeAwayBalance.set(team.team_id, { home: 0, away: 0 });
+  });
+  
+  console.log(`🎯 圓桌法: ${n}隊 → ${rounds}輪 × ${matchesPerRound}場/輪`);
+  
+  // 生成每一輪的比賽
+  for (let round = 0; round < rounds; round++) {
+    const roundMatches = [];
+    
+    // 第一個位置固定，其他位置旋轉
+    const arrangement = [teamIndices[0]];
+    for (let i = 1; i < totalTeams; i++) {
+      const rotatedIndex = ((i - 1 + round) % (totalTeams - 1)) + 1;
+      arrangement.push(teamIndices[rotatedIndex]);
+    }
+    
+    // 配對：第一個與最後一個，第二個與倒數第二個，以此類推
+    for (let i = 0; i < matchesPerRound; i++) {
+      const team1Index = arrangement[i];
+      const team2Index = arrangement[totalTeams - 1 - i];
+      
+      // 跳過輪空
+      if (team1Index === -1 || team2Index === -1) continue;
+      
+      const team1 = teams[team1Index];
+      const team2 = teams[team2Index];
+      
+      // 決定主客場 - 使用平衡策略
+      const balance1 = homeAwayBalance.get(team1.team_id);
+      const balance2 = homeAwayBalance.get(team2.team_id);
+      
+      let homeTeam, awayTeam;
+      
+      // 優先讓主場次數較少的隊伍做主場
+      if (balance1.home < balance2.home) {
+        homeTeam = team1;
+        awayTeam = team2;
+      } else if (balance2.home < balance1.home) {
+        homeTeam = team2;
+        awayTeam = team1;
+      } else {
+        // 主場次數相同時，使用輪換策略
+        if ((round + i) % 2 === 0) {
+          homeTeam = team1;
+          awayTeam = team2;
+        } else {
+          homeTeam = team2;
+          awayTeam = team1;
+        }
+      }
+      
+      // 更新統計
+      homeAwayBalance.get(homeTeam.team_id).home++;
+      homeAwayBalance.get(awayTeam.team_id).away++;
+      
+      roundMatches.push({
+        homeTeam,
+        awayTeam,
+        round: round + 1,
+        matchInRound: i + 1
+      });
+    }
+    
+    allMatches.push(...roundMatches);
+  }
+  
+  // 輸出平衡統計
+  console.log('🏠 圓桌法主客場平衡統計:');
+  teams.forEach(team => {
+    const balance = homeAwayBalance.get(team.team_id);
+    console.log(`  ${team.team_name}: 主場 ${balance.home} 次, 客場 ${balance.away} 次`);
+  });
+  
+  return allMatches;
+}
+
+/**
  * 分析背靠背比賽數量
  * Analyze the number of back-to-back matches
  * 
@@ -298,6 +410,64 @@ function analyzeBackToBackMatches(matches) {
   });
 
   return backToBackCount;
+}
+
+/**
+ * 分析主客場平衡情況
+ * Analyze home/away balance for all teams
+ * 
+ * @param {Array} matches - 比賽列表 Array of matches
+ * @param {Array} teams - 隊伍列表 Array of teams
+ * @returns {Object} 主客場平衡分析 Home/away balance analysis
+ */
+function analyzeHomeAwayBalance(matches, teams) {
+  const homeAwayStats = new Map();
+  
+  // 初始化統計
+  teams.forEach(team => {
+    homeAwayStats.set(team.team_id, {
+      team_name: team.team_name,
+      home_games: 0,
+      away_games: 0,
+      total_games: 0
+    });
+  });
+  
+  // 統計每場比賽
+  matches.forEach(match => {
+    const team1Stats = homeAwayStats.get(match.team1_id);
+    const team2Stats = homeAwayStats.get(match.team2_id);
+    
+    if (team1Stats) {
+      team1Stats.home_games++;
+      team1Stats.total_games++;
+    }
+    
+    if (team2Stats) {
+      team2Stats.away_games++;
+      team2Stats.total_games++;
+    }
+  });
+  
+  // 轉換為數組並計算平衡度
+  const balanceArray = Array.from(homeAwayStats.values()).map(stats => ({
+    ...stats,
+    balance_difference: Math.abs(stats.home_games - stats.away_games),
+    balance_ratio: stats.total_games > 0 ? (stats.home_games / stats.total_games).toFixed(2) : 0
+  }));
+  
+  // 計算整體平衡指標
+  const totalBalanceDifference = balanceArray.reduce((sum, team) => sum + team.balance_difference, 0);
+  const maxBalanceDifference = Math.max(...balanceArray.map(team => team.balance_difference));
+  const isWellBalanced = maxBalanceDifference <= 1; // 最大差異不超過1場
+  
+  return {
+    teamStats: balanceArray,
+    totalBalanceDifference,
+    maxBalanceDifference,
+    isWellBalanced,
+    summary: `最大主客場差異: ${maxBalanceDifference} 場, ${isWellBalanced ? '平衡良好' : '需要優化'}`
+  };
 }
 
 /**
@@ -336,5 +506,6 @@ module.exports = {
   validateGroupMatchConfig,
   optimizeMatchSchedule,
   generateMatchStatistics,
-  analyzeBackToBackMatches
+  analyzeBackToBackMatches,
+  analyzeHomeAwayBalance
 };

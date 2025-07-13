@@ -618,7 +618,8 @@ router.post('/:id/matches', async (req, res) => {
       validateGroupMatchConfig, 
       optimizeMatchSchedule,
       generateMatchStatistics,
-      analyzeBackToBackMatches
+      analyzeBackToBackMatches,
+      analyzeHomeAwayBalance
     } = require('../utils/groupMatchGenerator');
 
     // Validate configuration
@@ -715,6 +716,9 @@ router.post('/:id/matches', async (req, res) => {
       afterOptimization: optimize_schedule ? analyzeBackToBackMatches(matches) : null
     };
 
+    // 分析主客場平衡情況
+    const homeAwayAnalysis = analyzeHomeAwayBalance(matches, teams);
+
     // 插入比賽到數據庫
     await transaction(async (connection) => {
       for (const match of matches) {
@@ -744,7 +748,8 @@ router.post('/:id/matches', async (req, res) => {
         matchesCreated: matches.length,
         matches: matches,
         statistics: statistics,
-        backToBackAnalysis: backToBackAnalysis
+        backToBackAnalysis: backToBackAnalysis,
+        homeAwayAnalysis: homeAwayAnalysis
       }
     });
 
