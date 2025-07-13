@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Typography, Form, Input, Select, Button, Space, DatePicker, InputNumber, message, Spin } from 'antd';
+import { Card, Typography, Form, Input, Select, Button, Space, DatePicker, TimePicker, InputNumber, message, Spin, Row, Col, Divider } from 'antd';
 import { ArrowLeftOutlined, SaveOutlined, CalendarOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
@@ -63,11 +63,31 @@ const TournamentMatchEdit = () => {
         const { minutes, seconds } = convertFromSeconds(match.match_time);
         console.log('🔍 Converted to:', minutes, 'minutes,', seconds, 'seconds');
         
+        // 分離日期和時間 - 使用字符串解析避免時區問題
+        const matchMoment = moment(match.match_date);
+        
+        // 直接從字符串創建moment對象避免時區轉換
+        const dateString = matchMoment.format('YYYY-MM-DD');
+        const timeString = matchMoment.format('HH:mm');
+        
+        // 為DatePicker創建只包含日期的moment對象
+        const dateForPicker = moment(dateString, 'YYYY-MM-DD');
+        // 為TimePicker創建包含時間的moment對象
+        const timeForPicker = moment(timeString, 'HH:mm');
+        
+        console.log('🔍 Edit - Original match_date:', match.match_date);
+        console.log('🔍 Edit - Parsed moment:', matchMoment.format('YYYY-MM-DD HH:mm:ss'));
+        console.log('🔍 Edit - Date string:', dateString);
+        console.log('🔍 Edit - Time string:', timeString);
+        console.log('🔍 Edit - Date for picker:', dateForPicker.format('YYYY-MM-DD'));
+        console.log('🔍 Edit - Time for picker:', timeForPicker.format('HH:mm'));
+        
         form.setFieldsValue({
           match_number: match.match_number,
           team1_id: match.team1_id,
           team2_id: match.team2_id,
-          match_date: moment(match.match_date),
+          match_date: dateForPicker,
+          match_time: timeForPicker,
           match_minutes: minutes,
           match_seconds: seconds,
           match_type: getChineseMatchType(match.match_type),
@@ -91,8 +111,8 @@ const TournamentMatchEdit = () => {
   const getChineseMatchType = (englishType) => {
     switch (englishType) {
       case 'group': return '小組賽';
-      case 'friendly': return '友誼賽';
       case 'knockout': return '淘汰賽';
+      case 'friendly': return '友誼賽';
       default: return '友誼賽';
     }
   };
@@ -105,7 +125,8 @@ const TournamentMatchEdit = () => {
       
       // 確定比賽類型
       const matchType = values.match_type === '小組賽' ? 'group' : 
-                       values.match_type === '友誼賽' ? 'friendly' : 'knockout';
+                       values.match_type === '淘汰賽' ? 'knockout' : 
+                       values.match_type === '友誼賽' ? 'friendly' : 'friendly';
       
       let groupId = values.group_id || null;
       
@@ -134,11 +155,30 @@ const TournamentMatchEdit = () => {
         }
       }
       
+      // 組合日期和時間
+      console.log('🔍 Edit - Raw form values:', {
+        match_date: values.match_date,
+        match_time: values.match_time,
+        match_date_format: values.match_date?.format('YYYY-MM-DD'),
+        match_time_format: values.match_time?.format('HH:mm')
+      });
+      
+      // 直接使用格式化的字符串來避免時區問題
+      const dateString = values.match_date.format('YYYY-MM-DD'); // 從DatePicker獲取日期字符串
+      const timeString = values.match_time.format('HH:mm'); // 從TimePicker獲取時間字符串
+      
+      // 直接組合字符串
+      const matchDateTime = `${dateString} ${timeString}:00`;
+        
+      console.log('🔍 Edit - Date string:', dateString);
+      console.log('🔍 Edit - Time string:', timeString);
+      console.log('🔍 Edit - Combined datetime:', matchDateTime);
+
       const matchUpdateData = {
         match_number: values.match_number,
         team1_id: values.team1_id,
         team2_id: values.team2_id,
-        match_date: values.match_date.format('YYYY-MM-DD HH:mm:ss'),
+        match_date: matchDateTime,
         match_time: totalSeconds,
         match_type: matchType,
         tournament_stage: values.tournament_stage || null,
@@ -203,244 +243,219 @@ const TournamentMatchEdit = () => {
   }
 
   return (
-    <div style={{ padding: '24px' }}>
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <Button 
-            icon={<ArrowLeftOutlined />} 
-            onClick={handleCancel}
-          >
-            返回
-          </Button>
-          <Title level={2} style={{ margin: 0 }}>編輯比賽</Title>
-          {tournament && (
-            <span style={{ color: '#666' }}>
-              {tournament.tournament_name}
-            </span>
-          )}
-        </div>
+    <div style={{ padding: "24px" }}>
+      <div style={{ marginBottom: 24 }}>
+        <Button
+          icon={<ArrowLeftOutlined />}
+          onClick={handleCancel}
+          style={{ marginBottom: 16 }}
+        >
+          返回比賽詳情
+        </Button>
+        <Title level={2}>{tournament?.tournament_name} - 編輯比賽</Title>
+        <p style={{ color: "#666", marginBottom: 0 }}>修改比賽的詳細信息和設置</p>
+      </div>
 
-        <Card>
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={handleSubmit}
-          >
-            <Form.Item
-              label="比賽編號"
-              name="match_number"
-              rules={[
-                { required: true, message: '請輸入比賽編號' },
-                { pattern: /^[A-Z]\d{2}$/, message: '比賽編號格式：A01' }
-              ]}
-            >
-              <Input 
-                placeholder="例如：A01"
-                size="large"
-              />
-            </Form.Item>
-
-            <Form.Item
-              label="隊伍1"
-              name="team1_id"
-              rules={[{ required: true, message: '請選擇隊伍1' }]}
-            >
-              <Select 
-                placeholder="請選擇隊伍1"
-                size="large"
-                showSearch
-                filterOption={(input, option) =>
-                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                }
+      <Card>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+        >
+          <Row gutter={24}>
+            <Col span={12}>
+              <Form.Item
+                label="比賽場次"
+                name="match_number"
+                rules={[
+                  { required: true, message: "請輸入比賽場次" },
+                  { pattern: /^[A-Za-z0-9\-_]+$/, message: "比賽場次只能包含字母、數字、連字符和下劃線" },
+                ]}
               >
-                {teams.map(team => {
-                  const displayName = team.team_name?.includes("_") ? team.team_name.split("_")[0] : team.team_name;
-                  const groupName = team.group_name?.includes("_") ? team.group_name.split("_")[0] : team.group_name;
-                  return (
+                <Input placeholder="例如: A1, B2, SF1, F1" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="比賽類型" name="match_type" rules={[{ required: true, message: "請選擇比賽類型" }]}>
+                <Select>
+                  <Option value="小組賽">小組賽</Option>
+                  <Option value="淘汰賽">淘汰賽</Option>
+                  <Option value="友誼賽">友誼賽</Option>
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+
+          <Form.Item label="錦標賽階段" name="tournament_stage">
+            <Input placeholder="例如: 小組賽第1輪, 八強賽, 決賽" />
+          </Form.Item>
+
+          <Divider>隊伍設置</Divider>
+
+          <Form.Item label="選擇小組（可選）" name="group_id">
+            <Select placeholder="選擇小組後將只顯示該小組的隊伍" allowClear>
+              <Option value={null}>無小組</Option>
+              {groups.map((group) => (
+                <Option key={group.group_id} value={group.group_id}>
+                  小組 {group.group_name?.includes("_") ? group.group_name.split("_")[0] : group.group_name}
+                </Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          <Row gutter={24}>
+            <Col span={12}>
+              <Form.Item label="隊伍1" name="team1_id" rules={[{ required: true, message: "請選擇隊伍1" }]}>
+                <Select placeholder="選擇隊伍1" showSearch optionFilterProp="children">
+                  {teams.map((team) => (
                     <Option key={team.team_id} value={team.team_id}>
-                      {displayName}{groupName ? ` (小組 ${groupName})` : ''}
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div
+                          style={{
+                            width: 12,
+                            height: 12,
+                            backgroundColor: team.team_color || "#ccc",
+                            marginRight: 8,
+                            borderRadius: 2,
+                          }}
+                        />
+                        {team.team_name?.includes("_") ? team.team_name.split("_")[0] : team.team_name}
+                      </div>
                     </Option>
-                  );
-                })}
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              label="隊伍2"
-              name="team2_id"
-              rules={[{ required: true, message: '請選擇隊伍2' }]}
-            >
-              <Select 
-                placeholder="請選擇隊伍2"
-                size="large"
-                showSearch
-                filterOption={(input, option) =>
-                  option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                }
-              >
-                {teams.map(team => {
-                  const displayName = team.team_name?.includes("_") ? team.team_name.split("_")[0] : team.team_name;
-                  const groupName = team.group_name?.includes("_") ? team.group_name.split("_")[0] : team.group_name;
-                  return (
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item label="隊伍2" name="team2_id" rules={[{ required: true, message: "請選擇隊伍2" }]}>
+                <Select placeholder="選擇隊伍2" showSearch optionFilterProp="children">
+                  {teams.map((team) => (
                     <Option key={team.team_id} value={team.team_id}>
-                      {displayName}{groupName ? ` (小組 ${groupName})` : ''}
+                      <div style={{ display: "flex", alignItems: "center" }}>
+                        <div
+                          style={{
+                            width: 12,
+                            height: 12,
+                            backgroundColor: team.team_color || "#ccc",
+                            marginRight: 8,
+                            borderRadius: 2,
+                          }}
+                        />
+                        {team.team_name?.includes("_") ? team.team_name.split("_")[0] : team.team_name}
+                      </div>
                     </Option>
-                  );
-                })}
-              </Select>
-            </Form.Item>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
 
-            <Form.Item
-              label="所屬小組"
-              name="group_id"
-            >
-              <Select 
-                placeholder="請選擇小組（可選）"
-                size="large"
-                allowClear
-              >
-                {groups.map(group => {
-                  const displayName = group.group_name?.includes("_") ? group.group_name.split("_")[0] : group.group_name;
-                  return (
-                    <Option key={group.group_id} value={group.group_id}>
-                      小組 {displayName}
-                    </Option>
-                  );
-                })}
-              </Select>
-            </Form.Item>
+            <Divider>時間設置</Divider>
 
-            <Form.Item
-              label="比賽時間"
-              name="match_date"
-              rules={[{ required: true, message: '請選擇比賽時間' }]}
-            >
-              <DatePicker 
-                showTime
-                placeholder="請選擇比賽時間"
-                size="large"
-                style={{ width: '100%' }}
-                format="YYYY-MM-DD HH:mm"
-                disabledDate={(current) => current && current < moment().startOf('day')}
-              />
-            </Form.Item>
-
-            <div>
-              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>比賽時長</label>
-              <Input.Group compact>
+            <Row gutter={24}>
+              <Col span={12}>
                 <Form.Item
-                  name="match_minutes"
-                  style={{ display: 'inline-block', width: '50%', marginBottom: 0 }}
-                  dependencies={['match_seconds']}
-                  rules={[
-                    { 
-                      validator: (_, value) => {
-                        const minutes = value ?? 0;
-                        const seconds = form.getFieldValue('match_seconds') ?? 0;
-                        if (minutes === 0 && seconds === 0) {
-                          return Promise.reject(new Error('比賽時長不能為0'));
-                        }
-                        return Promise.resolve();
-                      }
-                    }
-                  ]}
+                  label="比賽日期"
+                  name="match_date"
+                  rules={[{ required: true, message: '請選擇比賽日期' }]}
                 >
-                  <InputNumber 
-                    placeholder="分鐘"
-                    size="large"
-                    min={0}
-                    max={60}
+                  <DatePicker 
+                    placeholder="選擇比賽日期"
                     style={{ width: '100%' }}
-                    addonAfter="分"
-                    onChange={() => {
-                      // 觸發秒數字段的驗證
-                      form.validateFields(['match_seconds']);
-                    }}
+                    disabledDate={(current) => current && current < moment().startOf('day')}
                   />
                 </Form.Item>
+              </Col>
+              <Col span={12}>
                 <Form.Item
-                  name="match_seconds"
-                  style={{ display: 'inline-block', width: '50%', marginBottom: 0 }}
-                  dependencies={['match_minutes']}
-                  rules={[
-                    { 
-                      validator: (_, value) => {
-                        const seconds = value ?? 0;
-                        const minutes = form.getFieldValue('match_minutes') ?? 0;
-                        if (minutes === 0 && seconds === 0) {
-                          return Promise.reject(new Error('比賽時長不能為0'));
-                        }
-                        return Promise.resolve();
-                      }
-                    }
-                  ]}
+                  label="比賽時間"
+                  name="match_time"
+                  rules={[{ required: true, message: '請選擇比賽時間' }]}
                 >
-                  <InputNumber 
-                    placeholder="秒數"
-                    size="large"
-                    min={0}
-                    max={59}
+                  <TimePicker 
+                    placeholder="選擇比賽時間"
                     style={{ width: '100%' }}
-                    addonAfter="秒"
-                    onChange={() => {
-                      // 觸發分鐘字段的驗證
-                      form.validateFields(['match_minutes']);
-                    }}
+                    format="HH:mm"
                   />
                 </Form.Item>
-              </Input.Group>
-            </div>
+              </Col>
+            </Row>
 
-            <Form.Item
-              label="比賽類型"
-              name="match_type"
-              rules={[{ required: true, message: '請選擇比賽類型' }]}
-            >
-              <Select 
-                placeholder="請選擇比賽類型"
-                size="large"
+          <div>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>比賽時長</label>
+            <Input.Group compact>
+              <Form.Item
+                name="match_minutes"
+                style={{ display: 'inline-block', width: '50%', marginBottom: 0 }}
+                dependencies={['match_seconds']}
+                rules={[
+                  { 
+                    validator: (_, value) => {
+                      const minutes = value ?? 0;
+                      const seconds = form.getFieldValue('match_seconds') ?? 0;
+                      if (minutes === 0 && seconds === 0) {
+                        return Promise.reject(new Error('比賽時長不能為0'));
+                      }
+                      return Promise.resolve();
+                    }
+                  }
+                ]}
               >
-                <Option value="小組賽">小組賽</Option>
-                <Option value="八強賽">八強賽</Option>
-                <Option value="準決賽">準決賽</Option>
-                <Option value="決賽">決賽</Option>
-                <Option value="友誼賽">友誼賽</Option>
-              </Select>
-            </Form.Item>
+                <InputNumber 
+                  placeholder="分鐘"
+                  min={0}
+                  max={60}
+                  style={{ width: '100%' }}
+                  addonAfter="分"
+                  onChange={() => {
+                    // 觸發秒數字段的驗證
+                    form.validateFields(['match_seconds']);
+                  }}
+                />
+              </Form.Item>
+              <Form.Item
+                name="match_seconds"
+                style={{ display: 'inline-block', width: '50%', marginBottom: 0 }}
+                dependencies={['match_minutes']}
+                rules={[
+                  { 
+                    validator: (_, value) => {
+                      const seconds = value ?? 0;
+                      const minutes = form.getFieldValue('match_minutes') ?? 0;
+                      if (minutes === 0 && seconds === 0) {
+                        return Promise.reject(new Error('比賽時長不能為0'));
+                      }
+                      return Promise.resolve();
+                    }
+                  }
+                ]}
+              >
+                <InputNumber 
+                  placeholder="秒數"
+                  min={0}
+                  max={59}
+                  style={{ width: '100%' }}
+                  addonAfter="秒"
+                  onChange={() => {
+                    // 觸發分鐘字段的驗證
+                    form.validateFields(['match_minutes']);
+                  }}
+                />
+              </Form.Item>
+            </Input.Group>
+          </div>
 
-            <Form.Item
-              label="錦標賽階段"
-              name="tournament_stage"
-            >
-              <Input 
-                placeholder="例如：小組賽第1輪"
-                size="large"
-              />
-            </Form.Item>
-
-            <Form.Item>
-              <Space>
-                <Button 
-                  type="primary" 
-                  htmlType="submit"
-                  loading={loading}
-                  icon={<SaveOutlined />}
-                  size="large"
-                >
-                  更新比賽
-                </Button>
-                <Button 
-                  onClick={handleCancel}
-                  size="large"
-                >
-                  取消
-                </Button>
-              </Space>
-            </Form.Item>
+          <Form.Item style={{ marginTop: 32 }}>
+            <Space>
+              <Button type="primary" htmlType="submit" loading={loading} icon={<SaveOutlined />}>
+                更新比賽
+              </Button>
+              <Button onClick={handleCancel}>取消</Button>
+            </Space>
+          </Form.Item>
           </Form>
         </Card>
-      </Space>
-    </div>
+      </div>
   );
 };
 

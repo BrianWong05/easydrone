@@ -125,10 +125,23 @@ const TournamentMatchCreate = () => {
       setLoading(true);
 
       // 組合日期和時間
-      const matchDateTime = moment(values.match_date)
-        .hour(values.match_time.hour())
-        .minute(values.match_time.minute())
-        .format("YYYY-MM-DD HH:mm:ss");
+      console.log('🔍 Create - Raw form values:', {
+        match_date: values.match_date,
+        match_time: values.match_time,
+        match_date_format: values.match_date?.format('YYYY-MM-DD'),
+        match_time_format: values.match_time?.format('HH:mm')
+      });
+      
+      // 直接使用格式化的字符串來避免時區問題
+      const dateString = values.match_date.format('YYYY-MM-DD'); // 從DatePicker獲取日期字符串
+      const timeString = values.match_time.format('HH:mm'); // 從TimePicker獲取時間字符串
+      
+      // 直接組合字符串
+      const matchDateTime = `${dateString} ${timeString}:00`;
+        
+      console.log('🔍 Create - Date string:', dateString);
+      console.log('🔍 Create - Time string:', timeString);
+      console.log('🔍 Create - Combined datetime:', matchDateTime);
 
       // 轉換分鐘和秒數為總秒數
       const totalSeconds = convertToSeconds(values.match_minutes, values.match_seconds);
@@ -183,7 +196,6 @@ const TournamentMatchCreate = () => {
             match_type: "group",
             match_minutes: 10,
             match_seconds: 0,
-            match_time: moment("10:00", "HH:mm"),
           }}
         >
           <Row gutter={24}>
