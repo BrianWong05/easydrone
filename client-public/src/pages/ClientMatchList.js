@@ -236,6 +236,28 @@ const ClientMatchList = () => {
     });
   };
 
+  // Custom sorting function for match numbers (e.g., A01, B01, C01, A02, B02, C02)
+  const sortMatchNumbers = (a, b) => {
+    const aNumber = a.match_number || "";
+    const bNumber = b.match_number || "";
+
+    if (!aNumber || !bNumber) return 0;
+
+    // Extract group letter and number (e.g., "A01" -> "A" and "01")
+    const aLetter = aNumber.charAt(0);
+    const bLetter = bNumber.charAt(0);
+    const aNum = parseInt(aNumber.slice(1)) || 0;
+    const bNum = parseInt(bNumber.slice(1)) || 0;
+
+    // First sort by number (01, 02, 03...)
+    if (aNum !== bNum) {
+      return aNum - bNum;
+    }
+
+    // Then sort by group letter (A, B, C, D...)
+    return aLetter.localeCompare(bLetter);
+  };
+
   // Table columns
   const columns = [
     {
@@ -243,6 +265,9 @@ const ClientMatchList = () => {
       dataIndex: 'match_number',
       key: 'match_number',
       width: 100,
+      sorter: (a, b) => sortMatchNumbers(a, b),
+      sortDirections: ['ascend', 'descend'],
+      defaultSortOrder: 'ascend',
       render: (number, record) => (
         <Button
           type="link"
@@ -292,6 +317,11 @@ const ClientMatchList = () => {
       dataIndex: 'match_date',
       key: 'match_date',
       width: 150,
+      sorter: (a, b) => {
+        if (!a.match_date || !b.match_date) return 0;
+        return moment(a.match_date).valueOf() - moment(b.match_date).valueOf();
+      },
+      sortDirections: ['ascend', 'descend'],
       render: (date) => (
         <Space direction="vertical" size="small">
           <Text>{date ? moment(date).format('MM/DD') : '-'}</Text>
@@ -307,6 +337,12 @@ const ClientMatchList = () => {
       key: 'match_type',
       width: 100,
       align: 'center',
+      sorter: (a, b) => {
+        const aType = a.match_type || "";
+        const bType = b.match_type || "";
+        return aType.localeCompare(bType);
+      },
+      sortDirections: ['ascend', 'descend'],
       render: (type) => getMatchTypeTag(type),
     },
     {
@@ -314,6 +350,12 @@ const ClientMatchList = () => {
       dataIndex: 'group_name',
       key: 'group_name',
       width: 120,
+      sorter: (a, b) => {
+        const aGroup = getDisplayGroupName(a.group_name) || "";
+        const bGroup = getDisplayGroupName(b.group_name) || "";
+        return aGroup.localeCompare(bGroup);
+      },
+      sortDirections: ['ascend', 'descend'],
       render: (groupName) => groupName ? (
         <Tag color="cyan">{getDisplayGroupName(groupName)}</Tag>
       ) : (
@@ -326,6 +368,19 @@ const ClientMatchList = () => {
       key: 'match_status',
       width: 120,
       align: 'center',
+      sorter: (a, b) => {
+        const statusOrder = { 
+          pending: 1, 
+          active: 2, 
+          in_progress: 2, 
+          completed: 3, 
+          cancelled: 4 
+        };
+        const aOrder = statusOrder[a.match_status] || 0;
+        const bOrder = statusOrder[b.match_status] || 0;
+        return aOrder - bOrder;
+      },
+      sortDirections: ['ascend', 'descend'],
       render: (status) => getMatchStatusTag(status),
     },
     {
@@ -528,6 +583,8 @@ const ClientMatchList = () => {
             showQuickJumper: true,
             showTotal: (total, range) => 
               `第 ${range[0]}-${range[1]} 項，共 ${total} 場比賽`,
+            pageSizeOptions: ['10', '20', '50', '100'],
+            defaultPageSize: 20
           }}
           locale={{
             emptyText: (
