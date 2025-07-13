@@ -268,9 +268,19 @@ const ClientMatchDetail = () => {
                 <TeamOutlined style={{ fontSize: '32px', color: 'white' }} />
               </div>
               <div>
-                <Title level={3} style={{ margin: 0 }}>
+                <Button
+                  type="link"
+                  style={{ 
+                    padding: 0, 
+                    height: 'auto', 
+                    fontSize: '24px', 
+                    fontWeight: 'bold',
+                    color: 'inherit'
+                  }}
+                  onClick={() => navigate(`/teams/${match.team1_id}`)}
+                >
                   {getDisplayTeamName(match.team1_name)}
-                </Title>
+                </Button>
                 {winnerInfo && winnerInfo.name === getDisplayTeamName(match.team1_name) && (
                   <Tag color="gold" icon={<TrophyOutlined />} style={{ marginTop: 8 }}>
                     獲勝
@@ -331,9 +341,19 @@ const ClientMatchDetail = () => {
                 <TeamOutlined style={{ fontSize: '32px', color: 'white' }} />
               </div>
               <div>
-                <Title level={3} style={{ margin: 0 }}>
+                <Button
+                  type="link"
+                  style={{ 
+                    padding: 0, 
+                    height: 'auto', 
+                    fontSize: '24px', 
+                    fontWeight: 'bold',
+                    color: 'inherit'
+                  }}
+                  onClick={() => navigate(`/teams/${match.team2_id}`)}
+                >
                   {getDisplayTeamName(match.team2_name)}
-                </Title>
+                </Button>
                 {winnerInfo && winnerInfo.name === getDisplayTeamName(match.team2_name) && (
                   <Tag color="gold" icon={<TrophyOutlined />} style={{ marginTop: 8 }}>
                     獲勝
