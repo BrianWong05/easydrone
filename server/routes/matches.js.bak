@@ -120,7 +120,7 @@ router.put('/batch-postpone', authenticateToken, async (req, res) => {
           // 更新比賽狀態為延期並調整時間
           await connection.execute(
             'UPDATE matches SET match_date = ? WHERE match_id = ?',
-            [newMatchDate, matchId]
+            ['postponed', newMatchDate, matchId]
           );
 
           successCount++;
@@ -1011,7 +1011,7 @@ router.put('/batch-postpone', async (req, res) => {
           // 更新比賽狀態為延期並調整時間
           await connection.execute(
             'UPDATE matches SET match_date = ? WHERE match_id = ?',
-            [newMatchDate, matchId]
+            ['postponed', newMatchDate, matchId]
           );
 
           successCount++;
