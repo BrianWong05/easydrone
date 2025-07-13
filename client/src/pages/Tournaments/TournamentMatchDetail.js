@@ -65,7 +65,7 @@ const MatchDetail = () => {
   };
 
   const handleBack = () => {
-    navigate(-1);
+    navigate(`/tournaments/${tournamentId}/matches`);
   };
 
   const handleEdit = () => {
@@ -75,7 +75,6 @@ const MatchDetail = () => {
   const handleStartMatch = () => {
     navigate(`/tournaments/${tournamentId}/matches/${matchId}/live`);
   };
-
 
   const handleDeleteMatch = () => {
     Modal.confirm({
@@ -172,7 +171,7 @@ const MatchDetail = () => {
 
   // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
   const getDisplayTeamName = (teamName) => {
-    if (!teamName) return '';
+    if (!teamName) return "";
     // 檢查是否以 _{tournamentId} 結尾，如果是則移除
     const suffix = `_${tournamentId}`;
     if (teamName.endsWith(suffix)) {
@@ -183,7 +182,7 @@ const MatchDetail = () => {
 
   // 清理小組名稱顯示（移除 _{tournament_id} 後綴）
   const getDisplayGroupName = (groupName) => {
-    if (!groupName) return '';
+    if (!groupName) return "";
     // 檢查是否以 _{tournamentId} 結尾，如果是則移除
     const suffix = `_${tournamentId}`;
     if (groupName.endsWith(suffix)) {
@@ -294,7 +293,7 @@ const MatchDetail = () => {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
             <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
-              返回
+              返回比賽列表
             </Button>
             <Title level={2} style={{ margin: 0 }}>
               比賽詳情
@@ -332,7 +331,9 @@ const MatchDetail = () => {
                   icon={<EditOutlined />}
                   onClick={handleEdit}
                   disabled={!matchData.team1_name || !matchData.team2_name}
-                  title={!matchData.team1_name || !matchData.team2_name ? "比賽隊伍尚未確定，無法編輯比賽" : "編輯延期比賽"}
+                  title={
+                    !matchData.team1_name || !matchData.team2_name ? "比賽隊伍尚未確定，無法編輯比賽" : "編輯延期比賽"
+                  }
                   style={{ color: "#fa8c16", borderColor: "#fa8c16" }}
                 >
                   編輯比賽
@@ -342,7 +343,9 @@ const MatchDetail = () => {
                   icon={<PlayCircleOutlined />}
                   onClick={handleStartMatch}
                   disabled={!matchData.team1_name || !matchData.team2_name}
-                  title={!matchData.team1_name || !matchData.team2_name ? "比賽隊伍尚未確定，無法開始比賽" : "開始延期的比賽"}
+                  title={
+                    !matchData.team1_name || !matchData.team2_name ? "比賽隊伍尚未確定，無法開始比賽" : "開始延期的比賽"
+                  }
                   style={{ backgroundColor: "#fa8c16" }}
                 >
                   開始比賽
