@@ -71,9 +71,9 @@ const ClientMatchList = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filters, setFilters] = useState({
-    status: '',
-    type: '',
-    group_id: '',
+    status: undefined,
+    type: undefined,
+    group_id: undefined,
     date_range: null,
     search: ''
   });
@@ -228,9 +228,9 @@ const ClientMatchList = () => {
 
   const clearFilters = () => {
     setFilters({
-      status: '',
-      type: '',
-      group_id: '',
+      status: undefined,
+      type: undefined,
+      group_id: undefined,
       date_range: null,
       search: ''
     });
@@ -508,7 +508,7 @@ const ClientMatchList = () => {
           </Col>
           <Col xs={24} sm={12} md={4}>
             <Select
-              placeholder="比賽狀態"
+              placeholder="請選擇比賽狀態"
               value={filters.status}
               onChange={(value) => handleFilterChange('status', value)}
               style={{ width: '100%' }}
@@ -521,7 +521,7 @@ const ClientMatchList = () => {
           </Col>
           <Col xs={24} sm={12} md={4}>
             <Select
-              placeholder="比賽類型"
+              placeholder="請選擇比賽類型"
               value={filters.type}
               onChange={(value) => handleFilterChange('type', value)}
               style={{ width: '100%' }}
@@ -534,7 +534,7 @@ const ClientMatchList = () => {
           </Col>
           <Col xs={24} sm={12} md={4}>
             <Select
-              placeholder="選擇小組"
+              placeholder="請選擇小組"
               value={filters.group_id}
               onChange={(value) => handleFilterChange('group_id', value)}
               style={{ width: '100%' }}
