@@ -201,13 +201,20 @@ const TournamentList = () => {
       render: (text, record) => (
         <Space>
           <TrophyOutlined style={{ color: record.status === 'active' ? '#52c41a' : '#faad14' }} />
-          <span style={{ 
-            fontWeight: 'bold',
-            color: record.status === 'active' ? '#52c41a' : 'inherit'
-          }}>
+          <Button
+            type="link"
+            style={{ 
+              padding: 0,
+              height: 'auto',
+              fontWeight: 'bold',
+              color: record.status === 'active' ? '#52c41a' : '#1890ff',
+              fontSize: '14px'
+            }}
+            onClick={() => navigate(`/tournaments/${record.tournament_id}`)}
+          >
             {text}
             {record.status === 'active' && <span style={{ marginLeft: 8, fontSize: '12px' }}>(公開中)</span>}
-          </span>
+          </Button>
         </Space>
       )
     },
