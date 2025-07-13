@@ -225,6 +225,15 @@ const TournamentGroupDetail = () => {
       dataIndex: "match_number",
       key: "match_number",
       width: 120,
+      render: (match_number, record) => (
+        <Button
+          type="link"
+          style={{ padding: 0, height: "auto", fontWeight: "bold" }}
+          onClick={() => navigate(`/tournaments/${tournamentId}/matches/${record.match_id}`)}
+        >
+          {match_number}
+        </Button>
+      ),
     },
     {
       title: "隊伍1",
@@ -240,7 +249,13 @@ const TournamentGroupDetail = () => {
               border: "1px solid #d9d9d9",
             }}
           />
-          <Text>{getDisplayTeamName(record.team1_name)}</Text>
+          <Button
+            type="link"
+            style={{ padding: 0, height: "auto" }}
+            onClick={() => navigate(`/tournaments/${tournamentId}/teams/${record.team1_id}`)}
+          >
+            {getDisplayTeamName(record.team1_name)}
+          </Button>
         </Space>
       ),
     },
@@ -268,7 +283,13 @@ const TournamentGroupDetail = () => {
               border: "1px solid #d9d9d9",
             }}
           />
-          <Text>{getDisplayTeamName(record.team2_name)}</Text>
+          <Button
+            type="link"
+            style={{ padding: 0, height: "auto" }}
+            onClick={() => navigate(`/tournaments/${tournamentId}/teams/${record.team2_id}`)}
+          >
+            {getDisplayTeamName(record.team2_name)}
+          </Button>
         </Space>
       ),
     },
@@ -345,7 +366,13 @@ const TournamentGroupDetail = () => {
               border: "1px solid #d9d9d9",
             }}
           />
-          <Text strong>{getDisplayTeamName(record.team_name)}</Text>
+          <Button
+            type="link"
+            style={{ padding: 0, height: "auto", fontWeight: "bold" }}
+            onClick={() => navigate(`/tournaments/${tournamentId}/teams/${record.team_id}`)}
+          >
+            {getDisplayTeamName(record.team_name)}
+          </Button>
         </Space>
       ),
     },
