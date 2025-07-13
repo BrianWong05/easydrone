@@ -9,6 +9,8 @@ import {
   BarChartOutlined,
   ThunderboltOutlined,
   MenuOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
 
@@ -17,6 +19,7 @@ const { Title, Text } = Typography;
 
 const ClientLayout = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [sidebarHidden, setSidebarHidden] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [tournament, setTournament] = useState(null);
@@ -183,15 +186,30 @@ const ClientLayout = ({ children }) => {
       
       {/* Desktop Sidebar */}
       {!isMobile && (
-        <Sider 
-          collapsible 
-          collapsed={collapsed} 
-          onCollapse={setCollapsed}
-          theme="light"
-          width={250}
-        >
-          {renderSidebarContent()}
-        </Sider>
+        <div style={{
+          width: sidebarHidden ? 0 : (collapsed ? 80 : 250),
+          transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          overflow: 'hidden'
+        }}>
+          <Sider 
+            collapsible 
+            collapsed={collapsed} 
+            onCollapse={setCollapsed}
+            theme="light"
+            width={250}
+            style={{
+              height: '100vh',
+              position: 'fixed',
+              left: 0,
+              top: 0,
+              zIndex: 1,
+              transform: sidebarHidden ? 'translateX(-100%)' : 'translateX(0)',
+              transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+            }}
+          >
+            {renderSidebarContent()}
+          </Sider>
+        </div>
       )}
       
       <Layout>
@@ -202,15 +220,51 @@ const ClientLayout = ({ children }) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          height: isMobile ? 56 : 64
+          height: isMobile ? 56 : 64,
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
         }}>
           <div style={{ display: 'flex', alignItems: 'center' }}>
-            {isMobile && (
+            {isMobile ? (
               <MenuOutlined 
                 className="mobile-menu-trigger"
                 onClick={() => setMobileDrawerOpen(true)}
                 style={{ marginRight: 16, fontSize: 18, cursor: 'pointer' }}
               />
+            ) : (
+              <div 
+                onClick={() => setSidebarHidden(!sidebarHidden)}
+                style={{ 
+                  marginRight: 16, 
+                  fontSize: 18, 
+                  cursor: 'pointer',
+                  padding: '4px',
+                  borderRadius: '4px',
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '32px',
+                  height: '32px',
+                  transform: 'scale(1)',
+                  backgroundColor: 'transparent'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#f5f5f5';
+                  e.currentTarget.style.transform = 'scale(1.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.transform = 'scale(1)';
+                }}
+                title={sidebarHidden ? '顯示側邊欄' : '隱藏側邊欄'}
+              >
+                <div style={{
+                  transition: 'transform 0.2s ease-in-out',
+                  transform: sidebarHidden ? 'rotate(180deg)' : 'rotate(0deg)'
+                }}>
+                  {sidebarHidden ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                </div>
+              </div>
             )}
             <Title level={3} style={{ 
               margin: 0, 
