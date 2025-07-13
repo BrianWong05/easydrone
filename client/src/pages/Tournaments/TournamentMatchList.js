@@ -116,11 +116,18 @@ const TournamentMatchList = () => {
       const params = new URLSearchParams({
         limit: "1000", // Large number to get all matches
         _t: Date.now(), // Add timestamp to prevent caching
+        _refresh: Math.random(), // Additional cache buster
       });
 
       console.log("🔍 Fetching all matches for tournament:", tournamentId);
 
-      const response = await axios.get(`/api/tournaments/${tournamentId}/matches?${params}`);
+      const response = await axios.get(`/api/tournaments/${tournamentId}/matches?${params}`, {
+        // Add headers to prevent caching
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
       console.log("🔍 All Matches API Response:", response.data);
 
       if (response.data.success) {
@@ -242,16 +249,21 @@ const TournamentMatchList = () => {
         return filteredMatches;
       });
       
-      // Force a complete refresh after a short delay to ensure server sync
-      setTimeout(async () => {
-        console.log('🔄 Refreshing matches from server...');
-        await fetchAllMatches();
-      }, 500);
+      // Clear selected rows if the deleted match was selected
+      setSelectedRowKeys(prevKeys => prevKeys.filter(key => key !== matchId));
+      
+      // Force immediate refresh from server to ensure data consistency
+      console.log('🔄 Immediately refreshing matches from server...');
+      await fetchAllMatches();
       
     } catch (error) {
       console.error("Error deleting match:", error);
       const errorMessage = error.response?.data?.message || "刪除比賽失敗";
       message.error(errorMessage);
+      
+      // If delete failed, refresh to restore correct state
+      console.log('❌ Delete failed, refreshing to restore correct state...');
+      await fetchAllMatches();
     }
   };
 
@@ -288,11 +300,9 @@ const TournamentMatchList = () => {
         
         setSelectedRowKeys([]);
         
-        // Force a complete refresh after a short delay to ensure server sync
-        setTimeout(async () => {
-          console.log('🔄 Batch delete - refreshing matches from server...');
-          await fetchAllMatches();
-        }, 500);
+        // Force immediate refresh from server to ensure data consistency
+        console.log('🔄 Batch delete - immediately refreshing matches from server...');
+        await fetchAllMatches();
       } else {
         message.error("批量刪除失敗");
       }
