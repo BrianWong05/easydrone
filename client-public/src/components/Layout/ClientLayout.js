@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Menu, Typography, Space, Spin, Alert } from "antd";
+import { Layout, Menu, Typography, Space, Spin, Alert, Drawer } from "antd";
 import { Link, useLocation } from "react-router-dom";
 import {
   TrophyOutlined,
@@ -8,6 +8,7 @@ import {
   CalendarOutlined,
   BarChartOutlined,
   ThunderboltOutlined,
+  MenuOutlined,
 } from "@ant-design/icons";
 import axios from "axios";
 
@@ -16,10 +17,24 @@ const { Title, Text } = Typography;
 
 const ClientLayout = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [tournament, setTournament] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const location = useLocation();
+
+  // Check if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Fetch the active tournament for public display
   useEffect(() => {
@@ -55,29 +70,62 @@ const ClientLayout = ({ children }) => {
     {
       key: '/leaderboard',
       icon: <BarChartOutlined />,
-      label: <Link to="/leaderboard">積分榜</Link>,
+      label: <Link to="/leaderboard" onClick={() => setMobileDrawerOpen(false)}>積分榜</Link>,
     },
     {
       key: '/teams',
       icon: <TeamOutlined />,
-      label: <Link to="/teams">隊伍</Link>,
+      label: <Link to="/teams" onClick={() => setMobileDrawerOpen(false)}>隊伍</Link>,
     },
     {
       key: '/groups',
       icon: <GroupOutlined />,
-      label: <Link to="/groups">小組</Link>,
+      label: <Link to="/groups" onClick={() => setMobileDrawerOpen(false)}>小組</Link>,
     },
     {
       key: '/matches',
       icon: <CalendarOutlined />,
-      label: <Link to="/matches">比賽</Link>,
+      label: <Link to="/matches" onClick={() => setMobileDrawerOpen(false)}>比賽</Link>,
     },
     {
       key: '/bracket',
       icon: <ThunderboltOutlined />,
-      label: <Link to="/bracket">淘汰賽對戰表</Link>,
+      label: <Link to="/bracket" onClick={() => setMobileDrawerOpen(false)}>淘汰賽對戰表</Link>,
     },
   ];
+
+  const renderSidebarContent = () => (
+    <>
+      <div style={{ 
+        padding: '16px', 
+        borderBottom: '1px solid #f0f0f0',
+        textAlign: 'center'
+      }}>
+        <Space direction="vertical" size="small">
+          <TrophyOutlined style={{ fontSize: 32, color: '#faad14' }} />
+          {(!collapsed || isMobile) && (
+            <>
+              <Title level={4} style={{ margin: 0, fontSize: 16 }}>
+                {tournament?.tournament_name || '錦標賽'}
+              </Title>
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                {tournament?.tournament_type === 'group' && '小組賽'}
+                {tournament?.tournament_type === 'knockout' && '淘汰賽'}
+                {tournament?.tournament_type === 'mixed' && '混合賽制'}
+              </Text>
+            </>
+          )}
+        </Space>
+      </div>
+      
+      <Menu
+        mode="inline"
+        selectedKeys={[location.pathname]}
+        items={menuItems}
+        style={{ borderRight: 0 }}
+      />
+    </>
+  );
 
   if (loading) {
     return (
@@ -119,57 +167,65 @@ const ClientLayout = ({ children }) => {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider 
-        collapsible 
-        collapsed={collapsed} 
-        onCollapse={setCollapsed}
-        theme="light"
-        width={250}
-      >
-        <div style={{ 
-          padding: '16px', 
-          borderBottom: '1px solid #f0f0f0',
-          textAlign: 'center'
-        }}>
-          <Space direction="vertical" size="small">
-            <TrophyOutlined style={{ fontSize: 32, color: '#faad14' }} />
-            {!collapsed && (
-              <>
-                <Title level={4} style={{ margin: 0, fontSize: 16 }}>
-                  {tournament?.tournament_name || '錦標賽'}
-                </Title>
-                <Text type="secondary" style={{ fontSize: 12 }}>
-                  {tournament?.tournament_type === 'group' && '小組賽'}
-                  {tournament?.tournament_type === 'knockout' && '淘汰賽'}
-                  {tournament?.tournament_type === 'mixed' && '混合賽制'}
-                </Text>
-              </>
-            )}
-          </Space>
-        </div>
-        
-        <Menu
-          mode="inline"
-          selectedKeys={[location.pathname]}
-          items={menuItems}
-          style={{ borderRight: 0 }}
-        />
-      </Sider>
+      {/* Mobile Drawer */}
+      {isMobile && (
+        <Drawer
+          title={null}
+          placement="left"
+          onClose={() => setMobileDrawerOpen(false)}
+          open={mobileDrawerOpen}
+          bodyStyle={{ padding: 0 }}
+          width={250}
+        >
+          {renderSidebarContent()}
+        </Drawer>
+      )}
+      
+      {/* Desktop Sidebar */}
+      {!isMobile && (
+        <Sider 
+          collapsible 
+          collapsed={collapsed} 
+          onCollapse={setCollapsed}
+          theme="light"
+          width={250}
+        >
+          {renderSidebarContent()}
+        </Sider>
+      )}
       
       <Layout>
         <Header style={{ 
           background: '#fff', 
-          padding: '0 24px',
+          padding: isMobile ? '0 16px' : '0 24px',
           borderBottom: '1px solid #f0f0f0',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'space-between'
+          justifyContent: 'space-between',
+          height: isMobile ? 56 : 64
         }}>
-          <Title level={3} style={{ margin: 0 }}>
-            {tournament?.tournament_name || '無人機足球錦標賽'}
-          </Title>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            {isMobile && (
+              <MenuOutlined 
+                className="mobile-menu-trigger"
+                onClick={() => setMobileDrawerOpen(true)}
+                style={{ marginRight: 16, fontSize: 18, cursor: 'pointer' }}
+              />
+            )}
+            <Title level={3} style={{ 
+              margin: 0, 
+              fontSize: isMobile ? 16 : 24 
+            }}>
+              {isMobile 
+                ? '錦標賽' 
+                : (tournament?.tournament_name || '無人機足球錦標賽')
+              }
+            </Title>
+          </div>
           <Space>
-            <Text type="secondary">公開賽事資訊</Text>
+            <Text type="secondary" style={{ fontSize: isMobile ? 12 : 14 }}>
+              公開賽事資訊
+            </Text>
           </Space>
         </Header>
         {children}

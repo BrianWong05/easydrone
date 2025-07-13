@@ -90,9 +90,9 @@ const ClientLeaderboard = () => {
       // 先重新計算積分榜以確保數據是最新的
       try {
         await axios.post("/api/stats/calculate-all-group-standings");
-        console.log('✅ Group standings recalculated for client leaderboard');
+        console.log("✅ Group standings recalculated for client leaderboard");
       } catch (calcError) {
-        console.warn('⚠️ Failed to recalculate standings:', calcError);
+        console.warn("⚠️ Failed to recalculate standings:", calcError);
         // 繼續執行，即使計算失敗也要顯示現有數據
       }
 
@@ -440,16 +440,16 @@ const ClientLeaderboard = () => {
 
               {/* 排名規則說明 */}
               {overallLeaderboard.length > 0 && (
-                <Card style={{ marginTop: '24px' }}>
-                  <div style={{ fontSize: '12px', color: '#666' }}>
-                    <p><strong>排名規則：</strong> 小組內排名 → 同排名隊伍間比較（積分 → 淨勝球 → 進球數）</p>
-                    <p><strong>積分規則：</strong> 勝利 3分，平局 1分，失敗 0分</p>
-                    <p><strong>排序說明：</strong> 先顯示各小組第1名，再顯示各小組第2名，以此類推</p>
-                    <p><strong>標籤說明：</strong> 
-                      <Tag size="small" color="gold" style={{ margin: '0 4px' }}>第1名</Tag>
-                      <Tag size="small" color="green" style={{ margin: '0 4px' }}>第2名</Tag>
-                      <Tag size="small" color="blue" style={{ margin: '0 4px' }}>第3名</Tag>
-                      表示該隊伍在其小組內的排名
+                <Card style={{ marginTop: "24px" }}>
+                  <div style={{ fontSize: "12px", color: "#666" }}>
+                    <p>
+                      <strong>排名規則：</strong> 小組內排名 → 同排名隊伍間比較（積分 → 淨勝球 → 進球數）
+                    </p>
+                    <p>
+                      <strong>積分規則：</strong> 勝利 3分，平局 1分，失敗 0分
+                    </p>
+                    <p>
+                      <strong>排序說明：</strong> 先顯示各小組第1名，再顯示各小組第2名，以此類推
                     </p>
                   </div>
                 </Card>
