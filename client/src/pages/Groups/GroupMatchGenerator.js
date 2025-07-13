@@ -97,8 +97,14 @@ const GroupMatchGenerator = () => {
       const matchDuration = matchTimeInSeconds / 60; // 轉換為分鐘
       const totalDuration = (totalMatches - 1) * values.match_interval + matchDuration;
       
-      const startTime = moment(values.match_date).format('YYYY-MM-DD') + ' ' + 
-                       moment(values.start_time).format('HH:mm:ss');
+      // 確保使用DatePicker的日期和TimePicker的時間
+      const dateString = values.match_date.format('YYYY-MM-DD');
+      const timeString = values.start_time.format('HH:mm:ss');
+      const startTime = `${dateString} ${timeString}`;
+      
+      console.log('🔍 Group Match - Date string:', dateString);
+      console.log('🔍 Group Match - Time string:', timeString);
+      console.log('🔍 Group Match - Combined startTime:', startTime);
       const endTime = moment(startTime).add(totalDuration, 'minutes');
 
       // 生成比賽預覽數據
@@ -147,8 +153,14 @@ const GroupMatchGenerator = () => {
       setGenerating(true);
       const values = await form.validateFields();
       
-      const matchDateTime = moment(values.match_date).format('YYYY-MM-DD') + ' ' + 
-                           moment(values.start_time).format('HH:mm:ss');
+      // 確保使用DatePicker的日期和TimePicker的時間
+      const dateString = values.match_date.format('YYYY-MM-DD');
+      const timeString = values.start_time.format('HH:mm:ss');
+      const matchDateTime = `${dateString} ${timeString}`;
+      
+      console.log('🔍 Group Match Generate - Date string:', dateString);
+      console.log('🔍 Group Match Generate - Time string:', timeString);
+      console.log('🔍 Group Match Generate - Combined matchDateTime:', matchDateTime);
       
       // 轉換分鐘和秒數為總秒數
       const matchTimeInSeconds = convertToSeconds(values.match_minutes, values.match_seconds);

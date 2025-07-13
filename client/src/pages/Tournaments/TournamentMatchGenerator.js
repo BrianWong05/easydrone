@@ -212,7 +212,14 @@ const TournamentMatchGenerator = () => {
 
       const selectedGroupsData = groups.filter((g) => selectedGroups.includes(g.group_id));
       const matches = [];
-      let currentTime = moment(startDate).hour(startTime.hour()).minute(startTime.minute());
+      // 確保使用DatePicker的日期和TimePicker的時間
+      const dateString = startDate.format('YYYY-MM-DD');
+      const timeString = startTime.format('HH:mm');
+      let currentTime = moment(`${dateString} ${timeString}`, 'YYYY-MM-DD HH:mm');
+      
+      console.log('🔍 Tournament Match Generator - Date string:', dateString);
+      console.log('🔍 Tournament Match Generator - Time string:', timeString);
+      console.log('🔍 Tournament Match Generator - Start time:', currentTime.format('YYYY-MM-DD HH:mm:ss'));
 
       // 首先獲取所有小組的隊伍數據
       const groupsWithTeams = [];
@@ -463,11 +470,13 @@ const TournamentMatchGenerator = () => {
                 <Text strong>預計結束：</Text>
                 <br />
                 <Text>
-                  {moment(startDate)
-                    .hour(startTime?.hour() || 0)
-                    .minute(startTime?.minute() || 0)
-                    .add(stats.estimatedDuration, "minutes")
-                    .format("YYYY-MM-DD HH:mm")}
+                  {(() => {
+                    const dateStr = startDate?.format('YYYY-MM-DD') || moment().format('YYYY-MM-DD');
+                    const timeStr = startTime?.format('HH:mm') || '09:00';
+                    return moment(`${dateStr} ${timeStr}`, 'YYYY-MM-DD HH:mm')
+                      .add(stats.estimatedDuration, "minutes")
+                      .format("YYYY-MM-DD HH:mm");
+                  })()}
                 </Text>
               </div>
 
