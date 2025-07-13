@@ -121,13 +121,7 @@ const TournamentMatchList = () => {
 
       console.log("🔍 Fetching all matches for tournament:", tournamentId);
 
-      const response = await axios.get(`/api/tournaments/${tournamentId}/matches?${params}`, {
-        // Add headers to prevent caching
-        headers: {
-          'Cache-Control': 'no-cache',
-          'Pragma': 'no-cache'
-        }
-      });
+      const response = await axios.get(`/api/tournaments/${tournamentId}/matches?${params}`);
       console.log("🔍 All Matches API Response:", response.data);
 
       if (response.data.success) {
