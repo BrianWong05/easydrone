@@ -17,12 +17,14 @@ export const getResponsiveTableProps = () => {
     size: mobile ? 'small' : 'middle',
     scroll: mobile ? { x: 'max-content' } : undefined,
     pagination: {
-      pageSize: mobile ? 5 : 10,
+      pageSize: mobile ? 10 : 20,
       showSizeChanger: !mobile,
       showQuickJumper: !mobile,
       showTotal: !smallMobile ? (total, range) => 
         `${range[0]}-${range[1]} / ${total}` : undefined,
-      size: mobile ? 'small' : 'default'
+      size: mobile ? 'small' : 'default',
+      pageSizeOptions: ['10', '20', '50', '100'],
+      defaultPageSize: mobile ? 10 : 20
     }
   };
 };

@@ -339,11 +339,13 @@ const ClientGroupList = () => {
           dataSource={groups}
           rowKey="group_id"
           pagination={{
-            pageSize: 10,
+            pageSize: 20,
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (total, range) => 
               `第 ${range[0]}-${range[1]} 項，共 ${total} 個小組`,
+            pageSizeOptions: ['10', '20', '50', '100'],
+            defaultPageSize: 20
           }}
           locale={{
             emptyText: (
