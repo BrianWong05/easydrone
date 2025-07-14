@@ -841,9 +841,16 @@ router.post('/:id/end', async (req, res) => {
           match.team1_score, match.team2_score, finalWinnerId);
       }
 
-      // 如果是淘汰賽，自動推進勝者到下一輪
-      if (finalWinnerId && !match.group_id) {
-        await autoAdvanceKnockoutWinner(connection, matchId, finalWinnerId);
+      // 如果是淘汰賽，自動推進勝者到下一輪，敗者到季軍賽
+      if (!match.group_id) {
+        if (finalWinnerId) {
+          await autoAdvanceKnockoutWinner(connection, matchId, finalWinnerId);
+        }
+        // 如果有敗者，檢查是否需要推進到季軍賽
+        const loserId = finalWinnerId === match.team1_id ? match.team2_id : match.team1_id;
+        if (loserId && finalWinnerId) {
+          await autoAdvanceKnockoutLoser(connection, matchId, loserId);
+        }
       }
     });
 
@@ -1140,6 +1147,75 @@ async function autoAdvanceKnockoutWinner(connection, matchId, winnerId) {
     
   } catch (error) {
     console.error('❌ Error auto-advancing knockout winner:', error);
+    // 不要拋出錯誤，避免影響比賽結束流程
+  }
+}
+
+// 自動推進淘汰賽敗者到季軍賽
+async function autoAdvanceKnockoutLoser(connection, matchId, loserId) {
+  try {
+    console.log(`🥉 Auto-advancing knockout loser: match ${matchId}, loser ${loserId}`);
+    
+    // 查找當前比賽的淘汰賽信息
+    const [currentBracket] = await connection.execute(`
+      SELECT kb.*, m.match_number, m.tournament_stage
+      FROM knockout_brackets kb
+      JOIN matches m ON kb.match_id = m.match_id
+      WHERE kb.match_id = ?
+    `, [matchId]);
+    
+    if (currentBracket.length === 0) {
+      console.log(`⚠️ No knockout bracket found for match ${matchId}`);
+      return;
+    }
+    
+    const bracket = currentBracket[0];
+    
+    // 只有準決賽的敗者才進入季軍賽
+    if (bracket.tournament_stage !== 'semi_final') {
+      console.log(`📍 Match ${bracket.match_number} is not semi-final, no 3rd place advancement`);
+      return;
+    }
+    
+    // 查找季軍賽（3rd place match）
+    const [thirdPlaceMatch] = await connection.execute(`
+      SELECT m.match_id, m.team1_id, m.team2_id
+      FROM matches m
+      WHERE m.tournament_stage = 'third_place' 
+      AND m.tournament_id = (SELECT tournament_id FROM matches WHERE match_id = ?)
+    `, [matchId]);
+    
+    if (thirdPlaceMatch.length === 0) {
+      console.log(`⚠️ No 3rd place match found`);
+      return;
+    }
+    
+    const thirdPlace = thirdPlaceMatch[0];
+    
+    // 確定在季軍賽中的位置（第一個空位）
+    let teamField = null;
+    if (!thirdPlace.team1_id) {
+      teamField = 'team1_id';
+    } else if (!thirdPlace.team2_id) {
+      teamField = 'team2_id';
+    } else {
+      console.log(`⚠️ 3rd place match already has both teams`);
+      return;
+    }
+    
+    console.log(`🥉 Advancing loser to 3rd place match as ${teamField}`);
+    
+    // 更新季軍賽
+    await connection.execute(`
+      UPDATE matches 
+      SET ${teamField} = ?
+      WHERE match_id = ?
+    `, [loserId, thirdPlace.match_id]);
+    
+    console.log(`✅ Successfully advanced loser ${loserId} to 3rd place match`);
+    
+  } catch (error) {
+    console.error('❌ Error auto-advancing knockout loser:', error);
     // 不要拋出錯誤，避免影響比賽結束流程
   }
 }

@@ -53,6 +53,74 @@ const ClientMatchDetail = () => {
     return teamName;
   };
 
+  // Helper function to find the source match for a team position in knockout matches
+  const findSourceMatch = (match, teamKey) => {
+    if (!match || match.match_type !== 'knockout') return null;
+    
+    const currentMatchNumber = match.match_number;
+    if (!currentMatchNumber) return null;
+    
+    // Define knockout progression mapping based on match numbers
+    const knockoutProgression = {
+      // Finals get teams from semifinals
+      'FI01': { team1: 'SE01', team2: 'SE02' },
+      
+      // Semifinals get teams from quarterfinals
+      'SE01': { team1: 'QU01', team2: 'QU02' },
+      'SE02': { team1: 'QU03', team2: 'QU04' },
+      
+      // Quarterfinals get teams from round of 16 (if exists)
+      'QU01': { team1: 'R16_01', team2: 'R16_02' },
+      'QU02': { team1: 'R16_03', team2: 'R16_04' },
+      'QU03': { team1: 'R16_05', team2: 'R16_06' },
+      'QU04': { team1: 'R16_07', team2: 'R16_08' },
+      
+      // Round of 16 get teams from round of 32 (if exists)
+      'R16_01': { team1: 'R32_01', team2: 'R32_02' },
+      'R16_02': { team1: 'R32_03', team2: 'R32_04' },
+      'R16_03': { team1: 'R32_05', team2: 'R32_06' },
+      'R16_04': { team1: 'R32_07', team2: 'R32_08' },
+      'R16_05': { team1: 'R32_09', team2: 'R32_10' },
+      'R16_06': { team1: 'R32_11', team2: 'R32_12' },
+      'R16_07': { team1: 'R32_13', team2: 'R32_14' },
+      'R16_08': { team1: 'R32_15', team2: 'R32_16' }
+    };
+    
+    try {
+      const progression = knockoutProgression[currentMatchNumber];
+      if (progression) {
+        return progression[teamKey];
+      }
+      return null;
+    } catch (error) {
+      console.error('Error finding source match:', error);
+      return null;
+    }
+  };
+
+  // Enhanced team display function that shows match references for knockout matches
+  const getTeamDisplayNameWithReference = (match, teamKey) => {
+    const teamName = match[`${teamKey}_name`];
+    if (teamName) return getDisplayTeamName(teamName);
+    
+    // For knockout matches, show match winner reference when team is not assigned
+    if (match.match_type === 'knockout') {
+      const teamId = match[`${teamKey}_id`];
+      if (!teamId) {
+        // Find the source match for this team position
+        const sourceMatch = findSourceMatch(match, teamKey);
+        if (sourceMatch) {
+          return `${sourceMatch}勝者`;
+        }
+        // If no source match found, show generic placeholder
+        return '待定';
+      }
+    }
+    
+    // For non-knockout matches or when team is assigned but no name
+    return teamName || '待定';
+  };
+
   // 清理小組名稱顯示（移除 _{tournament_id} 後綴）
   const getDisplayGroupName = (groupName) => {
     if (!groupName) return '';
@@ -129,7 +197,7 @@ const ClientMatchDetail = () => {
       return null;
     }
 
-    const winnerName = match.winner_id === match.team1_id ? getDisplayTeamName(match.team1_name) : getDisplayTeamName(match.team2_name);
+    const winnerName = match.winner_id === match.team1_id ? getTeamDisplayNameWithReference(match, 'team1') : getTeamDisplayNameWithReference(match, 'team2');
     const winnerColor = match.winner_id === match.team1_id ? match.team1_color : match.team2_color;
     
     const winReasonMap = {
@@ -262,7 +330,7 @@ const ClientMatchDetail = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  border: winnerInfo && winnerInfo.name === getDisplayTeamName(match.team1_name) ? '4px solid #faad14' : 'none'
+                  border: winnerInfo && winnerInfo.name === getTeamDisplayNameWithReference(match, 'team1') ? '4px solid #faad14' : 'none'
                 }}
               >
                 <TeamOutlined style={{ fontSize: '32px', color: 'white' }} />
@@ -279,9 +347,9 @@ const ClientMatchDetail = () => {
                   }}
                   onClick={() => navigate(`/teams/${match.team1_id}`)}
                 >
-                  {getDisplayTeamName(match.team1_name)}
+                  {getTeamDisplayNameWithReference(match, 'team1')}
                 </Button>
-                {winnerInfo && winnerInfo.name === getDisplayTeamName(match.team1_name) && (
+                {winnerInfo && winnerInfo.name === getTeamDisplayNameWithReference(match, 'team1') && (
                   <Tag color="gold" icon={<TrophyOutlined />} style={{ marginTop: 8 }}>
                     獲勝
                   </Tag>
@@ -335,7 +403,7 @@ const ClientMatchDetail = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  border: winnerInfo && winnerInfo.name === getDisplayTeamName(match.team2_name) ? '4px solid #faad14' : 'none'
+                  border: winnerInfo && winnerInfo.name === getTeamDisplayNameWithReference(match, 'team2') ? '4px solid #faad14' : 'none'
                 }}
               >
                 <TeamOutlined style={{ fontSize: '32px', color: 'white' }} />
@@ -352,9 +420,9 @@ const ClientMatchDetail = () => {
                   }}
                   onClick={() => navigate(`/teams/${match.team2_id}`)}
                 >
-                  {getDisplayTeamName(match.team2_name)}
+                  {getTeamDisplayNameWithReference(match, 'team2')}
                 </Button>
-                {winnerInfo && winnerInfo.name === getDisplayTeamName(match.team2_name) && (
+                {winnerInfo && winnerInfo.name === getTeamDisplayNameWithReference(match, 'team2') && (
                   <Tag color="gold" icon={<TrophyOutlined />} style={{ marginTop: 8 }}>
                     獲勝
                   </Tag>
@@ -416,7 +484,7 @@ const ClientMatchDetail = () => {
               <Col span={12}>
                 <Card size="small">
                   <Statistic
-                    title={getDisplayTeamName(match.team1_name)}
+                    title={getTeamDisplayNameWithReference(match, 'team1')}
                     value={match.team1_score || 0}
                     prefix={<TrophyOutlined style={{ color: match.team1_color || '#1890ff' }} />}
                     valueStyle={{ color: match.team1_color || '#1890ff' }}
@@ -427,7 +495,7 @@ const ClientMatchDetail = () => {
               <Col span={12}>
                 <Card size="small">
                   <Statistic
-                    title={getDisplayTeamName(match.team2_name)}
+                    title={getTeamDisplayNameWithReference(match, 'team2')}
                     value={match.team2_score || 0}
                     prefix={<TrophyOutlined style={{ color: match.team2_color || '#52c41a' }} />}
                     valueStyle={{ color: match.team2_color || '#52c41a' }}
@@ -438,7 +506,7 @@ const ClientMatchDetail = () => {
               <Col span={12}>
                 <Card size="small">
                   <Statistic
-                    title={`${getDisplayTeamName(match.team1_name)} 犯規次數`}
+                    title={`${getTeamDisplayNameWithReference(match, 'team1')} 犯規次數`}
                     value={match.team1_fouls || 0}
                     prefix={<FlagOutlined style={{ color: '#f5222d' }} />}
                     valueStyle={{ color: '#f5222d' }}
@@ -448,7 +516,7 @@ const ClientMatchDetail = () => {
               <Col span={12}>
                 <Card size="small">
                   <Statistic
-                    title={`${getDisplayTeamName(match.team2_name)} 犯規次數`}
+                    title={`${getTeamDisplayNameWithReference(match, 'team2')} 犯規次數`}
                     value={match.team2_fouls || 0}
                     prefix={<FlagOutlined style={{ color: '#f5222d' }} />}
                     valueStyle={{ color: '#f5222d' }}
@@ -500,14 +568,14 @@ const ClientMatchDetail = () => {
             icon={<TeamOutlined />}
             onClick={() => navigate(`/teams/${match.team1_id}`)}
           >
-            查看 {getDisplayTeamName(match.team1_name)}
+            查看 {getTeamDisplayNameWithReference(match, 'team1')}
           </Button>
           <Button 
             type="primary" 
             icon={<TeamOutlined />}
             onClick={() => navigate(`/teams/${match.team2_id}`)}
           >
-            查看 {getDisplayTeamName(match.team2_name)}
+            查看 {getTeamDisplayNameWithReference(match, 'team2')}
           </Button>
           {match.group_id && (
             <Button 

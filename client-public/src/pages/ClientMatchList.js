@@ -52,6 +52,77 @@ const ClientMatchList = () => {
     return teamName;
   };
 
+  // Helper function to find the source match for a team position in knockout matches
+  const findSourceMatch = (match, teamKey, allMatches) => {
+    if (!match || match.match_type !== 'knockout') return null;
+    
+    const currentMatchNumber = match.match_number;
+    if (!currentMatchNumber) return null;
+    
+    // Define knockout progression mapping based on match numbers
+    const knockoutProgression = {
+      // Finals get teams from semifinals
+      'FI01': { team1: 'SE01', team2: 'SE02' },
+      
+      // Semifinals get teams from quarterfinals
+      'SE01': { team1: 'QU01', team2: 'QU02' },
+      'SE02': { team1: 'QU03', team2: 'QU04' },
+      
+      // Quarterfinals get teams from round of 16 (if exists)
+      'QU01': { team1: 'R16_01', team2: 'R16_02' },
+      'QU02': { team1: 'R16_03', team2: 'R16_04' },
+      'QU03': { team1: 'R16_05', team2: 'R16_06' },
+      'QU04': { team1: 'R16_07', team2: 'R16_08' },
+      
+      // Round of 16 get teams from round of 32 (if exists)
+      'R16_01': { team1: 'R32_01', team2: 'R32_02' },
+      'R16_02': { team1: 'R32_03', team2: 'R32_04' },
+      'R16_03': { team1: 'R32_05', team2: 'R32_06' },
+      'R16_04': { team1: 'R32_07', team2: 'R32_08' },
+      'R16_05': { team1: 'R32_09', team2: 'R32_10' },
+      'R16_06': { team1: 'R32_11', team2: 'R32_12' },
+      'R16_07': { team1: 'R32_13', team2: 'R32_14' },
+      'R16_08': { team1: 'R32_15', team2: 'R32_16' }
+    };
+    
+    try {
+      const progression = knockoutProgression[currentMatchNumber];
+      if (progression) {
+        const sourceMatchNumber = progression[teamKey];
+        // Verify the source match exists in the matches list
+        const sourceMatch = allMatches.find(m => m.match_number === sourceMatchNumber);
+        return sourceMatch ? sourceMatchNumber : null;
+      }
+      return null;
+    } catch (error) {
+      console.error('Error finding source match:', error);
+      return null;
+    }
+  };
+
+  // Enhanced team display function that shows match references for knockout matches
+  const getTeamDisplayNameWithReference = (match, teamKey) => {
+    const teamName = match[`${teamKey}_name`];
+    if (teamName) return getDisplayTeamName(teamName);
+    
+    // For knockout matches, show match winner reference when team is not assigned
+    if (match.match_type === 'knockout') {
+      const teamId = match[`${teamKey}_id`];
+      if (!teamId) {
+        // Find the source match for this team position
+        const sourceMatch = findSourceMatch(match, teamKey, matches);
+        if (sourceMatch) {
+          return `${sourceMatch}勝者`;
+        }
+        // If no source match found, show generic placeholder
+        return '待定';
+      }
+    }
+    
+    // For non-knockout matches or when team is assigned but no name
+    return teamName || '待定';
+  };
+
   // 清理小組名稱顯示（移除 _{tournament_id} 後綴）
   const getDisplayGroupName = (groupName) => {
     if (!groupName) return '';
@@ -354,7 +425,7 @@ const ClientMatchList = () => {
                 borderRadius: '50%'
               }}
             />
-            <Text strong>{getDisplayTeamName(record.team1_name)}</Text>
+            <Text strong>{getTeamDisplayNameWithReference(record, 'team1')}</Text>
             <Text type="secondary">vs</Text>
             <div 
               style={{ 
@@ -364,7 +435,7 @@ const ClientMatchList = () => {
                 borderRadius: '50%'
               }}
             />
-            <Text strong>{getDisplayTeamName(record.team2_name)}</Text>
+            <Text strong>{getTeamDisplayNameWithReference(record, 'team2')}</Text>
           </Space>
           {record.match_status === 'completed' && (
             <Text style={{ fontSize: '16px', fontWeight: 'bold', color: '#1890ff' }}>

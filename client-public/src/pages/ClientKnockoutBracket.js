@@ -183,13 +183,55 @@ const ClientKnockoutBracket = () => {
     const teamName = match[`${teamKey}_name`];
     if (teamName) return getDisplayTeamName(teamName);
     
-    // Show placeholder for teams that haven't advanced yet
+    // Show match winner reference for teams that haven't advanced yet
     const teamId = match[`${teamKey}_id`];
     if (!teamId) {
-      return '待定';
+      // Find the source match for this team position
+      const sourceMatch = findSourceMatch(match, teamKey);
+      if (sourceMatch) {
+        return `${sourceMatch}勝者`;
+      }
+      // If no source match found, show a generic placeholder based on round
+      const currentRound = match.round_number;
+      if (currentRound === 1) {
+        return '待定'; // First round teams are manually assigned
+      }
+      return `第${currentRound-1}輪勝者`;
     }
     
     return `隊伍 ${teamId}`;
+  };
+
+  // Helper function to find the source match for a team position
+  const findSourceMatch = (match, teamKey) => {
+    if (!brackets || Object.keys(brackets).length === 0) return null;
+    
+    const currentRound = match.round_number;
+    const currentPosition = match.position_in_round;
+    
+    // Skip if this is the first round (no source matches)
+    if (currentRound <= 1) return null;
+    
+    // For team1, it comes from position (currentPosition * 2 - 1) in previous round
+    // For team2, it comes from position (currentPosition * 2) in previous round
+    const sourcePosition = teamKey === 'team1' ? 
+      (currentPosition * 2 - 1) : 
+      (currentPosition * 2);
+    
+    try {
+      // Find matches in the previous round
+      const previousRoundMatches = brackets[currentRound - 1];
+      if (!previousRoundMatches) return null;
+      
+      const sourceMatch = previousRoundMatches.find(m => 
+        m && m.position_in_round === sourcePosition
+      );
+      
+      return sourceMatch ? sourceMatch.match_number : null;
+    } catch (error) {
+      console.error('Error finding source match:', error);
+      return null;
+    }
   };
 
   const renderMatchCard = (match) => {

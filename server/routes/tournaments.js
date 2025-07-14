@@ -554,45 +554,61 @@ router.post('/:id/knockout/generate', async (req, res) => {
 
     let selectedTeams = [];
 
-    // 根據錦標賽類型選擇隊伍
+    // 根據錦標賽類型選擇隊伍（只選擇參與小組賽的隊伍）
     if (tournament.tournament_type === 'mixed') {
-      // 混合賽制：根據總排名榜選擇前N名
-      console.log(`🏆 混合賽制錦標賽：根據總排名榜選擇前${team_count}名隊伍`);
+      // 混合賽制：根據總排名榜選擇前N名（只包含有小組賽記錄的隊伍）
+      console.log(`🏆 混合賽制錦標賽：根據總排名榜選擇前${team_count}名隊伍（僅限小組賽參與者）`);
       
-      const leaderboard = await getOverallLeaderboard(tournamentId);
-      if (leaderboard.length < team_count) {
+      // 只選擇分配到小組的隊伍（有group_id的隊伍）
+      const groupTeams = await query(`
+        SELECT DISTINCT t.team_id, t.team_name, t.group_id,
+               COALESCE(gs.points, 0) as points,
+               COALESCE(gs.played, 0) as played,
+               ROW_NUMBER() OVER (ORDER BY COALESCE(gs.points, 0) DESC, t.team_name) as team_rank
+        FROM teams t
+        INNER JOIN team_groups tg ON t.group_id = tg.group_id
+        LEFT JOIN group_standings gs ON t.team_id = gs.team_id AND gs.tournament_id = ?
+        WHERE t.tournament_id = ? AND t.is_virtual = 0 AND t.group_id IS NOT NULL
+        ORDER BY COALESCE(gs.points, 0) DESC, t.team_name
+      `, [tournamentId, tournamentId]);
+      
+      console.log(`🏆 Found ${groupTeams.length} teams that participated in group matches`);
+      
+      if (groupTeams.length < team_count) {
         return res.status(400).json({
           success: false,
-          message: `錦標賽只有${leaderboard.length}支隊伍，無法選擇${team_count}支隊伍進行淘汰賽`
+          message: `只有${groupTeams.length}支隊伍參與了小組賽，無法選擇${team_count}支隊伍進行淘汰賽`
         });
       }
       
-      selectedTeams = leaderboard.slice(0, team_count).map(team => ({
+      selectedTeams = groupTeams.slice(0, team_count).map(team => ({
         team_id: team.team_id,
         team_name: team.team_name,
-        rank: team.rank,
+        rank: team.team_rank,
         points: team.points
       }));
       
     } else if (tournament.tournament_type === 'knockout') {
-      // 純淘汰賽：隨機選擇隊伍
-      console.log(`⚡ 純淘汰賽錦標賽：隨機選擇${team_count}支隊伍`);
+      // 純淘汰賽：選擇參與小組賽的隊伍
+      console.log(`⚡ 純淘汰賽錦標賽：選擇${team_count}支參與小組賽的隊伍`);
       
-      const allTeams = await query(`
-        SELECT team_id, team_name FROM teams 
-        WHERE tournament_id = ? AND is_virtual = 0
-        ORDER BY team_name
+      const groupTeams = await query(`
+        SELECT DISTINCT t.team_id, t.team_name, t.group_id
+        FROM teams t
+        INNER JOIN team_groups tg ON t.group_id = tg.group_id
+        WHERE t.tournament_id = ? AND t.is_virtual = 0 AND t.group_id IS NOT NULL
+        ORDER BY t.team_name
       `, [tournamentId]);
       
-      if (allTeams.length < team_count) {
+      if (groupTeams.length < team_count) {
         return res.status(400).json({
           success: false,
-          message: `錦標賽只有${allTeams.length}支隊伍，無法選擇${team_count}支隊伍進行淘汰賽`
+          message: `只有${groupTeams.length}支隊伍參與了小組賽，無法選擇${team_count}支隊伍進行淘汰賽`
         });
       }
       
       // 隨機打亂隊伍順序
-      const shuffledTeams = [...allTeams].sort(() => Math.random() - 0.5);
+      const shuffledTeams = [...groupTeams].sort(() => Math.random() - 0.5);
       selectedTeams = shuffledTeams.slice(0, team_count);
       
     } else {
@@ -1199,6 +1215,9 @@ async function generateKnockoutStructure(tournamentId, teams, matchDate, matchTi
         firstRoundMatchNumber++;
       }
 
+      // 先創建所有比賽，然後設置next_match_id關係
+      const allMatches = [...firstRoundMatches];
+      
       // 創建後續輪次的空比賽
       for (let round = 2; round <= rounds; round++) {
         const matchesInRound = Math.pow(2, rounds - round);
@@ -1217,33 +1236,7 @@ async function generateKnockoutStructure(tournamentId, teams, matchDate, matchTi
         // 這一輪的開始時間 = 前一輪最後一場比賽開始時間 + 額外間隔
         const thisRoundStartTime = previousRoundLastMatchTime.add(matchInterval, 'seconds');
 
-        // 如果是決賽輪次，先創建季軍賽（3rd place match）
-        if (round === rounds) {
-          const thirdPlaceMatchTime = thisRoundStartTime.clone();
-          const thirdPlaceResult = await connection.execute(`
-            INSERT INTO matches (
-              match_number, team1_id, team2_id, match_date, match_time,
-              match_type, tournament_stage, tournament_id
-            ) VALUES (?, NULL, NULL, ?, ?, 'knockout', ?, ?)
-          `, ['3RD01', thirdPlaceMatchTime.format('YYYY-MM-DD HH:mm:ss'), parseInt(matchTime), 'third_place', parseInt(tournamentId)]);
-
-          await connection.execute(`
-            INSERT INTO knockout_brackets (
-              tournament_id, match_id, round_number, position_in_round
-            ) VALUES (?, ?, ?, ?)
-          `, [parseInt(tournamentId), thirdPlaceResult[0].insertId, round, 0]); // position 0 for 3rd place
-
-          createdMatches.push({
-            round: round,
-            match_number: '3RD01',
-            stage: 'third_place',
-            match_id: thirdPlaceResult[0].insertId,
-            match_time: thirdPlaceMatchTime.format('YYYY-MM-DD HH:mm:ss')
-          });
-
-          // 決賽在季軍賽之後
-          thisRoundStartTime.add(matchInterval, 'seconds');
-        }
+        // 決賽輪次不需要額外處理，直接創建決賽
 
         for (let pos = 1; pos <= matchesInRound; pos++) {
           const matchNumberStr = `${stage.substring(0, 2).toUpperCase()}${roundMatchNumber.toString().padStart(2, '0')}`;
@@ -1264,8 +1257,10 @@ async function generateKnockoutStructure(tournamentId, teams, matchDate, matchTi
             ) VALUES (?, ?, ?, ?)
           `, [parseInt(tournamentId), matchResult[0].insertId, round, pos]);
           
-          createdMatches.push({
+          allMatches.push({
+            match_id: matchResult[0].insertId,
             round: round,
+            position: pos,
             match_number: matchNumberStr,
             team1: 'TBD',
             team2: 'TBD'
@@ -3742,7 +3737,7 @@ router.post('/:id/knockout/auto-advance', async (req, res) => {
         // 獲取當前輪次所有已完成的比賽
         const [completedMatches] = await connection.execute(`
           SELECT 
-            m.match_id, m.winner_id, m.match_number,
+            m.match_id, m.winner_id, m.match_number, m.team1_id, m.team2_id,
             kb.position_in_round, kb.round_number,
             wt.team_name as winner_name
           FROM matches m
@@ -3774,7 +3769,7 @@ router.post('/:id/knockout/auto-advance', async (req, res) => {
           continue; // 沒有下一輪，可能是決賽
         }
         
-        // 為每場完成的比賽推進勝者
+        // 正常的淘汰賽推進邏輯：勝者進入下一輪
         for (const match of completedMatches) {
           // 計算下一輪的位置 (兩場比賽的勝者進入一場比賽)
           const nextPosition = Math.ceil(match.position_in_round / 2);
