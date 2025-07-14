@@ -694,8 +694,9 @@ const TournamentLiveMatch = () => {
                   style={{
                     color: getTimeColor(),
                     margin: 0,
-                    fontSize: "48px",
+                    fontSize: "100px",
                     textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
+                    fontWeight: "bold",
                   }}
                 >
                   {formatTime(remainingTime)}
@@ -750,15 +751,15 @@ const TournamentLiveMatch = () => {
           <Col xs={24} lg={12}>
             <Card
               title={
-                <div style={{ textAlign: "center", fontSize: "48px", fontWeight: "bold" }}>
+                <div style={{ textAlign: "center", fontSize: "64px", fontWeight: "bold", color: "#1890ff" }}>
                   {getDisplayTeamName(matchData.team1_name)}
                 </div>
               }
-              style={{ height: "350px" }}
+              style={{ height: "450px" }}
             >
               <div style={{ textAlign: "center" }}>
                 <div style={{ marginBottom: 24 }}>
-                  <Title level={1} style={{ fontSize: "72px", margin: 0, color: "#1890ff" }}>
+                  <Title level={1} style={{ fontSize: "120px", margin: 0, color: "#1890ff", fontWeight: "bold" }}>
                     {team1Score}
                   </Title>
                   <div style={{ marginTop: 16 }}>
@@ -811,15 +812,15 @@ const TournamentLiveMatch = () => {
           <Col xs={24} lg={12}>
             <Card
               title={
-                <div style={{ textAlign: "center", fontSize: "48px", fontWeight: "bold" }}>
+                <div style={{ textAlign: "center", fontSize: "64px", fontWeight: "bold", color: "#f5222d" }}>
                   {getDisplayTeamName(matchData.team2_name)}
                 </div>
               }
-              style={{ height: "350px" }}
+              style={{ height: "450px" }}
             >
               <div style={{ textAlign: "center" }}>
                 <div style={{ marginBottom: 24 }}>
-                  <Title level={1} style={{ fontSize: "72px", margin: 0, color: "#f5222d" }}>
+                  <Title level={1} style={{ fontSize: "120px", margin: 0, color: "#f5222d", fontWeight: "bold" }}>
                     {team2Score}
                   </Title>
                   <div style={{ marginTop: 16 }}>
