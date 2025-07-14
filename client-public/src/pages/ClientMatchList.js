@@ -361,10 +361,11 @@ const ClientMatchList = () => {
         if (num.startsWith('R32')) return 800 + parseInt(num.slice(4));
         // Semifinals (SE01, SE02, etc.)
         if (num.startsWith('SE')) return 2000 + parseInt(num.slice(2));
+        // Third place playoff (TP01, 3RD01, etc.) - should come after semifinals but before finals
+        if (num.startsWith('TP')) return 2500 + parseInt(num.slice(2));
+        if (num.startsWith('3RD')) return 2500 + parseInt(num.slice(3));
         // Finals (FI01, etc.)
         if (num.startsWith('FI')) return 3000 + parseInt(num.slice(2));
-        // Third place playoff (3RD01, etc.)
-        if (num.startsWith('3RD')) return 2500 + parseInt(num.slice(3));
         // Other knockout matches - extract number for sorting
         const numPart = num.match(/\d+/);
         return numPart ? parseInt(numPart[0]) : 0;

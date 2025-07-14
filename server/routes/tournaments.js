@@ -1270,50 +1270,23 @@ async function generateKnockoutStructure(tournamentId, teams, matchDate, matchTi
         // 這一輪的開始時間 = 前一輪最後一場比賽開始時間 + 額外間隔
         const thisRoundStartTime = previousRoundLastMatchTime.add(matchInterval, 'seconds');
 
-        // 如果是決賽輪次且有準決賽，先創建季軍賽
+        // 如果是決賽輪次且有準決賽，需要處理季軍賽和決賽的順序
+        let thirdPlaceMatchId = null;
         if (stage === 'final' && rounds >= 2) {
-          // 創建季軍賽（3rd place match）
-          const thirdPlaceMatchNumber = 'TP01'; // Third Place 01
-          const thirdPlaceMatchTime = thisRoundStartTime.clone(); // 與決賽同時間或稍早
+          // 記錄季軍賽的時間，但先不創建
+          const thirdPlaceMatchTime = thisRoundStartTime.clone();
+          console.log(`🥉 Will create 3rd place match after final at: ${thirdPlaceMatchTime.format('YYYY-MM-DD HH:mm:ss')}`);
           
-          console.log(`🥉 Creating 3rd place match: ${thirdPlaceMatchNumber}`);
-          
-          const thirdPlaceResult = await connection.execute(`
-            INSERT INTO matches (
-              match_number, team1_id, team2_id, match_date, match_time,
-              match_type, tournament_stage, tournament_id
-            ) VALUES (?, NULL, NULL, ?, ?, 'knockout', 'third_place', ?)
-          `, [thirdPlaceMatchNumber, thirdPlaceMatchTime.format('YYYY-MM-DD HH:mm:ss'), parseInt(matchTime), parseInt(tournamentId)]);
-
-          // 季軍賽不需要在knockout_brackets表中記錄，因為它不是標準淘汰賽流程的一部分
-          // 但為了保持一致性，我們還是記錄它
-          await connection.execute(`
-            INSERT INTO knockout_brackets (
-              tournament_id, match_id, round_number, position_in_round
-            ) VALUES (?, ?, ?, ?)
-          `, [parseInt(tournamentId), thirdPlaceResult[0].insertId, round, 0]); // position 0 表示季軍賽
-          
-          allMatches.push({
-            match_id: thirdPlaceResult[0].insertId,
-            round: round,
-            position: 0, // 特殊位置表示季軍賽
-            match_number: thirdPlaceMatchNumber,
-            team1: 'TBD',
-            team2: 'TBD'
-          });
+          // 更新決賽的開始時間（在季軍賽之後）
+          thisRoundStartTime.add(matchInterval, 'seconds');
         }
 
         for (let pos = 1; pos <= matchesInRound; pos++) {
           const matchNumberStr = `${stage.substring(0, 2).toUpperCase()}${roundMatchNumber.toString().padStart(2, '0')}`;
 
           // 這一輪每場比賽的時間 = 這一輪開始時間 + (比賽位置 - 1) * 間隔
+          // 注意：如果是決賽輪且有季軍賽，thisRoundStartTime已經在上面調整過了
           let nextRoundMatchDateTime = thisRoundStartTime.clone().add((pos - 1) * matchInterval, 'seconds');
-          
-          // 如果是決賽且有季軍賽，決賽應該在季軍賽之後進行
-          if (stage === 'final' && rounds >= 2) {
-            // 決賽時間 = 季軍賽時間 + 間隔時間 (不包含比賽時長)
-            nextRoundMatchDateTime = thisRoundStartTime.clone().add(matchInterval, 'seconds');
-          }
           
           const matchResult = await connection.execute(`
             INSERT INTO matches (
@@ -1338,6 +1311,38 @@ async function generateKnockoutStructure(tournamentId, teams, matchDate, matchTi
           });
 
           roundMatchNumber++;
+        }
+        
+        // 創建季軍賽（在決賽之後創建，確保正確的數據庫順序）
+        if (stage === 'final' && rounds >= 2) {
+          const thirdPlaceMatchNumber = 'TP01'; // Third Place 01
+          // 季軍賽時間應該在決賽之前（時間上），但在數據庫中後創建
+          const thirdPlaceMatchTime = thisRoundStartTime.clone().subtract(matchInterval, 'seconds');
+          
+          console.log(`🥉 Creating 3rd place match: ${thirdPlaceMatchNumber} at ${thirdPlaceMatchTime.format('YYYY-MM-DD HH:mm:ss')}`);
+          
+          const thirdPlaceResult = await connection.execute(`
+            INSERT INTO matches (
+              match_number, team1_id, team2_id, match_date, match_time,
+              match_type, tournament_stage, tournament_id
+            ) VALUES (?, NULL, NULL, ?, ?, 'knockout', 'third_place', ?)
+          `, [thirdPlaceMatchNumber, thirdPlaceMatchTime.format('YYYY-MM-DD HH:mm:ss'), parseInt(matchTime), parseInt(tournamentId)]);
+
+          // 季軍賽記錄在knockout_brackets表中，使用特殊的round和position
+          await connection.execute(`
+            INSERT INTO knockout_brackets (
+              tournament_id, match_id, round_number, position_in_round
+            ) VALUES (?, ?, ?, ?)
+          `, [parseInt(tournamentId), thirdPlaceResult[0].insertId, round, 0]); // position 0 表示季軍賽
+          
+          allMatches.push({
+            match_id: thirdPlaceResult[0].insertId,
+            round: round,
+            position: 0, // 特殊位置表示季軍賽
+            match_number: thirdPlaceMatchNumber,
+            team1: 'TBD',
+            team2: 'TBD'
+          });
         }
       }
 
