@@ -401,6 +401,31 @@ const KnockoutBracket = () => {
       return getDisplayTeamName(teamName);
     }
 
+    // 特殊處理：季軍賽顯示準決賽敗者
+    if (match.tournament_stage === 'third_place') {
+      // 找到所有準決賽比賽
+      const semiMatches = [];
+      Object.values(allBrackets).forEach(roundMatches => {
+        roundMatches.forEach(m => {
+          if (m.tournament_stage === 'semi_final') {
+            semiMatches.push(m);
+          }
+        });
+      });
+
+      // 按比賽編號排序
+      semiMatches.sort((a, b) => a.match_number.localeCompare(b.match_number));
+
+      if (semiMatches.length >= 2) {
+        if (teamPosition === "team1") {
+          return `${semiMatches[0].match_number}敗者`;
+        } else {
+          return `${semiMatches[1].match_number}敗者`;
+        }
+      }
+      return "TBD";
+    }
+
     // 如果沒有隊伍名稱，查找來源比賽
     const currentRound = match.round_number;
     if (currentRound === 1) {

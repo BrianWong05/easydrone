@@ -115,8 +115,8 @@ const ClientKnockoutBracket = () => {
               if (match.match_status === 'completed') {
                 completedMatches++;
                 
-                // Check if this is the final match (highest round number)
-                if (match.round_number === maxRoundNumber && match.winner_name) {
+                // Check if this is the final match (highest round number AND tournament_stage is 'final')
+                if (match.round_number === maxRoundNumber && match.tournament_stage === 'final' && match.winner_name) {
                   champion = {
                     name: getDisplayTeamName(match.winner_name),
                     color: match.winner_id === match.team1_id ? match.team1_color : match.team2_color
@@ -179,9 +179,41 @@ const ClientKnockoutBracket = () => {
     }
   };
 
+  const getMatchDisplayName = (match) => {
+    if (match.tournament_stage === 'third_place') {
+      return '🥉 季軍賽';
+    }
+    return match.match_number;
+  };
+
   const getTeamDisplayName = (match, teamKey) => {
     const teamName = match[`${teamKey}_name`];
     if (teamName) return getDisplayTeamName(teamName);
+    
+    // 特殊處理：季軍賽顯示準決賽敗者
+    if (match.tournament_stage === 'third_place') {
+      // 找到所有準決賽比賽
+      const semiMatches = [];
+      Object.values(brackets).forEach(roundMatches => {
+        roundMatches.forEach(m => {
+          if (m.tournament_stage === 'semi_final') {
+            semiMatches.push(m);
+          }
+        });
+      });
+
+      // 按比賽編號排序
+      semiMatches.sort((a, b) => a.match_number.localeCompare(b.match_number));
+
+      if (semiMatches.length >= 2) {
+        if (teamKey === "team1") {
+          return `${semiMatches[0].match_number}敗者`;
+        } else {
+          return `${semiMatches[1].match_number}敗者`;
+        }
+      }
+      return "待定";
+    }
     
     // Show match winner reference for teams that haven't advanced yet
     const teamId = match[`${teamKey}_id`];
@@ -240,6 +272,7 @@ const ClientKnockoutBracket = () => {
     const team2Name = getTeamDisplayName(match, 'team2');
     const isTeam1Winner = match.winner_id === match.team1_id;
     const isTeam2Winner = match.winner_id === match.team2_id;
+    const isThirdPlace = match.tournament_stage === 'third_place';
 
     return (
       <Card 
@@ -249,7 +282,8 @@ const ClientKnockoutBracket = () => {
           marginBottom: 16, 
           minWidth: 280,
           cursor: 'pointer',
-          border: isCompleted ? '2px solid #52c41a' : '1px solid #d9d9d9'
+          border: isThirdPlace ? '2px solid #ffa940' : (isCompleted ? '2px solid #52c41a' : '1px solid #d9d9d9'),
+          backgroundColor: isThirdPlace ? '#fff7e6' : 'white'
         }}
         onClick={() => navigate(`/matches/${match.match_id}`)}
         hoverable
@@ -258,8 +292,8 @@ const ClientKnockoutBracket = () => {
           {/* Match Header */}
           <Row justify="space-between" align="middle">
             <Col>
-              <Text strong style={{ fontSize: '12px' }}>
-                {match.match_number}
+              <Text strong style={{ fontSize: '12px', color: isThirdPlace ? '#fa8c16' : 'inherit' }}>
+                {getMatchDisplayName(match)}
               </Text>
             </Col>
             <Col>
@@ -481,6 +515,12 @@ const ClientKnockoutBracket = () => {
                   .sort((a, b) => parseInt(a) - parseInt(b)) // Sort rounds in ascending order (final on the right)
                   .map(roundNumber => {
                     const roundMatches = brackets[roundNumber];
+                    // 分離季軍賽和常規比賽
+                    const regularMatches = roundMatches.filter(match => match.tournament_stage !== 'third_place');
+                    const thirdPlaceMatches = roundMatches.filter(match => match.tournament_stage === 'third_place');
+                    
+                    if (regularMatches.length === 0) return null; // 如果這一輪只有季軍賽，跳過
+                    
                     const roundName = getRoundName(parseInt(roundNumber), stats.totalRounds);
                     
                     return (
@@ -490,7 +530,7 @@ const ClientKnockoutBracket = () => {
                             {roundName}
                           </Title>
                           <Text type="secondary">
-                            {roundMatches.filter(m => m.match_status === 'completed').length} / {roundMatches.length} 已完成
+                            {regularMatches.filter(m => m.match_status === 'completed').length} / {regularMatches.length} 已完成
                           </Text>
                         </div>
                         
@@ -500,12 +540,34 @@ const ClientKnockoutBracket = () => {
                           alignItems: 'center',
                           gap: '16px'
                         }}>
-                          {roundMatches.map(match => renderMatchCard(match))}
+                          {regularMatches.map(match => renderMatchCard(match))}
                         </div>
                       </Col>
                     );
                   })}
               </Row>
+              
+              {/* 季軍賽單獨顯示 */}
+              {Object.values(brackets).some(roundMatches => 
+                roundMatches.some(match => match.tournament_stage === 'third_place')
+              ) && (
+                <div style={{ marginTop: 24 }}>
+                  <div style={{ textAlign: 'center', marginBottom: 16 }}>
+                    <Title level={4} style={{ margin: 0, color: '#fa8c16' }}>
+                      🥉 季軍賽
+                    </Title>
+                  </div>
+                  <Row justify="center">
+                    <Col>
+                      {Object.values(brackets).map(roundMatches => 
+                        roundMatches
+                          .filter(match => match.tournament_stage === 'third_place')
+                          .map(match => renderMatchCard(match))
+                      )}
+                    </Col>
+                  </Row>
+                </div>
+              )}
             </div>
           </Card>
 
