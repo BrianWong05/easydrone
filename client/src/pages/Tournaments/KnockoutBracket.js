@@ -62,6 +62,8 @@ const KnockoutBracket = () => {
           team_count: 8,
           match_date: moment().add(1, "day"),
           match_time: moment("14:00", "HH:mm"),
+          interval_minutes: 30,
+          interval_seconds: 0,
           match_minutes: 10,
           match_seconds: 0,
         });
@@ -91,10 +93,16 @@ const KnockoutBracket = () => {
     try {
       setGenerating(true);
 
+      // Use ONLY the date from match_date and ONLY the time from match_time
+      const dateOnly = values.match_date.format("YYYY-MM-DD"); // Only date part
+      const timeOnly = values.match_time.format("HH:mm:ss");   // Only time part
+      const combinedDateTime = `${dateOnly} ${timeOnly}`;      // Combine them
+      
       const requestData = {
         team_count: values.team_count,
-        match_date: values.match_date.format("YYYY-MM-DD HH:mm:ss"),
+        match_date: combinedDateTime,
         match_time: (values.match_minutes || 10) * 60 + (values.match_seconds || 0),
+        match_interval: (values.interval_minutes || 30) * 60 + (values.interval_seconds || 0),
       };
 
       console.log("🎯 生成淘汰賽請求:", requestData);
@@ -417,6 +425,34 @@ const KnockoutBracket = () => {
                 >
                   <InputNumber min={0} max={59} style={{ width: "100%" }} placeholder="秒" />
                 </Form.Item>
+              </Col>
+            </Row>
+
+            <Row gutter={16} style={{ marginTop: "16px" }}>
+              <Col span={6}>
+                <Form.Item
+                  label="比賽間隔（分鐘）"
+                  name="interval_minutes"
+                  rules={[{ required: true, message: "請輸入間隔分鐘" }]}
+                >
+                  <InputNumber min={0} max={120} style={{ width: "100%" }} placeholder="分鐘" />
+                </Form.Item>
+              </Col>
+              <Col span={6}>
+                <Form.Item
+                  label="比賽間隔（秒）"
+                  name="interval_seconds"
+                  rules={[{ required: true, message: "請輸入間隔秒數" }]}
+                >
+                  <InputNumber min={0} max={59} style={{ width: "100%" }} placeholder="秒" />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <div style={{ padding: "8px 0", color: "#666" }}>
+                  <Text type="secondary">
+                    比賽間隔：每場比賽之間的時間間隔，用於準備和清場
+                  </Text>
+                </div>
               </Col>
             </Row>
 

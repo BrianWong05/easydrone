@@ -520,7 +520,14 @@ router.patch('/:id/status', async (req, res) => {
 router.post('/:id/knockout/generate', async (req, res) => {
   try {
     const tournamentId = req.params.id;
-    const { team_count, match_date, match_time = 600 } = req.body;
+    const { team_count, match_date, match_time = 600, match_interval = 1800 } = req.body;
+    
+    console.log('🎯 Knockout generation request data:', {
+      team_count,
+      match_date,
+      match_time,
+      match_interval
+    });
 
     // 檢查錦標賽是否存在
     const tournaments = await query(
@@ -604,6 +611,7 @@ router.post('/:id/knockout/generate', async (req, res) => {
       selectedTeams, 
       match_date, 
       match_time,
+      match_interval,
       tournament.tournament_type
     );
 
@@ -1124,7 +1132,7 @@ async function getOverallLeaderboard(tournamentId) {
 }
 
 // 輔助函數：生成淘汰賽結構
-async function generateKnockoutStructure(tournamentId, teams, matchDate, matchTime, tournamentType) {
+async function generateKnockoutStructure(tournamentId, teams, matchDate, matchTime, matchInterval, tournamentType) {
   try {
     const teamCount = teams.length;
     const rounds = Math.log2(teamCount);
@@ -1152,6 +1160,10 @@ async function generateKnockoutStructure(tournamentId, teams, matchDate, matchTi
         const matchNumberStr = `${stage.substring(0, 2).toUpperCase()}${firstRoundMatchNumber.toString().padStart(2, '0')}`;
 
         // 創建比賽
+        // 計算這場比賽的時間（使用間隔）
+        // matchDate already contains the full datetime from frontend
+        const matchDateTime = moment(matchDate).add((firstRoundMatchNumber - 1) * matchInterval, 'seconds');
+        
         const matchResult = await connection.execute(`
           INSERT INTO matches (
             match_number, team1_id, team2_id, match_date, match_time,
@@ -1159,7 +1171,7 @@ async function generateKnockoutStructure(tournamentId, teams, matchDate, matchTi
           ) VALUES (?, ?, ?, ?, ?, 'knockout', ?, ?)
         `, [
           matchNumberStr, team1.team_id, team2.team_id, 
-          matchDate, matchTime, stage, parseInt(tournamentId)
+          matchDateTime.format('YYYY-MM-DD HH:mm:ss'), parseInt(matchTime), stage, parseInt(tournamentId)
         ]);
 
         // 創建淘汰賽記錄
@@ -1193,15 +1205,30 @@ async function generateKnockoutStructure(tournamentId, teams, matchDate, matchTi
         const stage = getStageByRound(round, rounds);
         let roundMatchNumber = 1; // Each round starts from 1
 
+        // 計算前一輪的比賽數量和時間
+        const previousRoundMatches = Math.pow(2, rounds - (round - 1));
+        // 計算從第一輪到前一輪的總比賽數量
+        let totalPreviousMatches = 0;
+        for (let r = 1; r < round; r++) {
+          totalPreviousMatches += Math.pow(2, rounds - r);
+        }
+        // 前一輪最後一場比賽的開始時間 = 基礎時間 + (總前序比賽數量 - 1) * 間隔
+        const previousRoundLastMatchTime = moment(matchDate).add((totalPreviousMatches - 1) * matchInterval, 'seconds');
+        // 這一輪的開始時間 = 前一輪最後一場比賽開始時間 + 額外間隔
+        const thisRoundStartTime = previousRoundLastMatchTime.add(matchInterval, 'seconds');
+
         for (let pos = 1; pos <= matchesInRound; pos++) {
           const matchNumberStr = `${stage.substring(0, 2).toUpperCase()}${roundMatchNumber.toString().padStart(2, '0')}`;
 
+          // 這一輪每場比賽的時間 = 這一輪開始時間 + (比賽位置 - 1) * 間隔
+          const nextRoundMatchDateTime = thisRoundStartTime.clone().add((pos - 1) * matchInterval, 'seconds');
+          
           const matchResult = await connection.execute(`
             INSERT INTO matches (
               match_number, team1_id, team2_id, match_date, match_time,
               match_type, tournament_stage, tournament_id
             ) VALUES (?, NULL, NULL, ?, ?, 'knockout', ?, ?)
-          `, [matchNumberStr, matchDate, matchTime, stage, parseInt(tournamentId)]);
+          `, [matchNumberStr, nextRoundMatchDateTime.format('YYYY-MM-DD HH:mm:ss'), parseInt(matchTime), stage, parseInt(tournamentId)]);
 
           await connection.execute(`
             INSERT INTO knockout_brackets (
