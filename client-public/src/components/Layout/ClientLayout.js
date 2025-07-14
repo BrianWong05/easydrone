@@ -236,7 +236,7 @@ const ClientLayout = ({ children }) => {
               />
             ) : (
               <div 
-                onClick={() => setSidebarHidden(!sidebarHidden)}
+                onClick={() => setCollapsed(!collapsed)}
                 style={{ 
                   marginRight: 16, 
                   fontSize: 18, 
@@ -260,13 +260,13 @@ const ClientLayout = ({ children }) => {
                   e.currentTarget.style.backgroundColor = 'transparent';
                   e.currentTarget.style.transform = 'scale(1)';
                 }}
-                title={sidebarHidden ? '顯示側邊欄' : '隱藏側邊欄'}
+                title={collapsed ? '展開側邊欄' : '收合側邊欄'}
               >
                 <div style={{
                   transition: 'transform 0.2s ease-in-out',
-                  transform: sidebarHidden ? 'rotate(180deg)' : 'rotate(0deg)'
+                  transform: collapsed ? 'rotate(180deg)' : 'rotate(0deg)'
                 }}>
-                  {sidebarHidden ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                  {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                 </div>
               </div>
             )}
