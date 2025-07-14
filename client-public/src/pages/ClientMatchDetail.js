@@ -121,6 +121,100 @@ const ClientMatchDetail = () => {
     return teamName || '待定';
   };
 
+  // Helper function to get navigation target (team ID or source match number)
+  const getNavigationTarget = (match, teamKey) => {
+    const teamId = match[`${teamKey}_id`];
+    const teamName = match[`${teamKey}_name`];
+    
+    // If team is assigned, navigate to team page
+    if (teamId && teamName) {
+      return { type: 'team', id: teamId };
+    }
+    
+    // For knockout matches without assigned teams, navigate to source match
+    if (match.match_type === 'knockout' && !teamId) {
+      const sourceMatch = findSourceMatch(match, teamKey);
+      if (sourceMatch) {
+        return { type: 'match', matchNumber: sourceMatch };
+      }
+    }
+    
+    return null;
+  };
+
+  // Helper function to find match ID by match number
+  const findMatchIdByNumber = async (matchNumber) => {
+    try {
+      console.log(`🔍 Searching for match: ${matchNumber}`);
+      
+      // Try to find the match in current tournament first
+      if (match?.tournament_id) {
+        console.log(`🏆 Searching in tournament: ${match.tournament_id}`);
+        try {
+          const tournamentResponse = await axios.get(`/api/tournaments/${match.tournament_id}/matches?limit=100`);
+          if (tournamentResponse.data.success) {
+            const matches = Array.isArray(tournamentResponse.data.data) ? 
+              tournamentResponse.data.data : 
+              (tournamentResponse.data.data.matches || []);
+            
+            console.log(`📋 Found ${matches.length} matches in tournament`);
+            const foundMatch = matches.find(m => m.match_number === matchNumber);
+            if (foundMatch) {
+              console.log(`✅ Found match ${matchNumber} with ID: ${foundMatch.match_id}`);
+              return foundMatch.match_id;
+            }
+          }
+        } catch (tournamentError) {
+          console.log('Tournament-specific search failed, trying general search');
+        }
+      }
+      
+      // Fallback to general matches endpoint
+      console.log(`🌐 Searching in all matches`);
+      const response = await axios.get(`/api/matches?limit=100`);
+      if (response.data.success) {
+        const matches = Array.isArray(response.data.data) ? 
+          response.data.data : 
+          (response.data.data.matches || []);
+        
+        console.log(`📋 Found ${matches.length} total matches`);
+        const foundMatch = matches.find(m => m.match_number === matchNumber);
+        if (foundMatch) {
+          console.log(`✅ Found match ${matchNumber} with ID: ${foundMatch.match_id}`);
+          return foundMatch.match_id;
+        }
+      }
+      
+      console.log(`❌ Match ${matchNumber} not found in any search`);
+    } catch (error) {
+      console.error('Error finding match by number:', error);
+    }
+    return null;
+  };
+
+  // Enhanced navigation handler
+  const handleTeamNavigation = async (match, teamKey) => {
+    const target = getNavigationTarget(match, teamKey);
+    
+    if (!target) {
+      return; // No valid navigation target
+    }
+    
+    if (target.type === 'team') {
+      navigate(`/teams/${target.id}`);
+    } else if (target.type === 'match') {
+      // Find the match ID for the source match number
+      const matchId = await findMatchIdByNumber(target.matchNumber);
+      if (matchId) {
+        navigate(`/matches/${matchId}`);
+      } else {
+        // Fallback: navigate to matches list with filter
+        console.log(`Source match ${target.matchNumber} not found, redirecting to matches list`);
+        navigate(`/matches?search=${target.matchNumber}`);
+      }
+    }
+  };
+
   // 清理小組名稱顯示（移除 _{tournament_id} 後綴）
   const getDisplayGroupName = (groupName) => {
     if (!groupName) return '';
@@ -345,7 +439,7 @@ const ClientMatchDetail = () => {
                     fontWeight: 'bold',
                     color: 'inherit'
                   }}
-                  onClick={() => navigate(`/teams/${match.team1_id}`)}
+                  onClick={() => handleTeamNavigation(match, 'team1')}
                 >
                   {getTeamDisplayNameWithReference(match, 'team1')}
                 </Button>
@@ -418,7 +512,7 @@ const ClientMatchDetail = () => {
                     fontWeight: 'bold',
                     color: 'inherit'
                   }}
-                  onClick={() => navigate(`/teams/${match.team2_id}`)}
+                  onClick={() => handleTeamNavigation(match, 'team2')}
                 >
                   {getTeamDisplayNameWithReference(match, 'team2')}
                 </Button>
@@ -566,14 +660,14 @@ const ClientMatchDetail = () => {
           <Button 
             type="primary" 
             icon={<TeamOutlined />}
-            onClick={() => navigate(`/teams/${match.team1_id}`)}
+            onClick={() => handleTeamNavigation(match, 'team1')}
           >
             查看 {getTeamDisplayNameWithReference(match, 'team1')}
           </Button>
           <Button 
             type="primary" 
             icon={<TeamOutlined />}
-            onClick={() => navigate(`/teams/${match.team2_id}`)}
+            onClick={() => handleTeamNavigation(match, 'team2')}
           >
             查看 {getTeamDisplayNameWithReference(match, 'team2')}
           </Button>
