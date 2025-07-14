@@ -1217,6 +1217,34 @@ async function generateKnockoutStructure(tournamentId, teams, matchDate, matchTi
         // 這一輪的開始時間 = 前一輪最後一場比賽開始時間 + 額外間隔
         const thisRoundStartTime = previousRoundLastMatchTime.add(matchInterval, 'seconds');
 
+        // 如果是決賽輪次，先創建季軍賽（3rd place match）
+        if (round === rounds) {
+          const thirdPlaceMatchTime = thisRoundStartTime.clone();
+          const thirdPlaceResult = await connection.execute(`
+            INSERT INTO matches (
+              match_number, team1_id, team2_id, match_date, match_time,
+              match_type, tournament_stage, tournament_id
+            ) VALUES (?, NULL, NULL, ?, ?, 'knockout', ?, ?)
+          `, ['3RD01', thirdPlaceMatchTime.format('YYYY-MM-DD HH:mm:ss'), parseInt(matchTime), 'third_place', parseInt(tournamentId)]);
+
+          await connection.execute(`
+            INSERT INTO knockout_brackets (
+              tournament_id, match_id, round_number, position_in_round
+            ) VALUES (?, ?, ?, ?)
+          `, [parseInt(tournamentId), thirdPlaceResult[0].insertId, round, 0]); // position 0 for 3rd place
+
+          createdMatches.push({
+            round: round,
+            match_number: '3RD01',
+            stage: 'third_place',
+            match_id: thirdPlaceResult[0].insertId,
+            match_time: thirdPlaceMatchTime.format('YYYY-MM-DD HH:mm:ss')
+          });
+
+          // 決賽在季軍賽之後
+          thisRoundStartTime.add(matchInterval, 'seconds');
+        }
+
         for (let pos = 1; pos <= matchesInRound; pos++) {
           const matchNumberStr = `${stage.substring(0, 2).toUpperCase()}${roundMatchNumber.toString().padStart(2, '0')}`;
 
