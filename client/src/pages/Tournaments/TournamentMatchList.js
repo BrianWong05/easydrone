@@ -190,6 +190,11 @@ const TournamentMatchList = () => {
     // Apply default sorting by match number (A01, B01, C01, D01, A02, B02, C02, D02...)
     filteredMatches.sort(sortMatchNumbers);
 
+    // Add total order index to each match after sorting
+    filteredMatches.forEach((match, index) => {
+      match.totalOrder = index + 1;
+    });
+
     // Update pagination total
     setPagination((prev) => ({
       ...prev,
@@ -374,26 +379,66 @@ const TournamentMatchList = () => {
     }));
   };
 
-  // Custom sorting function for match numbers (e.g., A01, B01, C01, A02, B02, C02)
+  // Custom sorting function for match numbers with proper tournament progression
   const sortMatchNumbers = (a, b) => {
     const aNumber = a.match_number || "";
     const bNumber = b.match_number || "";
+    const aType = a.match_type || "";
+    const bType = b.match_type || "";
 
     if (!aNumber || !bNumber) return 0;
 
-    // Extract group letter and number (e.g., "A01" -> "A" and "01")
-    const aLetter = aNumber.charAt(0);
-    const bLetter = bNumber.charAt(0);
-    const aNum = parseInt(aNumber.slice(1)) || 0;
-    const bNum = parseInt(bNumber.slice(1)) || 0;
-
-    // First sort by number (01, 02, 03...)
-    if (aNum !== bNum) {
-      return aNum - bNum;
+    // First, separate by match type: group matches come before knockout matches
+    if (aType !== bType) {
+      if (aType === 'group' && bType === 'knockout') return -1;
+      if (aType === 'knockout' && bType === 'group') return 1;
+      // For other types, use alphabetical order
+      return aType.localeCompare(bType);
     }
 
-    // Then sort by group letter (A, B, C, D...)
-    return aLetter.localeCompare(bLetter);
+    // For group matches, use the original logic
+    if (aType === 'group') {
+      // Extract group letter and number (e.g., "A01" -> "A" and "01")
+      const aLetter = aNumber.charAt(0);
+      const bLetter = bNumber.charAt(0);
+      const aNum = parseInt(aNumber.slice(1)) || 0;
+      const bNum = parseInt(bNumber.slice(1)) || 0;
+
+      // First sort by number (01, 02, 03...)
+      if (aNum !== bNum) {
+        return aNum - bNum;
+      }
+
+      // Then sort by group letter (A, B, C, D...)
+      return aLetter.localeCompare(bLetter);
+    }
+
+    // For knockout matches, sort by tournament progression
+    if (aType === 'knockout') {
+      const getKnockoutOrder = (matchNumber) => {
+        const num = matchNumber.toUpperCase();
+        // Quarterfinals (QU01, QU02, QU03, QU04)
+        if (num.startsWith('QU')) return 1000 + parseInt(num.slice(2));
+        // Round of 16 (R16_01, R16_02, etc.)
+        if (num.startsWith('R16')) return 900 + parseInt(num.slice(4));
+        // Round of 32 (R32_01, R32_02, etc.)
+        if (num.startsWith('R32')) return 800 + parseInt(num.slice(4));
+        // Semifinals (SE01, SE02, etc.)
+        if (num.startsWith('SE')) return 2000 + parseInt(num.slice(2));
+        // Finals (FI01, etc.)
+        if (num.startsWith('FI')) return 3000 + parseInt(num.slice(2));
+        // Third place playoff (3RD01, etc.)
+        if (num.startsWith('3RD')) return 2500 + parseInt(num.slice(3));
+        // Other knockout matches - extract number for sorting
+        const numPart = num.match(/\d+/);
+        return numPart ? parseInt(numPart[0]) : 0;
+      };
+
+      return getKnockoutOrder(aNumber) - getKnockoutOrder(bNumber);
+    }
+
+    // Fallback: alphabetical sorting
+    return aNumber.localeCompare(bNumber);
   };
 
   // 獲取隊伍顯示名稱，如果沒有隊伍則顯示來源比賽的勝者
@@ -451,6 +496,20 @@ const TournamentMatchList = () => {
   };
 
   const columns = [
+    {
+      title: "總順序",
+      dataIndex: "totalOrder",
+      key: "totalOrder",
+      width: 80,
+      align: "center",
+      sorter: (a, b) => (a.totalOrder || 0) - (b.totalOrder || 0),
+      sortDirections: ["ascend", "descend"],
+      render: (totalOrder) => (
+        <span style={{ fontWeight: "bold", color: "#1890ff" }}>
+          {totalOrder}
+        </span>
+      ),
+    },
     {
       title: "比賽場次",
       dataIndex: "match_number",
