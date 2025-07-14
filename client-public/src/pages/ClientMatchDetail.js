@@ -235,7 +235,7 @@ const ClientMatchDetail = () => {
               <Space>
                 {getMatchTypeTag(match.match_type)}
                 {match.group_name && (
-                  <Tag color="cyan">{match.group_name}</Tag>
+                  <Tag color="cyan">{getDisplayGroupName(match.group_name)}</Tag>
                 )}
               </Space>
             </Space>
@@ -385,7 +385,7 @@ const ClientMatchDetail = () => {
               </Descriptions.Item>
               {match.group_name && (
                 <Descriptions.Item label="所屬小組">
-                  <Tag color="cyan">{match.group_name}</Tag>
+                  <Tag color="cyan">{getDisplayGroupName(match.group_name)}</Tag>
                 </Descriptions.Item>
               )}
               <Descriptions.Item label="比賽狀態">
