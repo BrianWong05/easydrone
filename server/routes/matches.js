@@ -215,7 +215,7 @@ router.get('/', async (req, res) => {
       params.push(date_to);
     }
 
-    sql += ' ORDER BY m.match_date DESC, m.match_id DESC';
+    sql += ' ORDER BY m.match_date ASC, m.match_number ASC, m.match_id ASC';
 
     // 分頁
     const offset = (page - 1) * limit;

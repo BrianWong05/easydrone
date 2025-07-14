@@ -79,6 +79,18 @@ function generateGroupMatches(teams, options = {}) {
     matchNumber++;
   }
 
+  // 確保比賽按照比賽編號和時間升序排列
+  matches.sort((a, b) => {
+    // 首先按比賽編號排序
+    const matchNumA = parseInt(a.match_number.replace(/[A-Za-z]/g, ''));
+    const matchNumB = parseInt(b.match_number.replace(/[A-Za-z]/g, ''));
+    if (matchNumA !== matchNumB) {
+      return matchNumA - matchNumB;
+    }
+    // 如果比賽編號相同，按時間排序
+    return new Date(a.match_date) - new Date(b.match_date);
+  });
+
   return matches;
 }
 
@@ -155,7 +167,14 @@ function optimizeMatchSchedule(matches, matchInterval = 30) {
   // 使用系統性方法：將比賽分配到輪次中，確保每輪中每支隊伍最多出現一次
   const optimizedMatches = distributeMatchesInRounds(matches, teamCount);
 
-  // 重新分配比賽時間
+  // 首先按照比賽編號排序，確保A01在A02之前
+  optimizedMatches.sort((a, b) => {
+    const matchNumA = parseInt(a.match_number.replace(/[A-Za-z]/g, ''));
+    const matchNumB = parseInt(b.match_number.replace(/[A-Za-z]/g, ''));
+    return matchNumA - matchNumB;
+  });
+
+  // 重新分配比賽時間，確保A01最早，A02其次，依此類推
   const baseDate = moment(matches[0].match_date);
   optimizedMatches.forEach((match, index) => {
     const newDateTime = baseDate.clone().add(index * matchInterval, 'minutes');
