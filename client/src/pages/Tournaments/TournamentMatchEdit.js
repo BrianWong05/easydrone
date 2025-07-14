@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Typography, Form, Input, Select, Button, Space, DatePicker, TimePicker, InputNumber, message, Spin, Row, Col, Divider } from 'antd';
-import { ArrowLeftOutlined, SaveOutlined, CalendarOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, SaveOutlined, CalendarOutlined, SwapOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 import axios from 'axios';
@@ -213,6 +213,18 @@ const TournamentMatchEdit = () => {
     navigate(`/tournaments/${tournamentId}/matches/${matchId}`);
   };
 
+  const handleSwapTeams = () => {
+    const team1Id = form.getFieldValue('team1_id');
+    const team2Id = form.getFieldValue('team2_id');
+    
+    form.setFieldsValue({
+      team1_id: team2Id,
+      team2_id: team1Id
+    });
+    
+    message.success('隊伍已交換！');
+  };
+
   if (dataLoading) {
     return (
       <div style={{ padding: '24px', textAlign: 'center' }}>
@@ -303,8 +315,8 @@ const TournamentMatchEdit = () => {
             </Select>
           </Form.Item>
 
-          <Row gutter={24}>
-            <Col span={12}>
+          <Row gutter={24} align="bottom">
+            <Col span={11}>
               <Form.Item label="隊伍1" name="team1_id" rules={[{ required: true, message: "請選擇隊伍1" }]}>
                 <Select placeholder="選擇隊伍1" showSearch optionFilterProp="children">
                   {teams.map((team) => (
@@ -326,7 +338,26 @@ const TournamentMatchEdit = () => {
                 </Select>
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col span={2} style={{ textAlign: 'center' }}>
+              <Form.Item style={{ marginBottom: 0 }}>
+                <Button 
+                  type="dashed" 
+                  icon={<SwapOutlined />} 
+                  onClick={handleSwapTeams}
+                  title="交換隊伍"
+                  style={{ 
+                    width: '100%',
+                    height: '32px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  交換
+                </Button>
+              </Form.Item>
+            </Col>
+            <Col span={11}>
               <Form.Item label="隊伍2" name="team2_id" rules={[{ required: true, message: "請選擇隊伍2" }]}>
                 <Select placeholder="選擇隊伍2" showSearch optionFilterProp="children">
                   {teams.map((team) => (
