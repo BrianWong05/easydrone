@@ -520,13 +520,14 @@ router.patch('/:id/status', async (req, res) => {
 router.post('/:id/knockout/generate', async (req, res) => {
   try {
     const tournamentId = req.params.id;
-    const { team_count, match_date, match_time = 600, match_interval = 1800 } = req.body;
+    const { team_count, match_date, match_time = 600, match_interval = 1800, include_third_place = true } = req.body;
     
     console.log('🎯 Knockout generation request data:', {
       team_count,
       match_date,
       match_time,
-      match_interval
+      match_interval,
+      include_third_place
     });
 
     // 檢查錦標賽是否存在
@@ -628,7 +629,8 @@ router.post('/:id/knockout/generate', async (req, res) => {
       match_date, 
       match_time,
       match_interval,
-      tournament.tournament_type
+      tournament.tournament_type,
+      include_third_place
     );
 
     res.status(201).json({
@@ -1182,7 +1184,7 @@ async function getOverallLeaderboard(tournamentId) {
 }
 
 // 輔助函數：生成淘汰賽結構
-async function generateKnockoutStructure(tournamentId, teams, matchDate, matchTime, matchInterval, tournamentType) {
+async function generateKnockoutStructure(tournamentId, teams, matchDate, matchTime, matchInterval, tournamentType, includeThirdPlace = true) {
   try {
     const teamCount = teams.length;
     const rounds = Math.log2(teamCount);
@@ -1272,7 +1274,7 @@ async function generateKnockoutStructure(tournamentId, teams, matchDate, matchTi
 
         // 如果是決賽輪次且有準決賽，需要處理季軍賽和決賽的順序
         let thirdPlaceMatchId = null;
-        if (stage === 'final' && rounds >= 2) {
+        if (stage === 'final' && rounds >= 2 && includeThirdPlace) {
           // 記錄季軍賽的時間，但先不創建
           const thirdPlaceMatchTime = thisRoundStartTime.clone();
           console.log(`🥉 Will create 3rd place match after final at: ${thirdPlaceMatchTime.format('YYYY-MM-DD HH:mm:ss')}`);
@@ -1314,7 +1316,7 @@ async function generateKnockoutStructure(tournamentId, teams, matchDate, matchTi
         }
         
         // 創建季軍賽（在決賽之後創建，確保正確的數據庫順序）
-        if (stage === 'final' && rounds >= 2) {
+        if (stage === 'final' && rounds >= 2 && includeThirdPlace) {
           const thirdPlaceMatchNumber = 'TP01'; // Third Place 01
           // 季軍賽時間應該在決賽之前（時間上），但在數據庫中後創建
           const thirdPlaceMatchTime = thisRoundStartTime.clone().subtract(matchInterval, 'seconds');

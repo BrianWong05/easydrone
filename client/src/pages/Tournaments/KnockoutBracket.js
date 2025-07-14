@@ -17,6 +17,7 @@ import {
   Row,
   Col,
   Modal,
+  Checkbox,
 } from "antd";
 import { ArrowLeftOutlined, ThunderboltOutlined, TrophyOutlined, DeleteOutlined } from "@ant-design/icons";
 import axios from "axios";
@@ -66,6 +67,7 @@ const KnockoutBracket = () => {
           interval_seconds: 0,
           match_minutes: 10,
           match_seconds: 0,
+          include_third_place: true, // 默認包含季軍賽
         });
       }
     } catch (error) {
@@ -103,6 +105,7 @@ const KnockoutBracket = () => {
         match_date: combinedDateTime,
         match_time: (values.match_minutes || 10) * 60 + (values.match_seconds || 0),
         match_interval: (values.interval_minutes || 30) * 60 + (values.interval_seconds || 0),
+        include_third_place: values.include_third_place || false,
       };
 
       console.log("🎯 生成淘汰賽請求:", requestData);
@@ -552,6 +555,24 @@ const KnockoutBracket = () => {
                 <div style={{ padding: "8px 0", color: "#666" }}>
                   <Text type="secondary">
                     比賽間隔：每場比賽之間的時間間隔，用於準備和清場
+                  </Text>
+                </div>
+              </Col>
+            </Row>
+
+            <Row gutter={16} style={{ marginTop: "16px" }}>
+              <Col span={24}>
+                <Form.Item
+                  name="include_third_place"
+                  valuePropName="checked"
+                >
+                  <Checkbox>
+                    包含季軍賽（3rd Place Match）
+                  </Checkbox>
+                </Form.Item>
+                <div style={{ marginTop: "8px", color: "#666", fontSize: "12px" }}>
+                  <Text type="secondary">
+                    勾選此選項將在準決賽和決賽之間安排季軍賽，由兩場準決賽的敗者進行比賽
                   </Text>
                 </div>
               </Col>
