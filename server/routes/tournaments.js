@@ -689,7 +689,7 @@ router.post('/:id/knockout', async (req, res) => {
     }
 
     // 檢查所有隊伍是否存在
-    const teamIds = teams.map(t => t.team_id);
+    const teamIds = typeof teams[0] === 'object' ? teams.map(t => t.team_id) : teams; // Handle both array of objects and array of IDs
     const existingTeams = await query(
       `SELECT team_id FROM teams WHERE team_id IN (${teamIds.map(() => '?').join(',')})`,
       teamIds
@@ -719,13 +719,15 @@ router.post('/:id/knockout', async (req, res) => {
         const matchNumberStr = `${stage.substring(0, 2).toUpperCase()}${matchNumber.toString().padStart(2, '0')}`;
 
         // 創建比賽
+        const team1Id = typeof team1 === 'object' ? team1.team_id : team1;
+        const team2Id = typeof team2 === 'object' ? team2.team_id : team2;
         const matchResult = await connection.execute(`
           INSERT INTO matches (
             match_number, team1_id, team2_id, match_date, match_time,
             match_type, tournament_stage, tournament_id
           ) VALUES (?, ?, ?, ?, ?, 'knockout', ?, ?)
         `, [
-          matchNumberStr, team1.team_id, team2.team_id, 
+          matchNumberStr, team1Id, team2Id, 
           match_date, match_time, stage, tournamentId
         ]);
 
@@ -734,10 +736,10 @@ router.post('/:id/knockout', async (req, res) => {
           INSERT INTO knockout_brackets (
             tournament_id, match_id, round_number, position_in_round
           ) VALUES (?, ?, ?, ?)
-        `, [tournamentId, matchResult.insertId, currentRound, Math.floor(i / 2) + 1]);
+        `, [tournamentId, matchResult[0].insertId, currentRound, Math.floor(i / 2) + 1]);
 
         firstRoundMatches.push({
-          match_id: matchResult.insertId,
+          match_id: matchResult[0].insertId,
           position: Math.floor(i / 2) + 1
         });
 
@@ -748,6 +750,28 @@ router.post('/:id/knockout', async (req, res) => {
       for (let round = 2; round <= rounds; round++) {
         const matchesInRound = Math.pow(2, rounds - round);
         const stage = getStageByRound(round, rounds);
+
+        // 如果是決賽輪次且有準決賽，先創建季軍賽
+        if (stage === 'final' && rounds >= 2) {
+          // 創建季軍賽（3rd place match）
+          const thirdPlaceMatchNumber = 'TP01'; // Third Place 01
+          
+          console.log(`🥉 Creating 3rd place match: ${thirdPlaceMatchNumber}`);
+          
+          const thirdPlaceResult = await connection.execute(`
+            INSERT INTO matches (
+              match_number, team1_id, team2_id, match_date, match_time,
+              match_type, tournament_stage, tournament_id
+            ) VALUES (?, NULL, NULL, ?, ?, 'knockout', 'third_place', ?)
+          `, [thirdPlaceMatchNumber, match_date, match_time, tournamentId]);
+
+          // 季軍賽記錄在knockout_brackets表中
+          await connection.execute(`
+            INSERT INTO knockout_brackets (
+              tournament_id, match_id, round_number, position_in_round
+            ) VALUES (?, ?, ?, ?)
+          `, [tournamentId, thirdPlaceResult[0].insertId, round, 0]); // position 0 表示季軍賽
+        }
 
         for (let pos = 1; pos <= matchesInRound; pos++) {
           const matchNumberStr = `${stage.substring(0, 2).toUpperCase()}${matchNumber.toString().padStart(2, '0')}`;
@@ -763,7 +787,7 @@ router.post('/:id/knockout', async (req, res) => {
             INSERT INTO knockout_brackets (
               tournament_id, match_id, round_number, position_in_round
             ) VALUES (?, ?, ?, ?)
-          `, [tournamentId, matchResult.insertId, round, pos]);
+          `, [tournamentId, matchResult[0].insertId, round, pos]);
 
           matchNumber++;
         }
@@ -1236,7 +1260,38 @@ async function generateKnockoutStructure(tournamentId, teams, matchDate, matchTi
         // 這一輪的開始時間 = 前一輪最後一場比賽開始時間 + 額外間隔
         const thisRoundStartTime = previousRoundLastMatchTime.add(matchInterval, 'seconds');
 
-        // 決賽輪次不需要額外處理，直接創建決賽
+        // 如果是決賽輪次且有準決賽，先創建季軍賽
+        if (stage === 'final' && rounds >= 2) {
+          // 創建季軍賽（3rd place match）
+          const thirdPlaceMatchNumber = 'TP01'; // Third Place 01
+          const thirdPlaceMatchTime = thisRoundStartTime.clone(); // 與決賽同時間或稍早
+          
+          console.log(`🥉 Creating 3rd place match: ${thirdPlaceMatchNumber}`);
+          
+          const thirdPlaceResult = await connection.execute(`
+            INSERT INTO matches (
+              match_number, team1_id, team2_id, match_date, match_time,
+              match_type, tournament_stage, tournament_id
+            ) VALUES (?, NULL, NULL, ?, ?, 'knockout', 'third_place', ?)
+          `, [thirdPlaceMatchNumber, thirdPlaceMatchTime.format('YYYY-MM-DD HH:mm:ss'), parseInt(matchTime), parseInt(tournamentId)]);
+
+          // 季軍賽不需要在knockout_brackets表中記錄，因為它不是標準淘汰賽流程的一部分
+          // 但為了保持一致性，我們還是記錄它
+          await connection.execute(`
+            INSERT INTO knockout_brackets (
+              tournament_id, match_id, round_number, position_in_round
+            ) VALUES (?, ?, ?, ?)
+          `, [parseInt(tournamentId), thirdPlaceResult[0].insertId, round, 0]); // position 0 表示季軍賽
+          
+          allMatches.push({
+            match_id: thirdPlaceResult[0].insertId,
+            round: round,
+            position: 0, // 特殊位置表示季軍賽
+            match_number: thirdPlaceMatchNumber,
+            team1: 'TBD',
+            team2: 'TBD'
+          });
+        }
 
         for (let pos = 1; pos <= matchesInRound; pos++) {
           const matchNumberStr = `${stage.substring(0, 2).toUpperCase()}${roundMatchNumber.toString().padStart(2, '0')}`;
@@ -1282,7 +1337,7 @@ async function generateKnockoutStructure(tournamentId, teams, matchDate, matchTi
         const nextRoundBrackets = await connection.execute(`
           SELECT bracket_id, match_id, position_in_round 
           FROM knockout_brackets 
-          WHERE tournament_id = ? AND round_number = ?
+          WHERE tournament_id = ? AND round_number = ? AND position_in_round > 0
           ORDER BY position_in_round
         `, [parseInt(tournamentId), round + 1]);
 

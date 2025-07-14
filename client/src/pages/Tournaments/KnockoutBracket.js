@@ -206,6 +206,23 @@ const KnockoutBracket = () => {
     }
 
     const rounds = Object.keys(brackets).sort((a, b) => parseInt(a) - parseInt(b));
+    
+    // 分離季軍賽和常規輪次
+    const regularRounds = [];
+    let thirdPlaceMatches = [];
+    
+    rounds.forEach((roundNum) => {
+      const roundMatches = brackets[roundNum];
+      const thirdPlace = roundMatches.filter(match => match.tournament_stage === 'third_place');
+      const regular = roundMatches.filter(match => match.tournament_stage !== 'third_place');
+      
+      if (thirdPlace.length > 0) {
+        thirdPlaceMatches = thirdPlace;
+      }
+      if (regular.length > 0) {
+        regularRounds.push({ roundNum, matches: regular });
+      }
+    });
 
     return (
       <Card
@@ -216,15 +233,15 @@ const KnockoutBracket = () => {
           </Button>
         }
       >
+        {/* 常規淘汰賽輪次 */}
         <Row gutter={16}>
-          {rounds.map((roundNum) => {
-            const roundMatches = brackets[roundNum];
-            const roundName = getRoundName(parseInt(roundNum), rounds.length);
+          {regularRounds.map(({ roundNum, matches }) => {
+            const roundName = getRoundName(parseInt(roundNum), regularRounds.length);
 
             return (
-              <Col key={roundNum} span={24 / rounds.length}>
+              <Col key={roundNum} span={24 / regularRounds.length}>
                 <Card size="small" title={roundName} style={{ marginBottom: "16px" }}>
-                  {roundMatches.map((match) => (
+                  {matches.map((match) => (
                     <div
                       key={match.match_id}
                       style={{
@@ -247,7 +264,7 @@ const KnockoutBracket = () => {
                       onClick={() => navigate(`/tournaments/${tournamentId}/matches/${match.match_id}`)}
                       title="點擊查看比賽詳情"
                     >
-                      <div style={{ fontWeight: "bold", marginBottom: "4px" }}>{match.match_number}</div>
+                      <div style={{ fontWeight: "bold", marginBottom: "4px" }}>{getMatchDisplayName(match)}</div>
                       <div style={{ fontSize: "12px" }}>
                         {getTeamDisplayName(match, "team1", brackets)} vs {getTeamDisplayName(match, "team2", brackets)}
                       </div>
@@ -271,6 +288,58 @@ const KnockoutBracket = () => {
             );
           })}
         </Row>
+        
+        {/* 季軍賽 */}
+        {thirdPlaceMatches.length > 0 && (
+          <Row gutter={16} style={{ marginTop: "16px" }}>
+            <Col span={24}>
+              <Card size="small" title="季軍賽" style={{ backgroundColor: "#fff7e6", borderColor: "#ffa940" }}>
+                {thirdPlaceMatches.map((match) => (
+                  <div
+                    key={match.match_id}
+                    style={{
+                      border: "1px solid #ffa940",
+                      borderRadius: "4px",
+                      padding: "8px",
+                      marginBottom: "8px",
+                      backgroundColor: match.match_status === "completed" ? "#fff2e8" : "#fffbf0",
+                      cursor: "pointer",
+                      transition: "all 0.3s ease",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.target.style.backgroundColor = match.match_status === "completed" ? "#ffe7ba" : "#fff1b8";
+                      e.target.style.borderColor = "#fa8c16";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.backgroundColor = match.match_status === "completed" ? "#fff2e8" : "#fffbf0";
+                      e.target.style.borderColor = "#ffa940";
+                    }}
+                    onClick={() => navigate(`/tournaments/${tournamentId}/matches/${match.match_id}`)}
+                    title="點擊查看比賽詳情"
+                  >
+                    <div style={{ fontWeight: "bold", marginBottom: "4px", color: "#fa8c16" }}>🥉 {getMatchDisplayName(match)}</div>
+                    <div style={{ fontSize: "12px" }}>
+                      {getTeamDisplayName(match, "team1", brackets)} vs {getTeamDisplayName(match, "team2", brackets)}
+                    </div>
+                    {match.match_status === "completed" && (
+                      <>
+                        <div style={{ fontSize: "14px", fontWeight: "bold", color: "#fa8c16", marginTop: "4px" }}>
+                          {match.team1_score || 0} : {match.team2_score || 0}
+                        </div>
+                        <div style={{ fontSize: "12px", color: "#fa8c16", marginTop: "2px" }}>
+                          季軍: {getDisplayTeamName(match.winner_name)}
+                        </div>
+                      </>
+                    )}
+                    <Tag color="orange" size="small" style={{ marginTop: "4px" }}>
+                      {getStatusText(match.match_status)}
+                    </Tag>
+                  </div>
+                ))}
+              </Card>
+            </Col>
+          </Row>
+        )}
       </Card>
     );
   };
@@ -289,6 +358,13 @@ const KnockoutBracket = () => {
       default:
         return `第${roundNum}輪`;
     }
+  };
+
+  const getMatchDisplayName = (match) => {
+    if (match.tournament_stage === 'third_place') {
+      return '季軍賽';
+    }
+    return match.match_number;
   };
 
   const getStatusColor = (status) => {
