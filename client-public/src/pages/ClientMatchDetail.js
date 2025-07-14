@@ -199,8 +199,54 @@ const ClientMatchDetail = () => {
     
     // For knockout matches without assigned teams, navigate to source match
     if (match.match_type === 'knockout' && !teamId) {
-      const sourceMatch = findSourceMatch(match, teamKey);
-      if (sourceMatch) {
+      // Use the comprehensive knockout progression mapping
+      const matchNum = match.match_number?.toUpperCase();
+      const knockoutProgression = {
+        // 決賽 (Finals) - 來自準決賽
+        'FI01': { team1: 'SE01', team2: 'SE02' },
+        'FI02': { team1: 'SE03', team2: 'SE04' },
+        
+        // 季軍賽 (Third Place) - 來自準決賽敗者
+        'TP01': { team1: 'SE01', team2: 'SE02' },
+        
+        // 準決賽 (Semifinals) - 來自八強
+        'SE01': { team1: 'QU01', team2: 'QU02' },
+        'SE02': { team1: 'QU03', team2: 'QU04' },
+        'SE03': { team1: 'QU05', team2: 'QU06' },
+        'SE04': { team1: 'QU07', team2: 'QU08' },
+        
+        // 八強 (Quarterfinals) - 來自十六強
+        'QU01': { team1: 'R16_01', team2: 'R16_02' },
+        'QU02': { team1: 'R16_03', team2: 'R16_04' },
+        'QU03': { team1: 'R16_05', team2: 'R16_06' },
+        'QU04': { team1: 'R16_07', team2: 'R16_08' },
+        'QU05': { team1: 'R16_09', team2: 'R16_10' },
+        'QU06': { team1: 'R16_11', team2: 'R16_12' },
+        'QU07': { team1: 'R16_13', team2: 'R16_14' },
+        'QU08': { team1: 'R16_15', team2: 'R16_16' },
+        
+        // 十六強 (Round of 16) - 來自三十二強
+        'R16_01': { team1: 'R32_01', team2: 'R32_02' },
+        'R16_02': { team1: 'R32_03', team2: 'R32_04' },
+        'R16_03': { team1: 'R32_05', team2: 'R32_06' },
+        'R16_04': { team1: 'R32_07', team2: 'R32_08' },
+        'R16_05': { team1: 'R32_09', team2: 'R32_10' },
+        'R16_06': { team1: 'R32_11', team2: 'R32_12' },
+        'R16_07': { team1: 'R32_13', team2: 'R32_14' },
+        'R16_08': { team1: 'R32_15', team2: 'R32_16' },
+        'R16_09': { team1: 'R32_17', team2: 'R32_18' },
+        'R16_10': { team1: 'R32_19', team2: 'R32_20' },
+        'R16_11': { team1: 'R32_21', team2: 'R32_22' },
+        'R16_12': { team1: 'R32_23', team2: 'R32_24' },
+        'R16_13': { team1: 'R32_25', team2: 'R32_26' },
+        'R16_14': { team1: 'R32_27', team2: 'R32_28' },
+        'R16_15': { team1: 'R32_29', team2: 'R32_30' },
+        'R16_16': { team1: 'R32_31', team2: 'R32_32' }
+      };
+      
+      const progression = knockoutProgression[matchNum];
+      if (progression) {
+        const sourceMatch = progression[teamKey];
         return { type: 'match', matchNumber: sourceMatch };
       }
     }
