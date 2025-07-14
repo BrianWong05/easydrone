@@ -776,12 +776,22 @@ router.post('/:id/knockout', async (req, res) => {
         for (let pos = 1; pos <= matchesInRound; pos++) {
           const matchNumberStr = `${stage.substring(0, 2).toUpperCase()}${matchNumber.toString().padStart(2, '0')}`;
 
+          // 如果是決賽且有季軍賽，決賽應該在季軍賽之後進行
+          let finalMatchTime = match_date;
+          if (stage === 'final' && rounds >= 2) {
+            // 決賽時間 = 季軍賽時間 + 間隔時間 (不包含比賽時長)
+            const intervalTime = 1800; // 間隔時間（秒），默認30分鐘
+            const finalDate = new Date(match_date);
+            finalDate.setSeconds(finalDate.getSeconds() + intervalTime);
+            finalMatchTime = finalDate.toISOString().slice(0, 19).replace('T', ' ');
+          }
+
           const matchResult = await connection.execute(`
             INSERT INTO matches (
               match_number, team1_id, team2_id, match_date, match_time,
               match_type, tournament_stage, tournament_id
             ) VALUES (?, NULL, NULL, ?, ?, 'knockout', ?, ?)
-          `, [matchNumberStr, match_date, match_time, stage, tournamentId]);
+          `, [matchNumberStr, finalMatchTime, match_time, stage, tournamentId]);
 
           await connection.execute(`
             INSERT INTO knockout_brackets (
@@ -1297,7 +1307,13 @@ async function generateKnockoutStructure(tournamentId, teams, matchDate, matchTi
           const matchNumberStr = `${stage.substring(0, 2).toUpperCase()}${roundMatchNumber.toString().padStart(2, '0')}`;
 
           // 這一輪每場比賽的時間 = 這一輪開始時間 + (比賽位置 - 1) * 間隔
-          const nextRoundMatchDateTime = thisRoundStartTime.clone().add((pos - 1) * matchInterval, 'seconds');
+          let nextRoundMatchDateTime = thisRoundStartTime.clone().add((pos - 1) * matchInterval, 'seconds');
+          
+          // 如果是決賽且有季軍賽，決賽應該在季軍賽之後進行
+          if (stage === 'final' && rounds >= 2) {
+            // 決賽時間 = 季軍賽時間 + 間隔時間 (不包含比賽時長)
+            nextRoundMatchDateTime = thisRoundStartTime.clone().add(matchInterval, 'seconds');
+          }
           
           const matchResult = await connection.execute(`
             INSERT INTO matches (

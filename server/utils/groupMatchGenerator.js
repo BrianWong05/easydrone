@@ -503,8 +503,8 @@ function generateMatchStatistics(teams, options = {}) {
   const matchInterval = options.matchInterval || 30;
   const matchTime = options.matchTime || 600;
   
-  // 計算總時長
-  const totalDuration = (totalMatches - 1) * matchInterval + (matchTime / 60);
+  // 計算總時長 (只計算比賽間隔，不包含比賽時長)
+  const totalDuration = (totalMatches - 1) * matchInterval;
   const startTime = moment(options.matchDate || moment());
   const endTime = startTime.clone().add(totalDuration, 'minutes');
   

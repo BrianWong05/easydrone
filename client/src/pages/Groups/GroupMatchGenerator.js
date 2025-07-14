@@ -95,7 +95,7 @@ const GroupMatchGenerator = () => {
       const totalMatches = (teamCount * (teamCount - 1)) / 2;
       const matchTimeInSeconds = convertToSeconds(values.match_minutes, values.match_seconds);
       const matchDuration = matchTimeInSeconds / 60; // 轉換為分鐘
-      const totalDuration = (totalMatches - 1) * values.match_interval + matchDuration;
+      const totalDuration = (totalMatches - 1) * values.match_interval; // 只計算比賽間隔，不包含比賽時長
       
       // 確保使用DatePicker的日期和TimePicker的時間
       const dateString = values.match_date.format('YYYY-MM-DD');
