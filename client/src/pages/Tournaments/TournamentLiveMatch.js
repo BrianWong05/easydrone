@@ -82,6 +82,12 @@ const TournamentLiveMatch = () => {
   const [overtimeModalVisible, setOvertimeModalVisible] = useState(false);
   const [overtimeMinutes, setOvertimeMinutes] = useState(5); // 延長賽分鐘
   const [overtimeSeconds, setOvertimeSeconds] = useState(0); // 延長賽秒數
+  
+  // 中場休息計時器狀態
+  const [halfTimeMinutes, setHalfTimeMinutes] = useState(5); // 中場休息分鐘
+  const [halfTimeSeconds, setHalfTimeSeconds] = useState(0); // 中場休息秒數
+  const [halfTimeRemaining, setHalfTimeRemaining] = useState(0); // 中場休息剩餘秒數
+  const [halfTimeRunning, setHalfTimeRunning] = useState(false); // 中場休息計時器是否運行
 
   // 事件表單狀態
   const [eventForm, setEventForm] = useState({
@@ -207,6 +213,7 @@ const TournamentLiveMatch = () => {
               // 上半場結束，進入中場休息
               setIsHalfTime(true);
               setHalfTimeModalVisible(true);
+              // 不自動開始計時器，等待用戶手動設置和啟動
               message.info("上半場結束！進入中場休息");
               console.log("上半場結束，進入中場休息");
             } else if (currentHalf === 2) {
@@ -258,6 +265,37 @@ const TournamentLiveMatch = () => {
       }
     };
   }, [isRunning, matchStarted]);
+
+  // 中場休息計時器
+  useEffect(() => {
+    let interval = null;
+    if (halfTimeRunning && halfTimeRemaining > 0) {
+      console.log(`中場休息計時器啟動 - 剩餘時間: ${halfTimeRemaining}秒`);
+      interval = setInterval(() => {
+        setHalfTimeRemaining((time) => {
+          const newTime = time - 1;
+          console.log(`中場休息倒數: ${newTime}秒`);
+          if (newTime <= 0) {
+            setHalfTimeRunning(false);
+            message.info("中場休息時間結束！可以開始下半場了");
+            console.log("中場休息時間結束");
+            return 0;
+          }
+          return newTime;
+        });
+      }, 1000);
+    } else {
+      if (interval) {
+        clearInterval(interval);
+        console.log("中場休息計時器停止");
+      }
+    }
+    return () => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [halfTimeRunning, halfTimeRemaining]);
 
   const fetchMatchData = async () => {
     try {
@@ -364,8 +402,24 @@ const TournamentLiveMatch = () => {
     setRemainingTime(totalSeconds); // 下半場重新開始完整時間
     setIsRunning(true);
     setHalfTimeModalVisible(false);
+    // 停止中場休息計時器
+    setHalfTimeRunning(false);
+    setHalfTimeRemaining(0);
     message.success("下半場開始！");
     console.log(`開始下半場 - 設置倒數計時: ${totalSeconds}秒`);
+  };
+
+  const handleStartHalfTimeTimer = () => {
+    const totalHalfTimeSeconds = halfTimeMinutes * 60 + halfTimeSeconds;
+    setHalfTimeRemaining(totalHalfTimeSeconds);
+    setHalfTimeRunning(true);
+    message.success(`中場休息計時器開始！時長：${halfTimeMinutes}分${halfTimeSeconds}秒`);
+    console.log(`開始中場休息計時器 - 設置倒數計時: ${totalHalfTimeSeconds}秒`);
+  };
+
+  const handlePauseResumeHalfTime = () => {
+    setHalfTimeRunning(!halfTimeRunning);
+    message.info(halfTimeRunning ? "中場休息計時器已暫停" : "中場休息計時器已恢復");
   };
 
   const handleStartOvertime = () => {
@@ -454,6 +508,7 @@ const TournamentLiveMatch = () => {
       // 結束上半場，進入中場休息
       setIsHalfTime(true);
       setHalfTimeModalVisible(true);
+      // 不自動開始計時器，等待用戶手動設置和啟動
       message.info("上半場結束！進入中場休息");
       console.log("手動結束上半場，進入中場休息");
     } else if (currentHalf === 2) {
@@ -657,9 +712,19 @@ const TournamentLiveMatch = () => {
               </>
             )}
             {isHalfTime && (
-              <Button type="primary" size="large" icon={<PlayCircleOutlined />} onClick={handleStartSecondHalf}>
-                開始下半場
-              </Button>
+              <>
+                <Button type="primary" size="large" icon={<PlayCircleOutlined />} onClick={handleStartSecondHalf}>
+                  開始下半場
+                </Button>
+                <Button 
+                  size="large" 
+                  icon={<PauseCircleOutlined />} 
+                  onClick={() => setHalfTimeModalVisible(true)}
+                  style={{ marginLeft: "8px" }}
+                >
+                  中場休息計時器
+                </Button>
+              </>
             )}
             {isOvertime && (
               <Button
@@ -1002,6 +1067,7 @@ const TournamentLiveMatch = () => {
           cancelText="繼續休息"
           closable={false}
           maskClosable={false}
+          width={600}
         >
           <div style={{ textAlign: "center", padding: "20px 0" }}>
             <Title level={3}>⏰ 中場休息</Title>
@@ -1010,7 +1076,87 @@ const TournamentLiveMatch = () => {
               {getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score}{" "}
               {getDisplayTeamName(matchData.team2_name)}
             </p>
-            <p style={{ color: "#666" }}>準備好開始下半場了嗎？</p>
+
+            {/* 中場休息計時器 */}
+            <div style={{ margin: "30px 0", padding: "20px", backgroundColor: "#f5f5f5", borderRadius: "8px" }}>
+              <Title level={4} style={{ marginBottom: "16px" }}>中場休息計時器</Title>
+              
+              {/* 計時器顯示 */}
+              <div style={{ marginBottom: "20px" }}>
+                <Title 
+                  level={1} 
+                  style={{ 
+                    fontSize: "80px", 
+                    margin: "0", 
+                    color: halfTimeRemaining <= 60 ? "#f5222d" : "#52c41a",
+                    fontWeight: "bold",
+                    textShadow: "2px 2px 4px rgba(0,0,0,0.3)"
+                  }}
+                >
+                  {formatTime(halfTimeRemaining)}
+                </Title>
+                <Text style={{ fontSize: "14px", color: "#666" }}>
+                  / {halfTimeMinutes}分{halfTimeSeconds}秒
+                </Text>
+              </div>
+
+              {/* 時間設置 - 始終顯示，就像延長賽設置一樣 */}
+              <div style={{ marginBottom: "16px" }}>
+                <Text strong>中場休息時長：</Text>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", marginTop: "8px" }}>
+                  <InputNumber
+                    min={0}
+                    max={30}
+                    value={halfTimeMinutes}
+                    onChange={setHalfTimeMinutes}
+                    style={{ width: "80px" }}
+                    disabled={halfTimeRunning}
+                  />
+                  <Text>分</Text>
+                  <InputNumber
+                    min={0}
+                    max={59}
+                    value={halfTimeSeconds}
+                    onChange={setHalfTimeSeconds}
+                    style={{ width: "80px" }}
+                    disabled={halfTimeRunning}
+                  />
+                  <Text>秒</Text>
+                </div>
+                <div style={{ marginTop: "8px", color: "#666", fontSize: "12px" }}>
+                  總時長：{halfTimeMinutes}分{halfTimeSeconds}秒 ({halfTimeMinutes * 60 + halfTimeSeconds}秒)
+                </div>
+              </div>
+
+              {/* 計時器控制按鈕 */}
+              <Space>
+                {!halfTimeRunning && (
+                  <Button 
+                    type="primary" 
+                    icon={<PlayCircleOutlined />}
+                    onClick={handleStartHalfTimeTimer}
+                    disabled={halfTimeMinutes === 0 && halfTimeSeconds === 0}
+                  >
+                    {halfTimeRemaining === 0 ? "開始中場休息計時器" : "恢復計時器"}
+                  </Button>
+                )}
+                {halfTimeRunning && (
+                  <Button 
+                    icon={<PauseCircleOutlined />}
+                    onClick={handlePauseResumeHalfTime}
+                  >
+                    暫停計時器
+                  </Button>
+                )}
+              </Space>
+            </div>
+
+            <p style={{ color: "#666" }}>
+              {halfTimeRemaining > 0 
+                ? "中場休息進行中，可以隨時開始下半場" 
+                : "準備好開始下半場了嗎？"
+              }
+            </p>
           </div>
         </Modal>
 
