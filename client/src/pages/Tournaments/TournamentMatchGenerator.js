@@ -176,7 +176,9 @@ const TournamentMatchGenerator = () => {
     try {
       const response = await axios.get(`/api/tournaments/${tournamentId}/groups`);
       if (response.data.success) {
+        // The server now returns groups in data.groups with team_count
         const groupsData = response.data.data?.groups || [];
+        console.log('Fetched groups:', groupsData); // Debug log
         setGroups(groupsData);
         // 默認選中所有小組
         setSelectedGroups(groupsData.map((g) => g.group_id));

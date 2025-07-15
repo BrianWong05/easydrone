@@ -233,18 +233,21 @@ router.get('/:id/groups', async (req, res) => {
     
     const groups = await query(`
       SELECT 
-        group_id,
-        group_name,
-        tournament_id,
-        created_at
-      FROM team_groups 
-      WHERE tournament_id = ?
-      ORDER BY group_name
+        g.group_id,
+        g.group_name,
+        g.tournament_id,
+        g.created_at,
+        COUNT(t.team_id) as team_count
+      FROM team_groups g
+      LEFT JOIN teams t ON g.group_id = t.group_id
+      WHERE g.tournament_id = ?
+      GROUP BY g.group_id, g.group_name, g.tournament_id, g.created_at
+      ORDER BY g.group_name
     `, [id]);
 
     res.json({
       success: true,
-      data: groups
+      data: { groups }
     });
 
   } catch (error) {
