@@ -1,0 +1,26 @@
+{
+  "navigation": {
+    "leaderboard": "積分榜",
+    "teams": "隊伍",
+    "groups": "小組",
+    "matches": "比賽",
+    "bracket": "淘汰賽對戰表",
+    "bestTeams": "最佳球隊統計"
+  },
+  "layout": {
+    "title": "錦標賽",
+    "subtitle": "公開賽事資訊",
+    "expandSidebar": "展開側邊欄",
+    "collapseSidebar": "收合側邊欄",
+    "tournamentName": "無人機足球錦標賽",
+    "loadingTournament": "載入錦標賽資料中...",
+    "loadFailed": "載入失敗",
+    "noActiveTournament": "目前沒有可顯示的錦標賽",
+    "tournamentLoadFailed": "載入錦標賽資料失敗"
+  },
+  "tournamentTypes": {
+    "group": "小組賽",
+    "knockout": "淘汰賽", 
+    "mixed": "混合賽制"
+  }
+}

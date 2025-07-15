@@ -1,0 +1,61 @@
+{
+  "stats": {
+    "overview": "統計概覽",
+    "dashboard": "數據儀表板",
+    "summary": "統計摘要",
+    "detailed": "詳細統計",
+    "comparison": "對比分析",
+    "trends": "趨勢分析",
+    "performance": "表現統計",
+    "ranking": "排名統計",
+    "bestTeams": "最佳球隊統計",
+    "topPerformers": "頂級表現者",
+    "systemStatus": "系統狀態"
+  },
+  "metrics": {
+    "totalTeams": "隊伍總數",
+    "totalTournaments": "錦標賽",
+    "totalMatches": "比賽場次",
+    "totalAthletes": "運動員總數",
+    "matchesPlayed": "已賽場次",
+    "goalsScored": "進球總數",
+    "averageGoals": "平均進球",
+    "winRate": "勝率",
+    "drawRate": "平局率",
+    "lossRate": "敗率"
+  },
+  "rankings": {
+    "position": "排名",
+    "team": "隊伍",
+    "points": "積分",
+    "wins": "勝場",
+    "draws": "平局",
+    "losses": "敗場",
+    "goalsFor": "進球",
+    "goalsAgainst": "失球",
+    "goalDifference": "淨勝球",
+    "overallRanking": "總排名",
+    "groupRanking": "小組排名"
+  },
+  "progress": {
+    "groupStage": "小組賽進度",
+    "knockout": "淘汰賽進度",
+    "overall": "總體進度",
+    "completion": "完成度"
+  },
+  "system": {
+    "databaseConnection": "數據庫連接",
+    "apiService": "API服務",
+    "realTimeUpdate": "即時更新",
+    "systemVersion": "系統版本",
+    "status": "狀態"
+  },
+  "messages": {
+    "noData": "暫無數據",
+    "noRankingData": "暫無排名數據",
+    "loadingStats": "載入統計數據中...",
+    "dataUpdated": "數據已更新",
+    "refreshData": "刷新數據",
+    "exportData": "導出數據"
+  }
+}

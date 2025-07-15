@@ -1,0 +1,54 @@
+{
+  "group": {
+    "name": "小組名稱",
+    "list": "小組列表",
+    "detail": "小組詳情",
+    "create": "創建小組",
+    "edit": "編輯小組",
+    "delete": "刪除小組",
+    "management": "小組管理",
+    "letter": "小組字母",
+    "teams": "小組隊伍",
+    "matches": "小組比賽",
+    "standings": "小組積分榜",
+    "leaderboard": "小組排行榜",
+    "stage": "小組賽階段",
+    "maxTeams": "最大隊伍數",
+    "currentTeams": "當前隊伍數",
+    "description": "小組描述",
+    "status": "小組狀態",
+    "progress": "小組進度",
+    "allStandings": "所有小組積分榜"
+  },
+  "standings": {
+    "position": "排名",
+    "team": "隊伍",
+    "played": "已賽",
+    "won": "勝",
+    "drawn": "平",
+    "lost": "敗",
+    "goalsFor": "進球",
+    "goalsAgainst": "失球",
+    "goalDifference": "淨勝球",
+    "points": "積分"
+  },
+  "messages": {
+    "noGroups": "暫無小組",
+    "noGroupData": "暫無小組數據",
+    "loadingGroups": "載入小組資料中...",
+    "groupCreated": "小組創建成功",
+    "groupUpdated": "小組更新成功",
+    "groupDeleted": "小組刪除成功",
+    "deleteConfirmation": "確定要刪除這個小組嗎？",
+    "deleteWarning": "刪除後將無法恢復",
+    "noTeamsInGroup": "暫無隊伍",
+    "noStandingsData": "暫無積分榜數據",
+    "noMatchesInGroup": "暫無比賽"
+  },
+  "placeholders": {
+    "searchGroup": "搜索小組名稱",
+    "enterGroupName": "請輸入小組名稱",
+    "enterDescription": "請輸入小組描述",
+    "selectGroupLetter": "請選擇小組字母"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "team": {
+    "name": "隊伍名稱",
+    "list": "隊伍列表",
+    "detail": "隊伍詳情",
+    "create": "創建隊伍",
+    "edit": "編輯隊伍",
+    "delete": "刪除隊伍",
+    "management": "隊伍管理",
+    "captain": "隊長",
+    "members": "隊員",
+    "memberCount": "隊員數量",
+    "description": "隊伍描述",
+    "contactInfo": "聯絡資訊",
+    "registrationDate": "註冊日期",
+    "status": "隊伍狀態",
+    "group": "所屬小組",
+    "wins": "勝場",
+    "losses": "敗場",
+    "draws": "平局",
+    "points": "積分",
+    "goalsFor": "進球數",
+    "goalsAgainst": "失球數",
+    "goalDifference": "淨勝球",
+    "matchesPlayed": "已賽場次",
+    "winRate": "勝率",
+    "ranking": "排名",
+    "totalTeams": "隊伍總數"
+  },
+  "positions": {
+    "attacker": "進攻手",
+    "defender": "防守員",
+    "goalkeeper": "守門員",
+    "midfielder": "中場"
+  },
+  "structure": {
+    "formation": "陣型配置",
+    "attackers": "進攻手",
+    "defenders": "防守員",
+    "standardFormation": "1進攻手+3-5防守員結構"
+  },
+  "messages": {
+    "noTeams": "暫無隊伍",
+    "noTeamData": "暫無隊伍數據",
+    "loadingTeams": "載入隊伍資料中...",
+    "teamCreated": "隊伍創建成功",
+    "teamUpdated": "隊伍更新成功",
+    "teamDeleted": "隊伍刪除成功",
+    "deleteConfirmation": "確定要刪除這個隊伍嗎？",
+    "deleteWarning": "刪除後將無法恢復",
+    "noMatchHistory": "暫無比賽記錄",
+    "unknownTeam": "未知隊伍"
+  },
+  "placeholders": {
+    "searchTeam": "搜索隊伍名稱",
+    "enterTeamName": "請輸入隊伍名稱",
+    "enterDescription": "請輸入隊伍描述",
+    "selectCaptain": "請選擇隊長",
+    "enterContactInfo": "請輸入聯絡資訊"
+  }
+}

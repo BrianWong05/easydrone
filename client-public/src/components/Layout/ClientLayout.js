@@ -12,12 +12,15 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 import axios from "axios";
+import LanguageSwitcher from "../LanguageSwitcher";
 
 const { Header, Sider } = Layout;
 const { Title, Text } = Typography;
 
 const ClientLayout = ({ children }) => {
+  const { t } = useTranslation(['public', 'common']);
   const [collapsed, setCollapsed] = useState(false);
   const [sidebarHidden, setSidebarHidden] = useState(false);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -58,12 +61,12 @@ const ClientLayout = ({ children }) => {
         if (fallbackResponse.data.success && fallbackResponse.data.data.tournaments.length > 0) {
           setTournament(fallbackResponse.data.data.tournaments[0]);
         } else {
-          setError("目前沒有可顯示的錦標賽");
+          setError(t('public:layout.noActiveTournament'));
         }
       }
     } catch (error) {
       console.error("Error fetching tournament:", error);
-      setError("載入錦標賽資料失敗");
+      setError(t('public:layout.tournamentLoadFailed'));
     } finally {
       setLoading(false);
     }
@@ -75,7 +78,7 @@ const ClientLayout = ({ children }) => {
       icon: <BarChartOutlined />,
       label: (
         <Link to="/leaderboard" onClick={() => setMobileDrawerOpen(false)}>
-          積分榜
+          {t('public:navigation.leaderboard')}
         </Link>
       ),
     },
@@ -84,7 +87,7 @@ const ClientLayout = ({ children }) => {
       icon: <TeamOutlined />,
       label: (
         <Link to="/teams" onClick={() => setMobileDrawerOpen(false)}>
-          隊伍
+          {t('public:navigation.teams')}
         </Link>
       ),
     },
@@ -93,7 +96,7 @@ const ClientLayout = ({ children }) => {
       icon: <GroupOutlined />,
       label: (
         <Link to="/groups" onClick={() => setMobileDrawerOpen(false)}>
-          小組
+          {t('public:navigation.groups')}
         </Link>
       ),
     },
@@ -102,7 +105,7 @@ const ClientLayout = ({ children }) => {
       icon: <CalendarOutlined />,
       label: (
         <Link to="/matches" onClick={() => setMobileDrawerOpen(false)}>
-          比賽
+          {t('public:navigation.matches')}
         </Link>
       ),
     },
@@ -111,7 +114,7 @@ const ClientLayout = ({ children }) => {
       icon: <ThunderboltOutlined />,
       label: (
         <Link to="/bracket" onClick={() => setMobileDrawerOpen(false)}>
-          淘汰賽對戰表
+          {t('public:navigation.bracket')}
         </Link>
       ),
     },
@@ -120,7 +123,7 @@ const ClientLayout = ({ children }) => {
       icon: <BarChartOutlined />,
       label: (
         <Link to="/best-teams" onClick={() => setMobileDrawerOpen(false)}>
-          最佳球隊統計
+          {t('public:navigation.bestTeams')}
         </Link>
       ),
     },
@@ -140,12 +143,12 @@ const ClientLayout = ({ children }) => {
           {(!collapsed || isMobile) && (
             <>
               <Title level={4} style={{ margin: 0, fontSize: 16 }}>
-                {tournament?.tournament_name || "錦標賽"}
+                {tournament?.tournament_name || t('public:layout.title')}
               </Title>
               <Text type="secondary" style={{ fontSize: 12 }}>
-                {tournament?.tournament_type === "group" && "小組賽"}
-                {tournament?.tournament_type === "knockout" && "淘汰賽"}
-                {tournament?.tournament_type === "mixed" && "混合賽制"}
+                {tournament?.tournament_type === "group" && t('public:tournamentTypes.group')}
+                {tournament?.tournament_type === "knockout" && t('public:tournamentTypes.knockout')}
+                {tournament?.tournament_type === "mixed" && t('public:tournamentTypes.mixed')}
               </Text>
             </>
           )}
@@ -169,7 +172,7 @@ const ClientLayout = ({ children }) => {
           }}
         >
           <Spin size="large" />
-          <Text style={{ marginTop: 16 }}>載入錦標賽資料中...</Text>
+          <Text style={{ marginTop: 16 }}>{t('public:layout.loadingTournament')}</Text>
         </div>
       </Layout>
     );
@@ -187,7 +190,7 @@ const ClientLayout = ({ children }) => {
             padding: "0 24px",
           }}
         >
-          <Alert message="載入失敗" description={error} type="error" showIcon />
+          <Alert message={t('public:layout.loadFailed')} description={error} type="error" showIcon />
         </div>
       </Layout>
     );
@@ -295,7 +298,7 @@ const ClientLayout = ({ children }) => {
                   e.currentTarget.style.backgroundColor = "transparent";
                   e.currentTarget.style.transform = "scale(1)";
                 }}
-                title={collapsed ? "展開側邊欄" : "收合側邊欄"}
+                title={collapsed ? t('public:layout.expandSidebar') : t('public:layout.collapseSidebar')}
               >
                 <div
                   style={{
@@ -314,12 +317,13 @@ const ClientLayout = ({ children }) => {
                 fontSize: isMobile ? 16 : 24,
               }}
             >
-              {isMobile ? "錦標賽" : tournament?.tournament_name || "無人機足球錦標賽"}
+              {isMobile ? t('public:layout.title') : tournament?.tournament_name || t('public:layout.tournamentName')}
             </Title>
           </div>
           <Space>
+            <LanguageSwitcher size="small" />
             <Text type="secondary" style={{ fontSize: isMobile ? 12 : 14 }}>
-              公開賽事資訊
+              {t('public:layout.subtitle')}
             </Text>
           </Space>
         </Header>

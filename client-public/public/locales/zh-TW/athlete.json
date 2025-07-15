@@ -1,0 +1,75 @@
+{
+  "athlete": {
+    "name": "運動員姓名",
+    "list": "運動員列表",
+    "detail": "運動員詳情",
+    "create": "創建運動員",
+    "edit": "編輯運動員",
+    "delete": "刪除運動員",
+    "management": "運動員管理",
+    "profile": "運動員檔案",
+    "statistics": "運動員統計",
+    "performance": "表現數據",
+    "team": "所屬隊伍",
+    "position": "位置",
+    "number": "號碼",
+    "age": "年齡",
+    "height": "身高",
+    "weight": "體重",
+    "nationality": "國籍",
+    "experience": "經驗",
+    "joinDate": "加入日期",
+    "status": "狀態",
+    "contact": "聯絡方式",
+    "biography": "個人簡介",
+    "achievements": "成就",
+    "totalAthletes": "運動員總數"
+  },
+  "statistics": {
+    "matchesPlayed": "出賽場次",
+    "goals": "進球數",
+    "assists": "助攻數",
+    "saves": "撲救數",
+    "fouls": "犯規次數",
+    "yellowCards": "黃牌數",
+    "redCards": "紅牌數",
+    "minutesPlayed": "出場時間",
+    "averageRating": "平均評分",
+    "winRate": "勝率"
+  },
+  "positions": {
+    "attacker": "進攻手",
+    "defender": "防守員",
+    "goalkeeper": "守門員",
+    "midfielder": "中場",
+    "substitute": "替補"
+  },
+  "status": {
+    "active": "現役",
+    "inactive": "非現役",
+    "injured": "受傷",
+    "suspended": "停賽",
+    "retired": "退役"
+  },
+  "messages": {
+    "noAthletes": "暫無運動員",
+    "noAthleteData": "暫無運動員數據",
+    "loadingAthletes": "載入運動員資料中...",
+    "athleteCreated": "運動員創建成功",
+    "athleteUpdated": "運動員更新成功",
+    "athleteDeleted": "運動員刪除成功",
+    "deleteConfirmation": "確定要刪除這個運動員嗎？",
+    "deleteWarning": "刪除後將無法恢復",
+    "noStatistics": "暫無統計數據"
+  },
+  "placeholders": {
+    "searchAthlete": "搜索運動員姓名",
+    "enterAthleteName": "請輸入運動員姓名",
+    "selectTeam": "請選擇隊伍",
+    "selectPosition": "請選擇位置",
+    "enterNumber": "請輸入號碼",
+    "enterAge": "請輸入年齡",
+    "enterHeight": "請輸入身高",
+    "enterWeight": "請輸入體重"
+  }
+}

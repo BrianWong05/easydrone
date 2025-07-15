@@ -1,0 +1,60 @@
+{
+  "tournament": {
+    "name": "錦標賽名稱",
+    "overview": "錦標賽概覽",
+    "management": "錦標賽管理",
+    "create": "創建錦標賽",
+    "edit": "編輯錦標賽",
+    "delete": "刪除錦標賽",
+    "status": "錦標賽狀態",
+    "type": "錦標賽類型",
+    "description": "錦標賽描述",
+    "startDate": "開始日期",
+    "endDate": "結束日期",
+    "location": "比賽地點",
+    "organizer": "主辦單位",
+    "maxTeams": "最大隊伍數",
+    "currentTeams": "當前隊伍數",
+    "registrationDeadline": "報名截止日期",
+    "rules": "比賽規則",
+    "prizes": "獎項設置",
+    "format": "賽制格式",
+    "progress": "比賽進度",
+    "groupStageProgress": "小組賽進度",
+    "knockoutProgress": "淘汰賽進度",
+    "overallProgress": "總體進度"
+  },
+  "types": {
+    "groupStage": "小組賽",
+    "knockout": "淘汰賽",
+    "mixed": "混合賽制",
+    "roundRobin": "循環賽",
+    "singleElimination": "單淘汰",
+    "doubleElimination": "雙淘汰"
+  },
+  "messages": {
+    "noTournaments": "暫無錦標賽數據",
+    "createFirstTournament": "點擊上方「新增錦標賽」按鈕創建您的第一個錦標賽",
+    "loadingTournaments": "載入錦標賽資料中...",
+    "noActiveTournament": "目前沒有可顯示的錦標賽",
+    "tournamentLoadFailed": "載入錦標賽資料失敗",
+    "tournamentCreated": "錦標賽創建成功",
+    "tournamentUpdated": "錦標賽更新成功",
+    "tournamentDeleted": "錦標賽刪除成功",
+    "tournamentActivated": "錦標賽激活成功",
+    "tournamentDeactivated": "錦標賽停用成功",
+    "statusUpdateSuccess": "錦標賽狀態更新成功",
+    "deleteConfirmation": "確定要刪除這個錦標賽嗎？",
+    "deleteWarning": "刪除後將無法恢復，相關的比賽數據也會被刪除。",
+    "activateTooltip": "激活錦標賽 (設為公開顯示)",
+    "deactivateTooltip": "停用錦標賽 (從公開顯示中移除)",
+    "reactivateTooltip": "重新激活錦標賽"
+  },
+  "placeholders": {
+    "searchTournament": "搜索錦標賽名稱",
+    "enterTournamentName": "請輸入錦標賽名稱",
+    "enterDescription": "請輸入錦標賽描述",
+    "selectType": "請選擇錦標賽類型",
+    "selectLocation": "請選擇比賽地點"
+  }
+}
