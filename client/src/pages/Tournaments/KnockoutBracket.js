@@ -81,7 +81,21 @@ const KnockoutBracket = () => {
       setLoading(true);
       const response = await axios.get(`/api/tournaments/${tournamentId}/bracket`);
       if (response.data.success) {
-        setBrackets(response.data.data.rounds || {});
+        const brackets = response.data.data.rounds || {};
+        console.log('🔍 Knockout bracket data for tournament', tournamentId, ':', brackets);
+        
+        // Log sample match data to see available fields
+        Object.keys(brackets).forEach(roundNum => {
+          const matches = brackets[roundNum];
+          if (matches && matches.length > 0) {
+            console.log(`🔍 Round ${roundNum} sample match:`, matches[0]);
+            console.log(`🔍 Match date field:`, matches[0].match_date);
+            console.log(`🔍 Match time field:`, matches[0].match_time);
+            console.log(`🔍 All match fields:`, Object.keys(matches[0]));
+          }
+        });
+        
+        setBrackets(brackets);
       }
     } catch (error) {
       console.error("Error fetching brackets:", error);
@@ -271,6 +285,14 @@ const KnockoutBracket = () => {
                       <div style={{ fontSize: "12px" }}>
                         {getTeamDisplayName(match, "team1", brackets)} vs {getTeamDisplayName(match, "team2", brackets)}
                       </div>
+                      {/* Match Date and Time */}
+                      <div style={{ fontSize: "11px", color: "#666", marginTop: "4px" }}>
+                        {match.match_date ? (
+                          <>📅 {moment(match.match_date).format('MM/DD HH:mm')}</>
+                        ) : (
+                          <span style={{ color: '#ccc' }}>📅 時間待定</span>
+                        )}
+                      </div>
                       {match.match_status === "completed" && (
                         <>
                           <div style={{ fontSize: "14px", fontWeight: "bold", color: "#1890ff", marginTop: "4px" }}>
@@ -323,6 +345,14 @@ const KnockoutBracket = () => {
                     <div style={{ fontWeight: "bold", marginBottom: "4px", color: "#fa8c16" }}>🥉 {getMatchDisplayName(match)}</div>
                     <div style={{ fontSize: "12px" }}>
                       {getTeamDisplayName(match, "team1", brackets)} vs {getTeamDisplayName(match, "team2", brackets)}
+                    </div>
+                    {/* Match Date and Time for Third Place */}
+                    <div style={{ fontSize: "11px", color: "#fa8c16", marginTop: "4px" }}>
+                      {match.match_date ? (
+                        <>📅 {moment(match.match_date).format('MM/DD HH:mm')}</>
+                      ) : (
+                        <span style={{ color: '#ffb84d' }}>📅 時間待定</span>
+                      )}
                     </div>
                     {match.match_status === "completed" && (
                       <>

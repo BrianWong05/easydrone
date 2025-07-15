@@ -964,6 +964,7 @@ router.get('/:id/bracket', async (req, res) => {
       SELECT 
         kb.*,
         m.match_number, m.match_status, m.team1_score, m.team2_score, m.winner_id, m.tournament_stage,
+        m.match_date, m.match_time,
         t1.team_name as team1_name, t1.team_color as team1_color,
         t2.team_name as team2_name, t2.team_color as team2_color,
         w.team_name as winner_name
