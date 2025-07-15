@@ -29,6 +29,7 @@ import {
   FilterOutlined,
   ClockCircleOutlined,
 } from "@ant-design/icons";
+import { useTranslation } from 'react-i18next';
 import axios from "axios";
 import moment from "moment";
 
@@ -39,6 +40,7 @@ const { RangePicker } = DatePicker;
 const TournamentMatchList = () => {
   const { id: tournamentId } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation(['match', 'common']);
 
   // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
   const getDisplayTeamName = (teamName) => {
@@ -105,7 +107,7 @@ const TournamentMatchList = () => {
       }
     } catch (error) {
       console.error("Error fetching tournament:", error);
-      message.error("獲取錦標賽信息失敗");
+      message.error(t('common:messages.loadFailed'));
     }
   };
 
@@ -130,7 +132,7 @@ const TournamentMatchList = () => {
         setAllMatches(matchesData);
         console.log("✅ Fetched all matches:", matchesData.length);
       } else {
-        message.error("獲取比賽列表失敗");
+        message.error(t('match:messages.loadingMatches'));
       }
     } catch (error) {
       console.error("❌ Error fetching all matches:", error);
@@ -142,13 +144,13 @@ const TournamentMatchList = () => {
       });
 
       if (error.response?.status === 404) {
-        message.error("錦標賽不存在");
+        message.error(t('match:messages.tournamentNotFound'));
       } else if (error.response?.status >= 500) {
-        message.error("服務器錯誤，請稍後重試");
+        message.error(t('common:messages.error'));
       } else if (error.code === "NETWORK_ERROR" || !error.response) {
-        message.error("網絡連接錯誤，請檢查網絡連接");
+        message.error(t('common:messages.networkError'));
       } else {
-        message.error(`獲取比賽列表失敗: ${error.message}`);
+        message.error(`${t('match:messages.loadingMatches')}: ${error.message}`);
       }
     } finally {
       setLoading(false);
@@ -239,7 +241,7 @@ const TournamentMatchList = () => {
       console.log('🗑️ Current matches count before delete:', allMatches.length);
       
       await axios.delete(`/api/matches/${matchId}`);
-      message.success("比賽刪除成功");
+      message.success(t('match:messages.matchDeleted'));
       
       // Immediately remove the deleted match from local state for instant UI update
       setAllMatches(prevMatches => {
@@ -257,7 +259,7 @@ const TournamentMatchList = () => {
       
     } catch (error) {
       console.error("Error deleting match:", error);
-      const errorMessage = error.response?.data?.message || "刪除比賽失敗";
+      const errorMessage = error.response?.data?.message || t('common:messages.operationFailed');
       message.error(errorMessage);
       
       // If delete failed, refresh to restore correct state
@@ -268,7 +270,7 @@ const TournamentMatchList = () => {
 
   const handleBatchDelete = async () => {
     if (selectedRowKeys.length === 0) {
-      message.warning("請選擇要刪除的比賽");
+      message.warning(t('match:list.selectMatchesToDelete'));
       return;
     }
 
@@ -288,7 +290,10 @@ const TournamentMatchList = () => {
       }
 
       if (successCount > 0) {
-        message.success(`成功刪除 ${successCount} 場比賽${errorCount > 0 ? `，${errorCount} 場失敗` : ""}`);
+        message.success(t('match:list.batchDeleteSuccess', { 
+          successCount, 
+          errorCount: errorCount > 0 ? `, ${errorCount} ${t('match:list.failed')}` : "" 
+        }));
         
         // Immediately remove deleted matches from local state for instant UI update
         setAllMatches(prevMatches => {
@@ -303,11 +308,11 @@ const TournamentMatchList = () => {
         console.log('🔄 Batch delete - immediately refreshing matches from server...');
         await fetchAllMatches();
       } else {
-        message.error("批量刪除失敗");
+        message.error(t('match:list.batchDeleteFailed'));
       }
     } catch (error) {
       console.error("Error in batch delete:", error);
-      message.error("批量刪除失敗");
+      message.error(t('match:list.batchDeleteFailed'));
     } finally {
       setBatchDeleteLoading(false);
     }
@@ -315,7 +320,7 @@ const TournamentMatchList = () => {
 
   const handleBatchPostpone = async (values) => {
     if (selectedRowKeys.length === 0) {
-      message.warning("請選擇要延期的比賽");
+      message.warning(t('match:list.selectMatchesToPostpone'));
       return;
     }
 
@@ -338,11 +343,11 @@ const TournamentMatchList = () => {
           await fetchAllMatches();
         }, 500);
       } else {
-        message.error(response.data.message || "批量延期失敗");
+        message.error(response.data.message || t('match:list.batchPostponeFailed'));
       }
     } catch (error) {
       console.error("Error in batch postpone:", error);
-      const errorMessage = error.response?.data?.message || "批量延期失敗";
+      const errorMessage = error.response?.data?.message || t('match:list.batchPostponeFailed');
       message.error(errorMessage);
     } finally {
       setBatchPostponeLoading(false);
@@ -351,7 +356,7 @@ const TournamentMatchList = () => {
 
   const showPostponeModal = () => {
     if (selectedRowKeys.length === 0) {
-      message.warning("請選擇要延期的比賽");
+      message.warning(t('match:list.selectMatchesToPostpone'));
       return;
     }
     setPostponeModalVisible(true);
@@ -455,7 +460,7 @@ const TournamentMatchList = () => {
       return getKnockoutWinnerReference(record.match_number, teamPosition);
     }
     
-    return '待定';
+    return t('match:status.pending');
   };
 
   // 動態生成淘汰賽勝者引用
@@ -512,25 +517,25 @@ const TournamentMatchList = () => {
     if (progression) {
       const sourceMatch = progression[teamPosition];
       // 季軍賽顯示敗者，其他比賽顯示勝者
-      const resultType = matchNum === 'TP01' ? '敗者' : '勝者';
+      const resultType = matchNum === 'TP01' ? t('match:results.loss') : t('match:results.win');
       return `${sourceMatch}${resultType}`;
     }
     
     // 如果是第一輪比賽（沒有來源），返回待定
     if (matchNum.startsWith('QU') || matchNum.startsWith('R16') || matchNum.startsWith('R32')) {
-      return '待定';
+      return t('match:status.pending');
     }
     
-    return '待定';
+    return t('match:status.pending');
   };
 
   const getStatusTag = (status) => {
     const statusConfig = {
-      pending: { color: "default", text: "待開始" },
-      active: { color: "processing", text: "進行中" },
-      overtime: { color: "warning", text: "延長賽" },
-      completed: { color: "success", text: "已完成" },
-      postponed: { color: "orange", text: "已延期" },
+      pending: { color: "default", text: t('match:status.pending') },
+      active: { color: "processing", text: t('match:status.active') },
+      overtime: { color: "warning", text: t('match:status.overtime') },
+      completed: { color: "success", text: t('match:status.completed') },
+      postponed: { color: "orange", text: t('match:status.postponed') },
     };
     const config = statusConfig[status] || { color: "default", text: status };
     return <Tag color={config.color}>{config.text}</Tag>;
@@ -538,9 +543,9 @@ const TournamentMatchList = () => {
 
   const getTypeTag = (type) => {
     const typeConfig = {
-      group: { color: "blue", text: "小組賽" },
-      knockout: { color: "red", text: "淘汰賽" },
-      friendly: { color: "green", text: "友誼賽" },
+      group: { color: "blue", text: t('match:types.groupStage') },
+      knockout: { color: "red", text: t('match:types.knockout') },
+      friendly: { color: "green", text: t('match:types.friendly') },
     };
     const config = typeConfig[type] || { color: "default", text: type };
     return <Tag color={config.color}>{config.text}</Tag>;
@@ -548,7 +553,7 @@ const TournamentMatchList = () => {
 
   const columns = [
     {
-      title: "總順序",
+      title: t('match:list.totalOrder'),
       dataIndex: "totalOrder",
       key: "totalOrder",
       width: 80,
@@ -562,7 +567,7 @@ const TournamentMatchList = () => {
       ),
     },
     {
-      title: "比賽場次",
+      title: t('match:match.matchNumber'),
       dataIndex: "match_number",
       key: "match_number",
       width: 120,
@@ -582,7 +587,7 @@ const TournamentMatchList = () => {
       ),
     },
     {
-      title: "隊伍對戰",
+      title: t('match:list.teamMatchup'),
       key: "teams",
       width: 300,
       render: (_, record) => (
@@ -618,7 +623,7 @@ const TournamentMatchList = () => {
       ),
     },
     {
-      title: "小組",
+      title: t('match:match.group'),
       dataIndex: "group_name",
       key: "group_name",
       width: 80,
@@ -632,7 +637,7 @@ const TournamentMatchList = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      title: "比賽類型",
+      title: t('match:match.type'),
       dataIndex: "match_type",
       key: "match_type",
       width: 100,
@@ -645,7 +650,7 @@ const TournamentMatchList = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      title: "狀態",
+      title: t('match:match.status'),
       dataIndex: "match_status",
       key: "match_status",
       width: 100,
@@ -659,7 +664,7 @@ const TournamentMatchList = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      title: "比賽時間",
+      title: t('match:match.date'),
       dataIndex: "match_date",
       key: "match_date",
       width: 180,
@@ -671,14 +676,14 @@ const TournamentMatchList = () => {
       sortDirections: ["ascend", "descend"],
     },
     {
-      title: "勝者",
+      title: t('match:match.winner'),
       dataIndex: "winner_name",
       key: "winner_name",
       width: 120,
       render: (winner) => (winner ? <Tag color="gold">{getDisplayTeamName(winner)}</Tag> : "-"),
     },
     {
-      title: "操作",
+      title: t('common:actions.title'),
       key: "actions",
       width: 200,
       render: (_, record) => (
@@ -688,7 +693,7 @@ const TournamentMatchList = () => {
             icon={<EyeOutlined />}
             onClick={() => navigate(`/tournaments/${tournamentId}/matches/${record.match_id}`)}
           >
-            查看
+            {t('match:actions.view')}
           </Button>
           {record.match_status === "pending" && (
             <Button
@@ -696,9 +701,9 @@ const TournamentMatchList = () => {
               icon={<PlayCircleOutlined />}
               onClick={() => navigate(`/tournaments/${tournamentId}/matches/${record.match_id}/live`)}
               disabled={!record.team1_name || !record.team2_name}
-              title={!record.team1_name || !record.team2_name ? "比賽隊伍尚未確定，無法開始比賽" : "開始比賽"}
+              title={!record.team1_name || !record.team2_name ? t('match:messages.teamsNotDetermined') : t('match:actions.start')}
             >
-              開始
+              {t('match:actions.start')}
             </Button>
           )}
           {record.match_status === "active" && (
@@ -708,7 +713,7 @@ const TournamentMatchList = () => {
               style={{ color: "#52c41a" }}
               onClick={() => navigate(`/tournaments/${tournamentId}/matches/${record.match_id}/live`)}
             >
-              繼續
+              {t('match:actions.continue')}
             </Button>
           )}
           {record.match_status === "postponed" && (
@@ -718,9 +723,9 @@ const TournamentMatchList = () => {
               style={{ color: "#fa8c16" }}
               onClick={() => navigate(`/tournaments/${tournamentId}/matches/${record.match_id}/live`)}
               disabled={!record.team1_name || !record.team2_name}
-              title={!record.team1_name || !record.team2_name ? "比賽隊伍尚未確定，無法開始比賽" : "開始延期的比賽"}
+              title={!record.team1_name || !record.team2_name ? t('match:messages.teamsNotDetermined') : t('match:actions.startPostponed')}
             >
-              開始
+              {t('match:actions.start')}
             </Button>
           )}
           {record.match_status === "pending" && (
@@ -729,9 +734,9 @@ const TournamentMatchList = () => {
               icon={<EditOutlined />}
               onClick={() => navigate(`/tournaments/${tournamentId}/matches/${record.match_id}/edit`)}
               disabled={!record.team1_name || !record.team2_name}
-              title={!record.team1_name || !record.team2_name ? "比賽隊伍尚未確定，無法編輯比賽" : "編輯比賽"}
+              title={!record.team1_name || !record.team2_name ? t('match:messages.teamsNotDetermined') : t('match:actions.edit')}
             >
-              編輯
+              {t('match:actions.edit')}
             </Button>
           )}
           {record.match_status === "postponed" && (
@@ -740,21 +745,21 @@ const TournamentMatchList = () => {
               icon={<EditOutlined />}
               onClick={() => navigate(`/tournaments/${tournamentId}/matches/${record.match_id}/edit`)}
               disabled={!record.team1_name || !record.team2_name}
-              title={!record.team1_name || !record.team2_name ? "比賽隊伍尚未確定，無法編輯比賽" : "編輯延期比賽"}
+              title={!record.team1_name || !record.team2_name ? t('match:messages.teamsNotDetermined') : t('match:actions.editPostponed')}
               style={{ color: "#fa8c16" }}
             >
-              編輯
+              {t('match:actions.edit')}
             </Button>
           )}
           <Popconfirm
-            title="確認刪除比賽"
-            description="確定要刪除這場比賽嗎？"
+            title={t('match:messages.deleteConfirmation')}
+            description={t('match:messages.deleteConfirmation')}
             onConfirm={() => handleDelete(record.match_id)}
-            okText="確認"
-            cancelText="取消"
+            okText={t('common:actions.confirm')}
+            cancelText={t('common:actions.cancel')}
           >
             <Button type="link" danger icon={<DeleteOutlined />}>
-              刪除
+              {t('match:actions.delete')}
             </Button>
           </Popconfirm>
         </Space>
@@ -774,40 +779,40 @@ const TournamentMatchList = () => {
   return (
     <div style={{ padding: "24px" }}>
       <div style={{ marginBottom: 24 }}>
-        <Title level={2}>{tournament?.tournament_name} - 比賽管理</Title>
-        <p style={{ color: "#666", marginBottom: 0 }}>管理錦標賽中的所有比賽，包括小組賽和淘汰賽</p>
+        <Title level={2}>{tournament?.tournament_name} - {t('match:match.management')}</Title>
+        <p style={{ color: "#666", marginBottom: 0 }}>{t('match:messages.managementDescription')}</p>
       </div>
 
       {/* 統計卡片 */}
       <Row gutter={16} style={{ marginBottom: 24 }}>
         <Col span={4}>
           <Card>
-            <Statistic title="總比賽數" value={pagination.total} />
+            <Statistic title={t('match:statistics.totalMatches')} value={pagination.total} />
           </Card>
         </Col>
         <Col span={4}>
           <Card>
-            <Statistic title="待開始" value={stats.pending} valueStyle={{ color: "#666" }} />
+            <Statistic title={t('match:status.pending')} value={stats.pending} valueStyle={{ color: "#666" }} />
           </Card>
         </Col>
         <Col span={4}>
           <Card>
-            <Statistic title="進行中" value={stats.active} valueStyle={{ color: "#1890ff" }} />
+            <Statistic title={t('match:status.active')} value={stats.active} valueStyle={{ color: "#1890ff" }} />
           </Card>
         </Col>
         <Col span={4}>
           <Card>
-            <Statistic title="已完成" value={stats.completed} valueStyle={{ color: "#52c41a" }} />
+            <Statistic title={t('match:status.completed')} value={stats.completed} valueStyle={{ color: "#52c41a" }} />
           </Card>
         </Col>
         <Col span={4}>
           <Card>
-            <Statistic title="已延期" value={stats.postponed} valueStyle={{ color: "#fa8c16" }} />
+            <Statistic title={t('match:status.postponed')} value={stats.postponed} valueStyle={{ color: "#fa8c16" }} />
           </Card>
         </Col>
         <Col span={4}>
           <Card>
-            <Statistic title="其他" value={stats.total - stats.pending - stats.active - stats.completed - stats.postponed} valueStyle={{ color: "#999" }} />
+            <Statistic title={t('match:statistics.others')} value={stats.total - stats.pending - stats.active - stats.completed - stats.postponed} valueStyle={{ color: "#999" }} />
           </Card>
         </Col>
       </Row>
@@ -818,14 +823,14 @@ const TournamentMatchList = () => {
           <Col flex="auto">
             <Space wrap>
               <Input
-                placeholder="搜索比賽場次"
+                placeholder={t('match:placeholders.searchMatch')}
                 prefix={<SearchOutlined />}
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
                 style={{ width: 200 }}
               />
               <Select
-                placeholder="比賽狀態"
+                placeholder={t('match:list.filterStatus')}
                 value={filterStatus}
                 onChange={(value) => {
                   setFilterStatus(value);
@@ -833,14 +838,14 @@ const TournamentMatchList = () => {
                 }}
                 style={{ width: 120 }}
               >
-                <Option value="all">全部狀態</Option>
-                <Option value="pending">待開始</Option>
-                <Option value="active">進行中</Option>
-                <Option value="completed">已完成</Option>
-                <Option value="postponed">已延期</Option>
+                <Option value="all">{t('common:filters.all')}</Option>
+                <Option value="pending">{t('match:status.pending')}</Option>
+                <Option value="active">{t('match:status.active')}</Option>
+                <Option value="completed">{t('match:status.completed')}</Option>
+                <Option value="postponed">{t('match:status.postponed')}</Option>
               </Select>
               <Select
-                placeholder="比賽類型"
+                placeholder={t('match:match.type')}
                 value={filterType}
                 onChange={(value) => {
                   setFilterType(value);
@@ -848,13 +853,13 @@ const TournamentMatchList = () => {
                 }}
                 style={{ width: 120 }}
               >
-                <Option value="all">全部類型</Option>
-                <Option value="group">小組賽</Option>
-                <Option value="knockout">淘汰賽</Option>
-                <Option value="friendly">友誼賽</Option>
+                <Option value="all">{t('common:filters.all')}</Option>
+                <Option value="group">{t('match:types.groupStage')}</Option>
+                <Option value="knockout">{t('match:types.knockout')}</Option>
+                <Option value="friendly">{t('match:types.friendly')}</Option>
               </Select>
               <Select
-                placeholder="選擇小組"
+                placeholder={t('match:list.filterGroup')}
                 value={filterGroup}
                 onChange={(value) => {
                   setFilterGroup(value);
@@ -862,15 +867,15 @@ const TournamentMatchList = () => {
                 }}
                 style={{ width: 120 }}
               >
-                <Option value="all">全部小組</Option>
+                <Option value="all">{t('common:filters.all')}</Option>
                 {groups.map((group) => (
                   <Option key={group.group_id} value={group.group_id}>
-                    小組 {group.group_name?.includes("_") ? group.group_name.split("_")[0] : group.group_name}
+                    {t('match:match.group')} {group.group_name?.includes("_") ? group.group_name.split("_")[0] : group.group_name}
                   </Option>
                 ))}
               </Select>
               <Select
-                placeholder="選擇隊伍"
+                placeholder={t('match:list.filterTeam')}
                 value={filterTeam}
                 onChange={(value) => {
                   setFilterTeam(value);
@@ -880,7 +885,7 @@ const TournamentMatchList = () => {
                 showSearch
                 optionFilterProp="children"
               >
-                <Option value="all">全部隊伍</Option>
+                <Option value="all">{t('common:filters.all')}</Option>
                 {teams.map((team) => (
                   <Option key={team.team_id} value={team.team_id}>
                     {getDisplayTeamName(team.team_name)}
@@ -893,7 +898,7 @@ const TournamentMatchList = () => {
                   setDateRange(dates || []);
                   handleFilterChange();
                 }}
-                placeholder={["開始日期", "結束日期"]}
+                placeholder={[t('common:date.startDate'), t('common:date.endDate')]}
               />
             </Space>
           </Col>
@@ -904,13 +909,13 @@ const TournamentMatchList = () => {
                 icon={<PlusOutlined />}
                 onClick={() => navigate(`/tournaments/${tournamentId}/matches/create`)}
               >
-                新增比賽
+                {t('match:list.addMatch')}
               </Button>
               <Button
                 icon={<FilterOutlined />}
                 onClick={() => navigate(`/tournaments/${tournamentId}/matches/generate`)}
               >
-                生成比賽
+                {t('match:list.generateMatches')}
               </Button>
               {selectedRowKeys.length > 0 && (
                 <>
@@ -919,17 +924,17 @@ const TournamentMatchList = () => {
                     loading={batchPostponeLoading}
                     onClick={showPostponeModal}
                   >
-                    批量延期 ({selectedRowKeys.length})
+                    {t('match:list.batchPostpone')} ({selectedRowKeys.length})
                   </Button>
                   <Popconfirm
-                    title="批量刪除比賽"
-                    description={`確定要刪除選中的 ${selectedRowKeys.length} 場比賽嗎？`}
+                    title={t('match:list.batchDelete')}
+                    description={t('match:list.batchDeleteConfirmation', { count: selectedRowKeys.length })}
                     onConfirm={handleBatchDelete}
-                    okText="確認"
-                    cancelText="取消"
+                    okText={t('common:actions.confirm')}
+                    cancelText={t('common:actions.cancel')}
                   >
                     <Button danger icon={<DeleteOutlined />} loading={batchDeleteLoading}>
-                      批量刪除 ({selectedRowKeys.length})
+                      {t('match:list.batchDelete')} ({selectedRowKeys.length})
                     </Button>
                   </Popconfirm>
                 </>
@@ -956,7 +961,7 @@ const TournamentMatchList = () => {
             total: pagination.total,
             showSizeChanger: true,
             showQuickJumper: true,
-            showTotal: (total, range) => `第 ${range[0]}-${range[1]} 項，共 ${total} 場比賽`,
+            showTotal: (total, range) => t('common:pagination.showTotal', { start: range[0], end: range[1], total }),
             pageSizeOptions: ["10", "20", "50", "100"],
           }}
           onChange={handleTableChange}
@@ -966,7 +971,7 @@ const TournamentMatchList = () => {
 
       {/* 延期比賽模態框 */}
       <Modal
-        title="批量延期比賽"
+        title={t('match:list.batchPostpone')}
         open={postponeModalVisible}
         onCancel={handlePostponeCancel}
         footer={null}
@@ -978,31 +983,31 @@ const TournamentMatchList = () => {
           onFinish={handleBatchPostpone}
           initialValues={{ delayMinutes: 30 }}
         >
-          <p>選中的比賽數量: <strong>{selectedRowKeys.length}</strong></p>
+          <p>{t('match:list.selectedMatchesCount')}: <strong>{selectedRowKeys.length}</strong></p>
           
           <Form.Item
-            label="延期時間 (分鐘)"
+            label={t('match:list.delayTime')}
             name="delayMinutes"
             rules={[
-              { required: true, message: '請輸入延期時間' },
-              { type: 'number', min: 0, max: 1440, message: '延期時間必須在0-1440分鐘之間' }
+              { required: true, message: t('match:list.delayTimeRequired') },
+              { type: 'number', min: 0, max: 1440, message: t('match:list.delayTimeRange') }
             ]}
-            extra="輸入0表示只更改狀態為延期，不調整時間"
+            extra={t('match:list.delayTimeNote')}
           >
             <InputNumber
               style={{ width: '100%' }}
-              placeholder="請輸入延期分鐘數"
+              placeholder={t('match:list.delayTimePlaceholder')}
               min={0}
               max={1440}
               step={15}
-              addonAfter="分鐘"
+              addonAfter={t('common:time.minutes')}
             />
           </Form.Item>
 
           <div style={{ textAlign: 'right', marginTop: 24 }}>
             <Space>
               <Button onClick={handlePostponeCancel}>
-                取消
+                {t('common:actions.cancel')}
               </Button>
               <Button 
                 type="primary" 
@@ -1010,7 +1015,7 @@ const TournamentMatchList = () => {
                 loading={batchPostponeLoading}
                 icon={<ClockCircleOutlined />}
               >
-                確認延期
+                {t('match:list.confirmPostpone')}
               </Button>
             </Space>
           </div>

@@ -108,8 +108,19 @@
   },
   "pagination": {
     "total": "{{start}}-{{end}} of {{total}} items",
+    "showTotal": "{{start}}-{{end}} of {{total}} matches",
     "showSizeChanger": true,
     "showQuickJumper": true,
     "itemsPerPage": "/ page"
+  },
+  "filters": {
+    "all": "All"
+  },
+  "date": {
+    "startDate": "Start Date",
+    "endDate": "End Date"
+  },
+  "time": {
+    "minutes": "minutes"
   }
 }

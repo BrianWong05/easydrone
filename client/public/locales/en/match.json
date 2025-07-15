@@ -102,6 +102,51 @@
     "start": "Start",
     "view": "View",
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "continue": "Continue",
+    "startPostponed": "Start Postponed Match",
+    "editPostponed": "Edit Postponed Match"
+  },
+  "list": {
+    "title": "Match List",
+    "addMatch": "Add Match",
+    "generateMatches": "Generate Matches",
+    "totalOrder": "Order",
+    "teamMatchup": "Team Matchup",
+    "filterStatus": "Filter Status",
+    "filterGroup": "Filter Group",
+    "filterTeam": "Filter Team",
+    "searchTeams": "Search Team Names",
+    "batchDelete": "Batch Delete",
+    "batchDeleteConfirmation": "Are you sure you want to delete {{count}} selected matches?",
+    "batchDeleteDescription": "Will delete {{count}} matches, this operation cannot be undone",
+    "batchDeleteSuccess": "Successfully deleted {{successCount}} matches{{errorCount}}",
+    "batchDeleteFailed": "Batch delete failed",
+    "failed": "failed",
+    "selectMatchesToDelete": "Please select matches to delete",
+    "selectMatchesToPostpone": "Please select matches to postpone",
+    "batchPostpone": "Batch Postpone",
+    "batchPostponeFailed": "Batch postpone failed",
+    "selectedMatchesCount": "Selected matches count",
+    "delayTime": "Delay Time (minutes)",
+    "delayTimeRequired": "Please enter delay time",
+    "delayTimeRange": "Delay time must be between 0-1440 minutes",
+    "delayTimeNote": "Enter 0 to only change status to postponed without adjusting time",
+    "delayTimePlaceholder": "Enter delay minutes",
+    "confirmPostpone": "Confirm Postpone",
+    "createFirstMatch": "Create First Match"
+  },
+  "messages": {
+    "loadingMatches": "Failed to load match list",
+    "tournamentNotFound": "Tournament not found",
+    "matchDeleted": "Match deleted successfully",
+    "deleteConfirmation": "Are you sure you want to delete this match?",
+    "noMatches": "No match data available",
+    "teamsNotDetermined": "Teams not determined, cannot start match",
+    "managementDescription": "Manage all matches in the tournament, including group stage and knockout matches"
+  },
+  "statistics": {
+    "totalMatches": "Total Matches",
+    "others": "Others"
   }
 }
