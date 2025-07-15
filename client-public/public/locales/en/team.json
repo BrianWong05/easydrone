@@ -62,7 +62,10 @@
     "teamColor": "Team Color",
     "people": "people",
     "createdTime": "Created Time",
-    "lastUpdated": "Last Updated"
+    "lastUpdated": "Last Updated",
+    "goalsForShort": "For",
+    "goalsAgainstShort": "Against",
+    "goalDifferenceShort": "Diff"
   },
   "placeholders": {
     "searchTeam": "Search team name",

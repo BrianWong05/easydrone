@@ -36,6 +36,7 @@
     "noGroups": "暫無小組",
     "noGroupData": "暫無小組數據",
     "loadingGroups": "載入小組資料中...",
+    "loadingGroupDetail": "載入小組詳情中...",
     "groupCreated": "小組創建成功",
     "groupUpdated": "小組更新成功",
     "groupDeleted": "小組刪除成功",
@@ -44,7 +45,12 @@
     "noTeamsInGroup": "暫無隊伍",
     "noStandingsData": "暫無積分榜數據",
     "noMatchesInGroup": "暫無比賽",
-    "totalGroups": "分組數量"
+    "totalGroups": "分組數量",
+    "groupNotFound": "小組不存在",
+    "groupNotFoundDesc": "找不到指定的小組資訊"
+  },
+  "stats": {
+    "participatingTeams": "參賽隊伍"
   },
   "placeholders": {
     "searchGroup": "搜索小組名稱",

@@ -36,6 +36,7 @@
     "noGroups": "No groups available",
     "noGroupData": "No group data available",
     "loadingGroups": "Loading group data...",
+    "loadingGroupDetail": "Loading group details...",
     "groupCreated": "Group created successfully",
     "groupUpdated": "Group updated successfully",
     "groupDeleted": "Group deleted successfully",
@@ -44,7 +45,12 @@
     "noTeamsInGroup": "No teams in group",
     "noStandingsData": "No standings data available",
     "noMatchesInGroup": "No matches in group",
-    "totalGroups": "Total Groups"
+    "totalGroups": "Total Groups",
+    "groupNotFound": "Group Not Found",
+    "groupNotFoundDesc": "The specified group information could not be found"
+  },
+  "stats": {
+    "participatingTeams": "Participating Teams"
   },
   "placeholders": {
     "searchGroup": "Search group name",

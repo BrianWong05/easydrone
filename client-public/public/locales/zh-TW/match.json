@@ -52,13 +52,24 @@
     "ongoing": "進行中",
     "finished": "已結束",
     "cancelled": "已取消",
-    "postponed": "延期"
+    "postponed": "延期",
+    "pending": "待開始",
+    "inProgress": "進行中",
+    "completed": "已完成"
   },
   "results": {
     "win": "勝",
     "loss": "敗",
     "draw": "平",
     "pending": "待定"
+  },
+  "result": {
+    "win": "勝",
+    "loss": "負",
+    "draw": "平"
+  },
+  "pagination": {
+    "showTotal": "第 {{start}}-{{end}} 項，共 {{total}} 場比賽"
   },
   "statistics": {
     "goals": "進球",

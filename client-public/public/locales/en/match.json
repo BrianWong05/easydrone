@@ -52,13 +52,24 @@
     "ongoing": "Ongoing",
     "finished": "Finished",
     "cancelled": "Cancelled",
-    "postponed": "Postponed"
+    "postponed": "Postponed",
+    "pending": "Pending",
+    "inProgress": "In Progress",
+    "completed": "Completed"
   },
   "results": {
     "win": "Win",
     "loss": "Loss",
     "draw": "Draw",
     "pending": "Pending"
+  },
+  "result": {
+    "win": "W",
+    "loss": "L",
+    "draw": "D"
+  },
+  "pagination": {
+    "showTotal": "{{start}}-{{end}} of {{total}} matches"
   },
   "statistics": {
     "goals": "Goals",

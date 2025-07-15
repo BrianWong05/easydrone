@@ -62,7 +62,10 @@
     "teamColor": "隊伍顏色",
     "people": "人",
     "createdTime": "創建時間",
-    "lastUpdated": "最後更新"
+    "lastUpdated": "最後更新",
+    "goalsForShort": "進",
+    "goalsAgainstShort": "失",
+    "goalDifferenceShort": "差"
   },
   "placeholders": {
     "searchTeam": "搜索隊伍名稱",

@@ -60,7 +60,9 @@
     "finished": "Finished",
     "normal": "Normal",
     "running": "Running",
-    "enabled": "Enabled"
+    "enabled": "Enabled",
+    "notStarted": "Not Started",
+    "inProgress": "In Progress"
   },
   "messages": {
     "success": "Operation successful",
@@ -75,7 +77,8 @@
     "createSuccess": "Created successfully",
     "operationFailed": "Operation failed, please try again later",
     "networkError": "Network error, please check your connection",
-    "dataLoadFailed": "Failed to load data"
+    "dataLoadFailed": "Failed to load data",
+    "loadFailed": "Load Failed"
   },
   "forms": {
     "required": "This field is required",
@@ -102,7 +105,19 @@
   },
   "pagination": {
     "total": "{{start}}-{{end}} of {{total}} items",
+    "showTotal": "{{start}}-{{end}} of {{total}} groups",
     "showSizeChanger": true,
     "showQuickJumper": true
+  },
+  "actions": {
+    "actions": "Actions",
+    "viewDetails": "View Details",
+    "reload": "Reload",
+    "backToGroupList": "Back to Group List"
+  },
+  "stats": {
+    "totalTeams": "Total Teams",
+    "totalMatches": "Total Matches",
+    "completedMatches": "Completed Matches"
   }
 }

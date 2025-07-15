@@ -28,6 +28,7 @@ import {
   CheckCircleOutlined
 } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import moment from 'moment';
 
@@ -36,6 +37,7 @@ const { Title, Text } = Typography;
 const ClientGroupDetail = () => {
   const navigate = useNavigate();
   const { groupId } = useParams();
+  const { t } = useTranslation(['group', 'common', 'match']);
   const [tournament, setTournament] = useState(null);
 
   // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
@@ -97,7 +99,7 @@ const ClientGroupDetail = () => {
       }
 
       if (!tournamentData) {
-        setError('找不到可顯示的錦標賽');
+        setError(t('common:messages.noTournamentFound', { defaultValue: '找不到可顯示的錦標賽' }));
         return;
       }
 
@@ -110,12 +112,15 @@ const ClientGroupDetail = () => {
         setGroup(groupData.group);
         setTeams(groupData.teams || []);
         setMatches(groupData.matches || []);
+        
+        // Debug: Log the standings data to see the actual structure
+        console.log('Standings data from API:', groupData.standings);
         setStandings(groupData.standings || []);
       }
 
     } catch (error) {
       console.error('Error fetching group detail:', error);
-      setError('載入小組詳情失敗');
+      setError(t('group:messages.loadingGroupDetail', { defaultValue: '載入小組詳情失敗' }));
     } finally {
       setLoading(false);
     }
@@ -135,10 +140,10 @@ const ClientGroupDetail = () => {
 
   const getMatchStatusTag = (status) => {
     const statusMap = {
-      'pending': { color: 'default', text: '待開始' },
-      'in_progress': { color: 'processing', text: '進行中' },
-      'completed': { color: 'success', text: '已完成' },
-      'cancelled': { color: 'error', text: '已取消' }
+      'pending': { color: 'default', text: t('match:status.pending') },
+      'in_progress': { color: 'processing', text: t('match:status.inProgress') },
+      'completed': { color: 'success', text: t('match:status.completed') },
+      'cancelled': { color: 'error', text: t('match:status.cancelled') }
     };
     
     const statusInfo = statusMap[status] || { color: 'default', text: status };
@@ -147,9 +152,9 @@ const ClientGroupDetail = () => {
 
   const getResultTag = (result) => {
     const resultMap = {
-      'win': { color: 'success', text: '勝' },
-      'draw': { color: 'warning', text: '平' },
-      'loss': { color: 'error', text: '負' }
+      'win': { color: 'success', text: t('match:result.win') },
+      'draw': { color: 'warning', text: t('match:result.draw') },
+      'loss': { color: 'error', text: t('match:result.loss') }
     };
     
     if (!result) return null;
@@ -160,7 +165,7 @@ const ClientGroupDetail = () => {
   // Standings table columns
   const standingsColumns = [
     {
-      title: '排名',
+      title: t('group:standings.position'),
       key: 'rank',
       align: 'center',
       width: 60,
@@ -181,7 +186,7 @@ const ClientGroupDetail = () => {
       ),
     },
     {
-      title: '隊伍',
+      title: t('group:standings.team'),
       dataIndex: 'team_name',
       key: 'team_name',
       render: (name, record) => (
@@ -209,54 +214,81 @@ const ClientGroupDetail = () => {
       ),
     },
     {
-      title: '賽',
+      title: t('group:standings.played'),
       dataIndex: 'matches_played',
       key: 'matches_played',
       align: 'center',
       width: 50,
+      render: (value, record) => {
+        // Try different possible field names
+        const played = value || record.played || record.games_played || 0;
+        return <Text>{played}</Text>;
+      },
     },
     {
-      title: '勝',
+      title: t('group:standings.won'),
       dataIndex: 'wins',
       key: 'wins',
       align: 'center',
       width: 50,
+      render: (value, record) => {
+        const wins = value || record.won || 0;
+        return <Text>{wins}</Text>;
+      },
     },
     {
-      title: '平',
+      title: t('group:standings.drawn'),
       dataIndex: 'draws',
       key: 'draws',
       align: 'center',
       width: 50,
+      render: (value, record) => {
+        const draws = value || record.drawn || record.ties || 0;
+        return <Text>{draws}</Text>;
+      },
     },
     {
-      title: '負',
+      title: t('group:standings.lost'),
       dataIndex: 'losses',
       key: 'losses',
       align: 'center',
       width: 50,
+      render: (value, record) => {
+        const losses = value || record.lost || 0;
+        return <Text>{losses}</Text>;
+      },
     },
     {
-      title: '進球',
+      title: t('group:standings.goalsFor'),
       dataIndex: 'goals_for',
       key: 'goals_for',
       align: 'center',
       width: 60,
+      render: (value, record) => {
+        const goalsFor = value || record.goals_scored || record.gf || 0;
+        return <Text>{goalsFor}</Text>;
+      },
     },
     {
-      title: '失球',
+      title: t('group:standings.goalsAgainst'),
       dataIndex: 'goals_against',
       key: 'goals_against',
       align: 'center',
       width: 60,
+      render: (value, record) => {
+        const goalsAgainst = value || record.goals_conceded || record.ga || 0;
+        return <Text>{goalsAgainst}</Text>;
+      },
     },
     {
-      title: '淨勝球',
+      title: t('group:standings.goalDifference'),
       key: 'goal_difference',
       align: 'center',
       width: 80,
       render: (_, record) => {
-        const diff = (record.goals_for || 0) - (record.goals_against || 0);
+        const goalsFor = record.goals_for || record.goals_scored || record.gf || 0;
+        const goalsAgainst = record.goals_against || record.goals_conceded || record.ga || 0;
+        const diff = goalsFor - goalsAgainst;
         return (
           <Text style={{ color: diff > 0 ? '#52c41a' : diff < 0 ? '#f5222d' : '#666' }}>
             {diff > 0 ? '+' : ''}{diff}
@@ -265,19 +297,22 @@ const ClientGroupDetail = () => {
       },
     },
     {
-      title: '積分',
+      title: t('group:standings.points'),
       dataIndex: 'points',
       key: 'points',
       align: 'center',
       width: 60,
-      render: (points) => <Text strong style={{ color: '#1890ff' }}>{points}</Text>,
+      render: (points, record) => {
+        const pts = points || record.pts || 0;
+        return <Text strong style={{ color: '#1890ff' }}>{pts}</Text>;
+      },
     },
   ];
 
   // Matches table columns
   const matchesColumns = [
     {
-      title: '場次',
+      title: t('match:match.number'),
       dataIndex: 'match_number',
       key: 'match_number',
       width: 80,
@@ -297,7 +332,7 @@ const ClientGroupDetail = () => {
       ),
     },
     {
-      title: '對戰',
+      title: t('match:match.teams'),
       key: 'teams',
       render: (_, record) => (
         <Space direction="vertical" size="small">
@@ -315,20 +350,20 @@ const ClientGroupDetail = () => {
       ),
     },
     {
-      title: '時間',
+      title: t('match:match.time'),
       dataIndex: 'match_date',
       key: 'match_date',
       render: (date) => date ? moment(date).format('MM/DD HH:mm') : '-',
     },
     {
-      title: '狀態',
+      title: t('match:match.status'),
       dataIndex: 'match_status',
       key: 'match_status',
       align: 'center',
       render: (status) => getMatchStatusTag(status),
     },
     {
-      title: '操作',
+      title: t('common:actions.actions'),
       key: 'actions',
       align: 'center',
       render: (_, record) => (
@@ -337,7 +372,7 @@ const ClientGroupDetail = () => {
           size="small"
           onClick={() => navigate(`/matches/${record.match_id}`)}
         >
-          查看詳情
+          {t('common:actions.viewDetails')}
         </Button>
       ),
     },
@@ -348,7 +383,7 @@ const ClientGroupDetail = () => {
       <div style={{ padding: 24, textAlign: 'center' }}>
         <Spin size="large" />
         <div style={{ marginTop: 16 }}>
-          <Text>載入小組詳情中...</Text>
+          <Text>{t('group:messages.loadingGroupDetail')}</Text>
         </div>
       </div>
     );
@@ -358,13 +393,13 @@ const ClientGroupDetail = () => {
     return (
       <div style={{ padding: 24 }}>
         <Alert
-          message="載入失敗"
+          message={t('common:messages.loadFailed')}
           description={error}
           type="error"
           showIcon
           action={
             <Button size="small" onClick={fetchGroupDetail}>
-              重新載入
+              {t('common:actions.reload')}
             </Button>
           }
         />
@@ -376,8 +411,8 @@ const ClientGroupDetail = () => {
     return (
       <div style={{ padding: 24 }}>
         <Alert
-          message="小組不存在"
-          description="找不到指定的小組資訊"
+          message={t('group:messages.groupNotFound')}
+          description={t('group:messages.groupNotFoundDesc')}
           type="warning"
           showIcon
         />
@@ -397,7 +432,7 @@ const ClientGroupDetail = () => {
         onClick={() => navigate('/groups')}
         style={{ marginBottom: 16 }}
       >
-        返回小組列表
+        {t('common:actions.backToGroupList')}
       </Button>
 
       {/* Group Header */}
@@ -417,10 +452,10 @@ const ClientGroupDetail = () => {
           <Col>
             <Space>
               <Tag color="blue" style={{ fontSize: '14px', padding: '4px 12px' }}>
-                {teams.length} / {group.max_teams} 隊伍
+                {teams.length} / {group.max_teams} {t('group:group.teams')}
               </Tag>
               <Tag color={matchProgress === 100 ? 'success' : 'processing'}>
-                比賽進度 {matchProgress}%
+                {t('group:group.progress')} {matchProgress}%
               </Tag>
             </Space>
           </Col>
@@ -432,7 +467,7 @@ const ClientGroupDetail = () => {
         <Col xs={24} sm={12} md={6}>
           <Card>
             <Statistic
-              title="參賽隊伍"
+              title={t('group:stats.participatingTeams')}
               value={teams.length}
               prefix={<TeamOutlined style={{ color: '#1890ff' }} />}
               suffix={`/ ${group.max_teams}`}
@@ -443,7 +478,7 @@ const ClientGroupDetail = () => {
         <Col xs={24} sm={12} md={6}>
           <Card>
             <Statistic
-              title="總比賽數"
+              title={t('common:stats.totalMatches')}
               value={totalMatches}
               prefix={<CalendarOutlined style={{ color: '#faad14' }} />}
               valueStyle={{ color: '#faad14' }}
@@ -453,7 +488,7 @@ const ClientGroupDetail = () => {
         <Col xs={24} sm={12} md={6}>
           <Card>
             <Statistic
-              title="已完成"
+              title={t('common:stats.completedMatches')}
               value={completedMatches}
               prefix={<CheckCircleOutlined style={{ color: '#52c41a' }} />}
               valueStyle={{ color: '#52c41a' }}
@@ -464,7 +499,7 @@ const ClientGroupDetail = () => {
           <Card>
             <div style={{ textAlign: 'center' }}>
               <Text type="secondary" style={{ display: 'block', marginBottom: 8 }}>
-                比賽進度
+                {t('group:group.progress')}
               </Text>
               <Progress 
                 type="circle" 
@@ -481,7 +516,7 @@ const ClientGroupDetail = () => {
       <Card style={{ marginBottom: 24 }}>
         <Title level={3}>
           <TrophyOutlined style={{ marginRight: 8 }} />
-          小組積分榜
+          {t('group:group.standings')}
         </Title>
         <Table
           columns={standingsColumns}
@@ -494,7 +529,7 @@ const ClientGroupDetail = () => {
               <div style={{ textAlign: 'center', padding: '40px 0' }}>
                 <TrophyOutlined style={{ fontSize: '48px', color: '#d9d9d9' }} />
                 <div style={{ marginTop: 16 }}>
-                  <Text type="secondary">暫無積分資料</Text>
+                  <Text type="secondary">{t('group:messages.noStandingsData')}</Text>
                 </div>
               </div>
             )
@@ -506,7 +541,7 @@ const ClientGroupDetail = () => {
       <Card>
         <Title level={3}>
           <PlayCircleOutlined style={{ marginRight: 8 }} />
-          小組賽程
+          {t('group:group.matches')}
         </Title>
         <Table
           columns={matchesColumns}
@@ -519,14 +554,19 @@ const ClientGroupDetail = () => {
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (total, range) => 
-              `第 ${range[0]}-${range[1]} 項，共 ${total} 場比賽`,
+              t('match:pagination.showTotal', { 
+                start: range[0], 
+                end: range[1], 
+                total: total,
+                defaultValue: `第 ${range[0]}-${range[1]} 項，共 ${total} 場比賽`
+              }),
           }}
           locale={{
             emptyText: (
               <div style={{ textAlign: 'center', padding: '40px 0' }}>
                 <CalendarOutlined style={{ fontSize: '48px', color: '#d9d9d9' }} />
                 <div style={{ marginTop: 16 }}>
-                  <Text type="secondary">暫無比賽資料</Text>
+                  <Text type="secondary">{t('group:messages.noMatchesInGroup')}</Text>
                 </div>
               </div>
             )

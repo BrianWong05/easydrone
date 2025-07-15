@@ -60,7 +60,9 @@
     "finished": "已結束",
     "normal": "正常",
     "running": "運行中",
-    "enabled": "已啟用"
+    "enabled": "已啟用",
+    "notStarted": "未開始",
+    "inProgress": "進行中"
   },
   "messages": {
     "success": "操作成功",
@@ -75,7 +77,8 @@
     "createSuccess": "創建成功",
     "operationFailed": "操作失敗，請稍後重試",
     "networkError": "網絡錯誤，請檢查連接",
-    "dataLoadFailed": "數據載入失敗"
+    "dataLoadFailed": "數據載入失敗",
+    "loadFailed": "載入失敗"
   },
   "forms": {
     "required": "此欄位為必填",
@@ -102,7 +105,19 @@
   },
   "pagination": {
     "total": "第 {{start}}-{{end}} 項，共 {{total}} 項",
+    "showTotal": "第 {{start}}-{{end}} 項，共 {{total}} 個小組",
     "showSizeChanger": true,
     "showQuickJumper": true
+  },
+  "actions": {
+    "actions": "操作",
+    "viewDetails": "查看詳情",
+    "reload": "重新載入",
+    "backToGroupList": "返回小組列表"
+  },
+  "stats": {
+    "totalTeams": "總隊伍數",
+    "totalMatches": "總比賽數",
+    "completedMatches": "已完成比賽"
   }
 }

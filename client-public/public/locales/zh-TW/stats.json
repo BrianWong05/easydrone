@@ -56,6 +56,16 @@
     "loadingStats": "載入統計數據中...",
     "dataUpdated": "數據已更新",
     "refreshData": "刷新數據",
-    "exportData": "導出數據"
+    "exportData": "導出數據",
+    "lastUpdated": "最後更新",
+    "completedMatches": "已完成比賽"
+  },
+  "rules": {
+    "rankingRules": "排名規則",
+    "rankingDescription": "小組內排名 → 同排名隊伍間比較（積分 → 淨勝球 → 進球數）",
+    "pointsRules": "積分規則",
+    "pointsDescription": "勝利 3分，平局 1分，失敗 0分",
+    "sortingRules": "排序說明",
+    "sortingDescription": "先顯示各小組第1名，再顯示各小組第2名，以此類推"
   }
 }

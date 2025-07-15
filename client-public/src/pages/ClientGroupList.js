@@ -22,12 +22,14 @@ import {
   PlayCircleOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 const { Title, Text } = Typography;
 
 const ClientGroupList = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['group', 'common']);
   
   // 清理小組名稱顯示（移除 _{tournament_id} 後綴）
   const getDisplayGroupName = (groupName) => {
@@ -77,7 +79,7 @@ const ClientGroupList = () => {
       }
 
       if (!tournamentData) {
-        setError('找不到可顯示的錦標賽');
+        setError(t('messages.noTournamentFound', { defaultValue: '找不到可顯示的錦標賽' }));
         return;
       }
 
@@ -119,7 +121,7 @@ const ClientGroupList = () => {
 
     } catch (error) {
       console.error('Error fetching groups data:', error);
-      setError('載入小組資料失敗');
+      setError(t('messages.loadingGroups'));
     } finally {
       setLoading(false);
     }
@@ -130,13 +132,13 @@ const ClientGroupList = () => {
     const completedMatches = group.completed_matches || 0;
     
     if (totalMatches === 0) {
-      return { status: 'not-started', text: '未開始', color: 'default' };
+      return { status: 'not-started', text: t('common:status.notStarted', { defaultValue: '未開始' }), color: 'default' };
     } else if (completedMatches === totalMatches) {
-      return { status: 'completed', text: '已完成', color: 'success' };
+      return { status: 'completed', text: t('common:status.completed', { defaultValue: '已完成' }), color: 'success' };
     } else if (completedMatches > 0) {
-      return { status: 'in-progress', text: '進行中', color: 'processing' };
+      return { status: 'in-progress', text: t('common:status.inProgress', { defaultValue: '進行中' }), color: 'processing' };
     } else {
-      return { status: 'scheduled', text: '已排程', color: 'warning' };
+      return { status: 'scheduled', text: t('common:status.scheduled', { defaultValue: '已排程' }), color: 'warning' };
     }
   };
 
@@ -148,7 +150,7 @@ const ClientGroupList = () => {
 
   const columns = [
     {
-      title: '小組',
+      title: t('group:group.name'),
       dataIndex: 'group_name',
       key: 'group_name',
       render: (name, record) => (
@@ -163,7 +165,7 @@ const ClientGroupList = () => {
       ),
     },
     {
-      title: '隊伍數量',
+      title: t('group:group.teams'),
       dataIndex: 'team_count',
       key: 'team_count',
       align: 'center',
@@ -179,7 +181,7 @@ const ClientGroupList = () => {
       ),
     },
     {
-      title: '比賽進度',
+      title: t('group:group.progress'),
       key: 'match_progress',
       align: 'center',
       render: (_, record) => {
@@ -203,7 +205,7 @@ const ClientGroupList = () => {
       },
     },
     {
-      title: '狀態',
+      title: t('group:group.status'),
       key: 'status',
       align: 'center',
       render: (_, record) => {
@@ -212,7 +214,7 @@ const ClientGroupList = () => {
       },
     },
     {
-      title: '操作',
+      title: t('common:actions.actions'),
       key: 'actions',
       align: 'center',
       render: (_, record) => (
@@ -222,7 +224,7 @@ const ClientGroupList = () => {
           icon={<TeamOutlined />}
           onClick={() => navigate(`/groups/${record.group_id}`)}
         >
-          查看詳情
+          {t('common:actions.viewDetails')}
         </Button>
       ),
     },
@@ -233,7 +235,7 @@ const ClientGroupList = () => {
       <div style={{ padding: 24, textAlign: 'center' }}>
         <Spin size="large" />
         <div style={{ marginTop: 16 }}>
-          <Text>載入小組資料中...</Text>
+          <Text>{t('messages.loadingGroups')}</Text>
         </div>
       </div>
     );
@@ -243,13 +245,13 @@ const ClientGroupList = () => {
     return (
       <div style={{ padding: 24 }}>
         <Alert
-          message="載入失敗"
+          message={t('common:messages.loadFailed')}
           description={error}
           type="error"
           showIcon
           action={
             <Button size="small" onClick={fetchGroupsData}>
-              重新載入
+              {t('common:actions.reload')}
             </Button>
           }
         />
@@ -269,12 +271,12 @@ const ClientGroupList = () => {
                   <TrophyOutlined style={{ marginRight: 8, color: '#faad14' }} />
                   {tournament.tournament_name}
                 </Title>
-                <Text type="secondary">小組列表</Text>
+                <Text type="secondary">{t('group:group.list')}</Text>
               </Space>
             </Col>
             <Col>
               <Tag color="blue" style={{ fontSize: '14px', padding: '4px 12px' }}>
-                {tournament.status === 'active' ? '進行中' : tournament.status}
+                {tournament.status === 'active' ? t('common:status.inProgress') : tournament.status}
               </Tag>
             </Col>
           </Row>
@@ -286,7 +288,7 @@ const ClientGroupList = () => {
         <Col xs={24} sm={12} md={6}>
           <Card>
             <Statistic
-              title="總小組數"
+              title={t('messages.totalGroups')}
               value={stats.totalGroups}
               prefix={<UsergroupAddOutlined style={{ color: '#1890ff' }} />}
               valueStyle={{ color: '#1890ff' }}
@@ -296,7 +298,7 @@ const ClientGroupList = () => {
         <Col xs={24} sm={12} md={6}>
           <Card>
             <Statistic
-              title="總隊伍數"
+              title={t('common:stats.totalTeams')}
               value={stats.totalTeams}
               prefix={<TeamOutlined style={{ color: '#52c41a' }} />}
               valueStyle={{ color: '#52c41a' }}
@@ -306,7 +308,7 @@ const ClientGroupList = () => {
         <Col xs={24} sm={12} md={6}>
           <Card>
             <Statistic
-              title="總比賽數"
+              title={t('common:stats.totalMatches')}
               value={stats.totalMatches}
               prefix={<CalendarOutlined style={{ color: '#faad14' }} />}
               valueStyle={{ color: '#faad14' }}
@@ -316,7 +318,7 @@ const ClientGroupList = () => {
         <Col xs={24} sm={12} md={6}>
           <Card>
             <Statistic
-              title="已完成比賽"
+              title={t('common:stats.completedMatches')}
               value={stats.completedMatches}
               prefix={<PlayCircleOutlined style={{ color: '#f5222d' }} />}
               valueStyle={{ color: '#f5222d' }}
@@ -330,7 +332,7 @@ const ClientGroupList = () => {
         <div style={{ marginBottom: 16 }}>
           <Title level={3}>
             <UsergroupAddOutlined style={{ marginRight: 8 }} />
-            小組列表
+            {t('group:group.list')}
           </Title>
         </div>
         
@@ -343,7 +345,12 @@ const ClientGroupList = () => {
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (total, range) => 
-              `第 ${range[0]}-${range[1]} 項，共 ${total} 個小組`,
+              t('common:pagination.showTotal', { 
+                start: range[0], 
+                end: range[1], 
+                total: total,
+                defaultValue: `第 ${range[0]}-${range[1]} 項，共 ${total} 個小組`
+              }),
             pageSizeOptions: ['10', '20', '50', '100'],
             defaultPageSize: 20
           }}
@@ -352,7 +359,7 @@ const ClientGroupList = () => {
               <div style={{ textAlign: 'center', padding: '40px 0' }}>
                 <UsergroupAddOutlined style={{ fontSize: '48px', color: '#d9d9d9' }} />
                 <div style={{ marginTop: 16 }}>
-                  <Text type="secondary">暫無小組資料</Text>
+                  <Text type="secondary">{t('messages.noGroups')}</Text>
                 </div>
               </div>
             )

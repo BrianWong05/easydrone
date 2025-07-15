@@ -56,6 +56,16 @@
     "loadingStats": "Loading statistics...",
     "dataUpdated": "Data updated",
     "refreshData": "Refresh Data",
-    "exportData": "Export Data"
+    "exportData": "Export Data",
+    "lastUpdated": "Last Updated",
+    "completedMatches": "Completed Matches"
+  },
+  "rules": {
+    "rankingRules": "Ranking Rules",
+    "rankingDescription": "Group ranking then same rank teams comparison (Points, Goal difference, Goals scored)",
+    "pointsRules": "Points Rules",
+    "pointsDescription": "Win 3 points, Draw 1 point, Loss 0 points",
+    "sortingRules": "Sorting Rules",
+    "sortingDescription": "Show all group 1st places first, then all group 2nd places, and so on"
   }
 }
