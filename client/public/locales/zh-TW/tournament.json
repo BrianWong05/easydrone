@@ -226,5 +226,59 @@
       "completed": "已完成",
       "overtime": "延長賽"
     }
+  },
+  "edit": {
+    "title": "編輯錦標賽",
+    "subtitle": "修改錦標賽的基本信息",
+    "backToDetail": "返回錦標賽詳情",
+    "loading": "載入錦標賽信息中...",
+    "notFound": "錦標賽不存在",
+    "cannotEdit": "無法編輯錦標賽",
+    "cannotEditDescription": "只能編輯待開始狀態的錦標賽。已開始或已完成的錦標賽無法修改。",
+    "tournamentInfo": "錦標賽信息",
+    "tournamentStatus": "錦標賽狀態",
+    "currentStatus": "當前狀態",
+    "createdAt": "創建時間",
+    "lastUpdated": "最後更新",
+    "formatDescription": "賽制說明",
+    "features": "特點",
+    "saveChanges": "保存更改",
+    "cancel": "取消",
+    "typeChange": "錦標賽類型變更",
+    "validation": {
+      "nameRequired": "請輸入錦標賽名稱",
+      "nameMinLength": "錦標賽名稱至少需要2個字符",
+      "nameMaxLength": "錦標賽名稱不能超過100個字符",
+      "typeRequired": "請選擇錦標賽類型",
+      "startDateRequired": "請選擇開始日期",
+      "endDateRequired": "請選擇結束日期",
+      "endDateAfterStart": "結束日期不能早於開始日期",
+      "namePlaceholder": "請輸入錦標賽名稱",
+      "typePlaceholder": "請選擇錦標賽類型",
+      "startDatePlaceholder": "選擇開始日期",
+      "endDatePlaceholder": "選擇結束日期"
+    },
+    "typeChangeMessages": {
+      "groupToMixed": "允許變更：小組賽制可以隨時變更為混合賽制",
+      "groupToMixedDesc": "現有的小組和比賽數據將保留，您可以稍後添加淘汰賽階段。",
+      "mixedToGroupBlocked": "無法變更：存在淘汰賽比賽",
+      "mixedToGroupBlockedDesc": "發現 {{count}} 場淘汰賽比賽。請先刪除所有淘汰賽比賽才能變更為小組賽制。",
+      "mixedToGroupAllowed": "允許變更：混合賽制變更為小組賽制",
+      "mixedToGroupAllowedDesc": "沒有淘汰賽比賽，可以安全變更為小組賽制。",
+      "hasRelatedData": "無法變更：存在相關數據",
+      "hasRelatedDataDesc": "錦標賽已有相關數據（小組、隊伍或比賽）。請先清除所有相關數據。",
+      "noRelatedData": "允許變更：無相關數據",
+      "noRelatedDataDesc": "錦標賽沒有相關數據，可以安全變更類型。",
+      "groupMatches": "小組賽比賽: {{count}} 場",
+      "knockoutMatches": "淘汰賽比賽: {{count}} 場"
+    },
+    "typeOptions": {
+      "groupTitle": "小組賽制",
+      "groupDesc": "隊伍分組進行循環賽",
+      "knockoutTitle": "淘汰賽制",
+      "knockoutDesc": "單場淘汰制，快速決勝",
+      "mixedTitle": "混合賽制",
+      "mixedDesc": "小組賽+淘汰賽組合"
+    }
   }
 }

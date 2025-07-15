@@ -16,6 +16,7 @@ import {
   Spin
 } from 'antd';
 import { ArrowLeftOutlined, SaveOutlined, EditOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import moment from 'moment';
 
@@ -25,6 +26,7 @@ const { Option } = Select;
 const TournamentEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation(['tournament', 'common']);
   const [form] = Form.useForm();
 
   const [tournament, setTournament] = useState(null);
@@ -68,7 +70,7 @@ const TournamentEdit = () => {
       }
     } catch (error) {
       console.error('Error fetching tournament:', error);
-      message.error('獲取錦標賽信息失敗');
+      message.error(t('common:messages.dataLoadFailed'));
       navigate('/tournaments');
     } finally {
       setLoading(false);
@@ -89,12 +91,12 @@ const TournamentEdit = () => {
       const response = await axios.put(`/api/tournaments/${id}`, updateData);
       
       if (response.data.success) {
-        message.success('錦標賽更新成功');
+        message.success(t('tournament:messages.tournamentUpdated'));
         navigate(`/tournaments/${id}`);
       }
     } catch (error) {
       console.error('Error updating tournament:', error);
-      const errorMsg = error.response?.data?.message || '更新錦標賽失敗';
+      const errorMsg = error.response?.data?.message || t('common:messages.operationFailed');
       message.error(errorMsg);
     } finally {
       setSaving(false);
@@ -105,21 +107,21 @@ const TournamentEdit = () => {
     switch (type) {
       case 'group':
         return {
-          title: '小組賽制',
-          description: '隊伍分組進行循環賽，適合多隊伍參與的賽事。',
-          features: ['分組循環賽', '積分排名', '適合多隊伍']
+          title: t('tournament:create.typeDescriptions.group.title'),
+          description: t('tournament:create.typeDescriptions.group.description'),
+          features: t('tournament:create.typeDescriptions.group.features', { returnObjects: true })
         };
       case 'knockout':
         return {
-          title: '淘汰賽制',
-          description: '單場淘汰制，敗者即被淘汰，適合快速決出勝負。',
-          features: ['單場淘汰', '快速決勝', '刺激緊張']
+          title: t('tournament:create.typeDescriptions.knockout.title'),
+          description: t('tournament:create.typeDescriptions.knockout.description'),
+          features: t('tournament:create.typeDescriptions.knockout.features', { returnObjects: true })
         };
       case 'mixed':
         return {
-          title: '混合賽制',
-          description: '結合小組賽和淘汰賽，先進行小組賽選出晉級隊伍，再進行淘汰賽決出冠軍。',
-          features: ['小組賽+淘汰賽', '兩階段比賽', '最完整的賽制']
+          title: t('tournament:create.typeDescriptions.mixed.title'),
+          description: t('tournament:create.typeDescriptions.mixed.description'),
+          features: t('tournament:create.typeDescriptions.mixed.features', { returnObjects: true })
         };
       default:
         return null;
@@ -139,8 +141,8 @@ const TournamentEdit = () => {
       return {
         allowed: true,
         type: 'success',
-        message: '✅ 允許變更：小組賽制可以隨時變更為混合賽制',
-        description: '現有的小組和比賽數據將保留，您可以稍後添加淘汰賽階段。'
+        message: `✅ ${t('tournament:edit.typeChangeMessages.groupToMixed')}`,
+        description: t('tournament:edit.typeChangeMessages.groupToMixedDesc')
       };
     }
 
@@ -150,15 +152,15 @@ const TournamentEdit = () => {
         return {
           allowed: false,
           type: 'error',
-          message: '❌ 無法變更：存在淘汰賽比賽',
-          description: `發現 ${knockoutMatches} 場淘汰賽比賽。請先刪除所有淘汰賽比賽才能變更為小組賽制。`
+          message: `❌ ${t('tournament:edit.typeChangeMessages.mixedToGroupBlocked')}`,
+          description: t('tournament:edit.typeChangeMessages.mixedToGroupBlockedDesc', { count: knockoutMatches })
         };
       } else {
         return {
           allowed: true,
           type: 'warning',
-          message: '⚠️ 允許變更：混合賽制變更為小組賽制',
-          description: '沒有淘汰賽比賽，可以安全變更為小組賽制。'
+          message: `⚠️ ${t('tournament:edit.typeChangeMessages.mixedToGroupAllowed')}`,
+          description: t('tournament:edit.typeChangeMessages.mixedToGroupAllowedDesc')
         };
       }
     }
@@ -168,16 +170,16 @@ const TournamentEdit = () => {
       return {
         allowed: false,
         type: 'error',
-        message: '❌ 無法變更：存在相關數據',
-        description: '錦標賽已有相關數據（小組、隊伍或比賽）。請先清除所有相關數據。'
+        message: `❌ ${t('tournament:edit.typeChangeMessages.hasRelatedData')}`,
+        description: t('tournament:edit.typeChangeMessages.hasRelatedDataDesc')
       };
     }
 
     return {
       allowed: true,
       type: 'info',
-      message: '✅ 允許變更：無相關數據',
-      description: '錦標賽沒有相關數據，可以安全變更類型。'
+      message: `✅ ${t('tournament:edit.typeChangeMessages.noRelatedData')}`,
+      description: t('tournament:edit.typeChangeMessages.noRelatedDataDesc')
     };
   };
 
@@ -191,7 +193,7 @@ const TournamentEdit = () => {
       <div style={{ padding: '24px', textAlign: 'center' }}>
         <Spin size="large" />
         <div style={{ marginTop: '16px' }}>
-          <Text>載入錦標賽信息中...</Text>
+          <Text>{t('tournament:edit.loading')}</Text>
         </div>
       </div>
     );
@@ -200,7 +202,7 @@ const TournamentEdit = () => {
   if (!tournament) {
     return (
       <div style={{ padding: '24px', textAlign: 'center' }}>
-        <Text type="danger">錦標賽不存在</Text>
+        <Text type="danger">{t('tournament:edit.notFound')}</Text>
       </div>
     );
   }
@@ -216,18 +218,18 @@ const TournamentEdit = () => {
           onClick={() => navigate(`/tournaments/${id}`)}
           style={{ marginBottom: 16 }}
         >
-          返回錦標賽詳情
+          {t('tournament:edit.backToDetail')}
         </Button>
         <Title level={2}>
-          <EditOutlined /> 編輯錦標賽
+          <EditOutlined /> {t('tournament:edit.title')}
         </Title>
-        <Text type="secondary">修改錦標賽的基本信息</Text>
+        <Text type="secondary">{t('tournament:edit.subtitle')}</Text>
       </div>
 
       {!canEdit && (
         <Alert
-          message="無法編輯錦標賽"
-          description="只能編輯待開始狀態的錦標賽。已開始或已完成的錦標賽無法修改。"
+          message={t('tournament:edit.cannotEdit')}
+          description={t('tournament:edit.cannotEditDescription')}
           type="warning"
           style={{ marginBottom: 24 }}
           showIcon
@@ -240,19 +242,19 @@ const TournamentEdit = () => {
         
         return (
           <Alert
-            message="錦標賽類型變更"
+            message={t('tournament:edit.typeChange')}
             description={
               <div>
                 <div style={{ marginBottom: '8px' }}>{changeInfo.message}</div>
                 <div style={{ fontSize: '12px', color: '#666' }}>{changeInfo.description}</div>
                 {groupMatches > 0 && (
                   <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
-                    📊 小組賽比賽: {groupMatches} 場
+                    📊 {t('tournament:edit.typeChangeMessages.groupMatches', { count: groupMatches })}
                   </div>
                 )}
                 {knockoutMatches > 0 && (
                   <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
-                    🏆 淘汰賽比賽: {knockoutMatches} 場
+                    🏆 {t('tournament:edit.typeChangeMessages.knockoutMatches', { count: knockoutMatches })}
                   </div>
                 )}
               </div>
@@ -266,7 +268,7 @@ const TournamentEdit = () => {
 
       <Row gutter={24}>
         <Col span={16}>
-          <Card title="錦標賽信息">
+          <Card title={t('tournament:edit.tournamentInfo')}>
             <Form
               form={form}
               layout="vertical"
@@ -274,51 +276,51 @@ const TournamentEdit = () => {
               disabled={!canEdit}
             >
               <Form.Item
-                label="錦標賽名稱"
+                label={t('tournament:create.tournamentName')}
                 name="tournament_name"
                 rules={[
-                  { required: true, message: '請輸入錦標賽名稱' },
-                  { min: 2, message: '錦標賽名稱至少需要2個字符' },
-                  { max: 100, message: '錦標賽名稱不能超過100個字符' }
+                  { required: true, message: t('tournament:edit.validation.nameRequired') },
+                  { min: 2, message: t('tournament:edit.validation.nameMinLength') },
+                  { max: 100, message: t('tournament:edit.validation.nameMaxLength') }
                 ]}
               >
                 <Input 
-                  placeholder="請輸入錦標賽名稱"
+                  placeholder={t('tournament:edit.validation.namePlaceholder')}
                   size="large"
                 />
               </Form.Item>
 
               <Form.Item
-                label="錦標賽類型"
+                label={t('tournament:create.tournamentType')}
                 name="tournament_type"
-                rules={[{ required: true, message: '請選擇錦標賽類型' }]}
+                rules={[{ required: true, message: t('tournament:edit.validation.typeRequired') }]}
               >
                 <Select 
-                  placeholder="請選擇錦標賽類型"
+                  placeholder={t('tournament:edit.validation.typePlaceholder')}
                   size="large"
                   disabled={!isTournamentTypeChangeAllowed()}
                 >
                   <Option value="group">
                     <div>
-                      <div style={{ fontWeight: 'bold' }}>小組賽制</div>
+                      <div style={{ fontWeight: 'bold' }}>{t('tournament:edit.typeOptions.groupTitle')}</div>
                       <div style={{ fontSize: '12px', color: '#666' }}>
-                        隊伍分組進行循環賽
+                        {t('tournament:edit.typeOptions.groupDesc')}
                       </div>
                     </div>
                   </Option>
                   <Option value="knockout">
                     <div>
-                      <div style={{ fontWeight: 'bold' }}>淘汰賽制</div>
+                      <div style={{ fontWeight: 'bold' }}>{t('tournament:edit.typeOptions.knockoutTitle')}</div>
                       <div style={{ fontSize: '12px', color: '#666' }}>
-                        單場淘汰制，快速決勝
+                        {t('tournament:edit.typeOptions.knockoutDesc')}
                       </div>
                     </div>
                   </Option>
                   <Option value="mixed">
                     <div>
-                      <div style={{ fontWeight: 'bold' }}>混合賽制</div>
+                      <div style={{ fontWeight: 'bold' }}>{t('tournament:edit.typeOptions.mixedTitle')}</div>
                       <div style={{ fontSize: '12px', color: '#666' }}>
-                        小組賽+淘汰賽組合
+                        {t('tournament:edit.typeOptions.mixedDesc')}
                       </div>
                     </div>
                   </Option>
@@ -328,30 +330,30 @@ const TournamentEdit = () => {
               <Row gutter={16}>
                 <Col span={12}>
                   <Form.Item
-                    label="開始日期"
+                    label={t('tournament:create.startDate')}
                     name="start_date"
-                    rules={[{ required: true, message: '請選擇開始日期' }]}
+                    rules={[{ required: true, message: t('tournament:edit.validation.startDateRequired') }]}
                   >
                     <DatePicker 
                       style={{ width: '100%' }}
                       size="large"
-                      placeholder="選擇開始日期"
+                      placeholder={t('tournament:edit.validation.startDatePlaceholder')}
                     />
                   </Form.Item>
                 </Col>
                 <Col span={12}>
                   <Form.Item
-                    label="結束日期"
+                    label={t('tournament:create.endDate')}
                     name="end_date"
                     rules={[
-                      { required: true, message: '請選擇結束日期' },
+                      { required: true, message: t('tournament:edit.validation.endDateRequired') },
                       ({ getFieldValue }) => ({
                         validator(_, value) {
                           if (!value || !getFieldValue('start_date')) {
                             return Promise.resolve();
                           }
                           if (value.isBefore(getFieldValue('start_date'))) {
-                            return Promise.reject(new Error('結束日期不能早於開始日期'));
+                            return Promise.reject(new Error(t('tournament:edit.validation.endDateAfterStart')));
                           }
                           return Promise.resolve();
                         },
@@ -361,7 +363,7 @@ const TournamentEdit = () => {
                     <DatePicker 
                       style={{ width: '100%' }}
                       size="large"
-                      placeholder="選擇結束日期"
+                      placeholder={t('tournament:edit.validation.endDatePlaceholder')}
                     />
                   </Form.Item>
                 </Col>
@@ -377,13 +379,13 @@ const TournamentEdit = () => {
                       loading={saving}
                       size="large"
                     >
-                      保存更改
+                      {t('tournament:edit.saveChanges')}
                     </Button>
                     <Button
                       onClick={() => navigate(`/tournaments/${id}`)}
                       size="large"
                     >
-                      取消
+                      {t('tournament:edit.cancel')}
                     </Button>
                   </Space>
                 </Form.Item>
@@ -393,27 +395,27 @@ const TournamentEdit = () => {
         </Col>
 
         <Col span={8}>
-          <Card title="錦標賽狀態">
+          <Card title={t('tournament:edit.tournamentStatus')}>
             <Space direction="vertical" style={{ width: '100%' }}>
               <div>
-                <Text strong>當前狀態：</Text>
+                <Text strong>{t('tournament:edit.currentStatus')}：</Text>
                 <br />
                 <Text>
-                  {tournament.status === 'pending' && '待開始'}
-                  {tournament.status === 'active' && '進行中'}
-                  {tournament.status === 'completed' && '已完成'}
+                  {tournament.status === 'pending' && t('tournament:detail.status.pending')}
+                  {tournament.status === 'active' && t('tournament:detail.status.active')}
+                  {tournament.status === 'completed' && t('tournament:detail.status.completed')}
                 </Text>
               </div>
               
               <div>
-                <Text strong>創建時間：</Text>
+                <Text strong>{t('tournament:edit.createdAt')}：</Text>
                 <br />
                 <Text>{moment(tournament.created_at).format('YYYY-MM-DD HH:mm')}</Text>
               </div>
               
               {tournament.updated_at && (
                 <div>
-                  <Text strong>最後更新：</Text>
+                  <Text strong>{t('tournament:edit.lastUpdated')}：</Text>
                   <br />
                   <Text>{moment(tournament.updated_at).format('YYYY-MM-DD HH:mm')}</Text>
                 </div>
@@ -422,7 +424,7 @@ const TournamentEdit = () => {
           </Card>
 
           {form.getFieldValue('tournament_type') && (
-            <Card title="賽制說明" style={{ marginTop: 16 }}>
+            <Card title={t('tournament:edit.formatDescription')} style={{ marginTop: 16 }}>
               {(() => {
                 const typeInfo = getTournamentTypeInfo(form.getFieldValue('tournament_type'));
                 if (!typeInfo) return null;
@@ -436,7 +438,7 @@ const TournamentEdit = () => {
                       <Text type="secondary">{typeInfo.description}</Text>
                     </div>
                     <div>
-                      <Text strong>特點：</Text>
+                      <Text strong>{t('tournament:edit.features')}：</Text>
                       <ul style={{ margin: '8px 0', paddingLeft: '20px' }}>
                         {typeInfo.features.map((feature, index) => (
                           <li key={index}>

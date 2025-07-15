@@ -226,5 +226,59 @@
       "completed": "Completed",
       "overtime": "Overtime"
     }
+  },
+  "edit": {
+    "title": "Edit Tournament",
+    "subtitle": "Modify tournament basic information",
+    "backToDetail": "Back to Tournament Detail",
+    "loading": "Loading tournament information...",
+    "notFound": "Tournament does not exist",
+    "cannotEdit": "Cannot Edit Tournament",
+    "cannotEditDescription": "Only tournaments in pending status can be edited. Started or completed tournaments cannot be modified.",
+    "tournamentInfo": "Tournament Information",
+    "tournamentStatus": "Tournament Status",
+    "currentStatus": "Current Status",
+    "createdAt": "Created At",
+    "lastUpdated": "Last Updated",
+    "formatDescription": "Format Description",
+    "features": "Features",
+    "saveChanges": "Save Changes",
+    "cancel": "Cancel",
+    "typeChange": "Tournament Type Change",
+    "validation": {
+      "nameRequired": "Please enter tournament name",
+      "nameMinLength": "Tournament name must be at least 2 characters",
+      "nameMaxLength": "Tournament name cannot exceed 100 characters",
+      "typeRequired": "Please select tournament type",
+      "startDateRequired": "Please select start date",
+      "endDateRequired": "Please select end date",
+      "endDateAfterStart": "End date cannot be earlier than start date",
+      "namePlaceholder": "Please enter tournament name",
+      "typePlaceholder": "Please select tournament type",
+      "startDatePlaceholder": "Select start date",
+      "endDatePlaceholder": "Select end date"
+    },
+    "typeChangeMessages": {
+      "groupToMixed": "Change allowed: Group stage can be changed to mixed format anytime",
+      "groupToMixedDesc": "Existing group and match data will be retained, you can add knockout stage later.",
+      "mixedToGroupBlocked": "Cannot change: Knockout matches exist",
+      "mixedToGroupBlockedDesc": "Found {{count}} knockout matches. Please delete all knockout matches before changing to group stage format.",
+      "mixedToGroupAllowed": "Change allowed: Mixed format to group stage format",
+      "mixedToGroupAllowedDesc": "No knockout matches found, can safely change to group stage format.",
+      "hasRelatedData": "Cannot change: Related data exists",
+      "hasRelatedDataDesc": "Tournament has related data (groups, teams or matches). Please clear all related data first.",
+      "noRelatedData": "Change allowed: No related data",
+      "noRelatedDataDesc": "Tournament has no related data, type can be changed safely.",
+      "groupMatches": "Group stage matches: {{count}} matches",
+      "knockoutMatches": "Knockout matches: {{count}} matches"
+    },
+    "typeOptions": {
+      "groupTitle": "Group Stage Format",
+      "groupDesc": "Teams divided into groups for round-robin",
+      "knockoutTitle": "Knockout Format", 
+      "knockoutDesc": "Single elimination, quick decision",
+      "mixedTitle": "Mixed Format",
+      "mixedDesc": "Group stage + Knockout combination"
+    }
   }
 }
