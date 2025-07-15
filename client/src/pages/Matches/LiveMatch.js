@@ -44,6 +44,9 @@ const LiveMatch = () => {
   const [overtimeModalVisible, setOvertimeModalVisible] = useState(false);
   const [overtimeMinutes, setOvertimeMinutes] = useState(5); // 延長賽分鐘
   const [overtimeSeconds, setOvertimeSeconds] = useState(0); // 延長賽秒數
+  const [timerEditModalVisible, setTimerEditModalVisible] = useState(false); // 計時器編輯模態框
+  const [editMinutes, setEditMinutes] = useState(0); // 編輯分鐘
+  const [editSeconds, setEditSeconds] = useState(0); // 編輯秒數
   
   // 事件表單狀態
   const [eventForm, setEventForm] = useState({
@@ -320,6 +323,36 @@ const LiveMatch = () => {
     console.log(`開始延長賽 - 設置倒數計時: ${totalOvertimeSeconds}秒 (${displayTime})`);
   };
 
+  const handleOpenTimerEdit = () => {
+    // 只有在計時器停止時才能編輯
+    if (!isRunning) {
+      const minutes = Math.floor(remainingTime / 60);
+      const seconds = remainingTime % 60;
+      setEditMinutes(minutes);
+      setEditSeconds(seconds);
+      setTimerEditModalVisible(true);
+    } else {
+      message.warning("請先暫停計時器才能編輯時間");
+    }
+  };
+
+  const handleTimerEdit = () => {
+    const newTime = editMinutes * 60 + editSeconds;
+    if (newTime < 0) {
+      message.error("時間不能為負數");
+      return;
+    }
+    if (newTime > 3600) { // 限制最大1小時
+      message.error("時間不能超過60分鐘");
+      return;
+    }
+    
+    setRemainingTime(newTime);
+    setTimerEditModalVisible(false);
+    message.success(`計時器已設置為 ${editMinutes}分${editSeconds}秒`);
+    console.log(`手動設置計時器: ${newTime}秒 (${editMinutes}分${editSeconds}秒)`);
+  };
+
   const updateScore = async (scores = null) => {
     try {
       // Use provided scores or current state values
@@ -532,6 +565,14 @@ const LiveMatch = () => {
                   onClick={handlePauseResume}
                 >
                   {isRunning ? '暫停' : '繼續'}
+                </Button>
+                <Button
+                  size="large"
+                  onClick={handleOpenTimerEdit}
+                  disabled={isRunning}
+                  style={{ marginLeft: '8px' }}
+                >
+                  編輯時間
                 </Button>
                 <Button 
                   danger
@@ -965,6 +1006,74 @@ const LiveMatch = () => {
               ⚠️ 當前比分平局，結束下半場後將進入延長賽
             </p>
           )}
+        </Modal>
+
+        {/* 計時器編輯模態框 */}
+        <Modal
+          title="編輯比賽計時器"
+          open={timerEditModalVisible}
+          onOk={handleTimerEdit}
+          onCancel={() => setTimerEditModalVisible(false)}
+          okText="確認修改"
+          cancelText="取消"
+          okType="primary"
+        >
+          <div style={{ textAlign: 'center', padding: '20px 0' }}>
+            <Title level={4}>⏰ 設置剩餘時間</Title>
+            <p style={{ color: '#666', marginBottom: '20px' }}>
+              只有在計時器暫停時才能編輯時間
+            </p>
+            
+            <div style={{ marginBottom: '20px' }}>
+              <Text strong>當前剩餘時間：</Text>
+              <span style={{ fontSize: '24px', color: '#1890ff', marginLeft: '8px' }}>
+                {formatTime(remainingTime)}
+              </span>
+            </div>
+
+            <div style={{ margin: '20px 0' }}>
+              <Text strong>設置新時間：</Text>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  marginTop: '8px',
+                }}
+              >
+                <InputNumber
+                  min={0}
+                  max={60}
+                  value={editMinutes}
+                  onChange={setEditMinutes}
+                  style={{ width: '80px' }}
+                />
+                <Text>分</Text>
+                <InputNumber
+                  min={0}
+                  max={59}
+                  value={editSeconds}
+                  onChange={setEditSeconds}
+                  style={{ width: '80px' }}
+                />
+                <Text>秒</Text>
+              </div>
+              <div style={{ marginTop: '8px', color: '#666', fontSize: '12px' }}>
+                總時長：{editMinutes}分{editSeconds}秒 ({editMinutes * 60 + editSeconds}秒)
+              </div>
+            </div>
+
+            <div style={{ marginTop: '16px', padding: '12px', backgroundColor: '#f0f2f5', borderRadius: '6px' }}>
+              <Text style={{ fontSize: '16px', color: '#1890ff' }}>
+                預覽：{formatTime(editMinutes * 60 + editSeconds)}
+              </Text>
+            </div>
+            
+            <p style={{ color: '#999', fontSize: '12px', marginTop: '16px' }}>
+              注意：修改計時器不會影響比賽記錄，僅調整當前顯示時間
+            </p>
+          </div>
         </Modal>
       </Space>
     </div>
