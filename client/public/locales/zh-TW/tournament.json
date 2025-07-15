@@ -117,5 +117,52 @@
       "statusActive": "進行中",
       "statusCompleted": "已完成"
     }
+  },
+  "create": {
+    "title": "新增錦標賽",
+    "backToList": "返回列表",
+    "basicInfo": "基本信息",
+    "tournamentName": "錦標賽名稱",
+    "tournamentType": "錦標賽類型",
+    "competitionDates": "比賽日期（可選）",
+    "startDate": "開始日期",
+    "endDate": "結束日期",
+    "createTournament": "創建錦標賽",
+    "cancel": "取消",
+    "formatDescription": "賽制說明",
+    "features": "特點",
+    "selectTypePrompt": "請選擇錦標賽類型查看詳細說明",
+    "creationTips": "創建提示",
+    "validation": {
+      "nameRequired": "請輸入錦標賽名稱",
+      "nameMinLength": "錦標賽名稱至少需要2個字符",
+      "nameMaxLength": "錦標賽名稱不能超過100個字符",
+      "typeRequired": "請選擇錦標賽類型",
+      "namePlaceholder": "請輸入錦標賽名稱，例如：2024年春季無人機足球錦標賽"
+    },
+    "typeDescriptions": {
+      "group": {
+        "title": "小組賽制",
+        "description": "隊伍分組進行循環賽，每組前幾名晉級下一階段。適合參賽隊伍較多的情況。",
+        "features": ["分組循環賽", "積分排名", "小組出線"]
+      },
+      "knockout": {
+        "title": "淘汰賽制",
+        "description": "單場淘汰制，敗者直接出局。比賽節奏快，適合決定最終冠軍。",
+        "features": ["單場淘汰", "勝者晉級", "快速決出冠軍"]
+      },
+      "mixed": {
+        "title": "混合賽制",
+        "description": "結合小組賽和淘汰賽，先進行小組賽選出晉級隊伍，再進行淘汰賽決出冠軍。",
+        "features": ["小組賽+淘汰賽", "兩階段比賽", "最完整的賽制"]
+      }
+    },
+    "tips": {
+      "title": "創建提示",
+      "addTeams": "錦標賽創建後可以添加參賽隊伍",
+      "groupStage": "小組賽需要先創建小組並分配隊伍",
+      "knockout": "淘汰賽可以直接生成對戰圖表",
+      "mixed": "混合賽制結合了兩種賽制的優點"
+    }
   }
 }

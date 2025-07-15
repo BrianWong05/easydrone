@@ -117,5 +117,52 @@
       "statusActive": "Active",
       "statusCompleted": "Completed"
     }
+  },
+  "create": {
+    "title": "Add Tournament",
+    "backToList": "Back to List",
+    "basicInfo": "Basic Information",
+    "tournamentName": "Tournament Name",
+    "tournamentType": "Tournament Type",
+    "competitionDates": "Competition Dates (Optional)",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "createTournament": "Create Tournament",
+    "cancel": "Cancel",
+    "formatDescription": "Format Description",
+    "features": "Features",
+    "selectTypePrompt": "Please select a tournament type to view detailed description",
+    "creationTips": "Creation Tips",
+    "validation": {
+      "nameRequired": "Please enter tournament name",
+      "nameMinLength": "Tournament name must be at least 2 characters",
+      "nameMaxLength": "Tournament name cannot exceed 100 characters",
+      "typeRequired": "Please select tournament type",
+      "namePlaceholder": "Please enter tournament name, e.g.: 2024 Spring Drone Soccer Championship"
+    },
+    "typeDescriptions": {
+      "group": {
+        "title": "Group Stage Format",
+        "description": "Teams are divided into groups for round-robin matches, with top teams from each group advancing. Suitable for tournaments with many participating teams.",
+        "features": ["Group round-robin", "Points ranking", "Group qualification"]
+      },
+      "knockout": {
+        "title": "Knockout Format",
+        "description": "Single elimination format where losers are directly eliminated. Fast-paced matches, suitable for determining the final champion.",
+        "features": ["Single elimination", "Winner advances", "Quick championship decision"]
+      },
+      "mixed": {
+        "title": "Mixed Format",
+        "description": "Combines group stage and knockout, first conducting group matches to select advancing teams, then knockout rounds to determine the champion.",
+        "features": ["Group stage + Knockout", "Two-stage competition", "Most comprehensive format"]
+      }
+    },
+    "tips": {
+      "title": "Creation Tips",
+      "addTeams": "Teams can be added after tournament creation",
+      "groupStage": "Group stage requires creating groups and assigning teams first",
+      "knockout": "Knockout format can directly generate bracket charts",
+      "mixed": "Mixed format combines advantages of both formats"
+    }
   }
 }
