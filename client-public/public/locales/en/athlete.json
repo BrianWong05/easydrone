@@ -1,0 +1,75 @@
+{
+  "athlete": {
+    "name": "Athlete Name",
+    "list": "Athlete List",
+    "detail": "Athlete Details",
+    "create": "Create Athlete",
+    "edit": "Edit Athlete",
+    "delete": "Delete Athlete",
+    "management": "Athlete Management",
+    "profile": "Athlete Profile",
+    "statistics": "Athlete Statistics",
+    "performance": "Performance Data",
+    "team": "Team",
+    "position": "Position",
+    "number": "Number",
+    "age": "Age",
+    "height": "Height",
+    "weight": "Weight",
+    "nationality": "Nationality",
+    "experience": "Experience",
+    "joinDate": "Join Date",
+    "status": "Status",
+    "contact": "Contact",
+    "biography": "Biography",
+    "achievements": "Achievements",
+    "totalAthletes": "Total Athletes"
+  },
+  "statistics": {
+    "matchesPlayed": "Matches Played",
+    "goals": "Goals",
+    "assists": "Assists",
+    "saves": "Saves",
+    "fouls": "Fouls",
+    "yellowCards": "Yellow Cards",
+    "redCards": "Red Cards",
+    "minutesPlayed": "Minutes Played",
+    "averageRating": "Average Rating",
+    "winRate": "Win Rate"
+  },
+  "positions": {
+    "attacker": "Attacker",
+    "defender": "Defender",
+    "goalkeeper": "Goalkeeper",
+    "midfielder": "Midfielder",
+    "substitute": "Substitute"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "injured": "Injured",
+    "suspended": "Suspended",
+    "retired": "Retired"
+  },
+  "messages": {
+    "noAthletes": "No athletes available",
+    "noAthleteData": "No athlete data available",
+    "loadingAthletes": "Loading athlete data...",
+    "athleteCreated": "Athlete created successfully",
+    "athleteUpdated": "Athlete updated successfully",
+    "athleteDeleted": "Athlete deleted successfully",
+    "deleteConfirmation": "Are you sure you want to delete this athlete?",
+    "deleteWarning": "This action cannot be undone",
+    "noStatistics": "No statistics available"
+  },
+  "placeholders": {
+    "searchAthlete": "Search athlete name",
+    "enterAthleteName": "Enter athlete name",
+    "selectTeam": "Select team",
+    "selectPosition": "Select position",
+    "enterNumber": "Enter number",
+    "enterAge": "Enter age",
+    "enterHeight": "Enter height",
+    "enterWeight": "Enter weight"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "stats": {
+    "overview": "Statistics Overview",
+    "dashboard": "Data Dashboard",
+    "summary": "Statistics Summary",
+    "detailed": "Detailed Statistics",
+    "comparison": "Comparison Analysis",
+    "trends": "Trend Analysis",
+    "performance": "Performance Statistics",
+    "ranking": "Ranking Statistics",
+    "bestTeams": "Best Teams Statistics",
+    "topPerformers": "Top Performers",
+    "systemStatus": "System Status"
+  },
+  "metrics": {
+    "totalTeams": "Total Teams",
+    "totalTournaments": "Tournaments",
+    "totalMatches": "Total Matches",
+    "totalAthletes": "Total Athletes",
+    "matchesPlayed": "Matches Played",
+    "goalsScored": "Goals Scored",
+    "averageGoals": "Average Goals",
+    "winRate": "Win Rate",
+    "drawRate": "Draw Rate",
+    "lossRate": "Loss Rate"
+  },
+  "rankings": {
+    "position": "Position",
+    "team": "Team",
+    "points": "Points",
+    "wins": "Wins",
+    "draws": "Draws",
+    "losses": "Losses",
+    "goalsFor": "Goals For",
+    "goalsAgainst": "Goals Against",
+    "goalDifference": "Goal Difference",
+    "overallRanking": "Overall Ranking",
+    "groupRanking": "Group Ranking"
+  },
+  "progress": {
+    "groupStage": "Group Stage Progress",
+    "knockout": "Knockout Progress",
+    "overall": "Overall Progress",
+    "completion": "Completion"
+  },
+  "system": {
+    "databaseConnection": "Database Connection",
+    "apiService": "API Service",
+    "realTimeUpdate": "Real-time Update",
+    "systemVersion": "System Version",
+    "status": "Status"
+  },
+  "messages": {
+    "noData": "No data available",
+    "noRankingData": "No ranking data available",
+    "loadingStats": "Loading statistics...",
+    "dataUpdated": "Data updated",
+    "refreshData": "Refresh Data",
+    "exportData": "Export Data"
+  }
+}

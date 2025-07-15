@@ -1,0 +1,26 @@
+{
+  "navigation": {
+    "leaderboard": "Leaderboard",
+    "teams": "Teams",
+    "groups": "Groups",
+    "matches": "Matches",
+    "bracket": "Knockout Bracket",
+    "bestTeams": "Best Teams Statistics"
+  },
+  "layout": {
+    "title": "Tournament",
+    "subtitle": "Public Event Information",
+    "expandSidebar": "Expand Sidebar",
+    "collapseSidebar": "Collapse Sidebar",
+    "tournamentName": "Drone Soccer Tournament",
+    "loadingTournament": "Loading tournament data...",
+    "loadFailed": "Load Failed",
+    "noActiveTournament": "No active tournament to display",
+    "tournamentLoadFailed": "Failed to load tournament data"
+  },
+  "tournamentTypes": {
+    "group": "Group Stage",
+    "knockout": "Knockout",
+    "mixed": "Mixed Format"
+  }
+}
