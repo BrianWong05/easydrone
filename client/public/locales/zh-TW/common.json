@@ -48,6 +48,10 @@
     "deactivate": "停用",
     "reactivate": "重新激活"
   },
+  "actions": {
+    "confirm": "確定",
+    "cancel": "取消"
+  },
   "status": {
     "active": "激活",
     "inactive": "停用",
@@ -75,7 +79,8 @@
     "createSuccess": "創建成功",
     "operationFailed": "操作失敗，請稍後重試",
     "networkError": "網絡錯誤，請檢查連接",
-    "dataLoadFailed": "數據載入失敗"
+    "dataLoadFailed": "數據載入失敗",
+    "loadFailed": "數據載入失敗"
   },
   "forms": {
     "required": "此欄位為必填",

@@ -99,5 +99,75 @@
       "ungrouped": "Ungrouped",
       "virtual": "Virtual Teams"
     }
+  },
+  "detail": {
+    "title": "Team Details",
+    "backToList": "Back",
+    "editTeam": "Edit Team",
+    "deleteTeam": "Delete Team",
+    "addAthlete": "Add Athlete",
+    "addFirstAthlete": "Add First Athlete",
+    "teamNotFound": "Team data not found",
+    "backToTeamList": "Back to Team List",
+    "teamInfo": "Team Information",
+    "athleteList": "Athlete List",
+    "matchRecords": "Match Records",
+    "noAthletes": "No athletes",
+    "noMatches": "No match records",
+    "deleteConfirmation": "Confirm Delete",
+    "deleteWarning": "Are you sure you want to delete team \"{{teamName}}\"? This will also delete all related athletes and match records, and cannot be undone.",
+    "teamNotBelongToTournament": "Team does not belong to current tournament",
+    "cannotLoadMatchInfo": "Cannot load match information",
+    "stats": {
+      "totalMatches": "Total Matches",
+      "points": "Points",
+      "goalsFor": "Goals For",
+      "goalsAgainst": "Goals Against",
+      "wins": "Wins",
+      "draws": "Draws",
+      "losses": "Losses",
+      "goalDifference": "Goal Difference"
+    },
+    "info": {
+      "teamName": "Team Name",
+      "teamColor": "Team Color",
+      "group": "Group",
+      "athleteCount": "Athletes",
+      "unassigned": "Unassigned",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "description": "Team Description",
+      "people": "people"
+    },
+    "positions": {
+      "attacker": "Attacker",
+      "defender": "Defender",
+      "substitute": "Substitute"
+    },
+    "matchResults": {
+      "win": "W",
+      "draw": "D",
+      "loss": "L"
+    },
+    "columns": {
+      "jerseyNumber": "Jersey #",
+      "name": "Name",
+      "position": "Position",
+      "age": "Age",
+      "status": "Status",
+      "matchNumber": "Match #",
+      "opponent": "Opponent",
+      "score": "Score",
+      "result": "Result",
+      "matchTime": "Match Time",
+      "matchStatus": "Status"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "pending": "Pending",
+      "inProgress": "In Progress",
+      "completed": "Completed"
+    }
   }
 }

@@ -99,5 +99,75 @@
       "ungrouped": "未分組",
       "virtual": "虛擬隊伍"
     }
+  },
+  "detail": {
+    "title": "隊伍詳情",
+    "backToList": "返回",
+    "editTeam": "編輯隊伍",
+    "deleteTeam": "刪除隊伍",
+    "addAthlete": "新增運動員",
+    "addFirstAthlete": "新增第一位運動員",
+    "teamNotFound": "找不到隊伍資料",
+    "backToTeamList": "返回隊伍列表",
+    "teamInfo": "隊伍詳情",
+    "athleteList": "運動員名單",
+    "matchRecords": "比賽記錄",
+    "noAthletes": "暫無運動員",
+    "noMatches": "暫無比賽記錄",
+    "deleteConfirmation": "確認刪除",
+    "deleteWarning": "確定要刪除隊伍 \"{{teamName}}\" 嗎？此操作將同時刪除所有相關的運動員和比賽記錄，且無法撤銷。",
+    "teamNotBelongToTournament": "隊伍不屬於當前錦標賽",
+    "cannotLoadMatchInfo": "無法載入比賽信息",
+    "stats": {
+      "totalMatches": "總比賽場次",
+      "points": "積分",
+      "goalsFor": "進球數",
+      "goalsAgainst": "失球數",
+      "wins": "勝場",
+      "draws": "平場",
+      "losses": "負場",
+      "goalDifference": "淨勝球"
+    },
+    "info": {
+      "teamName": "隊伍名稱",
+      "teamColor": "隊伍顏色",
+      "group": "所屬小組",
+      "athleteCount": "運動員數量",
+      "unassigned": "未分配",
+      "createdAt": "創建時間",
+      "updatedAt": "更新時間",
+      "description": "隊伍描述",
+      "people": "人"
+    },
+    "positions": {
+      "attacker": "進攻手",
+      "defender": "防守員",
+      "substitute": "替補"
+    },
+    "matchResults": {
+      "win": "勝",
+      "draw": "平",
+      "loss": "負"
+    },
+    "columns": {
+      "jerseyNumber": "球衣號碼",
+      "name": "姓名",
+      "position": "位置",
+      "age": "年齡",
+      "status": "狀態",
+      "matchNumber": "比賽編號",
+      "opponent": "對手",
+      "score": "比分",
+      "result": "結果",
+      "matchTime": "比賽時間",
+      "matchStatus": "狀態"
+    },
+    "status": {
+      "active": "活躍",
+      "inactive": "非活躍",
+      "pending": "待開始",
+      "inProgress": "進行中",
+      "completed": "已完成"
+    }
   }
 }

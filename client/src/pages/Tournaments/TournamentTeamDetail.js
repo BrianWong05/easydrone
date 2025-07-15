@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Typography, Button, Space, Table, Tag, Descriptions, Row, Col, Statistic, message, Modal, Spin } from 'antd';
 import { ArrowLeftOutlined, EditOutlined, UserAddOutlined, TrophyOutlined, TeamOutlined, DeleteOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import axios from 'axios';
 
@@ -37,6 +38,7 @@ const TournamentTeamDetail = () => {
   };
   const navigate = useNavigate();
   const { id: tournamentId, teamId } = useParams();
+  const { t } = useTranslation(['team', 'athlete', 'match', 'common']);
   const [loading, setLoading] = useState(true);
   const [teamData, setTeamData] = useState(null);
   const [athletes, setAthletes] = useState([]);
@@ -86,7 +88,7 @@ const TournamentTeamDetail = () => {
         
         // Verify this team belongs to the current tournament
         if (team.tournament_id && team.tournament_id.toString() !== tournamentId) {
-          message.error('隊伍不屬於當前錦標賽');
+          message.error(t('team:detail.teamNotBelongToTournament'));
           navigate(`/tournaments/${tournamentId}/teams`);
           return;
         }
@@ -102,12 +104,12 @@ const TournamentTeamDetail = () => {
         await fetchTeamMatches();
         
       } else {
-        message.error('獲取隊伍詳情失敗');
+        message.error(t('common:messages.loadFailed'));
         navigate(`/tournaments/${tournamentId}/teams`);
       }
     } catch (error) {
       console.error('獲取隊伍詳情錯誤:', error);
-      message.error('獲取隊伍詳情失敗');
+      message.error(t('common:messages.loadFailed'));
       navigate(`/tournaments/${tournamentId}/teams`);
     } finally {
       setLoading(false);
@@ -128,7 +130,7 @@ const TournamentTeamDetail = () => {
       }
     } catch (error) {
       console.error('獲取隊伍比賽錯誤:', error);
-      message.error('無法載入比賽信息');
+      message.error(t('team:detail.cannotLoadMatchInfo'));
     }
   };
 
@@ -204,32 +206,27 @@ const TournamentTeamDetail = () => {
 
   const handleDeleteTeam = () => {
     Modal.confirm({
-      title: '確認刪除',
-      content: `確定要刪除隊伍 "${getDisplayTeamName(teamData.team_name)}" 嗎？此操作將同時刪除所有相關的運動員和比賽記錄，且無法撤銷。`,
-      okText: '確定',
-      cancelText: '取消',
+      title: t('team:detail.deleteConfirmation'),
+      content: t('team:detail.deleteWarning', { teamName: getDisplayTeamName(teamData.team_name) }),
+      okText: t('common:actions.confirm'),
+      cancelText: t('common:actions.cancel'),
       onOk: async () => {
         try {
           const response = await axios.delete(`/api/teams/${teamId}`);
           if (response.data.success) {
-            message.success('隊伍刪除成功');
+            message.success(t('team:messages.teamDeleted'));
             navigate(`/tournaments/${tournamentId}/teams`);
           }
         } catch (error) {
           console.error('刪除隊伍錯誤:', error);
-          message.error('刪除隊伍失敗');
+          message.error(t('common:messages.operationFailed'));
         }
       }
     });
   };
 
   const getPositionText = (position) => {
-    const positionMap = {
-      'attacker': '進攻手',
-      'defender': '防守員',
-      'substitute': '替補'
-    };
-    return positionMap[position] || position;
+    return t(`team:detail.positions.${position}`, { defaultValue: position });
   };
 
   const getPositionColor = (position) => {
@@ -247,35 +244,39 @@ const TournamentTeamDetail = () => {
     // Use winner_id to determine result instead of calculating from scores
     // This ensures manual referee decisions are respected
     if (match.winner_id === parseInt(teamId)) {
-      return '勝';
+      return t('team:detail.matchResults.win');
     } else if (match.winner_id === null) {
-      return '平';
+      return t('team:detail.matchResults.draw');
     } else if (match.winner_id) {
-      return '負';
+      return t('team:detail.matchResults.loss');
     } else {
       // Fallback to score-based calculation if winner_id is not set
       const isTeam1 = match.team1_id === parseInt(teamId);
       const teamScore = isTeam1 ? match.team1_score : match.team2_score;
       const opponentScore = isTeam1 ? match.team2_score : match.team1_score;
       
-      if (teamScore > opponentScore) return '勝';
-      if (teamScore === opponentScore) return '平';
-      return '負';
+      if (teamScore > opponentScore) return t('team:detail.matchResults.win');
+      if (teamScore === opponentScore) return t('team:detail.matchResults.draw');
+      return t('team:detail.matchResults.loss');
     }
   };
 
   const getResultColor = (result) => {
+    const winText = t('team:detail.matchResults.win');
+    const drawText = t('team:detail.matchResults.draw');
+    const lossText = t('team:detail.matchResults.loss');
+    
     switch (result) {
-      case '勝': return 'green';
-      case '平': return 'orange';
-      case '負': return 'red';
+      case winText: return 'green';
+      case drawText: return 'orange';
+      case lossText: return 'red';
       default: return 'default';
     }
   };
 
   const athletesColumns = [
     {
-      title: '球衣號碼',
+      title: t('team:detail.columns.jerseyNumber'),
       dataIndex: 'jersey_number',
       key: 'jersey_number',
       width: 100,
@@ -286,7 +287,7 @@ const TournamentTeamDetail = () => {
       ),
     },
     {
-      title: '姓名',
+      title: t('team:detail.columns.name'),
       dataIndex: 'name',
       key: 'name',
       sorter: (a, b) => (a.name || '').localeCompare(b.name || ''),
@@ -307,7 +308,7 @@ const TournamentTeamDetail = () => {
       ),
     },
     {
-      title: '位置',
+      title: t('team:detail.columns.position'),
       dataIndex: 'position',
       key: 'position',
       sorter: (a, b) => (a.position || '').localeCompare(b.position || ''),
@@ -319,7 +320,7 @@ const TournamentTeamDetail = () => {
       ),
     },
     {
-      title: '年齡',
+      title: t('team:detail.columns.age'),
       dataIndex: 'age',
       key: 'age',
       width: 80,
@@ -327,7 +328,7 @@ const TournamentTeamDetail = () => {
       sortDirections: ['ascend', 'descend'],
     },
     {
-      title: '狀態',
+      title: t('team:detail.columns.status'),
       dataIndex: 'is_active',
       key: 'is_active',
       width: 100,
@@ -335,7 +336,7 @@ const TournamentTeamDetail = () => {
       sortDirections: ['ascend', 'descend'],
       render: (isActive) => (
         <Tag color={isActive ? 'green' : 'red'}>
-          {isActive ? '活躍' : '非活躍'}
+          {isActive ? t('team:detail.status.active') : t('team:detail.status.inactive')}
         </Tag>
       ),
     },
@@ -363,7 +364,7 @@ const TournamentTeamDetail = () => {
 
   const matchesColumns = [
     {
-      title: '比賽編號',
+      title: t('team:detail.columns.matchNumber'),
       dataIndex: 'match_number',
       key: 'match_number',
       width: 120,
@@ -384,7 +385,7 @@ const TournamentTeamDetail = () => {
       ),
     },
     {
-      title: '對手',
+      title: t('team:detail.columns.opponent'),
       key: 'opponent',
       sorter: (a, b) => {
         const aIsTeam1 = a.team1_id === parseInt(teamId);
@@ -413,7 +414,7 @@ const TournamentTeamDetail = () => {
       },
     },
     {
-      title: '比分',
+      title: t('team:detail.columns.score'),
       key: 'score',
       width: 100,
       sorter: (a, b) => {
@@ -437,13 +438,16 @@ const TournamentTeamDetail = () => {
       },
     },
     {
-      title: '結果',
+      title: t('team:detail.columns.result'),
       key: 'result',
       width: 80,
       sorter: (a, b) => {
         const aResult = getMatchResult(a);
         const bResult = getMatchResult(b);
-        const resultOrder = { '勝': 3, '平': 2, '負': 1, '-': 0 };
+        const winText = t('team:detail.matchResults.win');
+        const drawText = t('team:detail.matchResults.draw');
+        const lossText = t('team:detail.matchResults.loss');
+        const resultOrder = { [winText]: 3, [drawText]: 2, [lossText]: 1, '-': 0 };
         return (resultOrder[aResult] || 0) - (resultOrder[bResult] || 0);
       },
       sortDirections: ['ascend', 'descend'],
@@ -457,7 +461,7 @@ const TournamentTeamDetail = () => {
       },
     },
     {
-      title: '比賽時間',
+      title: t('team:detail.columns.matchTime'),
       dataIndex: 'match_date',
       key: 'match_date',
       width: 150,
@@ -466,7 +470,7 @@ const TournamentTeamDetail = () => {
       render: (date) => moment(date).format('MM-DD HH:mm'),
     },
     {
-      title: '狀態',
+      title: t('team:detail.columns.matchStatus'),
       dataIndex: 'match_status',
       key: 'match_status',
       width: 100,
@@ -477,9 +481,9 @@ const TournamentTeamDetail = () => {
       sortDirections: ['ascend', 'descend'],
       render: (status) => {
         const statusMap = {
-          'pending': { color: 'orange', text: '待開始' },
-          'active': { color: 'green', text: '進行中' },
-          'completed': { color: 'blue', text: '已完成' }
+          'pending': { color: 'orange', text: t('team:detail.status.pending') },
+          'inProgress': { color: 'green', text: t('team:detail.status.inProgress') },
+          'completed': { color: 'blue', text: t('team:detail.status.completed') }
         };
         const config = statusMap[status] || { color: 'default', text: status };
         return <Tag color={config.color}>{config.text}</Tag>;
@@ -498,9 +502,9 @@ const TournamentTeamDetail = () => {
   if (!teamData) {
     return (
       <div style={{ textAlign: 'center', padding: '50px' }}>
-        <Title level={4}>找不到隊伍資料</Title>
+        <Title level={4}>{t('team:detail.teamNotFound')}</Title>
         <Button type="primary" onClick={handleBack}>
-          返回隊伍列表
+          {t('team:detail.backToTeamList')}
         </Button>
       </div>
     );
@@ -515,10 +519,10 @@ const TournamentTeamDetail = () => {
             <Col>
               <Space>
                 <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
-                  返回
+                  {t('team:detail.backToList')}
                 </Button>
                 <Title level={3} style={{ margin: 0 }}>
-                  隊伍詳情
+                  {t('team:detail.title')}
                 </Title>
               </Space>
             </Col>
@@ -529,20 +533,20 @@ const TournamentTeamDetail = () => {
                   icon={<UserAddOutlined />}
                   onClick={handleAddAthlete}
                 >
-                  新增運動員
+                  {t('team:detail.addAthlete')}
                 </Button>
                 <Button 
                   icon={<EditOutlined />}
                   onClick={handleEdit}
                 >
-                  編輯隊伍
+                  {t('team:detail.editTeam')}
                 </Button>
                 <Button 
                   danger 
                   icon={<DeleteOutlined />}
                   onClick={handleDeleteTeam}
                 >
-                  刪除隊伍
+                  {t('team:detail.deleteTeam')}
                 </Button>
               </Space>
             </Col>
@@ -566,7 +570,7 @@ const TournamentTeamDetail = () => {
               <span>{getDisplayTeamName(teamData.team_name)}</span>
               {teamData.group_name && (
                 <Tag color="blue">
-                  小組 {getDisplayGroupName(teamData.group_name)}
+                  {t('team:detail.info.group')} {getDisplayGroupName(teamData.group_name)}
                 </Tag>
               )}
             </Space>
@@ -575,28 +579,28 @@ const TournamentTeamDetail = () => {
           <Row gutter={[16, 16]}>
             <Col span={6}>
               <Statistic
-                title="總比賽場次"
+                title={t('team:detail.stats.totalMatches')}
                 value={stats.totalMatches}
                 prefix={<TrophyOutlined />}
               />
             </Col>
             <Col span={6}>
               <Statistic
-                title="積分"
+                title={t('team:detail.stats.points')}
                 value={stats.points}
                 valueStyle={{ color: '#1890ff' }}
               />
             </Col>
             <Col span={6}>
               <Statistic
-                title="進球數"
+                title={t('team:detail.stats.goalsFor')}
                 value={stats.goalsFor}
                 valueStyle={{ color: '#52c41a' }}
               />
             </Col>
             <Col span={6}>
               <Statistic
-                title="失球數"
+                title={t('team:detail.stats.goalsAgainst')}
                 value={stats.goalsAgainst}
                 valueStyle={{ color: '#ff4d4f' }}
               />
@@ -605,12 +609,12 @@ const TournamentTeamDetail = () => {
         </Card>
 
         {/* 詳細信息 */}
-        <Card title="隊伍詳情" extra={<TeamOutlined />}>
+        <Card title={t('team:detail.teamInfo')} extra={<TeamOutlined />}>
           <Descriptions bordered column={2}>
-            <Descriptions.Item label="隊伍名稱">
+            <Descriptions.Item label={t('team:detail.info.teamName')}>
               {getDisplayTeamName(teamData.team_name)}
             </Descriptions.Item>
-            <Descriptions.Item label="隊伍顏色">
+            <Descriptions.Item label={t('team:detail.info.teamColor')}>
               <Space>
                 <div 
                   style={{
@@ -624,26 +628,26 @@ const TournamentTeamDetail = () => {
                 {teamData.team_color || '#1890ff'}
               </Space>
             </Descriptions.Item>
-            <Descriptions.Item label="所屬小組">
+            <Descriptions.Item label={t('team:detail.info.group')}>
               {teamData.group_name ? (
-                <Tag color="blue">小組 {getDisplayGroupName(teamData.group_name)}</Tag>
+                <Tag color="blue">{t('team:detail.info.group')} {getDisplayGroupName(teamData.group_name)}</Tag>
               ) : (
-                <Text type="secondary">未分配</Text>
+                <Text type="secondary">{t('team:detail.info.unassigned')}</Text>
               )}
             </Descriptions.Item>
-            <Descriptions.Item label="運動員數量">
-              {athletes.length} 人
+            <Descriptions.Item label={t('team:detail.info.athleteCount')}>
+              {athletes.length} {t('team:detail.info.people')}
             </Descriptions.Item>
-            <Descriptions.Item label="勝場">
+            <Descriptions.Item label={t('team:detail.stats.wins')}>
               <span style={{ color: '#52c41a', fontWeight: 'bold' }}>{stats.wins}</span>
             </Descriptions.Item>
-            <Descriptions.Item label="平場">
+            <Descriptions.Item label={t('team:detail.stats.draws')}>
               <span style={{ color: '#faad14', fontWeight: 'bold' }}>{stats.draws}</span>
             </Descriptions.Item>
-            <Descriptions.Item label="負場">
+            <Descriptions.Item label={t('team:detail.stats.losses')}>
               <span style={{ color: '#ff4d4f', fontWeight: 'bold' }}>{stats.losses}</span>
             </Descriptions.Item>
-            <Descriptions.Item label="淨勝球">
+            <Descriptions.Item label={t('team:detail.stats.goalDifference')}>
               <span style={{ 
                 color: stats.goalDifference > 0 ? '#52c41a' : stats.goalDifference < 0 ? '#ff4d4f' : '#666',
                 fontWeight: 'bold'
@@ -651,14 +655,14 @@ const TournamentTeamDetail = () => {
                 {stats.goalDifference > 0 ? '+' : ''}{stats.goalDifference}
               </span>
             </Descriptions.Item>
-            <Descriptions.Item label="創建時間">
+            <Descriptions.Item label={t('team:detail.info.createdAt')}>
               {moment(teamData.created_at).format('YYYY-MM-DD HH:mm:ss')}
             </Descriptions.Item>
-            <Descriptions.Item label="更新時間">
+            <Descriptions.Item label={t('team:detail.info.updatedAt')}>
               {moment(teamData.updated_at).format('YYYY-MM-DD HH:mm:ss')}
             </Descriptions.Item>
             {teamData.description && (
-              <Descriptions.Item label="隊伍描述" span={2}>
+              <Descriptions.Item label={t('team:detail.info.description')} span={2}>
                 {teamData.description}
               </Descriptions.Item>
             )}
@@ -670,7 +674,7 @@ const TournamentTeamDetail = () => {
           title={
             <Space>
               <UserOutlined />
-              <span>運動員名單 ({athletes.length})</span>
+              <span>{t('team:detail.athleteList')} ({athletes.length})</span>
             </Space>
           }
           extra={
@@ -679,7 +683,7 @@ const TournamentTeamDetail = () => {
               icon={<UserAddOutlined />}
               onClick={handleAddAthlete}
             >
-              新增運動員
+              {t('team:detail.addAthlete')}
             </Button>
           }
         >
@@ -693,14 +697,14 @@ const TournamentTeamDetail = () => {
           {athletes.length === 0 && (
             <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
               <UserOutlined style={{ fontSize: '48px', marginBottom: 16 }} />
-              <div>暫無運動員</div>
+              <div>{t('team:detail.noAthletes')}</div>
               <Button 
                 type="primary" 
                 icon={<UserAddOutlined />}
                 onClick={handleAddAthlete}
                 style={{ marginTop: 16 }}
               >
-                新增第一位運動員
+                {t('team:detail.addFirstAthlete')}
               </Button>
             </div>
           )}
@@ -711,7 +715,7 @@ const TournamentTeamDetail = () => {
           title={
             <Space>
               <TrophyOutlined />
-              <span>比賽記錄 ({matches.length})</span>
+              <span>{t('team:detail.matchRecords')} ({matches.length})</span>
             </Space>
           }
         >
@@ -724,14 +728,14 @@ const TournamentTeamDetail = () => {
               showSizeChanger: true,
               showQuickJumper: true,
               showTotal: (total, range) => 
-                `第 ${range[0]}-${range[1]} 項，共 ${total} 場比賽`,
+                t('common:pagination.total', { start: range[0], end: range[1], total }),
             }}
             size="small"
           />
           {matches.length === 0 && (
             <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
               <TrophyOutlined style={{ fontSize: '48px', marginBottom: 16 }} />
-              <div>暫無比賽記錄</div>
+              <div>{t('team:detail.noMatches')}</div>
             </div>
           )}
         </Card>

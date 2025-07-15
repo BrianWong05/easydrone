@@ -48,6 +48,10 @@
     "deactivate": "Deactivate",
     "reactivate": "Reactivate"
   },
+  "actions": {
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+  },
   "status": {
     "active": "Active",
     "inactive": "Inactive",
@@ -75,7 +79,8 @@
     "createSuccess": "Created successfully",
     "operationFailed": "Operation failed, please try again later",
     "networkError": "Network error, please check your connection",
-    "dataLoadFailed": "Failed to load data"
+    "dataLoadFailed": "Failed to load data",
+    "loadFailed": "Failed to load data"
   },
   "forms": {
     "required": "This field is required",

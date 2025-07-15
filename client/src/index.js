@@ -4,11 +4,13 @@ import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ConfigProvider } from 'antd';
 import zhTW from 'antd/locale/zh_TW';
+import enUS from 'antd/locale/en_US';
 import { Toaster } from 'react-hot-toast';
 
 import App from './App';
 import './index.css';
 import './i18n'; // Initialize i18n
+import LocaleWrapper from './components/LocaleWrapper';
 
 // 創建 React Query 客戶端
 const queryClient = new QueryClient({
@@ -58,10 +60,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <ConfigProvider 
-        locale={zhTW} 
-        theme={theme}
-      >
+      <LocaleWrapper theme={theme}>
         <BrowserRouter>
           <App />
           <Toaster
@@ -89,7 +88,7 @@ root.render(
             }}
           />
         </BrowserRouter>
-      </ConfigProvider>
+      </LocaleWrapper>
     </QueryClientProvider>
   </React.StrictMode>
 );
