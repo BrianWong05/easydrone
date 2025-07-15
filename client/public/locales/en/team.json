@@ -195,6 +195,15 @@
       "colorRequired": "Please select a team color"
     }
   },
+  "create": {
+    "title": "Add Team",
+    "subtitle": "Create a new participating team for {{tournamentName}}",
+    "createNotice": "Team Creation Instructions",
+    "createNoticeDescription": "Team names must be unique within the same tournament. You can choose to assign the team to a group, or assign it later. The system supports tournament-specific teams, allowing you to use the same team name in different tournaments.",
+    "createTip": "Creation Tip",
+    "createTipDescription": "After creating the team, you can add athletes on the team details page, or adjust team assignments in group management. This team will belong exclusively to tournament \"{{tournamentName}}\".",
+    "createTeam": "Create Team"
+  },
   "messages": {
     "noTeams": "No teams available",
     "noTeamData": "No team data available",

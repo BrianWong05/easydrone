@@ -195,6 +195,15 @@
       "colorRequired": "請選擇隊伍顏色"
     }
   },
+  "create": {
+    "title": "新增隊伍",
+    "subtitle": "為 {{tournamentName}} 創建新的參賽隊伍",
+    "createNotice": "隊伍創建說明",
+    "createNoticeDescription": "隊伍名稱在同一錦標賽中必須唯一。您可以選擇將隊伍分配到小組，或稍後再進行分配。系統支持錦標賽專屬隊伍，您可以在不同錦標賽中使用相同的隊伍名稱。",
+    "createTip": "創建提示",
+    "createTipDescription": "創建隊伍後，您可以在隊伍詳情頁面中添加運動員，或在小組管理中調整隊伍分配。此隊伍將專屬於錦標賽「{{tournamentName}}」。",
+    "createTeam": "創建隊伍"
+  },
   "messages": {
     "noTeams": "暫無隊伍",
     "noTeamData": "暫無隊伍數據",
