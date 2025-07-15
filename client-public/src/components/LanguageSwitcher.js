@@ -11,13 +11,11 @@ const LanguageSwitcher = ({ size = 'default', style = {} }) => {
   const languages = [
     {
       code: 'zh-TW',
-      name: '繁體中文',
-      flag: '🇹🇼'
+      name: '繁體中文'
     },
     {
       code: 'en',
-      name: 'English',
-      flag: '🇺🇸'
+      name: 'English'
     }
   ];
 
@@ -39,10 +37,7 @@ const LanguageSwitcher = ({ size = 'default', style = {} }) => {
       >
         {languages.map(language => (
           <Option key={language.code} value={language.code}>
-            <Space>
-              <span>{language.flag}</span>
-              <span>{language.name}</span>
-            </Space>
+            {language.name}
           </Option>
         ))}
       </Select>
