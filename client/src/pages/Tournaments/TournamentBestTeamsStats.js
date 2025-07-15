@@ -286,7 +286,18 @@ const TournamentBestTeamsStats = () => {
       const response = await axios.get('/api/stats/best-teams', { params });
       if (response.data.success) {
         setBestTeamsData(response.data.data);
-        message.success(`統計數據已更新 (基於 ${selectedMatches.length > 0 ? selectedMatches.length + ' 場選定比賽' : '篩選條件'})`);
+        
+        // Save to public cache for client-public display
+        try {
+          await axios.post('/api/stats/best-teams-cache', {
+            stats_data: response.data.data
+          });
+          console.log('✅ Stats saved to public cache');
+        } catch (cacheError) {
+          console.error('Failed to save to public cache:', cacheError);
+        }
+        
+        message.success(`統計數據已更新並發布到公開頁面 (基於 ${selectedMatches.length > 0 ? selectedMatches.length + ' 場選定比賽' : '篩選條件'})`);
       }
     } catch (error) {
       console.error('獲取最佳球隊統計失敗:', error);

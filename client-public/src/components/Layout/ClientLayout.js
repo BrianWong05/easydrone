@@ -115,6 +115,15 @@ const ClientLayout = ({ children }) => {
         </Link>
       ),
     },
+    {
+      key: "/best-teams",
+      icon: <BarChartOutlined />,
+      label: (
+        <Link to="/best-teams" onClick={() => setMobileDrawerOpen(false)}>
+          最佳球隊統計
+        </Link>
+      ),
+    },
   ];
 
   const renderSidebarContent = () => (

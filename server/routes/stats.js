@@ -1158,4 +1158,118 @@ router.get('/available-matches', async (req, res) => {
   }
 });
 
+// 獲取公開的最佳球隊統計（用於客戶端顯示）
+router.get('/best-teams-public', async (req, res) => {
+  try {
+    console.log('🌐 Getting public best teams stats...');
+    
+    // First, ensure the cache table exists
+    try {
+      await query(`
+        CREATE TABLE IF NOT EXISTS best_teams_cache (
+          cache_id INT AUTO_INCREMENT PRIMARY KEY,
+          stats_data JSON NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          INDEX idx_created_at (created_at)
+        )
+      `);
+    } catch (createError) {
+      console.log('Cache table already exists or creation failed:', createError.message);
+    }
+    
+    // Get the latest calculated best teams stats from cache/database
+    const latestStats = await query(`
+      SELECT stats_data, created_at 
+      FROM best_teams_cache 
+      ORDER BY created_at DESC 
+      LIMIT 1
+    `);
+    
+    if (latestStats.length === 0) {
+      return res.json({
+        success: false,
+        message: '暫無最佳球隊統計數據，請等待管理員計算統計'
+      });
+    }
+    
+    // Handle both string and object types for stats_data
+    let statsData;
+    if (typeof latestStats[0].stats_data === 'string') {
+      statsData = JSON.parse(latestStats[0].stats_data);
+    } else {
+      statsData = latestStats[0].stats_data;
+    }
+    
+    res.json({
+      success: true,
+      data: statsData,
+      last_updated: latestStats[0].created_at
+    });
+    
+  } catch (error) {
+    console.error('獲取公開最佳球隊統計錯誤:', error);
+    res.status(500).json({
+      success: false,
+      message: '獲取統計數據失敗: ' + error.message
+    });
+  }
+});
+
+// 保存最佳球隊統計到緩存（管理員計算時調用）
+router.post('/best-teams-cache', async (req, res) => {
+  try {
+    const { stats_data } = req.body;
+    
+    console.log('💾 Saving best teams stats to cache...');
+    
+    // Ensure the cache table exists
+    try {
+      await query(`
+        CREATE TABLE IF NOT EXISTS best_teams_cache (
+          cache_id INT AUTO_INCREMENT PRIMARY KEY,
+          stats_data JSON NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          INDEX idx_created_at (created_at)
+        )
+      `);
+    } catch (createError) {
+      console.log('Cache table already exists or creation failed:', createError.message);
+    }
+    
+    // Clear old cache entries (keep only latest 5)
+    try {
+      await query(`
+        DELETE FROM best_teams_cache 
+        WHERE cache_id NOT IN (
+          SELECT * FROM (
+            SELECT cache_id FROM best_teams_cache 
+            ORDER BY created_at DESC 
+            LIMIT 4
+          ) AS latest
+        )
+      `);
+    } catch (deleteError) {
+      console.log('Failed to clean old cache entries:', deleteError.message);
+    }
+    
+    // Insert new cache entry
+    await query(`
+      INSERT INTO best_teams_cache (stats_data, created_at) 
+      VALUES (?, NOW())
+    `, [JSON.stringify(stats_data)]);
+    
+    res.json({
+      success: true,
+      message: '統計數據已保存到公開緩存'
+    });
+    
+  } catch (error) {
+    console.error('保存最佳球隊統計緩存錯誤:', error);
+    res.status(500).json({
+      success: false,
+      message: '保存統計緩存失敗: ' + error.message
+    });
+  }
+});
+
 module.exports = router;
