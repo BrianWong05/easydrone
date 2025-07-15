@@ -70,5 +70,52 @@
     "bestTeamsStats": "Best Teams Statistics",
     "knockoutBracket": "Knockout Bracket",
     "management": "Management"
+  },
+  "list": {
+    "title": "Tournament Management",
+    "addTournament": "Add Tournament",
+    "searchPlaceholder": "Search tournament name",
+    "selectStatus": "Select Status",
+    "selectType": "Select Type",
+    "noData": "No tournament data available",
+    "noDataDescription": "Click the 'Add Tournament' button above to create your first tournament",
+    "columns": {
+      "name": "Tournament Name",
+      "type": "Type",
+      "status": "Status",
+      "progress": "Match Progress",
+      "dates": "Dates",
+      "createdAt": "Created At",
+      "actions": "Actions"
+    },
+    "dates": {
+      "start": "Start",
+      "end": "End"
+    },
+    "status": {
+      "pending": "Pending",
+      "active": "Active",
+      "completed": "Completed",
+      "publicDisplay": "(Public)"
+    },
+    "actions": {
+      "viewDetails": "View Details",
+      "viewBracket": "View Knockout Bracket",
+      "edit": "Edit",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "reactivate": "Reactivate",
+      "delete": "Delete"
+    },
+    "tooltips": {
+      "activateTournament": "Activate tournament (set as public display)",
+      "deactivateTournament": "Deactivate tournament (remove from public display)",
+      "reactivateTournament": "Reactivate tournament"
+    },
+    "filters": {
+      "statusPending": "Pending",
+      "statusActive": "Active",
+      "statusCompleted": "Completed"
+    }
   }
 }

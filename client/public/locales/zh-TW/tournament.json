@@ -70,5 +70,52 @@
     "bestTeamsStats": "最佳球隊統計",
     "knockoutBracket": "淘汰賽對戰表",
     "management": "管理"
+  },
+  "list": {
+    "title": "錦標賽管理",
+    "addTournament": "新增錦標賽",
+    "searchPlaceholder": "搜索錦標賽名稱",
+    "selectStatus": "選擇狀態",
+    "selectType": "選擇類型",
+    "noData": "暫無錦標賽數據",
+    "noDataDescription": "點擊上方「新增錦標賽」按鈕創建您的第一個錦標賽",
+    "columns": {
+      "name": "錦標賽名稱",
+      "type": "類型",
+      "status": "狀態",
+      "progress": "比賽進度",
+      "dates": "日期",
+      "createdAt": "創建時間",
+      "actions": "操作"
+    },
+    "dates": {
+      "start": "開始",
+      "end": "結束"
+    },
+    "status": {
+      "pending": "待激活",
+      "active": "公開顯示中",
+      "completed": "已完成",
+      "publicDisplay": "(公開中)"
+    },
+    "actions": {
+      "viewDetails": "查看詳情",
+      "viewBracket": "查看淘汰賽圖表",
+      "edit": "編輯",
+      "activate": "激活",
+      "deactivate": "停用",
+      "reactivate": "重新激活",
+      "delete": "刪除"
+    },
+    "tooltips": {
+      "activateTournament": "激活錦標賽 (設為公開顯示)",
+      "deactivateTournament": "停用錦標賽 (從公開顯示中移除)",
+      "reactivateTournament": "重新激活錦標賽"
+    },
+    "filters": {
+      "statusPending": "待開始",
+      "statusActive": "進行中",
+      "statusCompleted": "已完成"
+    }
   }
 }

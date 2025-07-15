@@ -23,6 +23,7 @@ import {
   TeamOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import moment from 'moment';
 
@@ -32,6 +33,7 @@ const { Option } = Select;
 
 const TournamentList = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['tournament', 'common']);
   const [tournaments, setTournaments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
@@ -104,14 +106,14 @@ const TournamentList = () => {
             total: 0
           });
         } else {
-          message.error(`獲取錦標賽列表失敗: ${errorMessage}`);
+          message.error(`${t('common:messages.dataLoadFailed')}: ${errorMessage}`);
         }
       } else if (error.request) {
         // 網絡錯誤
-        message.error('網絡連接失敗，請檢查網絡連接');
+        message.error(t('common:messages.networkError'));
       } else {
         // 其他錯誤
-        message.error('獲取錦標賽列表失敗，請稍後重試');
+        message.error(t('common:messages.operationFailed'));
       }
       
       // 設置空狀態
@@ -135,12 +137,12 @@ const TournamentList = () => {
     try {
       const response = await axios.delete(`/api/tournaments/${tournamentId}`);
       if (response.data.success) {
-        message.success('錦標賽刪除成功');
+        message.success(t('tournament:messages.tournamentDeleted'));
         fetchTournaments(pagination.current, pagination.pageSize);
       }
     } catch (error) {
       console.error('刪除錦標賽失敗:', error);
-      message.error(error.response?.data?.message || '刪除錦標賽失敗');
+      message.error(error.response?.data?.message || t('common:messages.operationFailed'));
     }
   };
 
@@ -149,21 +151,21 @@ const TournamentList = () => {
     try {
       const response = await axios.put(`/api/tournaments/${tournamentId}/status`, { status });
       if (response.data.success) {
-        message.success('錦標賽狀態更新成功');
+        message.success(t('tournament:messages.statusUpdateSuccess'));
         fetchTournaments(pagination.current, pagination.pageSize);
       }
     } catch (error) {
       console.error('更新錦標賽狀態失敗:', error);
-      message.error(error.response?.data?.message || '更新錦標賽狀態失敗');
+      message.error(error.response?.data?.message || t('common:messages.operationFailed'));
     }
   };
 
   // 獲取狀態標籤
   const getStatusTag = (status) => {
     const statusConfig = {
-      pending: { color: 'orange', text: '待激活' },
-      active: { color: 'green', text: '公開顯示中' },
-      completed: { color: 'blue', text: '已完成' }
+      pending: { color: 'orange', text: t('tournament:list.status.pending') },
+      active: { color: 'green', text: t('tournament:list.status.active') },
+      completed: { color: 'blue', text: t('tournament:list.status.completed') }
     };
     
     const config = statusConfig[status] || { color: 'default', text: status };
@@ -178,9 +180,9 @@ const TournamentList = () => {
   // 獲取類型標籤
   const getTypeTag = (type) => {
     const typeConfig = {
-      group: { color: 'cyan', text: '小組賽' },
-      knockout: { color: 'red', text: '淘汰賽' },
-      mixed: { color: 'purple', text: '混合賽制' }
+      group: { color: 'cyan', text: t('tournament:types.groupStage') },
+      knockout: { color: 'red', text: t('tournament:types.knockout') },
+      mixed: { color: 'purple', text: t('tournament:types.mixed') }
     };
     
     const config = typeConfig[type] || { color: 'default', text: type };
@@ -195,7 +197,7 @@ const TournamentList = () => {
 
   const columns = [
     {
-      title: '錦標賽名稱',
+      title: t('tournament:list.columns.name'),
       dataIndex: 'tournament_name',
       key: 'tournament_name',
       render: (text, record) => (
@@ -213,27 +215,27 @@ const TournamentList = () => {
             onClick={() => navigate(`/tournaments/${record.tournament_id}`)}
           >
             {text}
-            {record.status === 'active' && <span style={{ marginLeft: 8, fontSize: '12px' }}>(公開中)</span>}
+            {record.status === 'active' && <span style={{ marginLeft: 8, fontSize: '12px' }}>{t('tournament:list.status.publicDisplay')}</span>}
           </Button>
         </Space>
       )
     },
     {
-      title: '類型',
+      title: t('tournament:list.columns.type'),
       dataIndex: 'tournament_type',
       key: 'tournament_type',
       render: (type) => getTypeTag(type),
       width: 120
     },
     {
-      title: '狀態',
+      title: t('tournament:list.columns.status'),
       dataIndex: 'status',
       key: 'status',
       render: (status) => getStatusTag(status),
       width: 100
     },
     {
-      title: '比賽進度',
+      title: t('tournament:list.columns.progress'),
       key: 'progress',
       render: (_, record) => {
         const progress = getProgress(record.completed_matches, record.total_matches);
@@ -250,35 +252,35 @@ const TournamentList = () => {
       width: 150
     },
     {
-      title: '日期',
+      title: t('tournament:list.columns.dates'),
       key: 'dates',
       render: (_, record) => (
         <Space direction="vertical" size="small">
           <div>
             <CalendarOutlined style={{ marginRight: 4, color: '#52c41a' }} />
-            開始: {moment(record.start_date).format('YYYY-MM-DD')}
+            {t('tournament:list.dates.start')}: {moment(record.start_date).format('YYYY-MM-DD')}
           </div>
           <div>
             <CalendarOutlined style={{ marginRight: 4, color: '#f5222d' }} />
-            結束: {moment(record.end_date).format('YYYY-MM-DD')}
+            {t('tournament:list.dates.end')}: {moment(record.end_date).format('YYYY-MM-DD')}
           </div>
         </Space>
       ),
       width: 180
     },
     {
-      title: '創建時間',
+      title: t('tournament:list.columns.createdAt'),
       dataIndex: 'created_at',
       key: 'created_at',
       render: (date) => moment(date).format('YYYY-MM-DD HH:mm'),
       width: 150
     },
     {
-      title: '操作',
+      title: t('tournament:list.columns.actions'),
       key: 'actions',
       render: (_, record) => (
         <Space>
-          <Tooltip title="查看詳情">
+          <Tooltip title={t('tournament:list.actions.viewDetails')}>
             <Button 
               type="text" 
               icon={<EyeOutlined />} 
@@ -287,7 +289,7 @@ const TournamentList = () => {
           </Tooltip>
           
           {record.tournament_type === 'knockout' && (
-            <Tooltip title="查看淘汰賽圖表">
+            <Tooltip title={t('tournament:list.actions.viewBracket')}>
               <Button 
                 type="text" 
                 icon={<TeamOutlined />} 
@@ -296,7 +298,7 @@ const TournamentList = () => {
             </Tooltip>
           )}
           
-          <Tooltip title="編輯">
+          <Tooltip title={t('tournament:list.actions.edit')}>
             <Button 
               type="text" 
               icon={<EditOutlined />} 
@@ -305,49 +307,49 @@ const TournamentList = () => {
           </Tooltip>
           
           {record.status === 'pending' && (
-            <Tooltip title="激活錦標賽 (設為公開顯示)">
+            <Tooltip title={t('tournament:list.tooltips.activateTournament')}>
               <Button 
                 type="text" 
                 style={{ color: '#52c41a' }}
                 onClick={() => handleStatusUpdate(record.tournament_id, 'active')}
               >
-                激活
+                {t('tournament:list.actions.activate')}
               </Button>
             </Tooltip>
           )}
           
           {record.status === 'active' && (
-            <Tooltip title="停用錦標賽 (從公開顯示中移除)">
+            <Tooltip title={t('tournament:list.tooltips.deactivateTournament')}>
               <Button 
                 type="text" 
                 style={{ color: '#faad14' }}
                 onClick={() => handleStatusUpdate(record.tournament_id, 'pending')}
               >
-                停用
+                {t('tournament:list.actions.deactivate')}
               </Button>
             </Tooltip>
           )}
           
           {record.status === 'completed' && (
-            <Tooltip title="重新激活錦標賽">
+            <Tooltip title={t('tournament:list.tooltips.reactivateTournament')}>
               <Button 
                 type="text" 
                 style={{ color: '#1890ff' }}
                 onClick={() => handleStatusUpdate(record.tournament_id, 'active')}
               >
-                重新激活
+                {t('tournament:list.actions.reactivate')}
               </Button>
             </Tooltip>
           )}
           
           <Popconfirm
-            title="確定要刪除這個錦標賽嗎？"
-            description="刪除後將無法恢復，相關的比賽數據也會被刪除。"
+            title={t('tournament:messages.deleteConfirmation')}
+            description={t('tournament:messages.deleteWarning')}
             onConfirm={() => handleDelete(record.tournament_id)}
-            okText="確定"
-            cancelText="取消"
+            okText={t('common:buttons.confirm')}
+            cancelText={t('common:buttons.cancel')}
           >
-            <Tooltip title="刪除">
+            <Tooltip title={t('tournament:list.actions.delete')}>
               <Button 
                 type="text" 
                 danger 
@@ -369,7 +371,7 @@ const TournamentList = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Title level={2}>
             <TrophyOutlined style={{ marginRight: 8, color: '#faad14' }} />
-            錦標賽管理
+            {t('tournament:list.title')}
           </Title>
           <Button 
             type="primary" 
@@ -377,7 +379,7 @@ const TournamentList = () => {
             onClick={() => navigate('/tournaments/create')}
             size="large"
           >
-            新增錦標賽
+            {t('tournament:list.addTournament')}
           </Button>
         </div>
 
@@ -385,7 +387,7 @@ const TournamentList = () => {
         <Card>
           <Space wrap>
             <Search
-              placeholder="搜索錦標賽名稱"
+              placeholder={t('tournament:list.searchPlaceholder')}
               style={{ width: 200 }}
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
@@ -393,27 +395,27 @@ const TournamentList = () => {
             />
             
             <Select
-              placeholder="選擇狀態"
+              placeholder={t('tournament:list.selectStatus')}
               style={{ width: 120 }}
               value={filters.status}
               onChange={(value) => setFilters({ ...filters, status: value })}
               allowClear
             >
-              <Option value="pending">待開始</Option>
-              <Option value="active">進行中</Option>
-              <Option value="completed">已完成</Option>
+              <Option value="pending">{t('tournament:list.filters.statusPending')}</Option>
+              <Option value="active">{t('tournament:list.filters.statusActive')}</Option>
+              <Option value="completed">{t('tournament:list.filters.statusCompleted')}</Option>
             </Select>
             
             <Select
-              placeholder="選擇類型"
+              placeholder={t('tournament:list.selectType')}
               style={{ width: 120 }}
               value={filters.type}
               onChange={(value) => setFilters({ ...filters, type: value })}
               allowClear
             >
-              <Option value="group">小組賽</Option>
-              <Option value="knockout">淘汰賽</Option>
-              <Option value="mixed">混合賽制</Option>
+              <Option value="group">{t('tournament:types.groupStage')}</Option>
+              <Option value="knockout">{t('tournament:types.knockout')}</Option>
+              <Option value="mixed">{t('tournament:types.mixed')}</Option>
             </Select>
           </Space>
         </Card>
@@ -430,10 +432,10 @@ const TournamentList = () => {
                 <div style={{ textAlign: 'center', padding: '40px 0' }}>
                   <TrophyOutlined style={{ fontSize: 48, color: '#d9d9d9', marginBottom: 16 }} />
                   <div style={{ marginBottom: 16 }}>
-                    <Text type="secondary" style={{ fontSize: 16 }}>暫無錦標賽數據</Text>
+                    <Text type="secondary" style={{ fontSize: 16 }}>{t('tournament:list.noData')}</Text>
                   </div>
                   <div>
-                    <Text type="secondary">點擊上方「新增錦標賽」按鈕創建您的第一個錦標賽</Text>
+                    <Text type="secondary">{t('tournament:list.noDataDescription')}</Text>
                   </div>
                   <div style={{ marginTop: 16 }}>
                     <Button 
@@ -441,7 +443,7 @@ const TournamentList = () => {
                       icon={<PlusOutlined />}
                       onClick={() => navigate('/tournaments/create')}
                     >
-                      新增錦標賽
+                      {t('tournament:list.addTournament')}
                     </Button>
                   </div>
                 </div>
@@ -451,7 +453,14 @@ const TournamentList = () => {
               ...pagination,
               showSizeChanger: true,
               showQuickJumper: true,
-              showTotal: (total, range) => `第 ${range[0]}-${range[1]} 項，共 ${total} 項`,
+              showTotal: (total, range) => t('common:pagination.total', { start: range[0], end: range[1], total }),
+              pageSizeOptions: ['10', '20', '50', '100'],
+              locale: {
+                items_per_page: t('common:pagination.itemsPerPage'),
+                jump_to: t('common:buttons.search'),
+                jump_to_confirm: t('common:buttons.confirm'),
+                page: '',
+              },
               onChange: (page, pageSize) => {
                 fetchTournaments(page, pageSize);
               }

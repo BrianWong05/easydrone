@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { Layout } from "antd";
+import { Layout, Spin } from "antd";
+import { useTranslation } from 'react-i18next';
 
 import MainLayout from "./components/Layout/MainLayout";
 import TournamentLayout from "./components/Layout/TournamentLayout";
@@ -50,10 +51,25 @@ const { Content } = Layout;
 
 function App() {
   const { initialize, isAuthenticated } = useAuthStore();
+  const { ready } = useTranslation();
 
   useEffect(() => {
     initialize();
   }, [initialize]);
+
+  // Show loading spinner while translations are loading
+  if (!ready) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '100vh' 
+      }}>
+        <Spin size="large" />
+      </div>
+    );
+  }
 
   return (
     <div className="App">

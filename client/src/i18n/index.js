@@ -52,9 +52,9 @@ i18n
     // React options
     react: {
       // Wait for all namespaces to be loaded before rendering
-      wait: true,
-      // Use Suspense for loading
-      useSuspense: true,
+      wait: false,
+      // Disable Suspense to avoid hydration issues
+      useSuspense: false,
     },
     
     // Pluralization

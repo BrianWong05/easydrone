@@ -103,6 +103,7 @@
   "pagination": {
     "total": "第 {{start}}-{{end}} 項，共 {{total}} 項",
     "showSizeChanger": true,
-    "showQuickJumper": true
+    "showQuickJumper": true,
+    "itemsPerPage": "條/頁"
   }
 }
