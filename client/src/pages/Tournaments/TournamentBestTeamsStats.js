@@ -405,7 +405,7 @@ const TournamentBestTeamsStats = () => {
               {getDisplayTeamName(record.team_name)}
             </div>
             <Text type="secondary" style={{ fontSize: '12px' }}>
-              {record.group_name ? `小組 ${record.group_name}` : '無小組'}
+              {record.group_name ? `小組 ${getDisplayGroupName(record.group_name)}` : '無小組'}
             </Text>
           </div>
         </div>
