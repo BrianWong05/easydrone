@@ -54,18 +54,26 @@ const ClientTeamDetail = () => {
     return teamName;
   };
 
-  // 清理小組名稱顯示（移除 _{tournament_id} 後綴）
+  // 清理小組名稱顯示（移除 _{tournament_id} 後綴）並翻譯
   const getDisplayGroupName = (groupName) => {
     if (!groupName) return '';
     const lastUnderscoreIndex = groupName.lastIndexOf('_');
+    let cleanName = groupName;
     if (lastUnderscoreIndex !== -1) {
       const beforeUnderscore = groupName.substring(0, lastUnderscoreIndex);
       const afterUnderscore = groupName.substring(lastUnderscoreIndex + 1);
       if (/^\d+$/.test(afterUnderscore)) {
-        return beforeUnderscore;
+        cleanName = beforeUnderscore;
       }
     }
-    return groupName;
+    
+    // 翻譯小組名稱：將 "小組A" 轉換為 "Group A"
+    if (cleanName.startsWith('小組')) {
+      const groupLetter = cleanName.replace('小組', '');
+      return `${t('common:group')} ${groupLetter}`;
+    }
+    
+    return cleanName;
   };
 
   const [team, setTeam] = useState(null);
@@ -340,7 +348,7 @@ const ClientTeamDetail = () => {
                     <Space>
                       {team.group_name && (
                         <Tag color="blue" style={{ fontSize: 14 }}>
-                          小組 {getDisplayGroupName(team.group_name)}
+                          {getDisplayGroupName(team.group_name)}
                         </Tag>
                       )}
                       <Text type="secondary">

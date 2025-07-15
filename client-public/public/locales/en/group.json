@@ -56,6 +56,7 @@
     "searchGroup": "Search group name",
     "enterGroupName": "Enter group name",
     "enterDescription": "Enter group description",
-    "selectGroupLetter": "Select group letter"
+    "selectGroupLetter": "Select group letter",
+    "selectGroup": "Select group"
   }
 }

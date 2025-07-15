@@ -27,6 +27,7 @@ import {
   FilterOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import moment from 'moment';
 
@@ -36,6 +37,7 @@ const { RangePicker } = DatePicker;
 
 const ClientMatchList = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['match', 'common', 'group']);
   const [tournament, setTournament] = useState(null);
 
   // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
@@ -112,20 +114,20 @@ const ClientMatchList = () => {
         // Find the source match for this team position
         const sourceMatch = findSourceMatch(match, teamKey, matches);
         if (sourceMatch) {
-          return `${sourceMatch}勝者`;
+          return `${sourceMatch}${t('match:result.winner')}`;
         }
         // If no source match found, show generic placeholder
-        return getKnockoutWinnerReference(match.match_number, teamKey) || '待定';
+        return getKnockoutWinnerReference(match.match_number, teamKey) || t('match:status.pending');
       }
     }
     
     // For non-knockout matches or when team is assigned but no name
-    return teamName || '待定';
+    return teamName || t('match:status.pending');
   };
 
   // 動態生成淘汰賽勝者引用
   const getKnockoutWinnerReference = (matchNumber, teamPosition) => {
-    if (!matchNumber) return '待定';
+    if (!matchNumber) return t('match:status.pending');
     
     const matchNum = matchNumber.toUpperCase();
     
@@ -177,16 +179,16 @@ const ClientMatchList = () => {
     if (progression) {
       const sourceMatch = progression[teamPosition];
       // 季軍賽顯示敗者，其他比賽顯示勝者
-      const resultType = matchNum === 'TP01' ? '敗者' : '勝者';
+      const resultType = matchNum === 'TP01' ? t('match:result.loser') : t('match:result.winner');
       return `${sourceMatch}${resultType}`;
     }
     
     // 如果是第一輪比賽（沒有來源），返回待定
     if (matchNum.startsWith('QU') || matchNum.startsWith('R16') || matchNum.startsWith('R32')) {
-      return '待定';
+      return t('match:status.pending');
     }
     
-    return '待定';
+    return t('match:status.pending');
   };
 
   // 清理小組名稱顯示（移除 _{tournament_id} 後綴）
@@ -248,7 +250,7 @@ const ClientMatchList = () => {
       }
 
       if (!tournamentData) {
-        setError('找不到可顯示的錦標賽');
+        setError(t('common:messages.noTournamentFound', { defaultValue: '找不到可顯示的錦標賽' }));
         return;
       }
 
@@ -330,7 +332,7 @@ const ClientMatchList = () => {
 
     } catch (error) {
       console.error('Error fetching matches data:', error);
-      setError('載入比賽資料失敗');
+      setError(t('match:messages.loadingMatches'));
     } finally {
       setLoading(false);
     }
@@ -338,11 +340,11 @@ const ClientMatchList = () => {
 
   const getMatchStatusTag = (status) => {
     const statusMap = {
-      'pending': { color: 'default', text: '待開始', icon: <ClockCircleOutlined /> },
-      'active': { color: 'processing', text: '進行中', icon: <PlayCircleOutlined /> },
-      'in_progress': { color: 'processing', text: '進行中', icon: <PlayCircleOutlined /> },
-      'completed': { color: 'success', text: '已完成', icon: <CheckCircleOutlined /> },
-      'cancelled': { color: 'error', text: '已取消', icon: <ClockCircleOutlined /> }
+      'pending': { color: 'default', text: t('match:status.pending'), icon: <ClockCircleOutlined /> },
+      'active': { color: 'processing', text: t('match:status.inProgress'), icon: <PlayCircleOutlined /> },
+      'in_progress': { color: 'processing', text: t('match:status.inProgress'), icon: <PlayCircleOutlined /> },
+      'completed': { color: 'success', text: t('match:status.completed'), icon: <CheckCircleOutlined /> },
+      'cancelled': { color: 'error', text: t('match:status.cancelled'), icon: <ClockCircleOutlined /> }
     };
     
     const statusInfo = statusMap[status] || { color: 'default', text: status, icon: <ClockCircleOutlined /> };
@@ -355,9 +357,9 @@ const ClientMatchList = () => {
 
   const getMatchTypeTag = (type) => {
     const typeMap = {
-      'group': { color: 'blue', text: '小組賽' },
-      'knockout': { color: 'purple', text: '淘汰賽' },
-      'friendly': { color: 'green', text: '友誼賽' }
+      'group': { color: 'blue', text: t('match:types.groupStage') },
+      'knockout': { color: 'purple', text: t('match:types.knockout') },
+      'friendly': { color: 'green', text: t('match:types.friendly') }
     };
     
     const typeInfo = typeMap[type] || { color: 'default', text: type };
@@ -447,7 +449,7 @@ const ClientMatchList = () => {
   // Table columns
   const columns = [
     {
-      title: '總順序',
+      title: t('match:match.totalOrder'),
       dataIndex: 'totalOrder',
       key: 'totalOrder',
       width: 80,
@@ -461,7 +463,7 @@ const ClientMatchList = () => {
       ),
     },
     {
-      title: '場次',
+      title: t('match:match.number'),
       dataIndex: 'match_number',
       key: 'match_number',
       width: 100,
@@ -479,7 +481,7 @@ const ClientMatchList = () => {
       ),
     },
     {
-      title: '對戰隊伍',
+      title: t('match:match.teams'),
       key: 'teams',
       render: (_, record) => (
         <Space direction="vertical" size="small">
@@ -513,7 +515,7 @@ const ClientMatchList = () => {
       ),
     },
     {
-      title: '比賽時間',
+      title: t('match:match.time'),
       dataIndex: 'match_date',
       key: 'match_date',
       width: 150,
@@ -532,7 +534,7 @@ const ClientMatchList = () => {
       ),
     },
     {
-      title: '類型',
+      title: t('match:match.type'),
       dataIndex: 'match_type',
       key: 'match_type',
       width: 100,
@@ -546,7 +548,7 @@ const ClientMatchList = () => {
       render: (type) => getMatchTypeTag(type),
     },
     {
-      title: '小組',
+      title: t('group:group.name'),
       dataIndex: 'group_name',
       key: 'group_name',
       width: 120,
@@ -563,7 +565,7 @@ const ClientMatchList = () => {
       ),
     },
     {
-      title: '狀態',
+      title: t('match:match.status'),
       dataIndex: 'match_status',
       key: 'match_status',
       width: 120,
@@ -584,7 +586,7 @@ const ClientMatchList = () => {
       render: (status) => getMatchStatusTag(status),
     },
     {
-      title: '操作',
+      title: t('common:actions.actions'),
       key: 'actions',
       width: 100,
       align: 'center',
@@ -594,7 +596,7 @@ const ClientMatchList = () => {
           size="small"
           onClick={() => navigate(`/matches/${record.match_id}`)}
         >
-          查看詳情
+          {t('common:actions.viewDetails')}
         </Button>
       ),
     },
@@ -605,7 +607,7 @@ const ClientMatchList = () => {
       <div style={{ padding: 24, textAlign: 'center' }}>
         <Spin size="large" />
         <div style={{ marginTop: 16 }}>
-          <Text>載入比賽資料中...</Text>
+          <Text>{t('match:messages.loadingMatches')}</Text>
         </div>
       </div>
     );
@@ -615,13 +617,13 @@ const ClientMatchList = () => {
     return (
       <div style={{ padding: 24 }}>
         <Alert
-          message="載入失敗"
+          message={t('common:messages.loadFailed')}
           description={error}
           type="error"
           showIcon
           action={
             <Button size="small" onClick={fetchMatchesData}>
-              重新載入
+              {t('common:actions.reload')}
             </Button>
           }
         />
@@ -641,12 +643,12 @@ const ClientMatchList = () => {
                   <TrophyOutlined style={{ marginRight: 8, color: '#faad14' }} />
                   {tournament.tournament_name}
                 </Title>
-                <Text type="secondary">比賽列表</Text>
+                <Text type="secondary">{t('match:match.list')}</Text>
               </Space>
             </Col>
             <Col>
               <Tag color="blue" style={{ fontSize: '14px', padding: '4px 12px' }}>
-                {tournament.status === 'active' ? '進行中' : tournament.status}
+                {tournament.status === 'active' ? t('common:status.inProgress') : tournament.status}
               </Tag>
             </Col>
           </Row>
@@ -658,7 +660,7 @@ const ClientMatchList = () => {
         <Col xs={24} sm={12} md={6}>
           <Card>
             <Statistic
-              title="總比賽數"
+              title={t('common:stats.totalMatches')}
               value={stats.totalMatches}
               prefix={<CalendarOutlined style={{ color: '#1890ff' }} />}
               valueStyle={{ color: '#1890ff' }}
@@ -668,7 +670,7 @@ const ClientMatchList = () => {
         <Col xs={24} sm={12} md={6}>
           <Card>
             <Statistic
-              title="待開始"
+              title={t('match:stats.pendingMatches')}
               value={stats.pendingMatches}
               prefix={<ClockCircleOutlined style={{ color: '#faad14' }} />}
               valueStyle={{ color: '#faad14' }}
@@ -678,7 +680,7 @@ const ClientMatchList = () => {
         <Col xs={24} sm={12} md={6}>
           <Card>
             <Statistic
-              title="進行中"
+              title={t('match:stats.activeMatches')}
               value={stats.activeMatches}
               prefix={<PlayCircleOutlined style={{ color: '#f5222d' }} />}
               valueStyle={{ color: '#f5222d' }}
@@ -688,7 +690,7 @@ const ClientMatchList = () => {
         <Col xs={24} sm={12} md={6}>
           <Card>
             <Statistic
-              title="已完成"
+              title={t('common:stats.completedMatches')}
               value={stats.completedMatches}
               prefix={<CheckCircleOutlined style={{ color: '#52c41a' }} />}
               valueStyle={{ color: '#52c41a' }}
@@ -703,38 +705,38 @@ const ClientMatchList = () => {
           <Col xs={24} sm={12} md={4}>
             <Text strong>
               <FilterOutlined style={{ marginRight: 8 }} />
-              篩選條件
+              {t('common:filters.title')}
             </Text>
           </Col>
           <Col xs={24} sm={12} md={4}>
             <Select
-              placeholder="請選擇比賽狀態"
+              placeholder={t('match:placeholders.selectStatus')}
               value={filters.status}
               onChange={(value) => handleFilterChange('status', value)}
               style={{ width: '100%' }}
               allowClear
             >
-              <Option value="pending">待開始</Option>
-              <Option value="active">進行中</Option>
-              <Option value="completed">已完成</Option>
+              <Option value="pending">{t('match:status.pending')}</Option>
+              <Option value="active">{t('match:status.inProgress')}</Option>
+              <Option value="completed">{t('match:status.completed')}</Option>
             </Select>
           </Col>
           <Col xs={24} sm={12} md={4}>
             <Select
-              placeholder="請選擇比賽類型"
+              placeholder={t('match:placeholders.selectType')}
               value={filters.type}
               onChange={(value) => handleFilterChange('type', value)}
               style={{ width: '100%' }}
               allowClear
             >
-              <Option value="group">小組賽</Option>
-              <Option value="knockout">淘汰賽</Option>
-              <Option value="friendly">友誼賽</Option>
+              <Option value="group">{t('match:types.groupStage')}</Option>
+              <Option value="knockout">{t('match:types.knockout')}</Option>
+              <Option value="friendly">{t('match:types.friendly')}</Option>
             </Select>
           </Col>
           <Col xs={24} sm={12} md={4}>
             <Select
-              placeholder="請選擇小組"
+              placeholder={t('group:placeholders.selectGroup')}
               value={filters.group_id}
               onChange={(value) => handleFilterChange('group_id', value)}
               style={{ width: '100%' }}
@@ -749,7 +751,7 @@ const ClientMatchList = () => {
           </Col>
           <Col xs={24} sm={12} md={4}>
             <Input
-              placeholder="搜尋隊伍或場次"
+              placeholder={t('match:placeholders.searchMatch')}
               value={filters.search}
               onChange={(e) => handleFilterChange('search', e.target.value)}
               prefix={<SearchOutlined />}
@@ -758,7 +760,7 @@ const ClientMatchList = () => {
           </Col>
           <Col xs={24} sm={12} md={4}>
             <Button onClick={clearFilters}>
-              清除篩選
+              {t('common:actions.clearFilters')}
             </Button>
           </Col>
         </Row>
@@ -769,7 +771,7 @@ const ClientMatchList = () => {
         <div style={{ marginBottom: 16 }}>
           <Title level={3}>
             <PlayCircleOutlined style={{ marginRight: 8 }} />
-            比賽列表
+            {t('match:match.list')}
           </Title>
         </div>
         
@@ -782,7 +784,12 @@ const ClientMatchList = () => {
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (total, range) => 
-              `第 ${range[0]}-${range[1]} 項，共 ${total} 場比賽`,
+              t('match:pagination.showTotal', { 
+                start: range[0], 
+                end: range[1], 
+                total: total,
+                defaultValue: `第 ${range[0]}-${range[1]} 項，共 ${total} 場比賽`
+              }),
             pageSizeOptions: ['10', '20', '50', '100'],
             defaultPageSize: 20
           }}
@@ -791,7 +798,7 @@ const ClientMatchList = () => {
               <div style={{ textAlign: 'center', padding: '40px 0' }}>
                 <CalendarOutlined style={{ fontSize: '48px', color: '#d9d9d9' }} />
                 <div style={{ marginTop: 16 }}>
-                  <Text type="secondary">暫無比賽資料</Text>
+                  <Text type="secondary">{t('match:messages.noMatches')}</Text>
                 </div>
               </div>
             )

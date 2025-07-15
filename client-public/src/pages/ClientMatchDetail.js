@@ -30,6 +30,7 @@ import {
   FlagOutlined
 } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import moment from 'moment';
 
@@ -38,6 +39,7 @@ const { Title, Text } = Typography;
 const ClientMatchDetail = () => {
   const navigate = useNavigate();
   const { matchId } = useParams();
+  const { t } = useTranslation(['match', 'common', 'group', 'team']);
 
   // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
   const getDisplayTeamName = (teamName) => {
@@ -110,20 +112,20 @@ const ClientMatchDetail = () => {
         // Find the source match for this team position
         const sourceMatch = findSourceMatch(match, teamKey);
         if (sourceMatch) {
-          return `${sourceMatch}勝者`;
+          return `${sourceMatch}${t('match:result.winner')}`;
         }
         // If no source match found, show generic placeholder
-        return getKnockoutWinnerReference(match.match_number, teamKey) || '待定';
+        return getKnockoutWinnerReference(match.match_number, teamKey) || t('match:status.pending');
       }
     }
     
     // For non-knockout matches or when team is assigned but no name
-    return teamName || '待定';
+    return teamName || t('match:status.pending');
   };
 
   // 動態生成淘汰賽勝者引用
   const getKnockoutWinnerReference = (matchNumber, teamPosition) => {
-    if (!matchNumber) return '待定';
+    if (!matchNumber) return t('match:status.pending');
     
     const matchNum = matchNumber.toUpperCase();
     
@@ -175,16 +177,16 @@ const ClientMatchDetail = () => {
     if (progression) {
       const sourceMatch = progression[teamPosition];
       // 季軍賽顯示敗者，其他比賽顯示勝者
-      const resultType = matchNum === 'TP01' ? '敗者' : '勝者';
+      const resultType = matchNum === 'TP01' ? t('match:result.loser') : t('match:result.winner');
       return `${sourceMatch}${resultType}`;
     }
     
     // 如果是第一輪比賽（沒有來源），返回待定
     if (matchNum.startsWith('QU') || matchNum.startsWith('R16') || matchNum.startsWith('R32')) {
-      return '待定';
+      return t('match:status.pending');
     }
     
-    return '待定';
+    return t('match:status.pending');
   };
 
   // Helper function to get navigation target (team ID or source match number)
@@ -364,7 +366,7 @@ const ClientMatchDetail = () => {
 
     } catch (error) {
       console.error('Error fetching match detail:', error);
-      setError('載入比賽詳情失敗');
+      setError(t('match:messages.loadingMatchDetail'));
     } finally {
       setLoading(false);
     }
@@ -372,11 +374,11 @@ const ClientMatchDetail = () => {
 
   const getMatchStatusTag = (status) => {
     const statusMap = {
-      'pending': { color: 'default', text: '待開始', icon: <ClockCircleOutlined /> },
-      'active': { color: 'processing', text: '進行中', icon: <PlayCircleOutlined /> },
-      'in_progress': { color: 'processing', text: '進行中', icon: <PlayCircleOutlined /> },
-      'completed': { color: 'success', text: '已完成', icon: <CheckCircleOutlined /> },
-      'cancelled': { color: 'error', text: '已取消', icon: <ClockCircleOutlined /> }
+      'pending': { color: 'default', text: t('match:status.pending'), icon: <ClockCircleOutlined /> },
+      'active': { color: 'processing', text: t('match:status.inProgress'), icon: <PlayCircleOutlined /> },
+      'in_progress': { color: 'processing', text: t('match:status.inProgress'), icon: <PlayCircleOutlined /> },
+      'completed': { color: 'success', text: t('match:status.completed'), icon: <CheckCircleOutlined /> },
+      'cancelled': { color: 'error', text: t('match:status.cancelled'), icon: <ClockCircleOutlined /> }
     };
     
     const statusInfo = statusMap[status] || { color: 'default', text: status, icon: <ClockCircleOutlined /> };
@@ -389,9 +391,9 @@ const ClientMatchDetail = () => {
 
   const getMatchTypeTag = (type) => {
     const typeMap = {
-      'group': { color: 'blue', text: '小組賽' },
-      'knockout': { color: 'purple', text: '淘汰賽' },
-      'friendly': { color: 'green', text: '友誼賽' }
+      'group': { color: 'blue', text: t('match:types.groupStage') },
+      'knockout': { color: 'purple', text: t('match:types.knockout') },
+      'friendly': { color: 'green', text: t('match:types.friendly') }
     };
     
     const typeInfo = typeMap[type] || { color: 'default', text: type };
@@ -407,10 +409,10 @@ const ClientMatchDetail = () => {
     const winnerColor = match.winner_id === match.team1_id ? match.team1_color : match.team2_color;
     
     const winReasonMap = {
-      'score': '比分獲勝',
-      'fouls': '犯規較少',
-      'referee': '裁判判決',
-      'draw': '平局'
+      'score': t('match:winReason.score'),
+      'fouls': t('match:winReason.fouls'),
+      'referee': t('match:winReason.referee'),
+      'draw': t('match:winReason.draw')
     };
 
     return {
@@ -446,7 +448,7 @@ const ClientMatchDetail = () => {
       <div style={{ padding: 24, textAlign: 'center' }}>
         <Spin size="large" />
         <div style={{ marginTop: 16 }}>
-          <Text>載入比賽詳情中...</Text>
+          <Text>{t('match:messages.loadingMatchDetail')}</Text>
         </div>
       </div>
     );
@@ -456,13 +458,13 @@ const ClientMatchDetail = () => {
     return (
       <div style={{ padding: 24 }}>
         <Alert
-          message="載入失敗"
+          message={t('common:messages.loadFailed')}
           description={error}
           type="error"
           showIcon
           action={
             <Button size="small" onClick={fetchMatchDetail}>
-              重新載入
+              {t('common:actions.reload')}
             </Button>
           }
         />
@@ -474,8 +476,8 @@ const ClientMatchDetail = () => {
     return (
       <div style={{ padding: 24 }}>
         <Alert
-          message="比賽不存在"
-          description="找不到指定的比賽資訊"
+          message={t('match:messages.matchNotFound')}
+          description={t('match:messages.matchNotFoundDesc')}
           type="warning"
           showIcon
         />
@@ -484,7 +486,7 @@ const ClientMatchDetail = () => {
   }
 
   const winnerInfo = getWinnerInfo(match);
-  const matchDuration = match.match_time ? `${Math.floor(match.match_time / 60)} 分鐘` : '10 分鐘';
+  const matchDuration = match.match_time ? `${Math.floor(match.match_time / 60)} ${t('match:time.minutes')}` : `10 ${t('match:time.minutes')}`;
 
   return (
     <div style={{ padding: 24 }}>
@@ -494,7 +496,7 @@ const ClientMatchDetail = () => {
         onClick={() => navigate('/matches')}
         style={{ marginBottom: 16 }}
       >
-        返回比賽列表
+        {t('common:actions.backToMatchList')}
       </Button>
 
       {/* Match Header */}
@@ -557,7 +559,7 @@ const ClientMatchDetail = () => {
                 </Button>
                 {winnerInfo && winnerInfo.name === getTeamDisplayNameWithReference(match, 'team1') && (
                   <Tag color="gold" icon={<TrophyOutlined />} style={{ marginTop: 8 }}>
-                    獲勝
+                    {t('match:result.winner')}
                   </Tag>
                 )}
               </div>
@@ -582,7 +584,7 @@ const ClientMatchDetail = () => {
                     {match.team1_score || 0} - {match.team2_score || 0}
                   </Title>
                   <Tag color="processing" icon={<PlayCircleOutlined />}>
-                    比賽進行中
+                    {t('match:status.inProgress')}
                   </Tag>
                 </div>
               ) : (
@@ -590,7 +592,7 @@ const ClientMatchDetail = () => {
                   <Title level={1} style={{ margin: 0, fontSize: '48px', color: '#d9d9d9' }}>
                     - : -
                   </Title>
-                  <Text type="secondary">比賽尚未開始</Text>
+                  <Text type="secondary">{t('match:status.notStarted')}</Text>
                 </div>
               )}
             </Space>
@@ -630,7 +632,7 @@ const ClientMatchDetail = () => {
                 </Button>
                 {winnerInfo && winnerInfo.name === getTeamDisplayNameWithReference(match, 'team2') && (
                   <Tag color="gold" icon={<TrophyOutlined />} style={{ marginTop: 8 }}>
-                    獲勝
+                    {t('match:result.winner')}
                   </Tag>
                 )}
               </div>
@@ -645,32 +647,32 @@ const ClientMatchDetail = () => {
           <Card>
             <Title level={3}>
               <CalendarOutlined style={{ marginRight: 8 }} />
-              比賽資訊
+              {t('match:match.information')}
             </Title>
             <Descriptions column={1} bordered size="small">
-              <Descriptions.Item label="比賽時間">
-                {match.match_date ? moment(match.match_date).format('YYYY/MM/DD HH:mm') : '待定'}
+              <Descriptions.Item label={t('match:match.time')}>
+                {match.match_date ? moment(match.match_date).format('YYYY/MM/DD HH:mm') : t('match:status.pending')}
               </Descriptions.Item>
-              <Descriptions.Item label="比賽時長">
+              <Descriptions.Item label={t('match:match.duration')}>
                 {matchDuration}
               </Descriptions.Item>
-              <Descriptions.Item label="比賽類型">
+              <Descriptions.Item label={t('match:match.type')}>
                 {getMatchTypeTag(match.match_type)}
               </Descriptions.Item>
               {match.group_name && (
-                <Descriptions.Item label="所屬小組">
+                <Descriptions.Item label={t('group:group.name')}>
                   <Tag color="cyan">{getDisplayGroupName(match.group_name)}</Tag>
                 </Descriptions.Item>
               )}
-              <Descriptions.Item label="比賽狀態">
+              <Descriptions.Item label={t('match:match.status')}>
                 {getMatchStatusTag(match.match_status)}
               </Descriptions.Item>
               {match.match_status === 'completed' && (
                 <>
-                  <Descriptions.Item label="開始時間">
+                  <Descriptions.Item label={t('match:match.startTime')}>
                     {match.start_time ? moment(match.start_time).format('HH:mm:ss') : '-'}
                   </Descriptions.Item>
-                  <Descriptions.Item label="結束時間">
+                  <Descriptions.Item label={t('match:match.endTime')}>
                     {match.end_time ? moment(match.end_time).format('HH:mm:ss') : '-'}
                   </Descriptions.Item>
                 </>
@@ -684,7 +686,7 @@ const ClientMatchDetail = () => {
           <Card>
             <Title level={3}>
               <ThunderboltOutlined style={{ marginRight: 8 }} />
-              比賽統計
+              {t('match:match.statistics')}
             </Title>
             <Row gutter={[16, 16]}>
               <Col span={12}>
@@ -694,7 +696,7 @@ const ClientMatchDetail = () => {
                     value={match.team1_score || 0}
                     prefix={<TrophyOutlined style={{ color: match.team1_color || '#1890ff' }} />}
                     valueStyle={{ color: match.team1_color || '#1890ff' }}
-                    suffix="進球"
+                    suffix={t('match:statistics.goals')}
                   />
                 </Card>
               </Col>
@@ -705,14 +707,14 @@ const ClientMatchDetail = () => {
                     value={match.team2_score || 0}
                     prefix={<TrophyOutlined style={{ color: match.team2_color || '#52c41a' }} />}
                     valueStyle={{ color: match.team2_color || '#52c41a' }}
-                    suffix="進球"
+                    suffix={t('match:statistics.goals')}
                   />
                 </Card>
               </Col>
               <Col span={12}>
                 <Card size="small">
                   <Statistic
-                    title={`${getTeamDisplayNameWithReference(match, 'team1')} 犯規次數`}
+                    title={`${getTeamDisplayNameWithReference(match, 'team1')} ${t('match:statistics.fouls')}`}
                     value={match.team1_fouls || 0}
                     prefix={<FlagOutlined style={{ color: '#f5222d' }} />}
                     valueStyle={{ color: '#f5222d' }}
@@ -722,7 +724,7 @@ const ClientMatchDetail = () => {
               <Col span={12}>
                 <Card size="small">
                   <Statistic
-                    title={`${getTeamDisplayNameWithReference(match, 'team2')} 犯規次數`}
+                    title={`${getTeamDisplayNameWithReference(match, 'team2')} ${t('match:statistics.fouls')}`}
                     value={match.team2_fouls || 0}
                     prefix={<FlagOutlined style={{ color: '#f5222d' }} />}
                     valueStyle={{ color: '#f5222d' }}
@@ -739,7 +741,7 @@ const ClientMatchDetail = () => {
         <Card style={{ marginTop: 24 }}>
           <Title level={3}>
             <FieldTimeOutlined style={{ marginRight: 8 }} />
-            比賽事件
+            {t('match:match.events')}
           </Title>
           <Timeline mode="left">
             {events.map((event, index) => (
@@ -753,7 +755,7 @@ const ClientMatchDetail = () => {
                     {getDisplayTeamName(event.team_name)} - {event.event_type}
                   </Text>
                   {event.athlete_name && (
-                    <Text type="secondary">球員: {event.athlete_name}</Text>
+                    <Text type="secondary">{t('team:athlete.name')}: {event.athlete_name}</Text>
                   )}
                   {event.description && (
                     <Text>{event.description}</Text>
@@ -767,28 +769,28 @@ const ClientMatchDetail = () => {
 
       {/* Quick Navigation */}
       <Card style={{ marginTop: 24 }}>
-        <Title level={4}>相關頁面</Title>
+        <Title level={4}>{t('common:navigation.relatedPages')}</Title>
         <Space wrap>
           <Button 
             type="primary" 
             icon={<TeamOutlined />}
             onClick={() => handleTeamNavigation(match, 'team1')}
           >
-            查看 {getTeamDisplayNameWithReference(match, 'team1')}
+            {t('common:actions.view')} {getTeamDisplayNameWithReference(match, 'team1')}
           </Button>
           <Button 
             type="primary" 
             icon={<TeamOutlined />}
             onClick={() => handleTeamNavigation(match, 'team2')}
           >
-            查看 {getTeamDisplayNameWithReference(match, 'team2')}
+            {t('common:actions.view')} {getTeamDisplayNameWithReference(match, 'team2')}
           </Button>
           {match.group_id && (
             <Button 
               icon={<TrophyOutlined />}
               onClick={() => navigate(`/groups/${match.group_id}`)}
             >
-              查看小組詳情
+              {t('common:actions.viewGroupDetails')}
             </Button>
           )}
         </Space>

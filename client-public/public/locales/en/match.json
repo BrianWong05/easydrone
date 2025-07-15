@@ -3,7 +3,14 @@
     "number": "Match Number",
     "matchNumber": "Match Number",
     "list": "Match List",
+    "totalOrder": "Total Order",
     "detail": "Match Details",
+    "information": "Match Information",
+    "statistics": "Match Statistics",
+    "events": "Match Events",
+    "duration": "Match Duration",
+    "startTime": "Start Time",
+    "endTime": "End Time",
     "create": "Create Match",
     "edit": "Edit Match",
     "delete": "Delete Match",
@@ -55,7 +62,8 @@
     "postponed": "Postponed",
     "pending": "Pending",
     "inProgress": "In Progress",
-    "completed": "Completed"
+    "completed": "Completed",
+    "notStarted": "Not Started"
   },
   "results": {
     "win": "Win",
@@ -66,7 +74,13 @@
   "result": {
     "win": "W",
     "loss": "L",
-    "draw": "D"
+    "draw": "D",
+    "winner": "Winner",
+    "loser": "Loser"
+  },
+  "stats": {
+    "pendingMatches": "Pending",
+    "activeMatches": "In Progress"
   },
   "pagination": {
     "showTotal": "{{start}}-{{end}} of {{total}} matches"
@@ -88,6 +102,7 @@
     "noMatches": "No matches available",
     "noMatchData": "No match data available",
     "loadingMatches": "Loading match data...",
+    "loadingMatchDetail": "Loading match details...",
     "matchCreated": "Match created successfully",
     "matchUpdated": "Match updated successfully",
     "matchDeleted": "Match deleted successfully",
@@ -95,14 +110,27 @@
     "deleteWarning": "This action cannot be undone",
     "noRecentMatches": "No recent matches",
     "generateSuccess": "Matches generated successfully",
-    "generateFailed": "Failed to generate matches"
+    "generateFailed": "Failed to generate matches",
+    "matchNotFound": "Match Not Found",
+    "matchNotFoundDesc": "The specified match information could not be found"
+  },
+  "winReason": {
+    "score": "Won by Score",
+    "fouls": "Fewer Fouls",
+    "referee": "Referee Decision",
+    "draw": "Draw"
+  },
+  "time": {
+    "minutes": "minutes"
   },
   "placeholders": {
-    "searchMatch": "Search matches",
+    "searchMatch": "Search teams or matches",
     "selectTeam1": "Select Team 1",
     "selectTeam2": "Select Team 2",
     "selectVenue": "Select venue",
     "selectReferee": "Select referee",
-    "enterScore": "Enter score"
+    "enterScore": "Enter score",
+    "selectStatus": "Select match status",
+    "selectType": "Select match type"
   }
 }

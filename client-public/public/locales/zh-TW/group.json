@@ -56,6 +56,7 @@
     "searchGroup": "搜索小組名稱",
     "enterGroupName": "請輸入小組名稱",
     "enterDescription": "請輸入小組描述",
-    "selectGroupLetter": "請選擇小組字母"
+    "selectGroupLetter": "請選擇小組字母",
+    "selectGroup": "請選擇小組"
   }
 }

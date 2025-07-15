@@ -97,6 +97,7 @@
     "apiService": "API Service",
     "realTimeUpdate": "Real-time Update"
   },
+  "group": "Group",
   "user": {
     "profile": "Profile",
     "changePassword": "Change Password",
@@ -113,7 +114,17 @@
     "actions": "Actions",
     "viewDetails": "View Details",
     "reload": "Reload",
-    "backToGroupList": "Back to Group List"
+    "backToGroupList": "Back to Group List",
+    "clearFilters": "Clear Filters",
+    "backToMatchList": "Back to Match List",
+    "view": "View",
+    "viewGroupDetails": "View Group Details"
+  },
+  "navigation": {
+    "relatedPages": "Related Pages"
+  },
+  "filters": {
+    "title": "Filter Conditions"
   },
   "stats": {
     "totalTeams": "Total Teams",

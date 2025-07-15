@@ -3,7 +3,14 @@
     "number": "比賽編號",
     "matchNumber": "比賽場次",
     "list": "比賽列表",
+    "totalOrder": "總順序",
     "detail": "比賽詳情",
+    "information": "比賽資訊",
+    "statistics": "比賽統計",
+    "events": "比賽事件",
+    "duration": "比賽時長",
+    "startTime": "開始時間",
+    "endTime": "結束時間",
     "create": "創建比賽",
     "edit": "編輯比賽",
     "delete": "刪除比賽",
@@ -55,7 +62,8 @@
     "postponed": "延期",
     "pending": "待開始",
     "inProgress": "進行中",
-    "completed": "已完成"
+    "completed": "已完成",
+    "notStarted": "比賽尚未開始"
   },
   "results": {
     "win": "勝",
@@ -66,7 +74,13 @@
   "result": {
     "win": "勝",
     "loss": "負",
-    "draw": "平"
+    "draw": "平",
+    "winner": "勝者",
+    "loser": "敗者"
+  },
+  "stats": {
+    "pendingMatches": "待開始",
+    "activeMatches": "進行中"
   },
   "pagination": {
     "showTotal": "第 {{start}}-{{end}} 項，共 {{total}} 場比賽"
@@ -88,6 +102,7 @@
     "noMatches": "暫無比賽",
     "noMatchData": "暫無比賽數據",
     "loadingMatches": "載入比賽資料中...",
+    "loadingMatchDetail": "載入比賽詳情中...",
     "matchCreated": "比賽創建成功",
     "matchUpdated": "比賽更新成功",
     "matchDeleted": "比賽刪除成功",
@@ -95,14 +110,27 @@
     "deleteWarning": "刪除後將無法恢復",
     "noRecentMatches": "暫無最近比賽",
     "generateSuccess": "比賽生成成功",
-    "generateFailed": "比賽生成失敗"
+    "generateFailed": "比賽生成失敗",
+    "matchNotFound": "比賽不存在",
+    "matchNotFoundDesc": "找不到指定的比賽資訊"
+  },
+  "winReason": {
+    "score": "比分獲勝",
+    "fouls": "犯規較少",
+    "referee": "裁判判決",
+    "draw": "平局"
+  },
+  "time": {
+    "minutes": "分鐘"
   },
   "placeholders": {
-    "searchMatch": "搜索比賽",
+    "searchMatch": "搜尋隊伍或場次",
     "selectTeam1": "請選擇隊伍1",
     "selectTeam2": "請選擇隊伍2",
     "selectVenue": "請選擇比賽場地",
     "selectReferee": "請選擇裁判",
-    "enterScore": "請輸入比分"
+    "enterScore": "請輸入比分",
+    "selectStatus": "請選擇比賽狀態",
+    "selectType": "請選擇比賽類型"
   }
 }

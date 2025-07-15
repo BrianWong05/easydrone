@@ -97,6 +97,7 @@
     "apiService": "API服務",
     "realTimeUpdate": "即時更新"
   },
+  "group": "小組",
   "user": {
     "profile": "個人資料",
     "changePassword": "修改密碼",
@@ -113,7 +114,17 @@
     "actions": "操作",
     "viewDetails": "查看詳情",
     "reload": "重新載入",
-    "backToGroupList": "返回小組列表"
+    "backToGroupList": "返回小組列表",
+    "clearFilters": "清除篩選",
+    "backToMatchList": "返回比賽列表",
+    "view": "查看",
+    "viewGroupDetails": "查看小組詳情"
+  },
+  "navigation": {
+    "relatedPages": "相關頁面"
+  },
+  "filters": {
+    "title": "篩選條件"
   },
   "stats": {
     "totalTeams": "總隊伍數",
