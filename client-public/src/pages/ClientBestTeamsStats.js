@@ -18,12 +18,14 @@ import {
   BarChartOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 const { Title, Text } = Typography;
 
 const ClientBestTeamsStats = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['stats', 'common']);
   const [loading, setLoading] = useState(true);
   const [bestTeamsData, setBestTeamsData] = useState(null);
   const [error, setError] = useState(null);
@@ -87,7 +89,7 @@ const ClientBestTeamsStats = () => {
       }
     } catch (error) {
       console.error('獲取錦標賽失敗:', error);
-      setError('獲取錦標賽信息失敗');
+      setError(t('messages.loadingError', { ns: 'common' }));
     }
   };
 
@@ -103,12 +105,12 @@ const ClientBestTeamsStats = () => {
       if (response.data.success) {
         setBestTeamsData(response.data.data);
       } else {
-        setError(response.data.message || '暫無最佳球隊統計數據');
+        setError(response.data.message || t('messages.noData'));
         setBestTeamsData(null);
       }
     } catch (error) {
       console.error('獲取最佳球隊統計失敗:', error);
-      setError('獲取統計數據失敗，請稍後再試');
+      setError(t('messages.loadingError', { ns: 'common' }));
       setBestTeamsData(null);
     } finally {
       setLoading(false);
@@ -117,7 +119,7 @@ const ClientBestTeamsStats = () => {
 
   const attackTeamsColumns = [
     {
-      title: '排名',
+      title: t('rankings.position'),
       key: 'rank',
       render: (_, record, index) => (
         <div style={{ textAlign: 'center' }}>
@@ -133,7 +135,7 @@ const ClientBestTeamsStats = () => {
       width: 80,
     },
     {
-      title: '隊伍',
+      title: t('rankings.team'),
       key: 'team',
       render: (_, record) => (
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -160,7 +162,7 @@ const ClientBestTeamsStats = () => {
               {getDisplayTeamName(record.team_name)}
             </div>
             <Text type="secondary" style={{ fontSize: '12px' }}>
-              {record.group_name ? `小組 ${getDisplayGroupName(record.group_name)}` : '無小組'}
+              {record.group_name ? `${t('common:group')} ${getDisplayGroupName(record.group_name)}` : t('common:noGroup')}
             </Text>
           </div>
         </div>
@@ -168,14 +170,14 @@ const ClientBestTeamsStats = () => {
       width: 200,
     },
     {
-      title: '比賽場次',
+      title: t('metrics.matchesPlayed'),
       dataIndex: 'matches_played',
       key: 'matches_played',
       width: 100,
       align: 'center',
     },
     {
-      title: '總進球',
+      title: t('metrics.goalsScored'),
       dataIndex: 'goals_for',
       key: 'goals_for',
       width: 100,
@@ -183,7 +185,7 @@ const ClientBestTeamsStats = () => {
       render: (goals) => <span style={{ fontWeight: 'bold', color: '#52c41a' }}>{goals}</span>
     },
     {
-      title: '平均進球',
+      title: t('metrics.averageGoals'),
       dataIndex: 'avg_goals_for',
       key: 'avg_goals_for',
       width: 100,
@@ -191,7 +193,7 @@ const ClientBestTeamsStats = () => {
       render: (avg) => <span style={{ fontWeight: 'bold' }}>{avg}</span>
     },
     {
-      title: '失球',
+      title: t('rankings.goalsAgainst'),
       dataIndex: 'goals_against',
       key: 'goals_against',
       width: 80,
@@ -201,7 +203,7 @@ const ClientBestTeamsStats = () => {
 
   const defenseTeamsColumns = [
     {
-      title: '排名',
+      title: t('rankings.position'),
       key: 'rank',
       render: (_, record, index) => (
         <div style={{ textAlign: 'center' }}>
@@ -217,7 +219,7 @@ const ClientBestTeamsStats = () => {
       width: 80,
     },
     {
-      title: '隊伍',
+      title: t('rankings.team'),
       key: 'team',
       render: (_, record) => (
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -244,7 +246,7 @@ const ClientBestTeamsStats = () => {
               {getDisplayTeamName(record.team_name)}
             </div>
             <Text type="secondary" style={{ fontSize: '12px' }}>
-              {record.group_name ? `小組 ${getDisplayGroupName(record.group_name)}` : '無小組'}
+              {record.group_name ? `${t('common:group')} ${getDisplayGroupName(record.group_name)}` : t('common:noGroup')}
             </Text>
           </div>
         </div>
@@ -252,14 +254,14 @@ const ClientBestTeamsStats = () => {
       width: 200,
     },
     {
-      title: '比賽場次',
+      title: t('metrics.matchesPlayed'),
       dataIndex: 'matches_played',
       key: 'matches_played',
       width: 100,
       align: 'center',
     },
     {
-      title: '總失球',
+      title: t('rankings.goalsAgainst'),
       dataIndex: 'goals_against',
       key: 'goals_against',
       width: 100,
@@ -267,7 +269,7 @@ const ClientBestTeamsStats = () => {
       render: (goals) => <span style={{ fontWeight: 'bold', color: '#ff4d4f' }}>{goals}</span>
     },
     {
-      title: '平均失球',
+      title: t('metrics.averageGoalsAgainst'),
       dataIndex: 'avg_goals_against',
       key: 'avg_goals_against',
       width: 100,
@@ -275,7 +277,7 @@ const ClientBestTeamsStats = () => {
       render: (avg) => <span style={{ fontWeight: 'bold' }}>{avg}</span>
     },
     {
-      title: '進球',
+      title: t('rankings.goalsFor'),
       dataIndex: 'goals_for',
       key: 'goals_for',
       width: 80,
@@ -287,7 +289,7 @@ const ClientBestTeamsStats = () => {
     return (
       <div style={{ textAlign: 'center', padding: '50px' }}>
         <Spin size="large" />
-        <p>載入中...</p>
+        <p>{t('messages.loadingStats')}</p>
       </div>
     );
   }
@@ -296,7 +298,7 @@ const ClientBestTeamsStats = () => {
     return (
       <div style={{ padding: '24px' }}>
         <Alert
-          message="暫無數據"
+          message={t('messages.noData')}
           description={error}
           type="info"
           showIcon
@@ -309,7 +311,7 @@ const ClientBestTeamsStats = () => {
     <div style={{ padding: '24px' }}>
       <div style={{ marginBottom: '24px' }}>
         <Title level={2}>
-          <BarChartOutlined /> 最佳球隊統計
+          <BarChartOutlined /> {t('stats.bestTeams')}
         </Title>
         
       </div>
@@ -321,7 +323,7 @@ const ClientBestTeamsStats = () => {
             <Col xs={24} sm={12} md={6}>
               <Card>
                 <Statistic
-                  title="分析比賽數"
+                  title={t('metrics.totalMatches')}
                   value={bestTeamsData.summary?.total_matches_analyzed || 0}
                   prefix={<BarChartOutlined />}
                 />
@@ -330,7 +332,7 @@ const ClientBestTeamsStats = () => {
             <Col xs={24} sm={12} md={6}>
               <Card>
                 <Statistic
-                  title="分析隊伍數"
+                  title={t('metrics.totalTeams')}
                   value={bestTeamsData.summary?.teams_analyzed || 0}
                   prefix={<TrophyOutlined />}
                 />
@@ -339,9 +341,9 @@ const ClientBestTeamsStats = () => {
             <Col xs={24} sm={12} md={6}>
               <Card style={{ backgroundColor: '#f6ffed' }}>
                 <Statistic
-                  title="最佳進攻球隊"
+                  title={t('stats.bestAttackTeam')}
                   value={getDisplayTeamName(bestTeamsData.best_attack_team?.team_name)}
-                  suffix={`${bestTeamsData.best_attack_team?.goals_for || 0} 球`}
+                  suffix={`${bestTeamsData.best_attack_team?.goals_for || 0} ${t('common:goals')}`}
                   prefix={<FireOutlined style={{ color: '#52c41a' }} />}
                   valueStyle={{ color: '#52c41a', fontSize: '16px' }}
                 />
@@ -350,9 +352,9 @@ const ClientBestTeamsStats = () => {
             <Col xs={24} sm={12} md={6}>
               <Card style={{ backgroundColor: '#e6f7ff' }}>
                 <Statistic
-                  title="最佳防守球隊"
+                  title={t('stats.bestDefenseTeam')}
                   value={getDisplayTeamName(bestTeamsData.best_defense_team?.team_name)}
-                  suffix={`失 ${bestTeamsData.best_defense_team?.goals_against || 0} 球`}
+                  suffix={`${t('common:conceded')} ${bestTeamsData.best_defense_team?.goals_against || 0} ${t('common:goals')}`}
                   prefix={<SafetyOutlined style={{ color: '#1890ff' }} />}
                   valueStyle={{ color: '#1890ff', fontSize: '16px' }}
                 />
@@ -362,7 +364,7 @@ const ClientBestTeamsStats = () => {
 
           {/* Top Attack Teams */}
           <Card 
-            title={<><FireOutlined style={{ color: '#52c41a' }} /> 最佳進攻球隊排行榜</>} 
+            title={<><FireOutlined style={{ color: '#52c41a' }} /> {t('stats.bestAttackTeamsRanking')}</>} 
             style={{ marginBottom: '24px' }}
           >
             <Table
@@ -371,13 +373,13 @@ const ClientBestTeamsStats = () => {
               rowKey="team_id"
               pagination={false}
               size="small"
-              locale={{ emptyText: '暫無數據' }}
+              locale={{ emptyText: t('messages.noData') }}
             />
           </Card>
 
           {/* Top Defense Teams */}
           <Card 
-            title={<><SafetyOutlined style={{ color: '#1890ff' }} /> 最佳防守球隊排行榜</>}
+            title={<><SafetyOutlined style={{ color: '#1890ff' }} /> {t('stats.bestDefenseTeamsRanking')}</>}
             style={{ marginBottom: '24px' }}
           >
             <Table
@@ -386,15 +388,15 @@ const ClientBestTeamsStats = () => {
               rowKey="team_id"
               pagination={false}
               size="small"
-              locale={{ emptyText: '暫無數據' }}
+              locale={{ emptyText: t('messages.noData') }}
             />
           </Card>
 
           {/* Analysis Info */}
-          <Card title="統計說明" size="small">
+          <Card title={t('stats.analysisInfo')} size="small">
             <div style={{ fontSize: '12px', color: '#666' }}>
-              <p><strong>統計說明：</strong> 最佳進攻球隊以總進球數排名，最佳防守球隊以總失球數排名（越少越好）</p>
-              <p><strong>數據更新：</strong> 統計數據由管理員計算後自動更新</p>
+              <p><strong>{t('stats.analysisDescription')}:</strong> {t('stats.rankingMethodDescription')}</p>
+              <p><strong>{t('stats.dataUpdate')}:</strong> {t('stats.dataUpdateDescription')}</p>
             </div>
           </Card>
         </>

@@ -78,7 +78,8 @@
     "operationFailed": "Operation failed, please try again later",
     "networkError": "Network error, please check your connection",
     "dataLoadFailed": "Failed to load data",
-    "loadFailed": "Load Failed"
+    "loadFailed": "Load Failed",
+    "loadingError": "Loading failed, please try again later"
   },
   "forms": {
     "required": "This field is required",
@@ -98,6 +99,9 @@
     "realTimeUpdate": "Real-time Update"
   },
   "group": "Group",
+  "noGroup": "No Group",
+  "goals": "goals",
+  "conceded": "conceded",
   "user": {
     "profile": "Profile",
     "changePassword": "Change Password",

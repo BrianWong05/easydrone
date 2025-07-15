@@ -10,7 +10,16 @@
     "ranking": "排名統計",
     "bestTeams": "最佳球隊統計",
     "topPerformers": "頂級表現者",
-    "systemStatus": "系統狀態"
+    "systemStatus": "系統狀態",
+    "bestAttackTeam": "最佳進攻球隊",
+    "bestDefenseTeam": "最佳防守球隊",
+    "bestAttackTeamsRanking": "最佳進攻球隊排行榜",
+    "bestDefenseTeamsRanking": "最佳防守球隊排行榜",
+    "analysisInfo": "統計說明",
+    "analysisDescription": "統計說明",
+    "rankingMethodDescription": "最佳進攻球隊以總進球數排名，最佳防守球隊以總失球數排名（越少越好）",
+    "dataUpdate": "數據更新",
+    "dataUpdateDescription": "統計數據由管理員計算後自動更新"
   },
   "metrics": {
     "totalTeams": "隊伍總數",
@@ -20,6 +29,7 @@
     "matchesPlayed": "已賽場次",
     "goalsScored": "進球總數",
     "averageGoals": "平均進球",
+    "averageGoalsAgainst": "平均失球",
     "winRate": "勝率",
     "drawRate": "平局率",
     "lossRate": "敗率"

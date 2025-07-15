@@ -10,7 +10,16 @@
     "ranking": "Ranking Statistics",
     "bestTeams": "Best Teams Statistics",
     "topPerformers": "Top Performers",
-    "systemStatus": "System Status"
+    "systemStatus": "System Status",
+    "bestAttackTeam": "Best Attack Team",
+    "bestDefenseTeam": "Best Defense Team",
+    "bestAttackTeamsRanking": "Best Attack Teams Ranking",
+    "bestDefenseTeamsRanking": "Best Defense Teams Ranking",
+    "analysisInfo": "Analysis Information",
+    "analysisDescription": "Analysis Description",
+    "rankingMethodDescription": "Best attack teams ranked by total goals scored, best defense teams ranked by total goals conceded (lower is better)",
+    "dataUpdate": "Data Update",
+    "dataUpdateDescription": "Statistics data is automatically updated after calculation by administrators"
   },
   "metrics": {
     "totalTeams": "Total Teams",
@@ -20,6 +29,7 @@
     "matchesPlayed": "Matches Played",
     "goalsScored": "Goals Scored",
     "averageGoals": "Average Goals",
+    "averageGoalsAgainst": "Average Goals Against",
     "winRate": "Win Rate",
     "drawRate": "Draw Rate",
     "lossRate": "Loss Rate"

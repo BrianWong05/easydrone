@@ -78,7 +78,8 @@
     "operationFailed": "操作失敗，請稍後重試",
     "networkError": "網絡錯誤，請檢查連接",
     "dataLoadFailed": "數據載入失敗",
-    "loadFailed": "載入失敗"
+    "loadFailed": "載入失敗",
+    "loadingError": "載入失敗，請稍後再試"
   },
   "forms": {
     "required": "此欄位為必填",
@@ -98,6 +99,9 @@
     "realTimeUpdate": "即時更新"
   },
   "group": "小組",
+  "noGroup": "無小組",
+  "goals": "球",
+  "conceded": "失",
   "user": {
     "profile": "個人資料",
     "changePassword": "修改密碼",
