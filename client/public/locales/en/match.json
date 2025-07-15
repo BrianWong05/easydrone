@@ -52,7 +52,11 @@
     "ongoing": "Ongoing",
     "finished": "Finished",
     "cancelled": "Cancelled",
-    "postponed": "Postponed"
+    "postponed": "Postponed",
+    "pending": "Pending",
+    "active": "Active",
+    "completed": "Completed",
+    "overtime": "Overtime"
   },
   "results": {
     "win": "Win",
@@ -93,5 +97,11 @@
     "selectVenue": "Select venue",
     "selectReferee": "Select referee",
     "enterScore": "Enter score"
+  },
+  "actions": {
+    "start": "Start",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete"
   }
 }

@@ -50,7 +50,8 @@
   },
   "actions": {
     "confirm": "確定",
-    "cancel": "取消"
+    "cancel": "取消",
+    "title": "操作"
   },
   "status": {
     "active": "激活",

@@ -32,6 +32,7 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import axios from "axios";
 
 const { Title, Text } = Typography;
@@ -40,6 +41,7 @@ const { Option } = Select;
 const TournamentGroupDetail = () => {
   const navigate = useNavigate();
   const { id: tournamentId, groupId } = useParams();
+  const { t } = useTranslation(['group', 'common', 'match']);
   const [group, setGroup] = useState(null);
   const [teams, setTeams] = useState([]);
 
@@ -124,11 +126,11 @@ const TournamentGroupDetail = () => {
         setMatches(matchesData || []);
         setStandings(standingsData || []);
       } else {
-        message.error("獲取小組詳情失敗");
+        message.error(t('group:messages.noGroupData'));
       }
     } catch (error) {
       console.error("Error fetching group detail:", error);
-      message.error("獲取小組詳情失敗");
+      message.error(t('group:messages.noGroupData'));
     } finally {
       setLoading(false);
     }
@@ -163,7 +165,7 @@ const TournamentGroupDetail = () => {
       }
     } catch (error) {
       console.error("Error fetching available teams:", error);
-      message.error("獲取可用隊伍失敗");
+      message.error(t('common:messages.loadFailed'));
       setAvailableTeams([]);
     }
   };
@@ -174,13 +176,13 @@ const TournamentGroupDetail = () => {
         team_id: values.team_id,
       });
 
-      message.success("隊伍添加成功");
+      message.success(t('group:detail.teamAddedSuccess'));
       setAddTeamModalVisible(false);
       form.resetFields();
       fetchGroupDetail();
     } catch (error) {
       console.error("Error adding team:", error);
-      const errorMessage = error.response?.data?.message || "添加隊伍失敗";
+      const errorMessage = error.response?.data?.message || t('group:detail.addTeamFailed');
       message.error(errorMessage);
     }
   };
@@ -188,11 +190,11 @@ const TournamentGroupDetail = () => {
   const handleRemoveTeam = async (teamId) => {
     try {
       await axios.delete(`/api/groups/${groupId}/teams/${teamId}`);
-      message.success("隊伍移除成功");
+      message.success(t('group:detail.teamRemovedSuccess'));
       fetchGroupDetail();
     } catch (error) {
       console.error("Error removing team:", error);
-      const errorMessage = error.response?.data?.message || "移除隊伍失敗";
+      const errorMessage = error.response?.data?.message || t('group:detail.removeTeamFailed');
       message.error(errorMessage);
     }
   };
@@ -200,11 +202,11 @@ const TournamentGroupDetail = () => {
   const handleDeleteGroup = async () => {
     try {
       await axios.delete(`/api/groups/${groupId}`);
-      message.success("小組刪除成功");
+      message.success(t('group:messages.groupDeleted'));
       navigate(`/tournaments/${tournamentId}/groups`);
     } catch (error) {
       console.error("Error deleting group:", error);
-      const errorMessage = error.response?.data?.message || "刪除小組失敗";
+      const errorMessage = error.response?.data?.message || t('common:messages.operationFailed');
       message.error(errorMessage);
     }
   };
@@ -221,7 +223,7 @@ const TournamentGroupDetail = () => {
   // 比賽表格列定義
   const matchColumns = [
     {
-      title: "比賽編號",
+      title: t('match:match.number'),
       dataIndex: "match_number",
       key: "match_number",
       width: 120,
@@ -236,7 +238,7 @@ const TournamentGroupDetail = () => {
       ),
     },
     {
-      title: "隊伍1",
+      title: t('match:match.team1'),
       key: "team1",
       render: (_, record) => (
         <Space>
@@ -260,7 +262,7 @@ const TournamentGroupDetail = () => {
       ),
     },
     {
-      title: "比分",
+      title: t('match:match.score'),
       key: "score",
       align: "center",
       render: (_, record) => (
@@ -270,7 +272,7 @@ const TournamentGroupDetail = () => {
       ),
     },
     {
-      title: "隊伍2",
+      title: t('match:match.team2'),
       key: "team2",
       render: (_, record) => (
         <Space>
@@ -294,28 +296,28 @@ const TournamentGroupDetail = () => {
       ),
     },
     {
-      title: "狀態",
+      title: t('match:match.status'),
       dataIndex: "match_status",
       key: "match_status",
       render: (status) => {
         const statusConfig = {
-          pending: { color: "default", text: "待開始" },
-          active: { color: "processing", text: "進行中" },
-          completed: { color: "success", text: "已完成" },
-          overtime: { color: "warning", text: "延長賽" },
+          pending: { color: "default", text: t('match:status.pending') },
+          active: { color: "processing", text: t('match:status.active') },
+          completed: { color: "success", text: t('match:status.completed') },
+          overtime: { color: "warning", text: t('match:status.overtime') },
         };
         const config = statusConfig[status] || statusConfig.pending;
         return <Tag color={config.color}>{config.text}</Tag>;
       },
     },
     {
-      title: "比賽時間",
+      title: t('match:match.date'),
       dataIndex: "match_date",
       key: "match_date",
       render: (date) => new Date(date).toLocaleString("zh-TW"),
     },
     {
-      title: "操作",
+      title: t('common:actions.title'),
       key: "actions",
       render: (_, record) => (
         <Space>
@@ -324,7 +326,7 @@ const TournamentGroupDetail = () => {
             icon={<EyeOutlined />}
             onClick={() => navigate(`/tournaments/${tournamentId}/matches/${record.match_id}`)}
           >
-            詳情
+            {t('common:buttons.view')}
           </Button>
           {record.match_status === "pending" && (
             <Button
@@ -332,7 +334,7 @@ const TournamentGroupDetail = () => {
               icon={<PlayCircleOutlined />}
               onClick={() => navigate(`/tournaments/${tournamentId}/matches/${record.match_id}/live`)}
             >
-              開始
+              {t('match:actions.start')}
             </Button>
           )}
         </Space>
@@ -343,7 +345,7 @@ const TournamentGroupDetail = () => {
   // 積分榜表格列定義
   const standingsColumns = [
     {
-      title: "排名",
+      title: t('group:standings.position'),
       key: "rank",
       width: 60,
       render: (_, __, index) => (
@@ -353,7 +355,7 @@ const TournamentGroupDetail = () => {
       ),
     },
     {
-      title: "隊伍",
+      title: t('group:standings.team'),
       key: "team",
       render: (_, record) => (
         <Space>
@@ -377,14 +379,14 @@ const TournamentGroupDetail = () => {
       ),
     },
     {
-      title: "場次",
+      title: t('group:standings.played'),
       dataIndex: "played",
       key: "played",
       align: "center",
       width: 60,
     },
     {
-      title: "勝",
+      title: t('group:standings.won'),
       dataIndex: "won",
       key: "won",
       align: "center",
@@ -392,7 +394,7 @@ const TournamentGroupDetail = () => {
       render: (won) => <Text style={{ color: "#52c41a", fontWeight: "bold" }}>{won}</Text>,
     },
     {
-      title: "平",
+      title: t('group:standings.drawn'),
       dataIndex: "drawn",
       key: "drawn",
       align: "center",
@@ -400,7 +402,7 @@ const TournamentGroupDetail = () => {
       render: (drawn) => <Text style={{ color: "#faad14", fontWeight: "bold" }}>{drawn}</Text>,
     },
     {
-      title: "負",
+      title: t('group:standings.lost'),
       dataIndex: "lost",
       key: "lost",
       align: "center",
@@ -408,21 +410,21 @@ const TournamentGroupDetail = () => {
       render: (lost) => <Text style={{ color: "#ff4d4f", fontWeight: "bold" }}>{lost}</Text>,
     },
     {
-      title: "進球",
+      title: t('group:standings.goalsFor'),
       dataIndex: "goals_for",
       key: "goals_for",
       align: "center",
       width: 60,
     },
     {
-      title: "失球",
+      title: t('group:standings.goalsAgainst'),
       dataIndex: "goals_against",
       key: "goals_against",
       align: "center",
       width: 60,
     },
     {
-      title: "淨勝球",
+      title: t('group:standings.goalDifference'),
       key: "goal_difference",
       align: "center",
       width: 80,
@@ -437,7 +439,7 @@ const TournamentGroupDetail = () => {
       },
     },
     {
-      title: "積分",
+      title: t('group:standings.points'),
       dataIndex: "points",
       key: "points",
       align: "center",
@@ -453,7 +455,7 @@ const TournamentGroupDetail = () => {
   if (loading) {
     return (
       <div style={{ padding: "24px", textAlign: "center" }}>
-        <Text>載入中...</Text>
+        <Text>{t('common:messages.loading')}</Text>
       </div>
     );
   }
@@ -461,7 +463,7 @@ const TournamentGroupDetail = () => {
   if (!group) {
     return (
       <div style={{ padding: "24px" }}>
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="找不到指定的小組" />
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('group:detail.groupNotFound')} />
       </div>
     );
   }
@@ -475,14 +477,14 @@ const TournamentGroupDetail = () => {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
             <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(`/tournaments/${tournamentId}/groups`)}>
-              返回小組列表
+              {t('group:detail.backToGroupList')}
             </Button>
             <div>
               <Title level={2} style={{ margin: 0 }}>
                 <TrophyOutlined style={{ marginRight: 8, color: "#faad14" }} />
-                小組 {displayGroupName}
+                {t('group:group.name')} {displayGroupName}
               </Title>
-              <Text type="secondary">{tournament?.tournament_name || `錦標賽 ${tournamentId}`} - 小組詳情</Text>
+              <Text type="secondary">{tournament?.tournament_name || `${t('tournament:tournament')} ${tournamentId}`} - {t('group:group.detail')}</Text>
             </div>
           </div>
 
@@ -491,17 +493,17 @@ const TournamentGroupDetail = () => {
               icon={<EditOutlined />}
               onClick={() => navigate(`/tournaments/${tournamentId}/groups/${groupId}/edit`)}
             >
-              編輯小組
+              {t('group:group.edit')}
             </Button>
             <Popconfirm
-              title="確定要刪除這個小組嗎？"
-              description="刪除後將無法恢復，相關的隊伍和比賽也會被影響。"
+              title={t('group:messages.deleteConfirmation')}
+              description={t('group:detail.deleteWarning')}
               onConfirm={handleDeleteGroup}
-              okText="確定"
-              cancelText="取消"
+              okText={t('common:actions.confirm')}
+              cancelText={t('common:actions.cancel')}
             >
               <Button danger icon={<DeleteOutlined />}>
-                刪除小組
+                {t('group:group.delete')}
               </Button>
             </Popconfirm>
           </Space>
@@ -512,7 +514,7 @@ const TournamentGroupDetail = () => {
           <Col span={6}>
             <Card>
               <Statistic
-                title="隊伍數量"
+                title={t('group:detail.teamCount')}
                 value={teams.length}
                 suffix={`/ ${group.max_teams}`}
                 valueStyle={{ color: teams.length >= group.max_teams ? "#cf1322" : "#3f8600" }}
@@ -526,13 +528,13 @@ const TournamentGroupDetail = () => {
           </Col>
           <Col span={6}>
             <Card>
-              <Statistic title="比賽場次" value={matches.length} valueStyle={{ color: "#1890ff" }} />
+              <Statistic title={t('group:detail.totalMatches')} value={matches.length} valueStyle={{ color: "#1890ff" }} />
             </Card>
           </Col>
           <Col span={6}>
             <Card>
               <Statistic
-                title="已完成比賽"
+                title={t('group:detail.completedMatches')}
                 value={matches.filter((m) => m.match_status === "completed").length}
                 suffix={`/ ${matches.length}`}
                 valueStyle={{ color: "#52c41a" }}
@@ -542,7 +544,7 @@ const TournamentGroupDetail = () => {
           <Col span={6}>
             <Card>
               <Statistic
-                title="進行中比賽"
+                title={t('group:detail.activeMatches')}
                 value={matches.filter((m) => m.match_status === "active").length}
                 valueStyle={{ color: "#faad14" }}
               />
@@ -555,8 +557,8 @@ const TournamentGroupDetail = () => {
           title={
             <Space>
               <TeamOutlined />
-              <span>隊伍管理</span>
-              <Tag color="blue">{teams.length} 支隊伍</Tag>
+              <span>{t('group:detail.teamManagement')}</span>
+              <Tag color="blue">{teams.length} {t('group:detail.teamsCount')}</Tag>
             </Space>
           }
           extra={
@@ -567,11 +569,11 @@ const TournamentGroupDetail = () => {
                 onClick={openAddTeamModal}
                 disabled={teams.length >= group.max_teams}
               >
-                添加隊伍
+                {t('group:detail.addTeam')}
               </Button>
               {teams.length >= 2 && matches.length === 0 && (
                 <Button type="default" icon={<PlayCircleOutlined />} onClick={handleGenerateMatches}>
-                  生成循環賽
+                  {t('group:detail.generateRoundRobin')}
                 </Button>
               )}
             </Space>
@@ -591,16 +593,16 @@ const TournamentGroupDetail = () => {
                         icon={<EyeOutlined />}
                         onClick={() => navigate(`/tournaments/${tournamentId}/teams/${team.team_id}`)}
                       >
-                        詳情
+                        {t('common:buttons.view')}
                       </Button>,
                       <Popconfirm
-                        title="確定要移除這支隊伍嗎？"
+                        title={t('group:detail.removeTeamConfirmation')}
                         onConfirm={() => handleRemoveTeam(team.team_id)}
-                        okText="確定"
-                        cancelText="取消"
+                        okText={t('common:actions.confirm')}
+                        cancelText={t('common:actions.cancel')}
                       >
                         <Button type="link" danger icon={<DeleteOutlined />}>
-                          移除
+                          {t('group:detail.removeTeam')}
                         </Button>
                       </Popconfirm>,
                     ]}
@@ -608,16 +610,16 @@ const TournamentGroupDetail = () => {
                     <Card.Meta
                       avatar={<Avatar style={{ backgroundColor: team.team_color }} icon={<TeamOutlined />} />}
                       title={getDisplayTeamName(team.team_name)}
-                      description={`隊伍顏色: ${team.team_color}`}
+                      description={`${t('team:labels.teamColor')}: ${team.team_color}`}
                     />
                   </Card>
                 </List.Item>
               )}
             />
           ) : (
-            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description="暫無隊伍">
+            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('group:messages.noTeamsInGroup')}>
               <Button type="primary" icon={<PlusOutlined />} onClick={openAddTeamModal}>
-                添加第一支隊伍
+                {t('group:detail.addFirstTeam')}
               </Button>
             </Empty>
           )}
@@ -629,7 +631,7 @@ const TournamentGroupDetail = () => {
             title={
               <Space>
                 <TrophyOutlined />
-                <span>積分榜</span>
+                <span>{t('group:group.standings')}</span>
               </Space>
             }
           >
@@ -642,8 +644,8 @@ const TournamentGroupDetail = () => {
           title={
             <Space>
               <PlayCircleOutlined />
-              <span>比賽列表</span>
-              <Tag color="blue">{matches.length} 場比賽</Tag>
+              <span>{t('group:detail.matchList')}</span>
+              <Tag color="blue">{matches.length} {t('group:detail.matchesCount')}</Tag>
             </Space>
           }
         >
@@ -652,11 +654,11 @@ const TournamentGroupDetail = () => {
           ) : (
             <Empty
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={teams.length < 2 ? "至少需要2支隊伍才能創建比賽" : "暫無比賽"}
+              description={teams.length < 2 ? t('group:detail.needTwoTeams') : t('group:messages.noMatchesInGroup')}
             >
               {teams.length >= 2 && (
                 <Button type="primary" icon={<PlayCircleOutlined />} onClick={handleGenerateMatches}>
-                  生成循環賽
+                  {t('group:detail.generateRoundRobin')}
                 </Button>
               )}
             </Empty>
@@ -666,15 +668,15 @@ const TournamentGroupDetail = () => {
 
       {/* 添加隊伍模態框 */}
       <Modal
-        title="添加隊伍到小組"
+        title={t('group:detail.addTeamToGroup')}
         open={addTeamModalVisible}
         onCancel={() => setAddTeamModalVisible(false)}
         footer={null}
       >
         {availableTeams.length > 0 ? (
           <Form form={form} layout="vertical" onFinish={handleAddTeam}>
-            <Form.Item label="選擇隊伍" name="team_id" rules={[{ required: true, message: "請選擇要添加的隊伍" }]}>
-              <Select placeholder="請選擇隊伍" size="large">
+            <Form.Item label={t('group:detail.selectTeam')} name="team_id" rules={[{ required: true, message: t('group:detail.selectTeamRequired') }]}>
+              <Select placeholder={t('group:detail.selectTeamPlaceholder')} size="large">
                 {availableTeams.map((team) => (
                   <Option key={team.team_id} value={team.team_id}>
                     <Space>
@@ -697,9 +699,9 @@ const TournamentGroupDetail = () => {
             <Form.Item>
               <Space>
                 <Button type="primary" htmlType="submit">
-                  添加隊伍
+                  {t('group:detail.addTeam')}
                 </Button>
-                <Button onClick={() => setAddTeamModalVisible(false)}>取消</Button>
+                <Button onClick={() => setAddTeamModalVisible(false)}>{t('common:buttons.cancel')}</Button>
               </Space>
             </Form.Item>
           </Form>
@@ -707,10 +709,10 @@ const TournamentGroupDetail = () => {
           <div style={{ textAlign: "center", padding: "40px 0" }}>
             <TeamOutlined style={{ fontSize: "48px", color: "#ccc", marginBottom: "16px" }} />
             <div>
-              <Text type="secondary">沒有可添加的隊伍</Text>
+              <Text type="secondary">{t('group:detail.noAvailableTeams')}</Text>
               <br />
               <Text type="secondary" style={{ fontSize: "12px" }}>
-                所有隊伍都已分配到小組或已在當前小組中
+                {t('group:detail.allTeamsAssigned')}
               </Text>
               <br />
               <Button
@@ -722,7 +724,7 @@ const TournamentGroupDetail = () => {
                   navigate(`/tournaments/${tournamentId}/teams/create`);
                 }}
               >
-                創建新隊伍
+                {t('team:create.createTeam')}
               </Button>
             </div>
           </div>

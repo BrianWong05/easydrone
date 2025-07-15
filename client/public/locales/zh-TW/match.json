@@ -52,7 +52,11 @@
     "ongoing": "進行中",
     "finished": "已結束",
     "cancelled": "已取消",
-    "postponed": "延期"
+    "postponed": "延期",
+    "pending": "待開始",
+    "active": "進行中",
+    "completed": "已完成",
+    "overtime": "延長賽"
   },
   "results": {
     "win": "勝",
@@ -93,5 +97,11 @@
     "selectVenue": "請選擇比賽場地",
     "selectReferee": "請選擇裁判",
     "enterScore": "請輸入比分"
+  },
+  "actions": {
+    "start": "開始",
+    "view": "查看",
+    "edit": "編輯",
+    "delete": "刪除"
   }
 }
