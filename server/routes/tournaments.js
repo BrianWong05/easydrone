@@ -224,6 +224,36 @@ router.get('/', async (req, res) => {
   }
 });
 
+// 獲取錦標賽的小組列表
+router.get('/:id/groups', async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const groups = await query(`
+      SELECT 
+        group_id,
+        group_name,
+        tournament_id,
+        created_at
+      FROM team_groups 
+      WHERE tournament_id = ?
+      ORDER BY group_name
+    `, [id]);
+
+    res.json({
+      success: true,
+      data: groups
+    });
+
+  } catch (error) {
+    console.error('獲取錦標賽小組列表錯誤:', error);
+    res.status(500).json({
+      success: false,
+      message: '獲取錦標賽小組列表失敗'
+    });
+  }
+});
+
 // 獲取單個錦標賽詳情
 router.get('/:id', async (req, res) => {
   try {

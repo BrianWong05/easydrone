@@ -125,8 +125,16 @@ const MainLayout = ({ children }) => {
           label: <Link to="/stats">統計概覽</Link>,
         },
         {
-          key: "/stats/groups",
-          label: <Link to="/stats/groups">小組積分</Link>,
+          key: "/stats/group-standings",
+          label: <Link to="/stats/group-standings">小組積分</Link>,
+        },
+        {
+          key: "/stats/overall-leaderboard",
+          label: <Link to="/stats/overall-leaderboard">總排名榜</Link>,
+        },
+        {
+          key: "/stats/best-teams",
+          label: <Link to="/stats/best-teams">最佳球隊統計</Link>,
         },
       ],
     },

@@ -940,4 +940,221 @@ router.get('/fouls', async (req, res) => {
   }
 });
 
+// 獲取最佳進攻和防守球隊統計
+router.get('/best-teams', async (req, res) => {
+  try {
+    const { 
+      tournament_id, 
+      group_id, 
+      match_type, 
+      date_from, 
+      date_to,
+      match_ids 
+    } = req.query;
+
+    console.log('🏆 Getting best attack and defense teams with filters:', {
+      tournament_id, group_id, match_type, date_from, date_to, match_ids
+    });
+
+    // Build WHERE clause based on filters
+    let whereConditions = ['m.match_status = "completed"'];
+    let params = [];
+
+    if (tournament_id) {
+      whereConditions.push('m.tournament_id = ?');
+      params.push(tournament_id);
+    }
+
+    if (group_id) {
+      whereConditions.push('m.group_id = ?');
+      params.push(group_id);
+    }
+
+    if (match_type) {
+      whereConditions.push('m.match_type = ?');
+      params.push(match_type);
+    }
+
+    if (date_from) {
+      whereConditions.push('DATE(m.match_date) >= ?');
+      params.push(date_from);
+    }
+
+    if (date_to) {
+      whereConditions.push('DATE(m.match_date) <= ?');
+      params.push(date_to);
+    }
+
+    if (match_ids) {
+      const matchIdArray = match_ids.split(',').map(id => parseInt(id.trim())).filter(id => !isNaN(id));
+      if (matchIdArray.length > 0) {
+        whereConditions.push(`m.match_id IN (${matchIdArray.map(() => '?').join(',')})`);
+        params.push(...matchIdArray);
+      }
+    }
+
+    const whereClause = whereConditions.join(' AND ');
+
+    // Get team statistics with filtering
+    const teamStats = await query(`
+      SELECT 
+        t.team_id,
+        t.team_name,
+        t.team_color,
+        g.group_name,
+        COUNT(DISTINCT m.match_id) as matches_played,
+        SUM(CASE 
+          WHEN m.team1_id = t.team_id THEN COALESCE(m.team1_score, 0)
+          WHEN m.team2_id = t.team_id THEN COALESCE(m.team2_score, 0)
+          ELSE 0 END) as goals_for,
+        SUM(CASE 
+          WHEN m.team1_id = t.team_id THEN COALESCE(m.team2_score, 0)
+          WHEN m.team2_id = t.team_id THEN COALESCE(m.team1_score, 0)
+          ELSE 0 END) as goals_against,
+        ROUND(SUM(CASE 
+          WHEN m.team1_id = t.team_id THEN COALESCE(m.team1_score, 0)
+          WHEN m.team2_id = t.team_id THEN COALESCE(m.team2_score, 0)
+          ELSE 0 END) / COUNT(DISTINCT m.match_id), 2) as avg_goals_for,
+        ROUND(SUM(CASE 
+          WHEN m.team1_id = t.team_id THEN COALESCE(m.team2_score, 0)
+          WHEN m.team2_id = t.team_id THEN COALESCE(m.team1_score, 0)
+          ELSE 0 END) / COUNT(DISTINCT m.match_id), 2) as avg_goals_against
+      FROM teams t
+      LEFT JOIN team_groups g ON t.group_id = g.group_id
+      JOIN matches m ON (t.team_id = m.team1_id OR t.team_id = m.team2_id)
+      WHERE ${whereClause}
+      GROUP BY t.team_id, t.team_name, t.team_color, g.group_name
+      HAVING matches_played > 0
+    `, params);
+
+    // Find best attack team (most goals)
+    const bestAttackTeam = teamStats.reduce((best, team) => 
+      team.goals_for > best.goals_for ? team : best, 
+      teamStats[0] || {}
+    );
+
+    // Find best defense team (least goals conceded)
+    const bestDefenseTeam = teamStats.reduce((best, team) => 
+      team.goals_against < best.goals_against ? team : best, 
+      teamStats[0] || {}
+    );
+
+    // Get top 5 attack teams
+    const topAttackTeams = [...teamStats]
+      .sort((a, b) => b.goals_for - a.goals_for)
+      .slice(0, 5);
+
+    // Get top 5 defense teams
+    const topDefenseTeams = [...teamStats]
+      .sort((a, b) => a.goals_against - b.goals_against)
+      .slice(0, 5);
+
+    // Get match count for context
+    const matchCountResult = await query(`
+      SELECT COUNT(DISTINCT m.match_id) as total_matches
+      FROM matches m
+      WHERE ${whereClause}
+    `, params);
+
+    const totalMatches = matchCountResult[0]?.total_matches || 0;
+
+    console.log('🏆 Best teams calculated:', {
+      bestAttack: bestAttackTeam?.team_name,
+      bestDefense: bestDefenseTeam?.team_name,
+      totalMatches,
+      teamsAnalyzed: teamStats.length
+    });
+
+    res.json({
+      success: true,
+      data: {
+        best_attack_team: bestAttackTeam,
+        best_defense_team: bestDefenseTeam,
+        top_attack_teams: topAttackTeams,
+        top_defense_teams: topDefenseTeams,
+        summary: {
+          total_matches_analyzed: totalMatches,
+          teams_analyzed: teamStats.length,
+          filters_applied: {
+            tournament_id: tournament_id || null,
+            group_id: group_id || null,
+            match_type: match_type || null,
+            date_range: date_from && date_to ? `${date_from} to ${date_to}` : null,
+            specific_matches: match_ids ? match_ids.split(',').length : null
+          }
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error('獲取最佳球隊統計錯誤:', error);
+    res.status(500).json({
+      success: false,
+      message: '獲取最佳球隊統計失敗',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
+  }
+});
+
+// 獲取可用的比賽列表（用於篩選）
+router.get('/available-matches', async (req, res) => {
+  try {
+    const { tournament_id, group_id } = req.query;
+
+    let whereConditions = ['m.match_status = "completed"'];
+    let params = [];
+
+    if (tournament_id) {
+      whereConditions.push('m.tournament_id = ?');
+      params.push(tournament_id);
+    }
+
+    if (group_id) {
+      whereConditions.push('m.group_id = ?');
+      params.push(group_id);
+    }
+
+    const whereClause = whereConditions.join(' AND ');
+
+    const matches = await query(`
+      SELECT 
+        m.match_id,
+        m.match_date,
+        m.match_time,
+        m.match_type,
+        m.tournament_stage,
+        m.team1_score,
+        m.team2_score,
+        t1.team_name as team1_name,
+        t1.team_color as team1_color,
+        t2.team_name as team2_name,
+        t2.team_color as team2_color,
+        g.group_name,
+        tour.tournament_name
+      FROM matches m
+      JOIN teams t1 ON m.team1_id = t1.team_id
+      JOIN teams t2 ON m.team2_id = t2.team_id
+      LEFT JOIN team_groups g ON m.group_id = g.group_id
+      LEFT JOIN tournaments tour ON m.tournament_id = tour.tournament_id
+      WHERE ${whereClause}
+      ORDER BY m.match_date DESC, m.match_time DESC
+    `, params);
+
+    res.json({
+      success: true,
+      data: {
+        matches,
+        total_count: matches.length
+      }
+    });
+
+  } catch (error) {
+    console.error('獲取可用比賽列表錯誤:', error);
+    res.status(500).json({
+      success: false,
+      message: '獲取可用比賽列表失敗'
+    });
+  }
+});
+
 module.exports = router;

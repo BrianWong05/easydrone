@@ -50,6 +50,7 @@ import StatsOverview from "./pages/Stats/StatsOverview";
 import GroupStandings from "./pages/Stats/GroupStandings";
 import AllGroupStandings from "./pages/Stats/AllGroupStandings";
 import OverallLeaderboard from "./pages/Stats/OverallLeaderboard";
+import BestTeamsStats from "./pages/Stats/BestTeamsStats";
 import NotFound from "./pages/NotFound";
 
 import "./App.css";
@@ -58,6 +59,7 @@ import TournamentMatchEdit from "./pages/Tournaments/TournamentMatchEdit";
 import TournamentMatchResultEdit from "./pages/Tournaments/TournamentMatchResultEdit";
 import TournamentOverallLeaderboard from "./pages/Tournaments/TournamentOverallLeaderboard";
 import TournamentLiveMatch from "./pages/Tournaments/TournamentLiveMatch";
+import TournamentBestTeamsStats from "./pages/Tournaments/TournamentBestTeamsStats";
 
 const { Content } = Layout;
 
@@ -98,6 +100,13 @@ function App() {
                   <Routes>
                     {/* 儀表板 */}
                     <Route path="/" element={<TournamentList />} />
+
+                    {/* 統計頁面 */}
+                    <Route path="/stats" element={<StatsOverview />} />
+                    <Route path="/stats/overview" element={<StatsOverview />} />
+                    <Route path="/stats/group-standings" element={<AllGroupStandings />} />
+                    <Route path="/stats/overall-leaderboard" element={<OverallLeaderboard />} />
+                    <Route path="/stats/best-teams" element={<BestTeamsStats />} />
 
                     {/* 404 頁面 */}
                     <Route path="*" element={<NotFound />} />
@@ -163,6 +172,7 @@ function App() {
                 <Route path="/leaderboard/groups" element={<GroupLeaderboard />} />
                 <Route path="/leaderboard/overall" element={<TournamentOverallLeaderboard />} />
                 <Route path="/leaderboard/stats" element={<div>Tournament Statistics</div>} />
+                <Route path="/leaderboard/best-teams" element={<TournamentBestTeamsStats />} />
 
                 {/* Settings */}
                 <Route path="/settings" element={<div>Tournament Settings</div>} />

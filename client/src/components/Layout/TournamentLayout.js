@@ -138,7 +138,12 @@ const TournamentLayout = ({ children }) => {
         },
         {
           key: `/tournaments/${id}/leaderboard/stats`,
-          label: <Link to={`/tournaments/${id}/leaderboard/stats`}>統計數據</Link>,
+          label: <span style={{ color: '#999', cursor: 'not-allowed' }}>統計數據 (開發中)</span>,
+          disabled: true,
+        },
+        {
+          key: `/tournaments/${id}/leaderboard/best-teams`,
+          label: <Link to={`/tournaments/${id}/leaderboard/best-teams`}>最佳球隊統計</Link>,
         },
       ],
     },
