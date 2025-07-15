@@ -36,6 +36,7 @@
     "noTournaments": "暫無錦標賽數據",
     "createFirstTournament": "點擊上方「新增錦標賽」按鈕創建您的第一個錦標賽",
     "loadingTournaments": "載入錦標賽資料中...",
+    "loadingKnockoutData": "載入淘汰賽資料中...",
     "noActiveTournament": "目前沒有可顯示的錦標賽",
     "tournamentLoadFailed": "載入錦標賽資料失敗",
     "tournamentCreated": "錦標賽創建成功",
@@ -48,7 +49,9 @@
     "deleteWarning": "刪除後將無法恢復，相關的比賽數據也會被刪除。",
     "activateTooltip": "激活錦標賽 (設為公開顯示)",
     "deactivateTooltip": "停用錦標賽 (從公開顯示中移除)",
-    "reactivateTooltip": "重新激活錦標賽"
+    "reactivateTooltip": "重新激活錦標賽",
+    "noKnockoutData": "暫無淘汰賽資料",
+    "noKnockoutDataDesc": "此錦標賽可能尚未開始淘汰賽階段，或採用其他賽制"
   },
   "placeholders": {
     "searchTournament": "搜索錦標賽名稱",
@@ -56,5 +59,33 @@
     "enterDescription": "請輸入錦標賽描述",
     "selectType": "請選擇錦標賽類型",
     "selectLocation": "請選擇比賽地點"
-  }
+  },
+  "rounds": {
+    "final": "決賽",
+    "semifinal": "準決賽",
+    "quarterfinal": "八強賽",
+    "round16": "十六強賽",
+    "thirdPlace": "季軍賽",
+    "roundNumber": "第{{number}}輪"
+  },
+  "bracket": {
+    "title": "淘汰賽對戰表",
+    "knockout": "淘汰賽",
+    "bracket": "對戰表"
+  },
+  "champion": {
+    "title": "冠軍",
+    "tournament": "錦標賽冠軍",
+    "congratulations": "恭喜獲得 {{tournament}} 冠軍！"
+  },
+  "stats": {
+    "totalRounds": "總輪數",
+    "progress": "比賽進度"
+  },
+  "actions": {
+    "viewAllMatches": "查看所有比賽",
+    "viewGroupStage": "查看小組賽"
+  },
+  "roundWinner": "第{{round}}輪勝者",
+  "teamNumber": "隊伍 {{id}}"
 }

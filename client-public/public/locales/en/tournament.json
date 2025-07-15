@@ -36,6 +36,7 @@
     "noTournaments": "No tournament data available",
     "createFirstTournament": "Click the 'Add Tournament' button above to create your first tournament",
     "loadingTournaments": "Loading tournament data...",
+    "loadingKnockoutData": "Loading knockout data...",
     "noActiveTournament": "No active tournament to display",
     "tournamentLoadFailed": "Failed to load tournament data",
     "tournamentCreated": "Tournament created successfully",
@@ -48,7 +49,9 @@
     "deleteWarning": "This action cannot be undone. Related match data will also be deleted.",
     "activateTooltip": "Activate tournament (set as public display)",
     "deactivateTooltip": "Deactivate tournament (remove from public display)",
-    "reactivateTooltip": "Reactivate tournament"
+    "reactivateTooltip": "Reactivate tournament",
+    "noKnockoutData": "No knockout data available",
+    "noKnockoutDataDesc": "This tournament may not have started the knockout stage yet, or uses a different format"
   },
   "placeholders": {
     "searchTournament": "Search tournament name",
@@ -56,5 +59,33 @@
     "enterDescription": "Enter tournament description",
     "selectType": "Select tournament type",
     "selectLocation": "Select venue"
-  }
+  },
+  "rounds": {
+    "final": "Final",
+    "semifinal": "Semifinal",
+    "quarterfinal": "Quarterfinal",
+    "round16": "Round of 16",
+    "thirdPlace": "Third Place",
+    "roundNumber": "Round {{number}}"
+  },
+  "bracket": {
+    "title": "Knockout Bracket",
+    "knockout": "Knockout",
+    "bracket": "Bracket"
+  },
+  "champion": {
+    "title": "Champion",
+    "tournament": "Tournament Champion",
+    "congratulations": "Congratulations on winning the {{tournament}} championship!"
+  },
+  "stats": {
+    "totalRounds": "Total Rounds",
+    "progress": "Match Progress"
+  },
+  "actions": {
+    "viewAllMatches": "View All Matches",
+    "viewGroupStage": "View Group Stage"
+  },
+  "roundWinner": "Round {{round}} Winner",
+  "teamNumber": "Team {{id}}"
 }

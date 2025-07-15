@@ -25,6 +25,7 @@ import {
   CrownOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import moment from 'moment';
 
@@ -32,6 +33,7 @@ const { Title, Text } = Typography;
 
 const ClientKnockoutBracket = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation(['tournament', 'match', 'common']);
   
   // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
   const getDisplayTeamName = (teamName) => {
@@ -81,7 +83,7 @@ const ClientKnockoutBracket = () => {
       }
 
       if (!tournamentData) {
-        setError('找不到可顯示的錦標賽');
+        setError(t('common:messages.noTournamentFound', { defaultValue: '找不到可顯示的錦標賽' }));
         return;
       }
 
@@ -140,7 +142,7 @@ const ClientKnockoutBracket = () => {
 
     } catch (error) {
       console.error('Error fetching knockout data:', error);
-      setError('載入淘汰賽資料失敗');
+      setError(t('tournament:messages.loadingKnockoutData'));
     } finally {
       setLoading(false);
     }
@@ -148,11 +150,11 @@ const ClientKnockoutBracket = () => {
 
   const getMatchStatusTag = (status) => {
     const statusMap = {
-      'pending': { color: 'default', text: '待開始', icon: <ClockCircleOutlined /> },
-      'active': { color: 'processing', text: '進行中', icon: <PlayCircleOutlined /> },
-      'in_progress': { color: 'processing', text: '進行中', icon: <PlayCircleOutlined /> },
-      'completed': { color: 'success', text: '已完成', icon: <CheckCircleOutlined /> },
-      'cancelled': { color: 'error', text: '已取消', icon: <ClockCircleOutlined /> }
+      'pending': { color: 'default', text: t('match:status.pending'), icon: <ClockCircleOutlined /> },
+      'active': { color: 'processing', text: t('match:status.inProgress'), icon: <PlayCircleOutlined /> },
+      'in_progress': { color: 'processing', text: t('match:status.inProgress'), icon: <PlayCircleOutlined /> },
+      'completed': { color: 'success', text: t('match:status.completed'), icon: <CheckCircleOutlined /> },
+      'cancelled': { color: 'error', text: t('match:status.cancelled'), icon: <ClockCircleOutlined /> }
     };
     
     const statusInfo = statusMap[status] || { color: 'default', text: status, icon: <ClockCircleOutlined /> };
@@ -167,21 +169,21 @@ const ClientKnockoutBracket = () => {
     const remainingRounds = totalRounds - roundNumber + 1;
     switch (remainingRounds) {
       case 1:
-        return "決賽";
+        return t('tournament:rounds.final');
       case 2:
-        return "準決賽";
+        return t('tournament:rounds.semifinal');
       case 3:
-        return "八強賽";
+        return t('tournament:rounds.quarterfinal');
       case 4:
-        return "十六強賽";
+        return t('tournament:rounds.round16');
       default:
-        return `第${roundNumber}輪`;
+        return t('tournament:rounds.roundNumber', { number: roundNumber });
     }
   };
 
   const getMatchDisplayName = (match) => {
     if (match.tournament_stage === 'third_place') {
-      return '🥉 季軍賽';
+      return `🥉 ${t('tournament:rounds.thirdPlace')}`;
     }
     return match.match_number;
   };
@@ -207,12 +209,12 @@ const ClientKnockoutBracket = () => {
 
       if (semiMatches.length >= 2) {
         if (teamKey === "team1") {
-          return `${semiMatches[0].match_number}敗者`;
+          return `${semiMatches[0].match_number}${t('match:result.loser')}`;
         } else {
-          return `${semiMatches[1].match_number}敗者`;
+          return `${semiMatches[1].match_number}${t('match:result.loser')}`;
         }
       }
-      return "待定";
+      return t('match:status.pending');
     }
     
     // Show match winner reference for teams that haven't advanced yet
@@ -221,17 +223,17 @@ const ClientKnockoutBracket = () => {
       // Find the source match for this team position
       const sourceMatch = findSourceMatch(match, teamKey);
       if (sourceMatch) {
-        return `${sourceMatch}勝者`;
+        return `${sourceMatch}${t('match:result.winner')}`;
       }
       // If no source match found, show a generic placeholder based on round
       const currentRound = match.round_number;
       if (currentRound === 1) {
-        return '待定'; // First round teams are manually assigned
+        return t('match:status.pending'); // First round teams are manually assigned
       }
-      return `第${currentRound-1}輪勝者`;
+      return t('tournament:roundWinner', { round: currentRound-1 });
     }
     
-    return `隊伍 ${teamId}`;
+    return t('tournament:teamNumber', { id: teamId });
   };
 
   // Helper function to find the source match for a team position
@@ -394,7 +396,7 @@ const ClientKnockoutBracket = () => {
       <div style={{ padding: 24, textAlign: 'center' }}>
         <Spin size="large" />
         <div style={{ marginTop: 16 }}>
-          <Text>載入淘汰賽資料中...</Text>
+          <Text>{t('tournament:messages.loadingKnockoutData')}</Text>
         </div>
       </div>
     );
@@ -404,13 +406,13 @@ const ClientKnockoutBracket = () => {
     return (
       <div style={{ padding: 24 }}>
         <Alert
-          message="載入失敗"
+          message={t('common:messages.loadFailed')}
           description={error}
           type="error"
           showIcon
           action={
             <Button size="small" onClick={fetchKnockoutData}>
-              重新載入
+              {t('common:actions.reload')}
             </Button>
           }
         />
@@ -432,17 +434,17 @@ const ClientKnockoutBracket = () => {
                   <TrophyOutlined style={{ marginRight: 8, color: '#faad14' }} />
                   {tournament.tournament_name}
                 </Title>
-                <Text type="secondary">淘汰賽對戰表</Text>
+                <Text type="secondary">{t('tournament:bracket.title')}</Text>
               </Space>
             </Col>
             <Col>
               <Space>
                 <Tag color="purple" style={{ fontSize: '14px', padding: '4px 12px' }}>
-                  淘汰賽
+                  {t('tournament:bracket.knockout')}
                 </Tag>
                 {stats.champion && (
                   <Tag color="gold" icon={<CrownOutlined />} style={{ fontSize: '14px', padding: '4px 12px' }}>
-                    冠軍: {stats.champion.name}
+                    {t('tournament:champion.title')}: {stats.champion.name}
                   </Tag>
                 )}
               </Space>
@@ -458,7 +460,7 @@ const ClientKnockoutBracket = () => {
             <Col xs={24} sm={12} md={6}>
               <Card>
                 <Statistic
-                  title="總比賽數"
+                  title={t('common:stats.totalMatches')}
                   value={stats.totalMatches}
                   prefix={<CalendarOutlined style={{ color: '#1890ff' }} />}
                   valueStyle={{ color: '#1890ff' }}
@@ -468,7 +470,7 @@ const ClientKnockoutBracket = () => {
             <Col xs={24} sm={12} md={6}>
               <Card>
                 <Statistic
-                  title="已完成"
+                  title={t('common:stats.completedMatches')}
                   value={stats.completedMatches}
                   prefix={<CheckCircleOutlined style={{ color: '#52c41a' }} />}
                   valueStyle={{ color: '#52c41a' }}
@@ -478,7 +480,7 @@ const ClientKnockoutBracket = () => {
             <Col xs={24} sm={12} md={6}>
               <Card>
                 <Statistic
-                  title="總輪數"
+                  title={t('tournament:stats.totalRounds')}
                   value={stats.totalRounds}
                   prefix={<ThunderboltOutlined style={{ color: '#faad14' }} />}
                   valueStyle={{ color: '#faad14' }}
@@ -489,7 +491,7 @@ const ClientKnockoutBracket = () => {
               <Card>
                 <div style={{ textAlign: 'center' }}>
                   <Text type="secondary" style={{ display: 'block', marginBottom: 8 }}>
-                    比賽進度
+                    {t('tournament:stats.progress')}
                   </Text>
                   <Progress 
                     type="circle" 
@@ -506,7 +508,7 @@ const ClientKnockoutBracket = () => {
           <Card>
             <Title level={3}>
               <ThunderboltOutlined style={{ marginRight: 8 }} />
-              對戰表
+              {t('tournament:bracket.bracket')}
             </Title>
             
             <div style={{ overflowX: 'auto', padding: '16px 0' }}>
@@ -530,7 +532,7 @@ const ClientKnockoutBracket = () => {
                             {roundName}
                           </Title>
                           <Text type="secondary">
-                            {regularMatches.filter(m => m.match_status === 'completed').length} / {regularMatches.length} 已完成
+                            {regularMatches.filter(m => m.match_status === 'completed').length} / {regularMatches.length} {t('common:stats.completed')}
                           </Text>
                         </div>
                         
@@ -554,7 +556,7 @@ const ClientKnockoutBracket = () => {
                 <div style={{ marginTop: 24 }}>
                   <div style={{ textAlign: 'center', marginBottom: 16 }}>
                     <Title level={4} style={{ margin: 0, color: '#fa8c16' }}>
-                      🥉 季軍賽
+                      🥉 {t('tournament:rounds.thirdPlace')}
                     </Title>
                   </div>
                   <Row justify="center">
@@ -577,7 +579,7 @@ const ClientKnockoutBracket = () => {
               <Space direction="vertical" size="large">
                 <Title level={2}>
                   <CrownOutlined style={{ color: '#faad14', marginRight: 8 }} />
-                  錦標賽冠軍
+                  {t('tournament:champion.tournament')}
                 </Title>
                 <div 
                   style={{ 
@@ -598,7 +600,7 @@ const ClientKnockoutBracket = () => {
                   {stats.champion.name}
                 </Title>
                 <Text type="secondary" style={{ fontSize: '16px' }}>
-                  恭喜獲得 {tournament?.tournament_name} 冠軍！
+                  {t('tournament:champion.congratulations', { tournament: tournament?.tournament_name })}
                 </Text>
               </Space>
             </Card>
@@ -612,20 +614,20 @@ const ClientKnockoutBracket = () => {
             description={
               <Space direction="vertical" size="small">
                 <Text type="secondary" style={{ fontSize: '16px' }}>
-                  暫無淘汰賽資料
+                  {t('tournament:messages.noKnockoutData')}
                 </Text>
                 <Text type="secondary">
-                  此錦標賽可能尚未開始淘汰賽階段，或採用其他賽制
+                  {t('tournament:messages.noKnockoutDataDesc')}
                 </Text>
               </Space>
             }
           >
             <Space>
               <Button type="primary" onClick={() => navigate('/matches')}>
-                查看所有比賽
+                {t('tournament:actions.viewAllMatches')}
               </Button>
               <Button onClick={() => navigate('/groups')}>
-                查看小組賽
+                {t('tournament:actions.viewGroupStage')}
               </Button>
             </Space>
           </Empty>

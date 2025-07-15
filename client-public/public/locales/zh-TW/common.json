@@ -129,6 +129,7 @@
   "stats": {
     "totalTeams": "總隊伍數",
     "totalMatches": "總比賽數",
-    "completedMatches": "已完成比賽"
+    "completedMatches": "已完成比賽",
+    "completed": "已完成"
   }
 }

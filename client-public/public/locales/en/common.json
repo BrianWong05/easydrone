@@ -129,6 +129,7 @@
   "stats": {
     "totalTeams": "Total Teams",
     "totalMatches": "Total Matches",
-    "completedMatches": "Completed Matches"
+    "completedMatches": "Completed Matches",
+    "completed": "Completed"
   }
 }
