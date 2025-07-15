@@ -32,8 +32,7 @@ router.get('/public', async (req, res) => {
   try {
     console.log('🌐 獲取公開錦標賽...');
     
-    // 首先嘗試獲取有統計數據的錦標賽
-    // 優先返回有最佳球隊統計數據的錦標賽
+    // 優先返回活躍的錦標賽，如果沒有活躍的則返回有統計數據的錦標賽
     const publicTournamentQuery = `
       SELECT 
         t.tournament_id,
@@ -44,11 +43,13 @@ router.get('/public', async (req, res) => {
         t.end_date,
         t.created_at,
         t.updated_at,
+        CASE WHEN t.status = 'active' THEN 1 ELSE 0 END as is_active,
         MAX(btc.created_at) as latest_stats
       FROM tournaments t
-      INNER JOIN best_teams_cache btc ON t.tournament_id = btc.tournament_id
+      LEFT JOIN best_teams_cache btc ON t.tournament_id = btc.tournament_id
+      WHERE t.status IN ('active', 'pending', 'completed')
       GROUP BY t.tournament_id
-      ORDER BY latest_stats DESC
+      ORDER BY is_active DESC, latest_stats DESC, t.created_at DESC
       LIMIT 1
     `;
     

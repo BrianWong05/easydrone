@@ -74,7 +74,10 @@ const ClientBestTeamsStats = () => {
       const response = await axios.get('/api/tournaments/public');
       if (response.data.success && response.data.data) {
         setTournaments([response.data.data]);
-        setSelectedTournament(response.data.data.tournament_id);
+        // Only update selected tournament if it's different or not set
+        if (!selectedTournament || selectedTournament !== response.data.data.tournament_id) {
+          setSelectedTournament(response.data.data.tournament_id);
+        }
       }
     } catch (error) {
       console.error('獲取錦標賽失敗:', error);
@@ -95,10 +98,12 @@ const ClientBestTeamsStats = () => {
         setBestTeamsData(response.data.data);
       } else {
         setError(response.data.message || '暫無最佳球隊統計數據');
+        setBestTeamsData(null);
       }
     } catch (error) {
       console.error('獲取最佳球隊統計失敗:', error);
       setError('獲取統計數據失敗，請稍後再試');
+      setBestTeamsData(null);
     } finally {
       setLoading(false);
     }
