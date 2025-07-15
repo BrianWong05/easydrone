@@ -21,7 +21,7 @@
     "type": "比賽類型",
     "round": "輪次",
     "group": "小組",
-    "stage": "階段",
+    "stage": "錦標賽階段",
     "duration": "比賽時長",
     "status": "比賽狀態",
     "winner": "獲勝隊伍",
@@ -143,10 +143,33 @@
     "deleteConfirmation": "確定要刪除這場比賽嗎？",
     "noMatches": "暫無比賽數據",
     "teamsNotDetermined": "比賽隊伍尚未確定，無法開始比賽",
-    "managementDescription": "管理錦標賽中的所有比賽，包括小組賽和淘汰賽"
+    "managementDescription": "管理錦標賽中的所有比賽，包括小組賽和淘汰賽",
+    "createDescription": "為錦標賽創建新的比賽場次",
+    "createFailed": "創建比賽失敗"
   },
   "statistics": {
     "totalMatches": "總比賽數",
     "others": "其他"
+  },
+  "form": {
+    "matchNumberRequired": "請輸入比賽場次",
+    "matchNumberPattern": "比賽場次只能包含字母、數字、連字符和下劃線",
+    "matchNumberPlaceholder": "例如: A1, B2, SF1, F1",
+    "matchTypeRequired": "請選擇比賽類型",
+    "stagePlaceholder": "例如: 小組賽第1輪, 八強賽, 決賽",
+    "teamSetup": "隊伍設置",
+    "selectGroup": "選擇小組（可選）",
+    "selectGroupPlaceholder": "選擇小組後將只顯示該小組的隊伍",
+    "noGroup": "無小組",
+    "team1Required": "請選擇隊伍1",
+    "team2Required": "請選擇隊伍2",
+    "timeSetup": "時間設置",
+    "dateRequired": "請選擇比賽日期",
+    "datePlaceholder": "選擇比賽日期",
+    "timeRequired": "請選擇比賽時間",
+    "timePlaceholder": "選擇比賽時間",
+    "durationRequired": "比賽時長不能為0",
+    "minutesPlaceholder": "分鐘",
+    "secondsPlaceholder": "秒數"
   }
 }

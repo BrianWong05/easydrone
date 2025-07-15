@@ -21,8 +21,8 @@
     "type": "Match Type",
     "round": "Round",
     "group": "Group",
-    "stage": "Stage",
-    "duration": "Duration",
+    "stage": "Tournament Stage",
+    "duration": "Match Duration",
     "status": "Match Status",
     "winner": "Winner",
     "loser": "Loser",
@@ -143,10 +143,33 @@
     "deleteConfirmation": "Are you sure you want to delete this match?",
     "noMatches": "No match data available",
     "teamsNotDetermined": "Teams not determined, cannot start match",
-    "managementDescription": "Manage all matches in the tournament, including group stage and knockout matches"
+    "managementDescription": "Manage all matches in the tournament, including group stage and knockout matches",
+    "createDescription": "Create a new match for the tournament",
+    "createFailed": "Failed to create match"
   },
   "statistics": {
     "totalMatches": "Total Matches",
     "others": "Others"
+  },
+  "form": {
+    "matchNumberRequired": "Please enter match number",
+    "matchNumberPattern": "Match number can only contain letters, numbers, hyphens and underscores",
+    "matchNumberPlaceholder": "e.g: A1, B2, SF1, F1",
+    "matchTypeRequired": "Please select match type",
+    "stagePlaceholder": "e.g: Group Stage Round 1, Quarterfinals, Finals",
+    "teamSetup": "Team Setup",
+    "selectGroup": "Select Group (Optional)",
+    "selectGroupPlaceholder": "Select group to show only teams from that group",
+    "noGroup": "No Group",
+    "team1Required": "Please select Team 1",
+    "team2Required": "Please select Team 2",
+    "timeSetup": "Time Setup",
+    "dateRequired": "Please select match date",
+    "datePlaceholder": "Select match date",
+    "timeRequired": "Please select match time",
+    "timePlaceholder": "Select match time",
+    "durationRequired": "Match duration cannot be 0",
+    "minutesPlaceholder": "Minutes",
+    "secondsPlaceholder": "Seconds"
   }
 }

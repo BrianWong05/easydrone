@@ -17,6 +17,7 @@ import {
   InputNumber,
 } from "antd";
 import { ArrowLeftOutlined, SaveOutlined } from "@ant-design/icons";
+import { useTranslation } from 'react-i18next';
 import axios from "axios";
 import moment from "moment";
 import { convertToSeconds } from "../../utils/timeUtils";
@@ -27,6 +28,7 @@ const { Option } = Select;
 const TournamentMatchCreate = () => {
   const { id: tournamentId } = useParams();
   const navigate = useNavigate();
+  const { t } = useTranslation(['match', 'common']);
   const [form] = Form.useForm();
 
   const [tournament, setTournament] = useState(null);
@@ -50,7 +52,7 @@ const TournamentMatchCreate = () => {
       }
     } catch (error) {
       console.error("Error fetching tournament:", error);
-      message.error("獲取錦標賽信息失敗");
+      message.error(t('common:messages.loadFailed'));
     }
   };
 
@@ -75,13 +77,13 @@ const TournamentMatchCreate = () => {
       }
     } catch (error) {
       console.error("Error fetching teams:", error);
-      message.error("獲取隊伍列表失敗");
+      message.error(t('common:messages.loadFailed'));
     }
   };
 
   const handleGroupChange = (groupId) => {
     setSelectedGroup(groupId);
-    // 清空隊伍選擇
+    // Clear team selection
     form.setFieldsValue({
       team1_id: undefined,
       team2_id: undefined,
@@ -90,7 +92,7 @@ const TournamentMatchCreate = () => {
 
   const handleMatchTypeChange = (type) => {
     setMatchType(type);
-    // 如果不是小組賽，清空小組選擇和隊伍選擇
+    // If not group match, clear group and team selection
     if (type !== "group") {
       setSelectedGroup(null);
       form.setFieldsValue({
@@ -124,7 +126,7 @@ const TournamentMatchCreate = () => {
     try {
       setLoading(true);
 
-      // 組合日期和時間
+      // Combine date and time
       console.log('🔍 Create - Raw form values:', {
         match_date: values.match_date,
         match_time: values.match_time,
@@ -132,18 +134,18 @@ const TournamentMatchCreate = () => {
         match_time_format: values.match_time?.format('HH:mm')
       });
       
-      // 直接使用格式化的字符串來避免時區問題
-      const dateString = values.match_date.format('YYYY-MM-DD'); // 從DatePicker獲取日期字符串
-      const timeString = values.match_time.format('HH:mm'); // 從TimePicker獲取時間字符串
+      // Use formatted strings to avoid timezone issues
+      const dateString = values.match_date.format('YYYY-MM-DD'); // Get date string from DatePicker
+      const timeString = values.match_time.format('HH:mm'); // Get time string from TimePicker
       
-      // 直接組合字符串
+      // Combine strings directly
       const matchDateTime = `${dateString} ${timeString}:00`;
         
       console.log('🔍 Create - Date string:', dateString);
       console.log('🔍 Create - Time string:', timeString);
       console.log('🔍 Create - Combined datetime:', matchDateTime);
 
-      // 轉換分鐘和秒數為總秒數
+      // Convert minutes and seconds to total seconds
       const totalSeconds = convertToSeconds(values.match_minutes, values.match_seconds);
 
       const submitData = {
@@ -152,21 +154,21 @@ const TournamentMatchCreate = () => {
         match_time: totalSeconds,
       };
 
-      // 移除前端用的字段
+      // Remove frontend-only fields
       delete submitData.match_minutes;
       delete submitData.match_seconds;
 
       const response = await axios.post(`/api/tournaments/${tournamentId}/matches`, submitData);
 
       if (response.data.success) {
-        message.success("比賽創建成功");
+        message.success(t('match:messages.matchCreated'));
         navigate(`/tournaments/${tournamentId}/matches`);
       } else {
-        message.error(response.data.message || "創建比賽失敗");
+        message.error(response.data.message || t('match:messages.createFailed'));
       }
     } catch (error) {
       console.error("Error creating match:", error);
-      const errorMessage = error.response?.data?.message || "創建比賽失敗";
+      const errorMessage = error.response?.data?.message || t('match:messages.createFailed');
       message.error(errorMessage);
     } finally {
       setLoading(false);
@@ -181,10 +183,10 @@ const TournamentMatchCreate = () => {
           onClick={() => navigate(`/tournaments/${tournamentId}/matches`)}
           style={{ marginBottom: 16 }}
         >
-          返回比賽列表
+          {t('common:navigation.backToMatchList')}
         </Button>
-        <Title level={2}>{tournament?.tournament_name} - 新增比賽</Title>
-        <p style={{ color: "#666", marginBottom: 0 }}>為錦標賽創建新的比賽場次</p>
+        <Title level={2}>{tournament?.tournament_name} - {t('match:match.create')}</Title>
+        <p style={{ color: "#666", marginBottom: 0 }}>{t('match:messages.createDescription')}</p>
       </div>
 
       <Card>
@@ -201,40 +203,40 @@ const TournamentMatchCreate = () => {
           <Row gutter={24}>
             <Col span={12}>
               <Form.Item
-                label="比賽場次"
+                label={t('match:match.matchNumber')}
                 name="match_number"
                 rules={[
-                  { required: true, message: "請輸入比賽場次" },
-                  { pattern: /^[A-Za-z0-9\-_]+$/, message: "比賽場次只能包含字母、數字、連字符和下劃線" },
+                  { required: true, message: t('match:form.matchNumberRequired') },
+                  { pattern: /^[A-Za-z0-9\-_]+$/, message: t('match:form.matchNumberPattern') },
                 ]}
               >
-                <Input placeholder="例如: A1, B2, SF1, F1" />
+                <Input placeholder={t('match:form.matchNumberPlaceholder')} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="比賽類型" name="match_type" rules={[{ required: true, message: "請選擇比賽類型" }]}>
+              <Form.Item label={t('match:match.type')} name="match_type" rules={[{ required: true, message: t('match:form.matchTypeRequired') }]}>
                 <Select onChange={handleMatchTypeChange}>
-                  <Option value="group">小組賽</Option>
-                  <Option value="knockout">淘汰賽</Option>
-                  <Option value="friendly">友誼賽</Option>
+                  <Option value="group">{t('match:types.groupStage')}</Option>
+                  <Option value="knockout">{t('match:types.knockout')}</Option>
+                  <Option value="friendly">{t('match:types.friendly')}</Option>
                 </Select>
               </Form.Item>
             </Col>
           </Row>
 
-          <Form.Item label="錦標賽階段" name="tournament_stage">
-            <Input placeholder="例如: 小組賽第1輪, 八強賽, 決賽" />
+          <Form.Item label={t('match:match.stage')} name="tournament_stage">
+            <Input placeholder={t('match:form.stagePlaceholder')} />
           </Form.Item>
 
-          <Divider>隊伍設置</Divider>
+          <Divider>{t('match:form.teamSetup')}</Divider>
 
           {matchType === "group" && (
-            <Form.Item label="選擇小組（可選）" name="group_id">
-              <Select placeholder="選擇小組後將只顯示該小組的隊伍" allowClear onChange={handleGroupChange}>
-                <Option value={null}>無小組</Option>
+            <Form.Item label={t('match:form.selectGroup')} name="group_id">
+              <Select placeholder={t('match:form.selectGroupPlaceholder')} allowClear onChange={handleGroupChange}>
+                <Option value={null}>{t('match:form.noGroup')}</Option>
                 {groups.map((group) => (
                   <Option key={group.group_id} value={group.group_id}>
-                    小組 {group.group_name?.includes("_") ? group.group_name.split("_")[0] : group.group_name}
+                    {t('match:match.group')} {group.group_name?.includes("_") ? group.group_name.split("_")[0] : group.group_name}
                   </Option>
                 ))}
               </Select>
@@ -243,8 +245,8 @@ const TournamentMatchCreate = () => {
 
           <Row gutter={24}>
             <Col span={12}>
-              <Form.Item label="隊伍1" name="team1_id" rules={[{ required: true, message: "請選擇隊伍1" }]}>
-                <Select placeholder="選擇隊伍1" showSearch optionFilterProp="children">
+              <Form.Item label={t('match:match.team1')} name="team1_id" rules={[{ required: true, message: t('match:form.team1Required') }]}>
+                <Select placeholder={t('match:placeholders.selectTeam1')} showSearch optionFilterProp="children">
                   {getFilteredTeams().map((team) => (
                     <Option key={team.team_id} value={team.team_id}>
                       <div style={{ display: "flex", alignItems: "center" }}>
@@ -265,8 +267,8 @@ const TournamentMatchCreate = () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="隊伍2" name="team2_id" rules={[{ required: true, message: "請選擇隊伍2" }]}>
-                <Select placeholder="選擇隊伍2" showSearch optionFilterProp="children">
+              <Form.Item label={t('match:match.team2')} name="team2_id" rules={[{ required: true, message: t('match:form.team2Required') }]}>
+                <Select placeholder={t('match:placeholders.selectTeam2')} showSearch optionFilterProp="children">
                   {getFilteredTeams().map((team) => (
                     <Option key={team.team_id} value={team.team_id}>
                       <div style={{ display: "flex", alignItems: "center" }}>
@@ -288,23 +290,23 @@ const TournamentMatchCreate = () => {
             </Col>
           </Row>
 
-          <Divider>時間設置</Divider>
+          <Divider>{t('match:form.timeSetup')}</Divider>
 
           <Row gutter={24}>
             <Col span={12}>
-              <Form.Item label="比賽日期" name="match_date" rules={[{ required: true, message: "請選擇比賽日期" }]}>
-                <DatePicker style={{ width: "100%" }} placeholder="選擇比賽日期" />
+              <Form.Item label={t('match:match.date')} name="match_date" rules={[{ required: true, message: t('match:form.dateRequired') }]}>
+                <DatePicker style={{ width: "100%" }} placeholder={t('match:form.datePlaceholder')} />
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label="比賽時間" name="match_time" rules={[{ required: true, message: "請選擇比賽時間" }]}>
-                <TimePicker style={{ width: "100%" }} format="HH:mm" placeholder="選擇比賽時間" />
+              <Form.Item label={t('match:match.time')} name="match_time" rules={[{ required: true, message: t('match:form.timeRequired') }]}>
+                <TimePicker style={{ width: "100%" }} format="HH:mm" placeholder={t('match:form.timePlaceholder')} />
               </Form.Item>
             </Col>
           </Row>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>比賽時長</label>
+            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>{t('match:match.duration')}</label>
             <Input.Group compact>
               <Form.Item
                 name="match_minutes"
@@ -316,7 +318,7 @@ const TournamentMatchCreate = () => {
                       const minutes = value ?? 0;
                       const seconds = form.getFieldValue('match_seconds') ?? 0;
                       if (minutes === 0 && seconds === 0) {
-                        return Promise.reject(new Error('比賽時長不能為0'));
+                        return Promise.reject(new Error(t('match:form.durationRequired')));
                       }
                       return Promise.resolve();
                     }
@@ -324,13 +326,13 @@ const TournamentMatchCreate = () => {
                 ]}
               >
                 <InputNumber 
-                  placeholder="分鐘"
+                  placeholder={t('match:form.minutesPlaceholder')}
                   min={0}
                   max={60}
                   style={{ width: '100%' }}
-                  addonAfter="分"
+                  addonAfter={t('common:time.minutes')}
                   onChange={() => {
-                    // 觸發秒數字段的驗證
+                    // Trigger seconds field validation
                     form.validateFields(['match_seconds']);
                   }}
                 />
@@ -345,7 +347,7 @@ const TournamentMatchCreate = () => {
                       const seconds = value ?? 0;
                       const minutes = form.getFieldValue('match_minutes') ?? 0;
                       if (minutes === 0 && seconds === 0) {
-                        return Promise.reject(new Error('比賽時長不能為0'));
+                        return Promise.reject(new Error(t('match:form.durationRequired')));
                       }
                       return Promise.resolve();
                     }
@@ -353,13 +355,13 @@ const TournamentMatchCreate = () => {
                 ]}
               >
                 <InputNumber 
-                  placeholder="秒數"
+                  placeholder={t('match:form.secondsPlaceholder')}
                   min={0}
                   max={59}
                   style={{ width: '100%' }}
-                  addonAfter="秒"
+                  addonAfter={t('common:time.seconds')}
                   onChange={() => {
-                    // 觸發分鐘字段的驗證
+                    // Trigger minutes field validation
                     form.validateFields(['match_minutes']);
                   }}
                 />
@@ -370,9 +372,9 @@ const TournamentMatchCreate = () => {
           <Form.Item style={{ marginTop: 32 }}>
             <Space>
               <Button type="primary" htmlType="submit" loading={loading} icon={<SaveOutlined />}>
-                創建比賽
+                {t('match:match.create')}
               </Button>
-              <Button onClick={() => navigate(`/tournaments/${tournamentId}/matches`)}>取消</Button>
+              <Button onClick={() => navigate(`/tournaments/${tournamentId}/matches`)}>{t('common:actions.cancel')}</Button>
             </Space>
           </Form.Item>
         </Form>
