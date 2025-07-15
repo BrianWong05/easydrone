@@ -164,5 +164,67 @@
       "knockout": "淘汰賽可以直接生成對戰圖表",
       "mixed": "混合賽制結合了兩種賽制的優點"
     }
+  },
+  "detail": {
+    "loading": "載入中...",
+    "notFound": "找不到錦標賽",
+    "editTournament": "編輯錦標賽",
+    "tournamentSettings": "錦標賽設置",
+    "startDate": "開始日期",
+    "endDate": "結束日期",
+    "createdAt": "創建時間",
+    "lastUpdated": "最後更新",
+    "notSet": "未設置",
+    "statistics": "錦標賽統計",
+    "totalTeams": "總隊伍數",
+    "totalGroups": "小組數",
+    "totalMatches": "總比賽數",
+    "totalAthletes": "運動員數",
+    "completedMatches": "已完成比賽",
+    "pendingMatches": "待進行比賽",
+    "managementFunctions": "管理功能",
+    "recentMatches": "最近比賽",
+    "viewAllMatches": "查看全部比賽",
+    "viewDetails": "查看詳情",
+    "noMatchRecords": "暫無比賽記錄",
+    "score": "比分",
+    "management": {
+      "teams": {
+        "title": "隊伍管理",
+        "description": "管理錦標賽隊伍，新增、編輯隊伍信息",
+        "viewTeams": "查看隊伍",
+        "addTeam": "新增隊伍"
+      },
+      "groups": {
+        "title": "小組管理",
+        "description": "管理錦標賽小組，分組和小組設置",
+        "viewGroups": "查看小組",
+        "addGroup": "新增小組"
+      },
+      "matches": {
+        "title": "比賽管理",
+        "description": "管理比賽賽程，創建和編輯比賽",
+        "viewMatches": "查看比賽",
+        "addMatch": "新增比賽"
+      },
+      "athletes": {
+        "title": "運動員管理",
+        "description": "管理運動員信息和隊伍成員",
+        "viewAthletes": "查看運動員",
+        "addAthlete": "新增運動員"
+      },
+      "leaderboard": {
+        "title": "積分榜",
+        "description": "查看比賽積分榜和統計數據",
+        "groupLeaderboard": "小組積分榜",
+        "overallLeaderboard": "總積分榜"
+      }
+    },
+    "status": {
+      "pending": "待開始",
+      "active": "進行中",
+      "completed": "已完成",
+      "overtime": "延長賽"
+    }
   }
 }

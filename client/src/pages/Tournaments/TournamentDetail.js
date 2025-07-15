@@ -30,6 +30,7 @@ import {
   RightOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import axios from "axios";
 import moment from "moment";
 
@@ -38,6 +39,7 @@ const { Title, Text } = Typography;
 const TournamentDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { t } = useTranslation(['tournament', 'common']);
   const [tournament, setTournament] = useState(null);
 
   // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
@@ -93,7 +95,7 @@ const TournamentDetail = () => {
       }
     } catch (error) {
       console.error("Error fetching tournament detail:", error);
-      message.error("載入錦標賽詳情失敗");
+      message.error(t('common:messages.dataLoadFailed'));
     } finally {
       setLoading(false);
     }
@@ -110,21 +112,21 @@ const TournamentDetail = () => {
     try {
       const response = await axios.put(`/api/tournaments/${id}/status`, { status });
       if (response.data.success) {
-        message.success("錦標賽狀態更新成功");
+        message.success(t('tournament:messages.statusUpdateSuccess'));
         fetchTournamentDetail();
       }
     } catch (error) {
       console.error("更新錦標賽狀態失敗:", error);
-      message.error(error.response?.data?.message || "更新錦標賽狀態失敗");
+      message.error(error.response?.data?.message || t('common:messages.operationFailed'));
     }
   };
 
   // 獲取狀態標籤
   const getStatusTag = (status) => {
     const statusConfig = {
-      pending: { color: "orange", text: "待開始" },
-      active: { color: "green", text: "進行中" },
-      completed: { color: "blue", text: "已完成" },
+      pending: { color: "orange", text: t('tournament:detail.status.pending') },
+      active: { color: "green", text: t('tournament:detail.status.active') },
+      completed: { color: "blue", text: t('tournament:detail.status.completed') },
     };
     const config = statusConfig[status] || { color: "default", text: status };
     return <Tag color={config.color}>{config.text}</Tag>;
@@ -133,10 +135,10 @@ const TournamentDetail = () => {
   // 獲取比賽狀態標籤
   const getMatchStatusTag = (status) => {
     const statusConfig = {
-      pending: { color: "orange", text: "待開始" },
-      active: { color: "green", text: "進行中" },
-      completed: { color: "blue", text: "已完成" },
-      overtime: { color: "purple", text: "延長賽" },
+      pending: { color: "orange", text: t('tournament:detail.status.pending') },
+      active: { color: "green", text: t('tournament:detail.status.active') },
+      completed: { color: "blue", text: t('tournament:detail.status.completed') },
+      overtime: { color: "purple", text: t('tournament:detail.status.overtime') },
     };
     const config = statusConfig[status] || { color: "default", text: status };
     return <Tag color={config.color}>{config.text}</Tag>;
@@ -145,53 +147,53 @@ const TournamentDetail = () => {
   // 管理功能卡片數據
   const managementCards = [
     {
-      title: "隊伍管理",
+      title: t('tournament:detail.management.teams.title'),
       icon: <TeamOutlined style={{ fontSize: 24, color: "#1890ff" }} />,
-      description: "管理錦標賽隊伍，新增、編輯隊伍信息",
+      description: t('tournament:detail.management.teams.description'),
       count: stats.totalTeams,
       actions: [
-        { text: "查看隊伍", path: `/tournaments/${id}/teams` },
-        { text: "新增隊伍", path: `/tournaments/${id}/teams/create` },
+        { text: t('tournament:detail.management.teams.viewTeams'), path: `/tournaments/${id}/teams` },
+        { text: t('tournament:detail.management.teams.addTeam'), path: `/tournaments/${id}/teams/create` },
       ],
     },
     {
-      title: "小組管理",
+      title: t('tournament:detail.management.groups.title'),
       icon: <GroupOutlined style={{ fontSize: 24, color: "#52c41a" }} />,
-      description: "管理錦標賽小組，分組和小組設置",
+      description: t('tournament:detail.management.groups.description'),
       count: stats.totalGroups,
       actions: [
-        { text: "查看小組", path: `/tournaments/${id}/groups` },
-        { text: "新增小組", path: `/tournaments/${id}/groups/create` },
+        { text: t('tournament:detail.management.groups.viewGroups'), path: `/tournaments/${id}/groups` },
+        { text: t('tournament:detail.management.groups.addGroup'), path: `/tournaments/${id}/groups/create` },
       ],
     },
     {
-      title: "比賽管理",
+      title: t('tournament:detail.management.matches.title'),
       icon: <CalendarOutlined style={{ fontSize: 24, color: "#fa8c16" }} />,
-      description: "管理比賽賽程，創建和編輯比賽",
+      description: t('tournament:detail.management.matches.description'),
       count: stats.totalMatches,
       actions: [
-        { text: "查看比賽", path: `/tournaments/${id}/matches` },
-        { text: "新增比賽", path: `/tournaments/${id}/matches/create` },
+        { text: t('tournament:detail.management.matches.viewMatches'), path: `/tournaments/${id}/matches` },
+        { text: t('tournament:detail.management.matches.addMatch'), path: `/tournaments/${id}/matches/create` },
       ],
     },
     {
-      title: "運動員管理",
+      title: t('tournament:detail.management.athletes.title'),
       icon: <UserOutlined style={{ fontSize: 24, color: "#eb2f96" }} />,
-      description: "管理運動員信息和隊伍成員",
+      description: t('tournament:detail.management.athletes.description'),
       count: stats.totalAthletes,
       actions: [
-        { text: "查看運動員", path: `/tournaments/${id}/athletes` },
-        { text: "新增運動員", path: `/tournaments/${id}/athletes/create` },
+        { text: t('tournament:detail.management.athletes.viewAthletes'), path: `/tournaments/${id}/athletes` },
+        { text: t('tournament:detail.management.athletes.addAthlete'), path: `/tournaments/${id}/athletes/create` },
       ],
     },
     {
-      title: "積分榜",
+      title: t('tournament:detail.management.leaderboard.title'),
       icon: <BarChartOutlined style={{ fontSize: 24, color: "#722ed1" }} />,
-      description: "查看比賽積分榜和統計數據",
+      description: t('tournament:detail.management.leaderboard.description'),
       count: stats.completedMatches,
       actions: [
-        { text: "小組積分榜", path: `/tournaments/${id}/leaderboard/groups` },
-        { text: "總積分榜", path: `/tournaments/${id}/leaderboard/overall` },
+        { text: t('tournament:detail.management.leaderboard.groupLeaderboard'), path: `/tournaments/${id}/leaderboard/groups` },
+        { text: t('tournament:detail.management.leaderboard.overallLeaderboard'), path: `/tournaments/${id}/leaderboard/overall` },
       ],
     },
   ];
@@ -199,7 +201,7 @@ const TournamentDetail = () => {
   if (loading) {
     return (
       <div style={{ padding: 24, textAlign: "center" }}>
-        <Title level={4}>載入中...</Title>
+        <Title level={4}>{t('tournament:detail.loading')}</Title>
       </div>
     );
   }
@@ -207,7 +209,7 @@ const TournamentDetail = () => {
   if (!tournament) {
     return (
       <div style={{ padding: 24, textAlign: "center" }}>
-        <Empty description="找不到錦標賽" />
+        <Empty description={t('tournament:detail.notFound')} />
       </div>
     );
   }
@@ -228,9 +230,9 @@ const TournamentDetail = () => {
                   <Space>
                     {getStatusTag(tournament.status)}
                     <Text type="secondary">
-                      {tournament.tournament_type === "group" && "小組賽"}
-                      {tournament.tournament_type === "knockout" && "淘汰賽"}
-                      {tournament.tournament_type === "mixed" && "混合賽制"}
+                      {tournament.tournament_type === "group" && t('tournament:types.groupStage')}
+                      {tournament.tournament_type === "knockout" && t('tournament:types.knockout')}
+                      {tournament.tournament_type === "mixed" && t('tournament:types.mixed')}
                     </Text>
                   </Space>
                 </div>
@@ -239,14 +241,14 @@ const TournamentDetail = () => {
             <Col>
               <Space>
                 <Button icon={<EditOutlined />} onClick={() => navigate(`/tournaments/${id}/edit`)}>
-                  編輯錦標賽
+                  {t('tournament:detail.editTournament')}
                 </Button>
                 <Button
                   icon={<SettingOutlined />}
                   type="primary"
                   onClick={() => navigate(`/tournaments/${id}/settings`)}
                 >
-                  錦標賽設置
+                  {t('tournament:detail.tournamentSettings')}
                 </Button>
               </Space>
             </Col>
@@ -255,27 +257,27 @@ const TournamentDetail = () => {
           <Divider />
 
           <Descriptions column={4}>
-            <Descriptions.Item label="開始日期">
-              {tournament.start_date ? moment(tournament.start_date).format("YYYY-MM-DD") : "未設置"}
+            <Descriptions.Item label={t('tournament:detail.startDate')}>
+              {tournament.start_date ? moment(tournament.start_date).format("YYYY-MM-DD") : t('tournament:detail.notSet')}
             </Descriptions.Item>
-            <Descriptions.Item label="結束日期">
-              {tournament.end_date ? moment(tournament.end_date).format("YYYY-MM-DD") : "未設置"}
+            <Descriptions.Item label={t('tournament:detail.endDate')}>
+              {tournament.end_date ? moment(tournament.end_date).format("YYYY-MM-DD") : t('tournament:detail.notSet')}
             </Descriptions.Item>
-            <Descriptions.Item label="創建時間">
+            <Descriptions.Item label={t('tournament:detail.createdAt')}>
               {moment(tournament.created_at).format("YYYY-MM-DD HH:mm")}
             </Descriptions.Item>
-            <Descriptions.Item label="最後更新">
+            <Descriptions.Item label={t('tournament:detail.lastUpdated')}>
               {moment(tournament.updated_at).format("YYYY-MM-DD HH:mm")}
             </Descriptions.Item>
           </Descriptions>
         </Card>
 
         {/* 統計數據 */}
-        <Card title="錦標賽統計">
+        <Card title={t('tournament:detail.statistics')}>
           <Row gutter={16}>
             <Col span={4}>
               <Statistic
-                title="總隊伍數"
+                title={t('tournament:detail.totalTeams')}
                 value={stats.totalTeams}
                 prefix={<TeamOutlined />}
                 valueStyle={{ color: "#1890ff" }}
@@ -283,7 +285,7 @@ const TournamentDetail = () => {
             </Col>
             <Col span={4}>
               <Statistic
-                title="小組數"
+                title={t('tournament:detail.totalGroups')}
                 value={stats.totalGroups}
                 prefix={<GroupOutlined />}
                 valueStyle={{ color: "#52c41a" }}
@@ -291,7 +293,7 @@ const TournamentDetail = () => {
             </Col>
             <Col span={4}>
               <Statistic
-                title="總比賽數"
+                title={t('tournament:detail.totalMatches')}
                 value={stats.totalMatches}
                 prefix={<CalendarOutlined />}
                 valueStyle={{ color: "#fa8c16" }}
@@ -299,7 +301,7 @@ const TournamentDetail = () => {
             </Col>
             <Col span={4}>
               <Statistic
-                title="運動員數"
+                title={t('tournament:detail.totalAthletes')}
                 value={stats.totalAthletes}
                 prefix={<UserOutlined />}
                 valueStyle={{ color: "#eb2f96" }}
@@ -307,7 +309,7 @@ const TournamentDetail = () => {
             </Col>
             <Col span={4}>
               <Statistic
-                title="已完成比賽"
+                title={t('tournament:detail.completedMatches')}
                 value={stats.completedMatches}
                 prefix={<PlayCircleOutlined />}
                 valueStyle={{ color: "#722ed1" }}
@@ -315,7 +317,7 @@ const TournamentDetail = () => {
             </Col>
             <Col span={4}>
               <Statistic
-                title="待進行比賽"
+                title={t('tournament:detail.pendingMatches')}
                 value={stats.pendingMatches}
                 prefix={<StopOutlined />}
                 valueStyle={{ color: "#fa541c" }}
@@ -325,7 +327,7 @@ const TournamentDetail = () => {
         </Card>
 
         {/* 管理功能區域 */}
-        <Card title="管理功能">
+        <Card title={t('tournament:detail.managementFunctions')}>
           <Row gutter={[16, 16]}>
             {managementCards.map((card, index) => (
               <Col span={8} key={index}>
@@ -362,10 +364,10 @@ const TournamentDetail = () => {
 
         {/* 最近比賽 */}
         <Card
-          title="最近比賽"
+          title={t('tournament:detail.recentMatches')}
           extra={
             <Button type="link" onClick={() => navigate(`/tournaments/${id}/matches`)}>
-              查看全部比賽
+              {t('tournament:detail.viewAllMatches')}
             </Button>
           }
         >
@@ -376,7 +378,7 @@ const TournamentDetail = () => {
                 <List.Item
                   actions={[
                     <Button type="link" onClick={() => navigate(`/tournaments/${id}/matches/${match.match_id}`)}>
-                      查看詳情
+                      {t('tournament:detail.viewDetails')}
                     </Button>,
                   ]}
                 >
@@ -396,7 +398,7 @@ const TournamentDetail = () => {
                         <Text type="secondary">{moment(match.match_date).format("YYYY-MM-DD HH:mm")}</Text>
                         {match.match_status === "completed" && (
                           <Text>
-                            比分: {match.team1_score} - {match.team2_score}
+                            {t('tournament:detail.score')}: {match.team1_score} - {match.team2_score}
                           </Text>
                         )}
                       </Space>
@@ -406,7 +408,7 @@ const TournamentDetail = () => {
               )}
             />
           ) : (
-            <Empty description="暫無比賽記錄" />
+            <Empty description={t('tournament:detail.noMatchRecords')} />
           )}
         </Card>
       </Space>

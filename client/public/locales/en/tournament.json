@@ -164,5 +164,67 @@
       "knockout": "Knockout format can directly generate bracket charts",
       "mixed": "Mixed format combines advantages of both formats"
     }
+  },
+  "detail": {
+    "loading": "Loading...",
+    "notFound": "Tournament not found",
+    "editTournament": "Edit Tournament",
+    "tournamentSettings": "Tournament Settings",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "createdAt": "Created At",
+    "lastUpdated": "Last Updated",
+    "notSet": "Not Set",
+    "statistics": "Tournament Statistics",
+    "totalTeams": "Total Teams",
+    "totalGroups": "Groups",
+    "totalMatches": "Total Matches",
+    "totalAthletes": "Athletes",
+    "completedMatches": "Completed Matches",
+    "pendingMatches": "Pending Matches",
+    "managementFunctions": "Management Functions",
+    "recentMatches": "Recent Matches",
+    "viewAllMatches": "View All Matches",
+    "viewDetails": "View Details",
+    "noMatchRecords": "No match records",
+    "score": "Score",
+    "management": {
+      "teams": {
+        "title": "Team Management",
+        "description": "Manage tournament teams, add and edit team information",
+        "viewTeams": "View Teams",
+        "addTeam": "Add Team"
+      },
+      "groups": {
+        "title": "Group Management", 
+        "description": "Manage tournament groups, grouping and group settings",
+        "viewGroups": "View Groups",
+        "addGroup": "Add Group"
+      },
+      "matches": {
+        "title": "Match Management",
+        "description": "Manage match schedules, create and edit matches",
+        "viewMatches": "View Matches",
+        "addMatch": "Add Match"
+      },
+      "athletes": {
+        "title": "Athlete Management",
+        "description": "Manage athlete information and team members",
+        "viewAthletes": "View Athletes",
+        "addAthlete": "Add Athlete"
+      },
+      "leaderboard": {
+        "title": "Leaderboard",
+        "description": "View match leaderboards and statistics",
+        "groupLeaderboard": "Group Leaderboard",
+        "overallLeaderboard": "Overall Leaderboard"
+      }
+    },
+    "status": {
+      "pending": "Pending",
+      "active": "Active", 
+      "completed": "Completed",
+      "overtime": "Overtime"
+    }
   }
 }
