@@ -169,5 +169,43 @@
       "inProgress": "進行中",
       "completed": "已完成"
     }
+  },
+  "edit": {
+    "title": "編輯隊伍",
+    "subtitle": "編輯隊伍信息",
+    "teamNotFound": "隊伍不存在",
+    "teamNotFoundDescription": "找不到指定的隊伍，請檢查URL是否正確",
+    "editNotice": "編輯隊伍說明",
+    "editNoticeDescription": "修改隊伍信息時請注意：如果隊伍已有進行中或已完成的比賽，某些修改可能會被限制。隊伍名稱在同一錦標賽中必須唯一。",
+    "groupHelp": "可選擇小組，或稍後在小組管理中分配",
+    "selectGroup": "請選擇小組",
+    "loadingGroups": "載入錦標賽小組中...",
+    "noGroupsAvailable": "此錦標賽暫無可用小組",
+    "noGroupAssignment": "暫不分配小組",
+    "current": "當前",
+    "full": "已滿",
+    "teamType": "隊伍類型",
+    "recommendedColors": "推薦顏色",
+    "updateNotice": "更新提示",
+    "updateNoticeDescription": "更新隊伍信息後，相關的運動員和比賽記錄將保持不變。此隊伍專屬於錦標賽「{{tournamentName}}」。",
+    "saveChanges": "保存更改",
+    "validation": {
+      "nameMinLength": "隊伍名稱至少需要2個字符",
+      "nameMaxLength": "隊伍名稱不能超過50個字符",
+      "colorRequired": "請選擇隊伍顏色"
+    }
+  },
+  "messages": {
+    "noTeams": "暫無隊伍",
+    "noTeamData": "暫無隊伍數據",
+    "loadingTeams": "載入隊伍資料中...",
+    "teamCreated": "隊伍創建成功",
+    "teamUpdated": "隊伍更新成功",
+    "teamDeleted": "隊伍刪除成功",
+    "deleteConfirmation": "確定要刪除這個隊伍嗎？",
+    "deleteWarning": "刪除後將無法恢復",
+    "noMatchHistory": "暫無比賽記錄",
+    "unknownTeam": "未知隊伍",
+    "nameConflict": "隊伍名稱衝突"
   }
 }

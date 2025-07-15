@@ -169,5 +169,43 @@
       "inProgress": "In Progress",
       "completed": "Completed"
     }
+  },
+  "edit": {
+    "title": "Edit Team",
+    "subtitle": "Edit team information",
+    "teamNotFound": "Team not found",
+    "teamNotFoundDescription": "The specified team could not be found. Please check if the URL is correct.",
+    "editNotice": "Edit Team Instructions",
+    "editNoticeDescription": "When modifying team information, please note: If the team has ongoing or completed matches, some modifications may be restricted. Team names must be unique within the same tournament.",
+    "groupHelp": "You can select a group, or assign it later in group management",
+    "selectGroup": "Please select a group",
+    "loadingGroups": "Loading tournament groups...",
+    "noGroupsAvailable": "No groups available in this tournament",
+    "noGroupAssignment": "Do not assign to group",
+    "current": "Current",
+    "full": "Full",
+    "teamType": "Team Type",
+    "recommendedColors": "Recommended Colors",
+    "updateNotice": "Update Notice",
+    "updateNoticeDescription": "After updating team information, related athlete and match records will remain unchanged. This team belongs exclusively to tournament \"{{tournamentName}}\".",
+    "saveChanges": "Save Changes",
+    "validation": {
+      "nameMinLength": "Team name must be at least 2 characters",
+      "nameMaxLength": "Team name cannot exceed 50 characters",
+      "colorRequired": "Please select a team color"
+    }
+  },
+  "messages": {
+    "noTeams": "No teams available",
+    "noTeamData": "No team data available",
+    "loadingTeams": "Loading team data...",
+    "teamCreated": "Team created successfully",
+    "teamUpdated": "Team updated successfully",
+    "teamDeleted": "Team deleted successfully",
+    "deleteConfirmation": "Are you sure you want to delete this team?",
+    "deleteWarning": "This action cannot be undone",
+    "noMatchHistory": "No match history available",
+    "unknownTeam": "Unknown Team",
+    "nameConflict": "Team name conflict"
   }
 }

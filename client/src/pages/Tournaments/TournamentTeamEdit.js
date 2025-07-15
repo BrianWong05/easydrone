@@ -15,6 +15,7 @@ import {
 } from 'antd';
 import { ArrowLeftOutlined, SaveOutlined, TrophyOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 const { Title, Text } = Typography;
@@ -23,6 +24,7 @@ const { Option } = Select;
 const TournamentTeamEdit = () => {
   const navigate = useNavigate();
   const { id: tournamentId, teamId } = useParams();
+  const { t } = useTranslation(['team', 'common']);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -71,12 +73,12 @@ const TournamentTeamEdit = () => {
           description: teamData.description || ''
         });
       } else {
-        message.error('獲取隊伍信息失敗');
+        message.error(t('common:messages.loadFailed'));
         navigate(`/tournaments/${tournamentId}/teams`);
       }
     } catch (error) {
       console.error('Error fetching team:', error);
-      message.error('獲取隊伍信息失敗');
+      message.error(t('common:messages.loadFailed'));
       navigate(`/tournaments/${tournamentId}/teams`);
     } finally {
       setLoading(false);
@@ -110,12 +112,12 @@ const TournamentTeamEdit = () => {
         }
       } else {
         console.error('❌ 獲取小組列表失敗:', response.data.message);
-        message.error('獲取錦標賽小組列表失敗');
+        message.error(t('common:messages.loadFailed'));
       }
     } catch (error) {
       console.error('❌ 獲取錦標賽小組列表錯誤:', error);
       console.error('錯誤詳情:', error.response?.data);
-      message.error('獲取錦標賽小組列表失敗，請檢查網絡連接');
+      message.error(t('common:messages.networkError'));
     } finally {
       setGroupsLoading(false);
     }
@@ -136,10 +138,10 @@ const TournamentTeamEdit = () => {
       });
       
       if (response && response.data.success) {
-        message.success(`隊伍 ${values.team_name} 更新成功！`);
+        message.success(t('team:messages.teamUpdated'));
         navigate(`/tournaments/${tournamentId}/teams`);
       } else {
-        message.error(response?.data?.message || '更新失敗');
+        message.error(response?.data?.message || t('common:messages.operationFailed'));
       }
     } catch (error) {
       console.error('Error updating team:', error);
@@ -149,13 +151,13 @@ const TournamentTeamEdit = () => {
       const errorMessage = error.response?.data?.message || '';
       
       if (status === 500) {
-        message.error(`服務器錯誤：${errorMessage}`);
+        message.error(`${t('common:messages.error')}: ${errorMessage}`);
       } else if (status === 400) {
-        message.error(`更新失敗：${errorMessage}`);
+        message.error(`${t('common:messages.operationFailed')}: ${errorMessage}`);
       } else if (status === 409) {
-        message.error(`隊伍名稱衝突：${errorMessage}`);
+        message.error(`${t('team:messages.nameConflict')}: ${errorMessage}`);
       } else {
-        message.error(errorMessage || '更新失敗，請重試');
+        message.error(errorMessage || t('common:messages.operationFailed'));
       }
     } finally {
       setSaving(false);
@@ -187,7 +189,7 @@ const TournamentTeamEdit = () => {
     return (
       <div style={{ textAlign: 'center', padding: '50px' }}>
         <Spin size="large" />
-        <p>載入中...</p>
+        <p>{t('common:messages.loading')}</p>
       </div>
     );
   }
@@ -195,8 +197,8 @@ const TournamentTeamEdit = () => {
   if (!team) {
     return (
       <Alert
-        message="隊伍不存在"
-        description="找不到指定的隊伍，請檢查URL是否正確"
+        message={t('team:edit.teamNotFound')}
+        description={t('team:edit.teamNotFoundDescription')}
         type="error"
         showIcon
       />
@@ -217,23 +219,23 @@ const TournamentTeamEdit = () => {
             icon={<ArrowLeftOutlined />} 
             onClick={handleCancel}
           >
-            返回
+            {t('common:buttons.back')}
           </Button>
           <div>
             <Title level={2} style={{ margin: 0 }}>
               <TrophyOutlined style={{ marginRight: 8, color: '#faad14' }} />
-              編輯隊伍 {displayTeamName}
+              {t('team:edit.title')} {displayTeamName}
             </Title>
             <Text type="secondary">
-              {tournament?.tournament_name || `錦標賽 ${tournamentId}`} - 編輯隊伍信息
+              {tournament?.tournament_name || `${t('tournament:tournament')} ${tournamentId}`} - {t('team:edit.subtitle')}
             </Text>
           </div>
         </div>
 
         <Card>
           <Alert
-            message="編輯隊伍說明"
-            description="修改隊伍信息時請注意：如果隊伍已有進行中或已完成的比賽，某些修改可能會被限制。隊伍名稱在同一錦標賽中必須唯一。"
+            message={t('team:edit.editNotice')}
+            description={t('team:edit.editNoticeDescription')}
             type="info"
             showIcon
             style={{ marginBottom: 24 }}
@@ -245,35 +247,35 @@ const TournamentTeamEdit = () => {
             onFinish={handleSubmit}
           >
             <Form.Item
-              label="隊伍名稱"
+              label={t('team:team.name')}
               name="team_name"
               rules={[
-                { required: true, message: '請輸入隊伍名稱' },
-                { min: 2, message: '隊伍名稱至少需要2個字符' },
-                { max: 50, message: '隊伍名稱不能超過50個字符' }
+                { required: true, message: t('team:placeholders.enterTeamName') },
+                { min: 2, message: t('team:edit.validation.nameMinLength') },
+                { max: 50, message: t('team:edit.validation.nameMaxLength') }
               ]}
             >
               <Input 
-                placeholder="請輸入隊伍名稱"
+                placeholder={t('team:placeholders.enterTeamName')}
                 size="large"
                 maxLength={50}
               />
             </Form.Item>
 
             <Form.Item
-              label="所屬小組"
+              label={t('team:team.group')}
               name="group_id"
-              help="可選擇小組，或稍後在小組管理中分配"
+              help={t('team:edit.groupHelp')}
             >
               <Select
-                placeholder="請選擇小組"
+                placeholder={t('team:edit.selectGroup')}
                 size="large"
                 loading={groupsLoading}
-                notFoundContent={groupsLoading ? "載入錦標賽小組中..." : "此錦標賽暫無可用小組"}
+                notFoundContent={groupsLoading ? t('team:edit.loadingGroups') : t('team:edit.noGroupsAvailable')}
               >
                 <Option value={null}>
                   <span style={{ color: '#999', fontStyle: 'italic' }}>
-                    暫不分配小組
+                    {t('team:edit.noGroupAssignment')}
                   </span>
                 </Option>
                 {Array.isArray(availableGroups) ? availableGroups.map(group => {
@@ -290,13 +292,13 @@ const TournamentTeamEdit = () => {
                     >
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <span>
-                          小組 {displayName} {isCurrent && <span style={{ color: '#1890ff' }}>(當前)</span>}
+                          {t('team:team.group')} {displayName} {isCurrent && <span style={{ color: '#1890ff' }}>({t('team:edit.current')})</span>}
                         </span>
                         <span style={{ 
                           color: isFull ? '#ff4d4f' : '#52c41a',
                           fontSize: '12px'
                         }}>
-                          {teamCount}/{maxTeams} {isFull ? '(已滿)' : ''}
+                          {teamCount}/{maxTeams} {isFull ? `(${t('team:edit.full')})` : ''}
                         </span>
                       </div>
                     </Option>
@@ -306,9 +308,9 @@ const TournamentTeamEdit = () => {
             </Form.Item>
 
             <Form.Item
-              label="隊伍顏色"
+              label={t('team:labels.teamColor')}
               name="team_color"
-              rules={[{ required: true, message: '請選擇隊伍顏色' }]}
+              rules={[{ required: true, message: t('team:edit.validation.colorRequired') }]}
             >
               <ColorPicker 
                 size="large"
@@ -316,7 +318,7 @@ const TournamentTeamEdit = () => {
                 format="hex"
                 presets={[
                   {
-                    label: '推薦顏色',
+                    label: t('team:edit.recommendedColors'),
                     colors: [
                       '#FF0000', '#0000FF', '#00FF00', '#FFFF00',
                       '#FF00FF', '#00FFFF', '#FFA500', '#800080',
@@ -328,22 +330,22 @@ const TournamentTeamEdit = () => {
             </Form.Item>
 
             <Form.Item
-              label="隊伍類型"
+              label={t('team:edit.teamType')}
               name="is_virtual"
               valuePropName="checked"
             >
               <Switch 
-                checkedChildren="虛擬隊伍" 
-                unCheckedChildren="真實隊伍"
+                checkedChildren={t('team:list.teamType.virtual')} 
+                unCheckedChildren={t('team:list.teamType.real')}
               />
             </Form.Item>
 
             <Form.Item
-              label="隊伍描述"
+              label={t('team:team.description')}
               name="description"
             >
               <Input.TextArea 
-                placeholder="請輸入隊伍描述（可選）"
+                placeholder={t('team:placeholders.enterDescription')}
                 rows={4}
                 maxLength={200}
                 showCount
@@ -351,8 +353,10 @@ const TournamentTeamEdit = () => {
             </Form.Item>
 
             <Alert
-              message="更新提示"
-              description={`更新隊伍信息後，相關的運動員和比賽記錄將保持不變。此隊伍專屬於錦標賽「${tournament?.tournament_name || `ID: ${tournamentId}`}」。`}
+              message={t('team:edit.updateNotice')}
+              description={t('team:edit.updateNoticeDescription', { 
+                tournamentName: tournament?.tournament_name || `ID: ${tournamentId}` 
+              })}
               type="success"
               showIcon
               style={{ marginBottom: 24 }}
@@ -367,13 +371,13 @@ const TournamentTeamEdit = () => {
                   icon={<SaveOutlined />}
                   size="large"
                 >
-                  保存更改
+                  {t('team:edit.saveChanges')}
                 </Button>
                 <Button 
                   onClick={handleCancel}
                   size="large"
                 >
-                  取消
+                  {t('common:buttons.cancel')}
                 </Button>
               </Space>
             </Form.Item>
