@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, Typography, Form, Input, Button, Space, InputNumber, message, Alert } from 'antd';
 import { ArrowLeftOutlined, SaveOutlined, TrophyOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 const { Title, Text } = Typography;
@@ -9,6 +10,7 @@ const { Title, Text } = Typography;
 const TournamentGroupCreate = () => {
   const navigate = useNavigate();
   const { id: tournamentId } = useParams();
+  const { t } = useTranslation(['group', 'common']);
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [tournament, setTournament] = useState(null);
@@ -22,15 +24,15 @@ const TournamentGroupCreate = () => {
         setTournament(response.data.data.tournament || response.data.data);
       } else {
         console.log('Tournament API returned success: false');
-        message.warning('無法載入錦標賽信息，但您仍可以創建小組');
+        message.warning(t('group:create.canStillCreate'));
       }
     } catch (error) {
       console.error('Error fetching tournament:', error);
       console.log('Tournament fetch error details:', error.response?.data);
       if (error.response?.status === 404) {
-        message.warning('錦標賽不存在或API端點未實現');
+        message.warning(t('group:create.tournamentNotFound'));
       } else {
-        message.error('載入錦標賽信息失敗');
+        message.error(t('common:messages.loadFailed'));
       }
     }
   };
@@ -56,13 +58,13 @@ const TournamentGroupCreate = () => {
         group_name: `${userLetter}_${tournamentId}`, // Internal: A_1, B_1, etc.
         display_name: userLetter, // Display: A, B, etc.
         max_teams: values.max_teams,
-        description: values.description || `錦標賽 ${tournamentId} - 小組 ${userLetter}`
+        description: values.description || `${t('tournament:tournament')} ${tournamentId} - ${t('group:group.name')} ${userLetter}`
       });
       if (response && response.data.success) {
-        message.success(`小組 ${userLetter} 創建成功！`);
+        message.success(t('group:messages.groupCreated'));
         navigate(`/tournaments/${tournamentId}/groups`);
       } else {
-        message.error(response?.data?.message || '創建失敗');
+        message.error(response?.data?.message || t('common:messages.operationFailed'));
       }
     } catch (error) {
       console.error('Error creating group:', error);
@@ -76,17 +78,17 @@ const TournamentGroupCreate = () => {
       if (status === 500) {
         console.log('500 Error message:', errorMessage);
         if (errorMessage.includes('數據庫表結構未更新')) {
-          message.error('數據庫需要更新，請聯繫管理員運行遷移腳本');
+          message.error(t('group:create.databaseUpdateNeeded'));
         } else {
-          message.error(`服務器錯誤：${errorMessage}`);
+          message.error(`${t('common:messages.error')}: ${errorMessage}`);
         }
       } else if (status === 400) {
-        message.error(`創建失敗：${errorMessage}`);
+        message.error(`${t('common:messages.operationFailed')}: ${errorMessage}`);
       } else if (status === 409) {
-        message.error(`小組名稱衝突：${errorMessage}`);
+        message.error(`${t('group:create.nameConflict')}: ${errorMessage}`);
       } else {
         console.error('Final error creating group:', error);
-        message.error(error.message || errorMessage || '創建失敗，請重試');
+        message.error(error.message || errorMessage || t('common:messages.operationFailed'));
       }
     } finally {
       setLoading(false);
@@ -105,23 +107,25 @@ const TournamentGroupCreate = () => {
             icon={<ArrowLeftOutlined />} 
             onClick={handleCancel}
           >
-            返回
+            {t('common:buttons.back')}
           </Button>
           <div>
             <Title level={2} style={{ margin: 0 }}>
               <TrophyOutlined style={{ marginRight: 8, color: '#faad14' }} />
-              新增小組
+              {t('group:create.title')}
             </Title>
             <Text type="secondary">
-              為 {tournament?.tournament_name || `錦標賽 ${tournamentId}`} 創建新的比賽小組
+              {t('group:create.subtitle', { 
+                tournamentName: tournament?.tournament_name || `${t('tournament:tournament')} ${tournamentId}` 
+              })}
             </Text>
           </div>
         </div>
 
         <Card>
           <Alert
-            message="小組設置說明"
-            description="小組名稱使用單個字母（如A、B、C、D），每個小組建議包含3-4支隊伍進行循環賽。系統支持錦標賽專屬小組，您可以在不同錦標賽中使用相同的小組名稱。"
+            message={t('group:create.setupNotice')}
+            description={t('group:create.setupNoticeDescription')}
             type="info"
             showIcon
             style={{ marginBottom: 24 }}
@@ -136,15 +140,15 @@ const TournamentGroupCreate = () => {
             }}
           >
             <Form.Item
-              label="小組名稱"
+              label={t('group:group.name')}
               name="group_name"
               rules={[
-                { required: true, message: '請輸入小組名稱' },
-                { pattern: /^[A-Z]$/, message: '小組名稱必須是單個大寫字母（A-Z）' }
+                { required: true, message: t('group:placeholders.enterGroupName') },
+                { pattern: /^[A-Z]$/, message: t('group:create.validation.namePattern') }
               ]}
             >
               <Input 
-                placeholder="請輸入小組名稱（例如：A）"
+                placeholder={t('group:create.namePlaceholder')}
                 size="large"
                 maxLength={1}
                 style={{ textTransform: 'uppercase' }}
@@ -152,29 +156,29 @@ const TournamentGroupCreate = () => {
             </Form.Item>
 
             <Form.Item
-              label="最大隊伍數量"
+              label={t('group:group.maxTeams')}
               name="max_teams"
               rules={[
-                { required: true, message: '請輸入最大隊伍數量' },
-                { type: 'number', min: 2, max: 8, message: '隊伍數量必須在2-8之間' }
+                { required: true, message: t('group:create.validation.maxTeamsRequired') },
+                { type: 'number', min: 2, max: 8, message: t('group:create.validation.maxTeamsRange') }
               ]}
             >
               <InputNumber 
-                placeholder="請輸入最大隊伍數量"
+                placeholder={t('group:create.maxTeamsPlaceholder')}
                 size="large"
                 min={2}
                 max={8}
                 style={{ width: '100%' }}
-                addonAfter="支隊伍"
+                addonAfter={t('group:create.teamsUnit')}
               />
             </Form.Item>
 
             <Form.Item
-              label="小組描述"
+              label={t('group:group.description')}
               name="description"
             >
               <Input.TextArea 
-                placeholder="請輸入小組描述（可選）"
+                placeholder={t('group:placeholders.enterDescription')}
                 rows={4}
                 maxLength={200}
                 showCount
@@ -182,8 +186,10 @@ const TournamentGroupCreate = () => {
             </Form.Item>
 
             <Alert
-              message="創建提示"
-              description={`創建小組後，您可以在隊伍管理中將隊伍分配到此小組，或在小組詳情頁面中添加隊伍。此小組將專屬於錦標賽「${tournament?.tournament_name || `ID: ${tournamentId}`}」。`}
+              message={t('group:create.createTip')}
+              description={t('group:create.createTipDescription', { 
+                tournamentName: tournament?.tournament_name || `ID: ${tournamentId}` 
+              })}
               type="success"
               showIcon
               style={{ marginBottom: 24 }}
@@ -198,13 +204,13 @@ const TournamentGroupCreate = () => {
                   icon={<SaveOutlined />}
                   size="large"
                 >
-                  創建小組
+                  {t('group:create.createGroup')}
                 </Button>
                 <Button 
                   onClick={handleCancel}
                   size="large"
                 >
-                  取消
+                  {t('common:buttons.cancel')}
                 </Button>
               </Space>
             </Form.Item>

@@ -86,5 +86,26 @@
     "addTeamFailed": "添加隊伍失敗",
     "teamRemovedSuccess": "隊伍移除成功",
     "removeTeamFailed": "移除隊伍失敗"
+  },
+  "create": {
+    "title": "新增小組",
+    "subtitle": "為 {{tournamentName}} 創建新的比賽小組",
+    "setupNotice": "小組設置說明",
+    "setupNoticeDescription": "小組名稱使用單個字母（如A、B、C、D），每個小組建議包含3-4支隊伍進行循環賽。系統支持錦標賽專屬小組，您可以在不同錦標賽中使用相同的小組名稱。",
+    "createTip": "創建提示",
+    "createTipDescription": "創建小組後，您可以在隊伍管理中將隊伍分配到此小組，或在小組詳情頁面中添加隊伍。此小組將專屬於錦標賽「{{tournamentName}}」。",
+    "createGroup": "創建小組",
+    "namePlaceholder": "請輸入小組名稱（例如：A）",
+    "maxTeamsPlaceholder": "請輸入最大隊伍數量",
+    "teamsUnit": "支隊伍",
+    "canStillCreate": "無法載入錦標賽信息，但您仍可以創建小組",
+    "tournamentNotFound": "錦標賽不存在或API端點未實現",
+    "databaseUpdateNeeded": "數據庫需要更新，請聯繫管理員運行遷移腳本",
+    "nameConflict": "小組名稱衝突",
+    "validation": {
+      "namePattern": "小組名稱必須是單個大寫字母（A-Z）",
+      "maxTeamsRequired": "請輸入最大隊伍數量",
+      "maxTeamsRange": "隊伍數量必須在2-8之間"
+    }
   }
 }

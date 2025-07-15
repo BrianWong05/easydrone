@@ -86,5 +86,26 @@
     "addTeamFailed": "Failed to add team",
     "teamRemovedSuccess": "Team removed successfully",
     "removeTeamFailed": "Failed to remove team"
+  },
+  "create": {
+    "title": "Add Group",
+    "subtitle": "Create a new competition group for {{tournamentName}}",
+    "setupNotice": "Group Setup Instructions",
+    "setupNoticeDescription": "Group names use single letters (like A, B, C, D), each group should contain 3-4 teams for round-robin matches. The system supports tournament-specific groups, allowing you to use the same group name in different tournaments.",
+    "createTip": "Creation Tip",
+    "createTipDescription": "After creating the group, you can assign teams to this group in team management, or add teams on the group details page. This group will belong exclusively to tournament \"{{tournamentName}}\".",
+    "createGroup": "Create Group",
+    "namePlaceholder": "Enter group name (e.g., A)",
+    "maxTeamsPlaceholder": "Enter maximum number of teams",
+    "teamsUnit": "teams",
+    "canStillCreate": "Unable to load tournament information, but you can still create groups",
+    "tournamentNotFound": "Tournament does not exist or API endpoint not implemented",
+    "databaseUpdateNeeded": "Database needs to be updated, please contact administrator to run migration scripts",
+    "nameConflict": "Group name conflict",
+    "validation": {
+      "namePattern": "Group name must be a single uppercase letter (A-Z)",
+      "maxTeamsRequired": "Please enter maximum number of teams",
+      "maxTeamsRange": "Number of teams must be between 2-8"
+    }
   }
 }
