@@ -26,12 +26,14 @@ import {
   ThunderboltOutlined
 } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import moment from 'moment';
 
 const { Title, Text } = Typography;
 
 const ClientTeamDetail = () => {
+  const { t } = useTranslation(['team', 'common', 'public', 'match', 'athlete']);
   const navigate = useNavigate();
   const { teamId } = useParams();
   const [tournament, setTournament] = useState(null);
@@ -147,7 +149,7 @@ const ClientTeamDetail = () => {
       }
 
       if (!tournamentData) {
-        setError('找不到可顯示的錦標賽');
+        setError(t('public:layout.noActiveTournament'));
         return;
       }
 
@@ -192,36 +194,36 @@ const ClientTeamDetail = () => {
 
     } catch (error) {
       console.error('Error fetching team detail:', error);
-      setError('載入隊伍詳情失敗');
+      setError(t('team:messages.loadingTeams'));
     } finally {
       setLoading(false);
     }
   };
 
   const getMatchResult = (match) => {
-    if (match.match_status !== 'completed') return '待進行';
+    if (match.match_status !== 'completed') return t('match:results.pending');
     
     const isTeam1 = match.team1_id === parseInt(teamId);
     const teamScore = isTeam1 ? match.team1_score : match.team2_score;
     const opponentScore = isTeam1 ? match.team2_score : match.team1_score;
     
-    if (teamScore > opponentScore) return '勝';
-    if (teamScore < opponentScore) return '負';
-    return '平';
+    if (teamScore > opponentScore) return t('match:results.win');
+    if (teamScore < opponentScore) return t('match:results.loss');
+    return t('match:results.draw');
   };
 
   const getMatchResultColor = (result) => {
     switch (result) {
-      case '勝': return '#52c41a';
-      case '負': return '#ff4d4f';
-      case '平': return '#faad14';
+      case t('match:results.win'): return '#52c41a';
+      case t('match:results.loss'): return '#ff4d4f';
+      case t('match:results.draw'): return '#faad14';
       default: return '#666';
     }
   };
 
   const athleteColumns = [
     {
-      title: '球員',
+      title: t('athlete:athlete.name'),
       key: 'athlete',
       render: (_, record) => (
         <Space>
@@ -244,26 +246,26 @@ const ClientTeamDetail = () => {
       )
     },
     {
-      title: '位置',
+      title: t('athlete:athlete.position'),
       dataIndex: 'position',
       key: 'position',
       render: (position) => {
         const positionMap = {
-          'attacker': { text: '進攻手', color: 'red' },
-          'defender': { text: '防守員', color: 'blue' },
-          'substitute': { text: '替補', color: 'orange' }
+          'attacker': { text: t('athlete:positions.attacker'), color: 'red' },
+          'defender': { text: t('athlete:positions.defender'), color: 'blue' },
+          'substitute': { text: t('athlete:positions.substitute'), color: 'orange' }
         };
         const pos = positionMap[position] || { text: position, color: 'default' };
         return <Tag color={pos.color}>{pos.text}</Tag>;
       }
     },
     {
-      title: '狀態',
+      title: t('athlete:athlete.status'),
       dataIndex: 'is_active',
       key: 'is_active',
       render: (isActive) => (
         <Tag color={isActive ? 'green' : 'red'}>
-          {isActive ? '活躍' : '非活躍'}
+          {isActive ? t('athlete:status.active') : t('athlete:status.inactive')}
         </Tag>
       )
     }
@@ -274,7 +276,7 @@ const ClientTeamDetail = () => {
       <div style={{ padding: 24, textAlign: 'center' }}>
         <Spin size="large" />
         <div style={{ marginTop: 16 }}>
-          <Text>載入隊伍詳情中...</Text>
+          <Text>{t('team:messages.loadingTeamDetail', { defaultValue: '載入隊伍詳情中...' })}</Text>
         </div>
       </div>
     );
@@ -284,7 +286,7 @@ const ClientTeamDetail = () => {
     return (
       <div style={{ padding: 24 }}>
         <Alert
-          message="載入失敗"
+          message={t('common:messages.error')}
           description={error}
           type="error"
           showIcon
@@ -297,8 +299,8 @@ const ClientTeamDetail = () => {
     return (
       <div style={{ padding: 24 }}>
         <Alert
-          message="隊伍不存在"
-          description="找不到指定的隊伍資訊"
+          message={t('team:messages.teamNotFound', { defaultValue: '隊伍不存在' })}
+          description={t('team:messages.teamNotFoundDesc', { defaultValue: '找不到指定的隊伍資訊' })}
           type="warning"
           showIcon
         />
@@ -353,11 +355,11 @@ const ClientTeamDetail = () => {
         </Card>
 
         {/* Team Statistics */}
-        <Card title="隊伍統計">
+        <Card title={t('team:messages.teamStatistics')}>
           <Row gutter={16}>
             <Col span={6}>
               <Statistic
-                title="比賽場次"
+                title={t('team:team.matchesPlayed')}
                 value={stats.totalMatches}
                 prefix={<CalendarOutlined />}
                 valueStyle={{ color: '#1890ff' }}
@@ -365,7 +367,7 @@ const ClientTeamDetail = () => {
             </Col>
             <Col span={6}>
               <Statistic
-                title="積分"
+                title={t('team:team.points')}
                 value={stats.points}
                 prefix={<TrophyOutlined />}
                 valueStyle={{ color: '#faad14' }}
@@ -373,7 +375,7 @@ const ClientTeamDetail = () => {
             </Col>
             <Col span={6}>
               <Statistic
-                title="進球"
+                title={t('team:team.goalsFor')}
                 value={stats.goalsFor}
                 prefix={<FireOutlined />}
                 valueStyle={{ color: '#52c41a' }}
@@ -381,7 +383,7 @@ const ClientTeamDetail = () => {
             </Col>
             <Col span={6}>
               <Statistic
-                title="失球"
+                title={t('team:team.goalsAgainst')}
                 value={stats.goalsAgainst}
                 prefix={<ThunderboltOutlined />}
                 valueStyle={{ color: '#ff4d4f' }}
@@ -394,21 +396,21 @@ const ClientTeamDetail = () => {
           <Row gutter={16}>
             <Col span={8}>
               <Statistic
-                title="勝場"
+                title={t('team:team.wins')}
                 value={stats.wins}
                 valueStyle={{ color: '#52c41a' }}
               />
             </Col>
             <Col span={8}>
               <Statistic
-                title="平局"
+                title={t('team:team.draws')}
                 value={stats.draws}
                 valueStyle={{ color: '#faad14' }}
               />
             </Col>
             <Col span={8}>
               <Statistic
-                title="敗場"
+                title={t('team:team.losses')}
                 value={stats.losses}
                 valueStyle={{ color: '#ff4d4f' }}
               />
@@ -417,10 +419,10 @@ const ClientTeamDetail = () => {
         </Card>
 
         {/* Team Information */}
-        <Card title="隊伍資訊">
+        <Card title={t('team:team.detail')}>
           <Descriptions column={2} bordered>
-            <Descriptions.Item label="隊伍名稱">{getDisplayTeamName(team.team_name)}</Descriptions.Item>
-            <Descriptions.Item label="隊伍顏色">
+            <Descriptions.Item label={t('team:team.name')}>{getDisplayTeamName(team.team_name)}</Descriptions.Item>
+            <Descriptions.Item label={t('team:labels.teamColor', { defaultValue: '隊伍顏色' })}>
               <Space>
                 <div 
                   style={{ 
@@ -434,18 +436,18 @@ const ClientTeamDetail = () => {
                 {team.team_color}
               </Space>
             </Descriptions.Item>
-            <Descriptions.Item label="所屬小組">
-              {team.group_name ? `小組 ${getDisplayGroupName(team.group_name)}` : '未分配'}
+            <Descriptions.Item label={t('team:team.group')}>
+              {team.group_name ? `${t('team:team.group')} ${getDisplayGroupName(team.group_name)}` : t('team:messages.noGroupAssigned')}
             </Descriptions.Item>
-            <Descriptions.Item label="成員數量">{athletes.length} 人</Descriptions.Item>
-            <Descriptions.Item label="創建時間">
+            <Descriptions.Item label={t('team:team.memberCount')}>{athletes.length} {t('team:labels.people', { defaultValue: '人' })}</Descriptions.Item>
+            <Descriptions.Item label={t('team:labels.createdTime', { defaultValue: '創建時間' })}>
               {moment(team.created_at).format('YYYY-MM-DD HH:mm')}
             </Descriptions.Item>
-            <Descriptions.Item label="最後更新">
+            <Descriptions.Item label={t('team:labels.lastUpdated', { defaultValue: '最後更新' })}>
               {moment(team.updated_at).format('YYYY-MM-DD HH:mm')}
             </Descriptions.Item>
             {team.description && (
-              <Descriptions.Item label="隊伍描述" span={2}>
+              <Descriptions.Item label={t('team:team.description')} span={2}>
                 <Text>{team.description}</Text>
               </Descriptions.Item>
             )}
@@ -453,7 +455,7 @@ const ClientTeamDetail = () => {
         </Card>
 
         {/* Team Members */}
-        <Card title={`隊伍成員 (${athletes.length})`}>
+        <Card title={`${t('team:team.members')} (${athletes.length})`}>
           <Table
             columns={athleteColumns}
             dataSource={athletes}
@@ -464,7 +466,7 @@ const ClientTeamDetail = () => {
                 <div style={{ textAlign: 'center', padding: '40px 0' }}>
                   <UserOutlined style={{ fontSize: 48, color: '#d9d9d9', marginBottom: 16 }} />
                   <div>
-                    <Text type="secondary" style={{ fontSize: 16 }}>暫無隊員資料</Text>
+                    <Text type="secondary" style={{ fontSize: 16 }}>{t('athlete:messages.noAthleteData')}</Text>
                   </div>
                 </div>
               )
@@ -473,7 +475,7 @@ const ClientTeamDetail = () => {
         </Card>
 
         {/* Recent Matches */}
-        <Card title={`最近比賽 (${matches.length})`}>
+        <Card title={`${t('match:match.recent')} (${matches.length})`}>
           <List
             dataSource={matches.slice(0, 10)}
             locale={{
@@ -481,7 +483,7 @@ const ClientTeamDetail = () => {
                 <div style={{ textAlign: 'center', padding: '40px 0' }}>
                   <CalendarOutlined style={{ fontSize: 48, color: '#d9d9d9', marginBottom: 16 }} />
                   <div>
-                    <Text type="secondary" style={{ fontSize: 16 }}>暫無比賽記錄</Text>
+                    <Text type="secondary" style={{ fontSize: 16 }}>{t('team:messages.noMatchHistory')}</Text>
                   </div>
                 </div>
               )
@@ -533,7 +535,7 @@ const ClientTeamDetail = () => {
                         </Text>
                         {match.group_name && (
                           <Tag color="blue" size="small">
-                            小組 {getDisplayGroupName(match.group_name)}
+                            {t('team:team.group')} {getDisplayGroupName(match.group_name)}
                           </Tag>
                         )}
                       </Space>

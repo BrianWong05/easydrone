@@ -15,7 +15,7 @@
   "metrics": {
     "totalTeams": "Total Teams",
     "totalTournaments": "Tournaments",
-    "totalMatches": "Total Matches",
+    "totalMatches": "Match Number",
     "totalAthletes": "Total Athletes",
     "matchesPlayed": "Matches Played",
     "goalsScored": "Goals Scored",

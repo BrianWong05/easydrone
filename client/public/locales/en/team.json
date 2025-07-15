@@ -51,6 +51,12 @@
     "noMatchHistory": "No match history available",
     "unknownTeam": "Unknown Team"
   },
+  "labels": {
+    "teamColor": "Team Color",
+    "people": "people",
+    "createdTime": "Created Time",
+    "lastUpdated": "Last Updated"
+  },
   "placeholders": {
     "searchTeam": "Search team name",
     "enterTeamName": "Enter team name",

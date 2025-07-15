@@ -1,6 +1,7 @@
 {
   "match": {
     "number": "比賽編號",
+    "matchNumber": "比賽場次",
     "list": "比賽列表",
     "detail": "比賽詳情",
     "create": "創建比賽",

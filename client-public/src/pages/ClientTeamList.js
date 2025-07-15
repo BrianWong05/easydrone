@@ -20,11 +20,13 @@ import {
   FireOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 const { Title, Text } = Typography;
 
 const ClientTeamList = () => {
+  const { t } = useTranslation(['team', 'common', 'public', 'match']);
   const navigate = useNavigate();
   const [tournament, setTournament] = useState(null);
   const [teams, setTeams] = useState([]);
@@ -90,7 +92,7 @@ const ClientTeamList = () => {
       }
 
       if (!tournamentData) {
-        setError('找不到可顯示的錦標賽');
+        setError(t('public:layout.noActiveTournament'));
         return;
       }
 
@@ -117,7 +119,7 @@ const ClientTeamList = () => {
 
     } catch (error) {
       console.error('Error fetching teams data:', error);
-      setError('載入隊伍資料失敗');
+      setError(t('team:messages.loadingTeams'));
     } finally {
       setLoading(false);
     }
@@ -125,7 +127,7 @@ const ClientTeamList = () => {
 
   const columns = [
     {
-      title: '隊伍',
+      title: t('team:team.name'),
       dataIndex: 'team_name',
       key: 'team_name',
       render: (name, record) => (
@@ -155,7 +157,7 @@ const ClientTeamList = () => {
             {record.group_name && (
               <div>
                 <Tag color="blue" style={{ marginTop: 4 }}>
-                  小組 {getDisplayGroupName(record.group_name)}
+                  {t('team:team.group')} {getDisplayGroupName(record.group_name)}
                 </Tag>
               </div>
             )}
@@ -164,7 +166,7 @@ const ClientTeamList = () => {
       )
     },
     {
-      title: '成員數量',
+      title: t('team:team.members'),
       dataIndex: 'athlete_count',
       key: 'athlete_count',
       width: 120,
@@ -179,7 +181,7 @@ const ClientTeamList = () => {
       )
     },
     {
-      title: '比賽場次',
+      title: t('match:match.matchNumber'),
       key: 'matches',
       width: 120,
       align: 'center',
@@ -191,7 +193,7 @@ const ClientTeamList = () => {
       )
     },
     {
-      title: '勝場',
+      title: t('team:team.wins'),
       dataIndex: 'wins',
       key: 'wins',
       width: 80,
@@ -203,7 +205,7 @@ const ClientTeamList = () => {
       )
     },
     {
-      title: '進球',
+      title: t('team:team.goalsFor'),
       dataIndex: 'goals_for',
       key: 'goals_for',
       width: 80,
@@ -216,7 +218,7 @@ const ClientTeamList = () => {
       )
     },
     {
-      title: '積分',
+      title: t('team:team.points'),
       dataIndex: 'points',
       key: 'points',
       width: 80,
@@ -229,7 +231,7 @@ const ClientTeamList = () => {
       sorter: (a, b) => (b.points || 0) - (a.points || 0)
     },
     {
-      title: '操作',
+      title: t('common:buttons.view'),
       key: 'actions',
       width: 100,
       align: 'center',
@@ -243,7 +245,7 @@ const ClientTeamList = () => {
             }}
             onClick={() => navigate(`/teams/${record.team_id}`)}
           >
-            查看詳情
+            {t('common:buttons.view')}
           </Text>
         </Space>
       )
@@ -255,7 +257,7 @@ const ClientTeamList = () => {
       <div style={{ padding: 24, textAlign: 'center' }}>
         <Spin size="large" />
         <div style={{ marginTop: 16 }}>
-          <Text>載入隊伍資料中...</Text>
+          <Text>{t('team:messages.loadingTeams')}</Text>
         </div>
       </div>
     );
@@ -265,7 +267,7 @@ const ClientTeamList = () => {
     return (
       <div style={{ padding: 24 }}>
         <Alert
-          message="載入失敗"
+          message={t('common:messages.error')}
           description={error}
           type="error"
           showIcon
@@ -285,10 +287,10 @@ const ClientTeamList = () => {
                 <TeamOutlined style={{ fontSize: 32, color: '#1890ff' }} />
                 <div>
                   <Title level={2} style={{ margin: 0 }}>
-                    {tournament?.tournament_name} 參賽隊伍
+                    {tournament?.tournament_name} {t('public:navigation.teams')}
                   </Title>
                   <Text type="secondary">
-                    查看所有參賽隊伍的詳細資訊
+                    {t('team:messages.viewAllTeamsInfo', { defaultValue: '查看所有參賽隊伍的詳細資訊' })}
                   </Text>
                 </div>
               </Space>
@@ -297,11 +299,11 @@ const ClientTeamList = () => {
         </Card>
 
         {/* Statistics */}
-        <Card title="隊伍統計">
+        <Card title={t('team:messages.teamStatistics', { defaultValue: '隊伍統計' })}>
           <Row gutter={16}>
             <Col span={8}>
               <Statistic
-                title="參賽隊伍"
+                title={t('team:team.totalTeams')}
                 value={stats.totalTeams}
                 prefix={<TeamOutlined />}
                 valueStyle={{ color: '#1890ff' }}
@@ -309,7 +311,7 @@ const ClientTeamList = () => {
             </Col>
             <Col span={8}>
               <Statistic
-                title="總運動員"
+                title={t('athlete:athlete.totalAthletes')}
                 value={stats.totalAthletes}
                 prefix={<UserOutlined />}
                 valueStyle={{ color: '#52c41a' }}
@@ -317,7 +319,7 @@ const ClientTeamList = () => {
             </Col>
             <Col span={8}>
               <Statistic
-                title="分組數量"
+                title={t('group:messages.totalGroups', { defaultValue: '分組數量' })}
                 value={stats.totalGroups}
                 prefix={<TrophyOutlined />}
                 valueStyle={{ color: '#fa8c16' }}
@@ -327,7 +329,7 @@ const ClientTeamList = () => {
         </Card>
 
         {/* Teams Table */}
-        <Card title="隊伍列表">
+        <Card title={t('team:team.list')}>
           <Table
             columns={columns}
             dataSource={teams}
@@ -336,7 +338,7 @@ const ClientTeamList = () => {
               pageSize: 20,
               showSizeChanger: true,
               showQuickJumper: true,
-              showTotal: (total, range) => `第 ${range[0]}-${range[1]} 項，共 ${total} 支隊伍`,
+              showTotal: (total, range) => t('common:pagination.total', { start: range[0], end: range[1], total }) + ` ${t('team:messages.teamsCount', { defaultValue: '支隊伍' })}`,
               pageSizeOptions: ['10', '20', '50', '100'],
               defaultPageSize: 20
             }}
@@ -345,7 +347,7 @@ const ClientTeamList = () => {
                 <div style={{ textAlign: 'center', padding: '40px 0' }}>
                   <TeamOutlined style={{ fontSize: 48, color: '#d9d9d9', marginBottom: 16 }} />
                   <div>
-                    <Text type="secondary" style={{ fontSize: 16 }}>暫無隊伍資料</Text>
+                    <Text type="secondary" style={{ fontSize: 16 }}>{t('team:messages.noTeamData')}</Text>
                   </div>
                 </div>
               )

@@ -43,7 +43,8 @@
     "deleteWarning": "This action cannot be undone",
     "noTeamsInGroup": "No teams in group",
     "noStandingsData": "No standings data available",
-    "noMatchesInGroup": "No matches in group"
+    "noMatchesInGroup": "No matches in group",
+    "totalGroups": "Total Groups"
   },
   "placeholders": {
     "searchGroup": "Search group name",

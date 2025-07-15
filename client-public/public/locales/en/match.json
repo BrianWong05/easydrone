@@ -1,6 +1,7 @@
 {
   "match": {
     "number": "Match Number",
+    "matchNumber": "Match Number",
     "list": "Match List",
     "detail": "Match Details",
     "create": "Create Match",

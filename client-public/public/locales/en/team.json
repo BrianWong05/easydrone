@@ -49,7 +49,20 @@
     "deleteConfirmation": "Are you sure you want to delete this team?",
     "deleteWarning": "This action cannot be undone",
     "noMatchHistory": "No match history available",
-    "unknownTeam": "Unknown Team"
+    "unknownTeam": "Unknown Team",
+    "viewAllTeamsInfo": "View detailed information of all participating teams",
+    "teamStatistics": "Team Statistics",
+    "teamsCount": "teams",
+    "noGroupAssigned": "No Group",
+    "loadingTeamDetail": "Loading team details...",
+    "teamNotFound": "Team Not Found",
+    "teamNotFoundDesc": "The specified team information could not be found"
+  },
+  "labels": {
+    "teamColor": "Team Color",
+    "people": "people",
+    "createdTime": "Created Time",
+    "lastUpdated": "Last Updated"
   },
   "placeholders": {
     "searchTeam": "Search team name",

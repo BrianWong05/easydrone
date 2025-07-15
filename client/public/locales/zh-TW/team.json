@@ -14,7 +14,7 @@
     "contactInfo": "聯絡資訊",
     "registrationDate": "註冊日期",
     "status": "隊伍狀態",
-    "group": "所屬小組",
+    "group": "小組",
     "wins": "勝場",
     "losses": "敗場",
     "draws": "平局",
@@ -50,6 +50,12 @@
     "deleteWarning": "刪除後將無法恢復",
     "noMatchHistory": "暫無比賽記錄",
     "unknownTeam": "未知隊伍"
+  },
+  "labels": {
+    "teamColor": "隊伍顏色",
+    "people": "人",
+    "createdTime": "創建時間",
+    "lastUpdated": "最後更新"
   },
   "placeholders": {
     "searchTeam": "搜索隊伍名稱",
