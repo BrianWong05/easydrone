@@ -46,9 +46,11 @@ const TournamentBestTeamsStats = () => {
   const [availableMatches, setAvailableMatches] = useState([]);
   const [tournament, setTournament] = useState(null);
   const [groups, setGroups] = useState([]);
+  const [availableKnockoutRounds, setAvailableKnockoutRounds] = useState([]);
   
   // Filter states
-  const [selectedGroup, setSelectedGroup] = useState(null);
+  const [selectedGroups, setSelectedGroups] = useState([]);
+  const [selectedKnockoutRounds, setSelectedKnockoutRounds] = useState([]);
   const [selectedMatchType, setSelectedMatchType] = useState(null);
   const [selectedDateRange, setSelectedDateRange] = useState(null);
   const [selectedMatches, setSelectedMatches] = useState([]);
@@ -60,7 +62,14 @@ const TournamentBestTeamsStats = () => {
 
   useEffect(() => {
     fetchAvailableMatches();
-  }, [tournamentId, selectedGroup]);
+  }, [tournamentId, selectedGroups, selectedKnockoutRounds]);
+
+  // Auto-select matches when groups or knockout rounds are selected
+  useEffect(() => {
+    if (availableMatches.length > 0) {
+      autoSelectMatchesBasedOnFilters();
+    }
+  }, [availableMatches, selectedGroups, selectedKnockoutRounds]);
 
   const fetchInitialData = async () => {
     try {
@@ -79,11 +88,60 @@ const TournamentBestTeamsStats = () => {
         const groupData = groupsRes.data.data;
         setGroups(Array.isArray(groupData) ? groupData : []);
       }
+
+      // Fetch available knockout rounds from tournament matches
+      await fetchAvailableKnockoutRounds();
     } catch (error) {
       console.error('獲取錦標賽數據失敗:', error);
       message.error('獲取錦標賽數據失敗');
       // Set default empty arrays on error
       setGroups([]);
+      setAvailableKnockoutRounds([]);
+    }
+  };
+
+  const fetchAvailableKnockoutRounds = async () => {
+    try {
+      console.log('🔍 Fetching knockout rounds for tournament:', tournamentId);
+      
+      // Get all knockout matches for this tournament to see which rounds exist
+      const response = await axios.get('/api/stats/available-matches', { 
+        params: { 
+          tournament_id: tournamentId,
+          match_type: 'knockout'
+        }
+      });
+      
+      console.log('🔍 API Response:', response.data);
+      
+      if (response.data.success) {
+        const matches = response.data.data.matches || [];
+        console.log('🔍 All knockout matches found:', matches.length);
+        console.log('🔍 Sample matches:', matches.slice(0, 3));
+        
+        // Log all tournament_stage values (including null/undefined)
+        const allStages = matches.map(match => match.tournament_stage);
+        console.log('🔍 All tournament_stage values:', allStages);
+        
+        // Extract unique tournament stages from knockout matches
+        const stages = [...new Set(matches.map(match => match.tournament_stage).filter(Boolean))];
+        
+        console.log('🏆 Found knockout stages in database:', stages);
+        console.log('🏆 Available knockout rounds mapping:', knockoutRounds.map(r => r.value));
+        
+        // Filter knockout rounds to only show available ones
+        const available = knockoutRounds.filter(round => stages.includes(round.value));
+        console.log('🏆 Filtered available rounds:', available);
+        
+        setAvailableKnockoutRounds(available);
+      } else {
+        console.error('🔍 API returned success: false', response.data);
+        setAvailableKnockoutRounds([]);
+      }
+    } catch (error) {
+      console.error('獲取淘汰賽輪次失敗:', error);
+      // Fallback to show all rounds if fetch fails
+      setAvailableKnockoutRounds(knockoutRounds);
     }
   };
 
@@ -91,11 +149,23 @@ const TournamentBestTeamsStats = () => {
     try {
       setMatchesLoading(true);
       const params = { tournament_id: tournamentId };
-      if (selectedGroup) params.group_id = selectedGroup;
+      if (selectedGroups.length > 0) {
+        // If multiple groups selected, we'll handle this in the backend or filter client-side
+        params.group_id = selectedGroups[0]; // For now, use first selected group for API call
+      }
 
       const response = await axios.get('/api/stats/available-matches', { params });
       if (response.data.success) {
-        setAvailableMatches(response.data.data.matches || []);
+        let matches = response.data.data.matches || [];
+        
+        // Client-side filtering for multiple groups if needed
+        if (selectedGroups.length > 0) {
+          matches = matches.filter(match => 
+            selectedGroups.includes(match.group_id) || !match.group_id // Include non-group matches
+          );
+        }
+        
+        setAvailableMatches(matches);
         setSelectedMatches([]); // Reset selected matches when filters change
         setSelectAllMatches(false);
       }
@@ -107,25 +177,116 @@ const TournamentBestTeamsStats = () => {
     }
   };
 
+  // Helper function to get cumulative knockout rounds
+  const getCumulativeKnockoutRounds = (selectedRounds) => {
+    if (selectedRounds.length === 0) return [];
+    
+    // Define round hierarchy (from earliest to latest)
+    const roundHierarchy = [
+      'round_of_32', 'round_of_16', 'quarter_final', 'quarterfinal', 'quarter-final', 'top8',
+      'semi_final', 'semifinal', 'semi-final', 'top4',
+      'third_place', 'third-place', 'bronze',
+      'final', 'finals', 'gold'
+    ];
+    
+    // Find the earliest selected round
+    let earliestIndex = roundHierarchy.length;
+    selectedRounds.forEach(round => {
+      const index = roundHierarchy.indexOf(round);
+      if (index !== -1 && index < earliestIndex) {
+        earliestIndex = index;
+      }
+    });
+    
+    // Return all rounds from the earliest selected round onwards
+    if (earliestIndex < roundHierarchy.length) {
+      return roundHierarchy.slice(earliestIndex);
+    }
+    
+    return selectedRounds; // Fallback to original selection
+  };
+
+  // Auto-select matches based on selected groups and knockout rounds
+  const autoSelectMatchesBasedOnFilters = () => {
+    if (availableMatches.length === 0) return;
+
+    let matchesToSelect = [];
+
+    // If groups are selected, include matches from those groups
+    if (selectedGroups.length > 0) {
+      const groupMatches = availableMatches.filter(match => 
+        selectedGroups.includes(match.group_id)
+      );
+      matchesToSelect.push(...groupMatches.map(m => m.match_id));
+    }
+
+    // If knockout rounds are selected, include matches from those rounds
+    if (selectedKnockoutRounds.length > 0) {
+      const cumulativeRounds = getCumulativeKnockoutRounds(selectedKnockoutRounds);
+      const knockoutMatches = availableMatches.filter(match => 
+        cumulativeRounds.includes(match.tournament_stage)
+      );
+      matchesToSelect.push(...knockoutMatches.map(m => m.match_id));
+    }
+
+    // If mixed match type is selected and both groups and knockout rounds are selected
+    if (selectedMatchType === 'mixed' && selectedGroups.length > 0 && selectedKnockoutRounds.length > 0) {
+      // Already handled above - union of group and knockout matches
+    }
+    // If no specific filters, don't auto-select anything
+    else if (selectedGroups.length === 0 && selectedKnockoutRounds.length === 0) {
+      matchesToSelect = [];
+    }
+
+    // Remove duplicates and update selection
+    const uniqueMatches = [...new Set(matchesToSelect)];
+    setSelectedMatches(uniqueMatches);
+    setSelectAllMatches(uniqueMatches.length === availableMatches.length);
+
+    console.log('🎯 Auto-selected matches based on filters:', {
+      selectedGroups,
+      selectedKnockoutRounds,
+      totalAvailable: availableMatches.length,
+      autoSelected: uniqueMatches.length
+    });
+  };
+
   const fetchBestTeamsStats = async () => {
     try {
       setLoading(true);
       const params = { tournament_id: tournamentId }; // Always filter by current tournament
       
-      if (selectedGroup) params.group_id = selectedGroup;
-      if (selectedMatchType) params.match_type = selectedMatchType;
+      // Priority 1: If specific matches are selected, use only those matches
+      if (selectedMatches.length > 0) {
+        params.match_ids = selectedMatches.join(',');
+        console.log('🎯 Using selected matches:', selectedMatches.length, 'matches');
+      } 
+      // Priority 2: If no specific matches selected, use group/knockout filters
+      else {
+        if (selectedGroups.length > 0) {
+          params.group_id = selectedGroups.join(',');
+        }
+        if (selectedKnockoutRounds.length > 0) {
+          const cumulativeRounds = getCumulativeKnockoutRounds(selectedKnockoutRounds);
+          params.tournament_stage = cumulativeRounds.join(',');
+          console.log('🏆 Using knockout rounds filter:', cumulativeRounds);
+        }
+        if (selectedMatchType) params.match_type = selectedMatchType;
+        console.log('🎯 Using filter-based selection (no specific matches selected)');
+      }
+
+      // Date range filter (always applied if set)
       if (selectedDateRange && selectedDateRange.length === 2) {
         params.date_from = selectedDateRange[0].format('YYYY-MM-DD');
         params.date_to = selectedDateRange[1].format('YYYY-MM-DD');
       }
-      if (selectedMatches.length > 0) {
-        params.match_ids = selectedMatches.join(',');
-      }
+
+      console.log('📊 Final API parameters:', params);
 
       const response = await axios.get('/api/stats/best-teams', { params });
       if (response.data.success) {
         setBestTeamsData(response.data.data);
-        message.success('統計數據已更新');
+        message.success(`統計數據已更新 (基於 ${selectedMatches.length > 0 ? selectedMatches.length + ' 場選定比賽' : '篩選條件'})`);
       }
     } catch (error) {
       console.error('獲取最佳球隊統計失敗:', error);
@@ -150,7 +311,8 @@ const TournamentBestTeamsStats = () => {
   };
 
   const resetFilters = () => {
-    setSelectedGroup(null);
+    setSelectedGroups([]);
+    setSelectedKnockoutRounds([]);
     setSelectedMatchType(null);
     setSelectedDateRange(null);
     setSelectedMatches([]);
@@ -167,6 +329,36 @@ const TournamentBestTeamsStats = () => {
     }
     return teamName;
   };
+
+  // Helper function to clean group names
+  const getDisplayGroupName = (groupName) => {
+    if (!groupName) return '';
+    const match = groupName.match(/^(.+)_\d+$/);
+    if (match) {
+      return match[1];
+    }
+    return groupName;
+  };
+
+  // Knockout rounds mapping - including common variations
+  const knockoutRounds = [
+    { value: 'round_of_32', label: '32強' },
+    { value: 'round_of_16', label: '16強' },
+    { value: 'quarter_final', label: '八強' },
+    { value: 'quarterfinal', label: '八強' },
+    { value: 'quarter-final', label: '八強' },
+    { value: 'top8', label: '八強' },
+    { value: 'semi_final', label: '四強' },
+    { value: 'semifinal', label: '四強' },
+    { value: 'semi-final', label: '四強' },
+    { value: 'top4', label: '四強' },
+    { value: 'third_place', label: '季軍戰' },
+    { value: 'third-place', label: '季軍戰' },
+    { value: 'bronze', label: '季軍戰' },
+    { value: 'final', label: '決賽' },
+    { value: 'finals', label: '決賽' },
+    { value: 'gold', label: '決賽' }
+  ];
 
   const attackTeamsColumns = [
     {
@@ -297,7 +489,7 @@ const TournamentBestTeamsStats = () => {
               {getDisplayTeamName(record.team_name)}
             </div>
             <Text type="secondary" style={{ fontSize: '12px' }}>
-              {record.group_name ? `小組 ${record.group_name}` : '無小組'}
+              {record.group_name ? `小組 ${getDisplayGroupName(record.group_name)}` : '無小組'}
             </Text>
           </div>
         </div>
@@ -360,40 +552,144 @@ const TournamentBestTeamsStats = () => {
       {/* Filters */}
       <Card title={<><FilterOutlined /> 篩選條件</>} style={{ marginBottom: '24px' }}>
         <Row gutter={[16, 16]}>
-          <Col xs={24} sm={12} md={8}>
+          <Col xs={24} sm={12} md={selectedMatchType === 'knockout' ? 12 : 8}>
             <div>
-              <Text strong>小組</Text>
+              <Text strong>比賽類型 <span style={{ color: '#ff4d4f' }}>*</span></Text>
               <Select
                 style={{ width: '100%', marginTop: '4px' }}
-                placeholder="選擇小組"
-                allowClear
-                value={selectedGroup}
-                onChange={setSelectedGroup}
-              >
-                {Array.isArray(groups) && groups.map(group => (
-                  <Option key={group.group_id} value={group.group_id}>
-                    {group.group_name}
-                  </Option>
-                ))}
-              </Select>
-            </div>
-          </Col>
-          <Col xs={24} sm={12} md={8}>
-            <div>
-              <Text strong>比賽類型</Text>
-              <Select
-                style={{ width: '100%', marginTop: '4px' }}
-                placeholder="選擇比賽類型"
+                placeholder="請先選擇比賽類型"
                 allowClear
                 value={selectedMatchType}
-                onChange={setSelectedMatchType}
+                onChange={(value) => {
+                  setSelectedMatchType(value);
+                  // Clear group/knockout selection when switching match type
+                  if (value === 'knockout' || !value) {
+                    setSelectedGroups([]);
+                  }
+                  if (value === 'group' || value === 'mixed' || !value) {
+                    setSelectedKnockoutRounds([]);
+                  }
+                }}
               >
                 <Option value="group">小組賽</Option>
                 <Option value="knockout">淘汰賽</Option>
+                <Option value="mixed">混合賽制 (小組賽+淘汰賽)</Option>
               </Select>
             </div>
           </Col>
-          <Col xs={24} sm={12} md={8}>
+          {(selectedMatchType === 'group' || selectedMatchType === 'mixed') && (
+            <Col xs={24} sm={12} md={8}>
+              <div>
+                <Text strong>小組 ({selectedGroups.length} 已選)</Text>
+                <div style={{ 
+                  marginTop: '8px', 
+                  border: '1px solid #d9d9d9', 
+                  borderRadius: '6px', 
+                  padding: '8px',
+                  maxHeight: '120px',
+                  overflowY: 'auto',
+                  backgroundColor: '#fafafa'
+                }}>
+                  <div style={{ marginBottom: '8px' }}>
+                    <Checkbox
+                      indeterminate={selectedGroups.length > 0 && selectedGroups.length < groups.length}
+                      checked={selectedGroups.length === groups.length && groups.length > 0}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedGroups(groups.map(g => g.group_id));
+                        } else {
+                          setSelectedGroups([]);
+                        }
+                      }}
+                    >
+                      <Text strong>全選</Text>
+                    </Checkbox>
+                  </div>
+                  {Array.isArray(groups) && groups.map(group => (
+                    <div key={group.group_id} style={{ marginBottom: '4px' }}>
+                      <Checkbox
+                        checked={selectedGroups.includes(group.group_id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedGroups([...selectedGroups, group.group_id]);
+                          } else {
+                            setSelectedGroups(selectedGroups.filter(id => id !== group.group_id));
+                          }
+                        }}
+                      >
+                        {getDisplayGroupName(group.group_name)}
+                      </Checkbox>
+                    </div>
+                  ))}
+                  {groups.length === 0 && (
+                    <Text type="secondary" style={{ fontSize: '12px' }}>
+                      此錦標賽暫無小組
+                    </Text>
+                  )}
+                </div>
+              </div>
+            </Col>
+          )}
+          {(selectedMatchType === 'knockout' || selectedMatchType === 'mixed') && (
+            <Col xs={24} sm={12} md={8}>
+              <div>
+                <Text strong>淘汰賽輪次 ({selectedKnockoutRounds.length} 已選)</Text>
+                <div style={{ 
+                  marginTop: '8px', 
+                  border: '1px solid #d9d9d9', 
+                  borderRadius: '6px', 
+                  padding: '8px',
+                  maxHeight: '120px',
+                  overflowY: 'auto',
+                  backgroundColor: '#fafafa'
+                }}>
+                  <div style={{ marginBottom: '8px' }}>
+                    <Checkbox
+                      indeterminate={selectedKnockoutRounds.length > 0 && selectedKnockoutRounds.length < availableKnockoutRounds.length}
+                      checked={selectedKnockoutRounds.length === availableKnockoutRounds.length && availableKnockoutRounds.length > 0}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedKnockoutRounds(availableKnockoutRounds.map(r => r.value));
+                        } else {
+                          setSelectedKnockoutRounds([]);
+                        }
+                      }}
+                    >
+                      <Text strong>全選</Text>
+                    </Checkbox>
+                  </div>
+                  {availableKnockoutRounds.length === 0 && (
+                    <Text type="secondary" style={{ fontSize: '12px' }}>
+                      此錦標賽暫無淘汰賽
+                    </Text>
+                  )}
+                  {availableKnockoutRounds.map(round => (
+                    <div key={round.value} style={{ marginBottom: '4px' }}>
+                      <Checkbox
+                        checked={selectedKnockoutRounds.includes(round.value)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedKnockoutRounds([...selectedKnockoutRounds, round.value]);
+                          } else {
+                            setSelectedKnockoutRounds(selectedKnockoutRounds.filter(r => r !== round.value));
+                          }
+                        }}
+                      >
+                        <span>{round.label}</span>
+                        <span style={{ fontSize: '10px', color: '#999', marginLeft: '4px' }}>
+                          (含後續輪次)
+                        </span>
+                      </Checkbox>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </Col>
+          )}
+          <Col xs={24} sm={12} md={
+            selectedMatchType === 'knockout' ? 4 : 
+            selectedMatchType === 'mixed' ? 4 : 8
+          }>
             <div>
               <Text strong>日期範圍</Text>
               <RangePicker
@@ -421,21 +717,64 @@ const TournamentBestTeamsStats = () => {
           {matchesLoading ? (
             <Spin />
           ) : (
-            <Select
-              mode="multiple"
-              style={{ width: '100%' }}
-              placeholder="選擇要包含在統計中的比賽（留空表示包含所有符合條件的比賽）"
-              value={selectedMatches}
-              onChange={handleMatchSelection}
-              maxTagCount={3}
-              maxTagTextLength={20}
-            >
+            <div style={{ 
+              border: '1px solid #d9d9d9', 
+              borderRadius: '6px', 
+              padding: '8px',
+              maxHeight: '200px',
+              overflowY: 'auto',
+              backgroundColor: '#fafafa'
+            }}>
+              {availableMatches.length === 0 && (
+                <Text type="secondary" style={{ fontSize: '12px' }}>
+                  暫無符合條件的比賽
+                </Text>
+              )}
               {Array.isArray(availableMatches) && availableMatches.map(match => (
-                <Option key={match.match_id} value={match.match_id}>
-                  {moment(match.match_date).format('MM-DD')} {getDisplayTeamName(match.team1_name)} vs {getDisplayTeamName(match.team2_name)} ({match.team1_score}-{match.team2_score})
-                </Option>
+                <div key={match.match_id} style={{ marginBottom: '4px' }}>
+                  <Checkbox
+                    checked={selectedMatches.includes(match.match_id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedMatches([...selectedMatches, match.match_id]);
+                      } else {
+                        setSelectedMatches(selectedMatches.filter(id => id !== match.match_id));
+                      }
+                      // Update select all state
+                      const newSelected = e.target.checked 
+                        ? [...selectedMatches, match.match_id]
+                        : selectedMatches.filter(id => id !== match.match_id);
+                      setSelectAllMatches(newSelected.length === availableMatches.length);
+                    }}
+                  >
+                    <div style={{ fontSize: '12px' }}>
+                      <div style={{ fontWeight: 'bold' }}>
+                        {moment(match.match_date).format('MM/DD HH:mm')} - {match.match_type === 'group' ? '小組賽' : '淘汰賽'}
+                        {match.match_number && (
+                          <span style={{ marginLeft: '8px', color: '#1890ff' }}>
+                            🏟️ {match.match_number}
+                          </span>
+                        )}
+                      </div>
+                      <div style={{ color: '#666' }}>
+                        {getDisplayTeamName(match.team1_name)} vs {getDisplayTeamName(match.team2_name)} 
+                        <span style={{ marginLeft: '8px', fontWeight: 'bold' }}>
+                          ({match.team1_score || 0}-{match.team2_score || 0})
+                        </span>
+                      </div>
+                      <div style={{ color: '#999', fontSize: '11px', display: 'flex', gap: '12px' }}>
+                        {match.group_name && (
+                          <span>{getDisplayGroupName(match.group_name)}</span>
+                        )}
+                        {match.tournament_stage && (
+                          <span>🏆 {match.tournament_stage}</span>
+                        )}
+                      </div>
+                    </div>
+                  </Checkbox>
+                </div>
               ))}
-            </Select>
+            </div>
           )}
           
           {availableMatches.length > 0 && (
@@ -530,10 +869,38 @@ const TournamentBestTeamsStats = () => {
             <div style={{ fontSize: '12px', color: '#666' }}>
               <p><strong>錦標賽：</strong> {tournament?.tournament_name || '未知'}</p>
               {bestTeamsData.summary.filters_applied.group_id && (
-                <p><strong>小組：</strong> {Array.isArray(groups) ? groups.find(g => g.group_id == bestTeamsData.summary.filters_applied.group_id)?.group_name || '未知' : '未知'}</p>
+                <p><strong>小組：</strong> {
+                  (() => {
+                    if (!Array.isArray(groups)) return '未知';
+                    const groupIds = bestTeamsData.summary.filters_applied.group_id.split(',');
+                    const groupNames = groupIds.map(id => {
+                      const group = groups.find(g => g.group_id == id);
+                      return group ? getDisplayGroupName(group.group_name) : `未知(${id})`;
+                    });
+                    return groupNames.join(', ');
+                  })()
+                }</p>
+              )}
+              {bestTeamsData.summary.filters_applied.tournament_stage && (
+                <p><strong>淘汰賽輪次：</strong> {
+                  (() => {
+                    const stageIds = bestTeamsData.summary.filters_applied.tournament_stage.split(',');
+                    const stageNames = stageIds.map(id => 
+                      availableKnockoutRounds.find(r => r.value === id)?.label || 
+                      knockoutRounds.find(r => r.value === id)?.label || 
+                      `未知(${id})`
+                    );
+                    return stageNames.join(', ');
+                  })()
+                }</p>
               )}
               {bestTeamsData.summary.filters_applied.match_type && (
-                <p><strong>比賽類型：</strong> {bestTeamsData.summary.filters_applied.match_type === 'group' ? '小組賽' : '淘汰賽'}</p>
+                <p><strong>比賽類型：</strong> {
+                  bestTeamsData.summary.filters_applied.match_type === 'group' ? '小組賽' : 
+                  bestTeamsData.summary.filters_applied.match_type === 'knockout' ? '淘汰賽' : 
+                  bestTeamsData.summary.filters_applied.match_type === 'mixed' ? '混合賽制' : 
+                  bestTeamsData.summary.filters_applied.match_type
+                }</p>
               )}
               {bestTeamsData.summary.filters_applied.date_range && (
                 <p><strong>日期範圍：</strong> {bestTeamsData.summary.filters_applied.date_range}</p>
@@ -550,9 +917,17 @@ const TournamentBestTeamsStats = () => {
       {!bestTeamsData && (
         <Card>
           <Alert
-            message="請設定篩選條件並點擊「計算統計」"
-            description={`分析 ${tournament?.tournament_name || '此錦標賽'} 中的最佳進攻和防守球隊。您可以選擇小組、比賽類型、日期範圍或特定比賽來進行統計分析。`}
-            type="info"
+            message={selectedMatchType ? "請點擊「計算統計」開始分析" : "請先選擇比賽類型"}
+            description={
+              selectedMatchType 
+                ? `分析 ${tournament?.tournament_name || '此錦標賽'} 中的${
+                    selectedMatchType === 'group' ? '小組賽' : 
+                    selectedMatchType === 'knockout' ? '淘汰賽' : 
+                    '所有比賽'
+                  }最佳進攻和防守球隊。`
+                : `請先選擇要分析的比賽類型（小組賽、淘汰賽或混合賽制），然後設定其他篩選條件。`
+            }
+            type={selectedMatchType ? "info" : "warning"}
             showIcon
           />
         </Card>

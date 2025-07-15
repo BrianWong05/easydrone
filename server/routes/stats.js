@@ -1119,6 +1119,7 @@ router.get('/available-matches', async (req, res) => {
     const matches = await query(`
       SELECT 
         m.match_id,
+        m.match_number,
         m.match_date,
         m.match_time,
         m.match_type,
