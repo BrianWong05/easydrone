@@ -290,9 +290,10 @@ const TournamentBestTeamsStats = () => {
         // Save to public cache for client-public display
         try {
           await axios.post('/api/stats/best-teams-cache', {
-            stats_data: response.data.data
+            stats_data: response.data.data,
+            tournament_id: tournamentId
           });
-          console.log('✅ Stats saved to public cache');
+          console.log('✅ Stats saved to public cache for tournament:', tournamentId);
         } catch (cacheError) {
           console.error('Failed to save to public cache:', cacheError);
         }

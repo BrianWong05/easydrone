@@ -61,6 +61,13 @@ const ClientBestTeamsStats = () => {
 
   useEffect(() => {
     fetchTournaments();
+    
+    // Set up periodic refresh to check for tournament changes
+    const interval = setInterval(() => {
+      fetchTournaments();
+    }, 30000); // Check every 30 seconds
+    
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {

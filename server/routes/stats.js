@@ -1255,30 +1255,28 @@ router.post('/best-teams-cache', async (req, res) => {
       console.log('Cache table already exists or creation failed:', createError.message);
     }
     
-    // Clear old cache entries for this tournament (keep only latest 3 per tournament)
-    if (tournament_id) {
-      try {
-        await query(`
-          DELETE FROM best_teams_cache 
-          WHERE tournament_id = ? AND cache_id NOT IN (
-            SELECT * FROM (
-              SELECT cache_id FROM best_teams_cache 
-              WHERE tournament_id = ?
-              ORDER BY created_at DESC 
-              LIMIT 2
-            ) AS latest
-          )
-        `, [tournament_id, tournament_id]);
-      } catch (deleteError) {
-        console.log('Failed to clean old cache entries:', deleteError.message);
-      }
-    }
+    // Check if cache entry already exists for this tournament
+    const existingCache = await query(`
+      SELECT cache_id FROM best_teams_cache 
+      WHERE tournament_id = ?
+    `, [tournament_id]);
     
-    // Insert new cache entry
-    await query(`
-      INSERT INTO best_teams_cache (tournament_id, stats_data, created_at) 
-      VALUES (?, ?, NOW())
-    `, [tournament_id, JSON.stringify(stats_data)]);
+    if (existingCache.length > 0) {
+      // Update existing cache entry
+      await query(`
+        UPDATE best_teams_cache 
+        SET stats_data = ?, created_at = NOW()
+        WHERE tournament_id = ?
+      `, [JSON.stringify(stats_data), tournament_id]);
+      console.log(`📝 Updated existing cache entry for tournament ${tournament_id}`);
+    } else {
+      // Insert new cache entry
+      await query(`
+        INSERT INTO best_teams_cache (tournament_id, stats_data, created_at) 
+        VALUES (?, ?, NOW())
+      `, [tournament_id, JSON.stringify(stats_data)]);
+      console.log(`➕ Created new cache entry for tournament ${tournament_id}`);
+    }
     
     res.json({
       success: true,
