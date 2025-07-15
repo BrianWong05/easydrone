@@ -9,8 +9,7 @@ import {
   Row,
   Col,
   Statistic,
-  Tag,
-  Select
+  Tag
 } from 'antd';
 import { 
   TrophyOutlined, 
@@ -313,25 +312,6 @@ const ClientBestTeamsStats = () => {
           <BarChartOutlined /> 最佳球隊統計
         </Title>
         
-        {tournaments.length > 0 && (
-          <div style={{ marginTop: '16px', marginBottom: '16px' }}>
-            <Space>
-              <Text strong>錦標賽：</Text>
-              <Select
-                value={selectedTournament}
-                onChange={setSelectedTournament}
-                style={{ minWidth: '200px' }}
-                placeholder="選擇錦標賽"
-              >
-                {tournaments.map(tournament => (
-                  <Select.Option key={tournament.tournament_id} value={tournament.tournament_id}>
-                    {tournament.tournament_name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Space>
-          </div>
-        )}
       </div>
 
       {bestTeamsData && (
