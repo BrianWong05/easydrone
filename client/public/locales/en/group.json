@@ -50,5 +50,12 @@
     "enterGroupName": "Enter group name",
     "enterDescription": "Enter group description",
     "selectGroupLetter": "Select group letter"
+  },
+  "list": {
+    "title": "Tournament Group Management",
+    "subtitle": "Manage tournament groups",
+    "teamCompletion": "Team Completion",
+    "createFirstGroup": "Create First Group",
+    "noGroupsDescription": "Click 'Create Group' button to create the first group"
   }
 }

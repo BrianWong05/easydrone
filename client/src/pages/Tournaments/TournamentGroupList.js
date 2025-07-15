@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Card, Typography, Button, Space, Row, Col, Table, Tag, Progress, message } from "antd";
 import { PlusOutlined, EyeOutlined, EditOutlined, TrophyOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import axios from "axios";
 
 const { Title, Text } = Typography;
@@ -9,6 +10,7 @@ const { Title, Text } = Typography;
 const TournamentGroupList = () => {
   const navigate = useNavigate();
   const { id: tournamentId } = useParams();
+  const { t } = useTranslation(['group', 'common']);
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -73,11 +75,11 @@ const TournamentGroupList = () => {
 
         setGroups(groupsWithStandings);
       } else {
-        message.error("獲取小組列表失敗");
+        message.error(t('group:messages.loadingGroups'));
       }
     } catch (error) {
       console.error("獲取小組數據錯誤:", error);
-      message.error("獲取小組數據失敗");
+      message.error(t('group:messages.noGroupData'));
     } finally {
       setLoading(false);
     }
@@ -85,7 +87,7 @@ const TournamentGroupList = () => {
 
   const standingsColumns = [
     {
-      title: "排名",
+      title: t('group:standings.position'),
       key: "rank",
       width: 60,
       render: (_, __, index) => (
@@ -100,7 +102,7 @@ const TournamentGroupList = () => {
       ),
     },
     {
-      title: "隊伍",
+      title: t('group:standings.team'),
       dataIndex: "name",
       key: "name",
       render: (name, record, index) => (
@@ -117,7 +119,7 @@ const TournamentGroupList = () => {
               if (record.team_id) {
                 navigate(`/tournaments/${tournamentId}/teams/${record.team_id}`);
               } else {
-                message.warning("無法找到隊伍詳情");
+                message.warning(t('common:messages.noData'));
               }
             }}
           >
@@ -127,53 +129,53 @@ const TournamentGroupList = () => {
       ),
     },
     {
-      title: "積分",
+      title: t('group:standings.points'),
       dataIndex: "points",
       key: "points",
       width: 60,
       render: (points) => <span style={{ fontWeight: "bold", color: "#1890ff" }}>{points}</span>,
     },
     {
-      title: "場次",
+      title: t('group:standings.played'),
       dataIndex: "played",
       key: "played",
       width: 60,
     },
     {
-      title: "勝",
+      title: t('group:standings.won'),
       dataIndex: "won",
       key: "won",
       width: 50,
       render: (won) => <span style={{ color: "#52c41a" }}>{won}</span>,
     },
     {
-      title: "平",
+      title: t('group:standings.drawn'),
       dataIndex: "drawn",
       key: "drawn",
       width: 50,
       render: (drawn) => <span style={{ color: "#faad14" }}>{drawn}</span>,
     },
     {
-      title: "負",
+      title: t('group:standings.lost'),
       dataIndex: "lost",
       key: "lost",
       width: 50,
       render: (lost) => <span style={{ color: "#ff4d4f" }}>{lost}</span>,
     },
     {
-      title: "進球",
+      title: t('group:standings.goalsFor'),
       dataIndex: "gf",
       key: "gf",
       width: 60,
     },
     {
-      title: "失球",
+      title: t('group:standings.goalsAgainst'),
       dataIndex: "ga",
       key: "ga",
       width: 60,
     },
     {
-      title: "淨勝球",
+      title: t('group:standings.goalDifference'),
       key: "gd",
       width: 80,
       render: (_, record) => {
@@ -197,13 +199,13 @@ const TournamentGroupList = () => {
     <div style={{ padding: "24px" }}>
       <Space direction="vertical" size="large" style={{ width: "100%" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Title level={2}>小組列表</Title>
+          <Title level={2}>{t('group:group.list')}</Title>
           <Button
             type="primary"
             icon={<PlusOutlined />}
             onClick={() => navigate(`/tournaments/${tournamentId}/groups/create`)}
           >
-            新增小組
+            {t('group:group.create')}
           </Button>
         </div>
 
@@ -213,9 +215,9 @@ const TournamentGroupList = () => {
               <Card
                 title={
                   <Space>
-                    <span style={{ fontSize: "18px", fontWeight: "bold" }}>小組 {group.group_name}</span>
+                    <span style={{ fontSize: "18px", fontWeight: "bold" }}>{t('group:group.name')} {group.group_name}</span>
                     <Tag color="blue">
-                      {group.current_teams}/{group.max_teams} 隊伍
+                      {group.current_teams}/{group.max_teams} {t('group:group.teams')}
                     </Tag>
                   </Space>
                 }
@@ -226,14 +228,14 @@ const TournamentGroupList = () => {
                       icon={<EyeOutlined />}
                       onClick={() => navigate(`/tournaments/${tournamentId}/groups/${group.group_id}`)}
                     >
-                      查看詳情
+                      {t('common:buttons.view')}
                     </Button>
                     <Button
                       type="link"
                       icon={<EditOutlined />}
                       onClick={() => navigate(`/tournaments/${tournamentId}/groups/${group.group_id}/edit`)}
                     >
-                      編輯
+                      {t('common:buttons.edit')}
                     </Button>
                   </Space>
                 }
@@ -241,7 +243,7 @@ const TournamentGroupList = () => {
               >
                 <Space direction="vertical" style={{ width: "100%" }} size="middle">
                   <div>
-                    <Text type="secondary">隊伍完整度</Text>
+                    <Text type="secondary">{t('group:list.teamCompletion')}</Text>
                     <Progress
                       percent={(group.current_teams / group.max_teams) * 100}
                       size="small"
@@ -251,7 +253,7 @@ const TournamentGroupList = () => {
 
                   <div>
                     <Text strong style={{ marginBottom: 8, display: "block" }}>
-                      積分榜
+                      {t('group:group.standings')}
                     </Text>
                     <Table
                       columns={standingsColumns}
@@ -271,7 +273,7 @@ const TournamentGroupList = () => {
         {groups.length === 0 && !loading && (
           <Card>
             <div style={{ textAlign: "center", padding: "40px 0" }}>
-              <Text type="secondary">暫無小組數據</Text>
+              <Text type="secondary">{t('group:messages.noGroups')}</Text>
               <br />
               <Button
                 type="primary"
@@ -279,7 +281,7 @@ const TournamentGroupList = () => {
                 onClick={() => navigate(`/tournaments/${tournamentId}/groups/create`)}
                 style={{ marginTop: 16 }}
               >
-                創建第一個小組
+                {t('group:list.createFirstGroup')}
               </Button>
             </div>
           </Card>

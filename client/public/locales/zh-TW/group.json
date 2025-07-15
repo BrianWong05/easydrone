@@ -50,5 +50,12 @@
     "enterGroupName": "請輸入小組名稱",
     "enterDescription": "請輸入小組描述",
     "selectGroupLetter": "請選擇小組字母"
+  },
+  "list": {
+    "title": "錦標賽小組管理",
+    "subtitle": "管理錦標賽小組",
+    "teamCompletion": "隊伍完整度",
+    "createFirstGroup": "創建第一個小組",
+    "noGroupsDescription": "點擊「創建小組」按鈕創建第一個小組"
   }
 }
