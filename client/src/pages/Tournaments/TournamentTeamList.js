@@ -10,6 +10,7 @@ import {
   TrophyOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import axios from "axios";
 
 const { Title, Text } = Typography;
@@ -18,6 +19,7 @@ const { Option } = Select;
 const TournamentTeamList = () => {
   const navigate = useNavigate();
   const { id: tournamentId } = useParams();
+  const { t } = useTranslation(['team', 'common']);
   const [teams, setTeams] = useState([]);
   const [groups, setGroups] = useState([]);
   const [tournament, setTournament] = useState(null);
@@ -102,11 +104,11 @@ const TournamentTeamList = () => {
           total: paginationData.total || 0,
         });
       } else {
-        message.error("獲取隊伍列表失敗");
+        message.error(t('common:messages.dataLoadFailed'));
       }
     } catch (error) {
       console.error("Error fetching teams:", error);
-      message.error("獲取隊伍列表失敗");
+      message.error(t('common:messages.dataLoadFailed'));
     } finally {
       setLoading(false);
     }
@@ -142,12 +144,12 @@ const TournamentTeamList = () => {
   const handleDelete = async (teamId) => {
     try {
       await axios.delete(`/api/tournaments/${tournamentId}/teams/${teamId}`);
-      message.success("隊伍刪除成功");
+      message.success(t('team:messages.teamDeleted'));
       fetchTeams(pagination.current, pagination.pageSize);
       fetchTeamStats(); // Refresh statistics after deletion
     } catch (error) {
       console.error("Error deleting team:", error);
-      const errorMessage = error.response?.data?.message || "刪除隊伍失敗";
+      const errorMessage = error.response?.data?.message || t('common:messages.operationFailed');
       message.error(errorMessage);
     }
   };
@@ -163,7 +165,7 @@ const TournamentTeamList = () => {
 
   const columns = [
     {
-      title: "隊伍",
+      title: t('team:list.columns.team'),
       key: "team",
       render: (_, record) => {
         const displayName = record.team_name?.includes("_") ? record.team_name.split("_")[0] : record.team_name;
@@ -197,42 +199,42 @@ const TournamentTeamList = () => {
       },
     },
     {
-      title: "所屬小組",
+      title: t('team:list.columns.group'),
       key: "group",
       render: (_, record) => {
         if (!record.group_id) {
-          return <Tag color="default">未分配</Tag>;
+          return <Tag color="default">{t('team:list.unassigned')}</Tag>;
         }
         const group = Array.isArray(groups) ? groups.find((g) => g.group_id === record.group_id) : null;
         const groupDisplayName = group?.group_name?.includes("_") ? group.group_name.split("_")[0] : group?.group_name;
-        return <Tag color="blue">小組 {groupDisplayName || record.group_id}</Tag>;
+        return <Tag color="blue">{t('team:list.group')} {groupDisplayName || record.group_id}</Tag>;
       },
     },
     {
-      title: "隊伍類型",
+      title: t('team:list.columns.type'),
       dataIndex: "is_virtual",
       key: "is_virtual",
-      render: (isVirtual) => <Tag color={isVirtual ? "orange" : "green"}>{isVirtual ? "虛擬隊伍" : "真實隊伍"}</Tag>,
+      render: (isVirtual) => <Tag color={isVirtual ? "orange" : "green"}>{isVirtual ? t('team:list.teamType.virtual') : t('team:list.teamType.real')}</Tag>,
     },
     {
-      title: "創建時間",
+      title: t('team:list.columns.createdAt'),
       dataIndex: "created_at",
       key: "created_at",
       render: (date) => new Date(date).toLocaleDateString("zh-TW"),
     },
     {
-      title: "操作",
+      title: t('team:list.columns.actions'),
       key: "actions",
       render: (_, record) => (
         <Space>
-          <Tooltip title="查看詳情">
+          <Tooltip title={t('team:list.actions.viewDetails')}>
             <Button
               type="text"
               icon={<EyeOutlined />}
               onClick={() => navigate(`/tournaments/${tournamentId}/teams/${record.team_id}`)}
             />
           </Tooltip>
-          <Tooltip title="編輯隊伍">
+          <Tooltip title={t('team:list.actions.editTeam')}>
             <Button
               type="text"
               icon={<EditOutlined />}
@@ -240,13 +242,13 @@ const TournamentTeamList = () => {
             />
           </Tooltip>
           <Popconfirm
-            title="確定要刪除這支隊伍嗎？"
-            description="刪除後將無法恢復，相關的運動員和比賽記錄也會被影響。"
+            title={t('team:list.actions.deleteConfirmation')}
+            description={t('team:list.actions.deleteWarning')}
             onConfirm={() => handleDelete(record.team_id)}
-            okText="確定"
-            cancelText="取消"
+            okText={t('common:buttons.confirm')}
+            cancelText={t('common:buttons.cancel')}
           >
-            <Tooltip title="刪除隊伍">
+            <Tooltip title={t('team:list.actions.deleteTeam')}>
               <Button type="text" danger icon={<DeleteOutlined />} />
             </Tooltip>
           </Popconfirm>
@@ -263,9 +265,9 @@ const TournamentTeamList = () => {
           <div>
             <Title level={2} style={{ margin: 0 }}>
               <TrophyOutlined style={{ marginRight: 8, color: "#faad14" }} />
-              錦標賽隊伍管理
+              {t('team:list.title')}
             </Title>
-            <Text type="secondary">{tournament?.tournament_name || `錦標賽 ${tournamentId}`} - 管理參賽隊伍</Text>
+            <Text type="secondary">{tournament?.tournament_name || `錦標賽 ${tournamentId}`} - {t('team:list.subtitle')}</Text>
           </div>
           <Button
             type="primary"
@@ -273,7 +275,7 @@ const TournamentTeamList = () => {
             onClick={() => navigate(`/tournaments/${tournamentId}/teams/create`)}
             size="large"
           >
-            新增隊伍
+            {t('team:list.addTeam')}
           </Button>
         </div>
 
@@ -284,25 +286,25 @@ const TournamentTeamList = () => {
               <div style={{ fontSize: "24px", fontWeight: "bold", color: "#1890ff" }}>
                 {teamStats.total_teams || 0}
               </div>
-              <div style={{ color: "#666" }}>總隊伍數</div>
+              <div style={{ color: "#666" }}>{t('team:list.stats.totalTeams')}</div>
             </div>
             <div style={{ textAlign: "center" }}>
               <div style={{ fontSize: "24px", fontWeight: "bold", color: "#52c41a" }}>
                 {teamStats.grouped_teams || 0}
               </div>
-              <div style={{ color: "#666" }}>已分組</div>
+              <div style={{ color: "#666" }}>{t('team:list.stats.grouped')}</div>
             </div>
             <div style={{ textAlign: "center" }}>
               <div style={{ fontSize: "24px", fontWeight: "bold", color: "#faad14" }}>
                 {teamStats.ungrouped_teams || 0}
               </div>
-              <div style={{ color: "#666" }}>未分組</div>
+              <div style={{ color: "#666" }}>{t('team:list.stats.ungrouped')}</div>
             </div>
             <div style={{ textAlign: "center" }}>
               <div style={{ fontSize: "24px", fontWeight: "bold", color: "#722ed1" }}>
                 {teamStats.virtual_teams || 0}
               </div>
-              <div style={{ color: "#666" }}>虛擬隊伍</div>
+              <div style={{ color: "#666" }}>{t('team:list.stats.virtual')}</div>
             </div>
           </div>
         </Card>
@@ -311,15 +313,15 @@ const TournamentTeamList = () => {
         <Card>
           <Space size="large">
             <Input
-              placeholder="搜索隊伍名稱"
+              placeholder={t('team:list.searchPlaceholder')}
               prefix={<SearchOutlined />}
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               style={{ width: 250 }}
             />
             <Select value={filterGroup} onChange={setFilterGroup} style={{ width: 150 }}>
-              <Option value="all">所有小組</Option>
-              <Option value="unassigned">未分配</Option>
+              <Option value="all">{t('team:list.allGroups')}</Option>
+              <Option value="unassigned">{t('team:list.unassigned')}</Option>
               {Array.isArray(groups)
                 ? groups.map((group) => {
                     const displayName = group.group_name?.includes("_")
@@ -327,14 +329,14 @@ const TournamentTeamList = () => {
                       : group.group_name;
                     return (
                       <Option key={group.group_id} value={group.group_id.toString()}>
-                        小組 {displayName}
+                        {t('team:list.group')} {displayName}
                       </Option>
                     );
                   })
                 : []}
             </Select>
             <Text type="secondary">
-              顯示 {filteredTeams.length} / {teamStats.total_teams || 0} 支隊伍
+              {t('team:list.showingTeams', { count: filteredTeams.length, total: teamStats.total_teams || 0 })}
             </Text>
           </Space>
         </Card>
@@ -352,7 +354,7 @@ const TournamentTeamList = () => {
               total: pagination.total,
               showSizeChanger: true,
               showQuickJumper: true,
-              showTotal: (total, range) => `第 ${range[0]}-${range[1]} 項，共 ${total} 支隊伍`,
+              showTotal: (total, range) => t('common:pagination.total', { start: range[0], end: range[1], total }) + ` ${t('team:team.totalTeams')}`,
               pageSizeOptions: ["10", "20", "30", "50", "100"],
             }}
             onChange={handleTableChange}
@@ -361,10 +363,10 @@ const TournamentTeamList = () => {
                 <div style={{ textAlign: "center", padding: "40px 0" }}>
                   <TeamOutlined style={{ fontSize: 48, color: "#d9d9d9", marginBottom: 16 }} />
                   <div style={{ marginBottom: 16 }}>
-                    <span style={{ color: "#999", fontSize: 16 }}>暫無隊伍</span>
+                    <span style={{ color: "#999", fontSize: 16 }}>{t('team:list.noTeams')}</span>
                   </div>
                   <div>
-                    <span style={{ color: "#999" }}>點擊「新增隊伍」按鈕創建第一支隊伍</span>
+                    <span style={{ color: "#999" }}>{t('team:list.noTeamsDescription')}</span>
                   </div>
                 </div>
               ),

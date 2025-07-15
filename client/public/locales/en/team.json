@@ -63,5 +63,41 @@
     "enterDescription": "Enter team description",
     "selectCaptain": "Select captain",
     "enterContactInfo": "Enter contact information"
+  },
+  "list": {
+    "title": "Tournament Team Management",
+    "subtitle": "Manage participating teams",
+    "addTeam": "Add Team",
+    "searchPlaceholder": "Search team name",
+    "allGroups": "All Groups",
+    "unassigned": "Unassigned",
+    "group": "Group",
+    "showingTeams": "Showing {{count}} / {{total}} teams",
+    "noTeams": "No teams",
+    "noTeamsDescription": "Click 'Add Team' button to create the first team",
+    "columns": {
+      "team": "Team",
+      "group": "Group",
+      "type": "Team Type",
+      "createdAt": "Created At",
+      "actions": "Actions"
+    },
+    "teamType": {
+      "real": "Real Team",
+      "virtual": "Virtual Team"
+    },
+    "actions": {
+      "viewDetails": "View Details",
+      "editTeam": "Edit Team",
+      "deleteTeam": "Delete Team",
+      "deleteConfirmation": "Are you sure you want to delete this team?",
+      "deleteWarning": "This action cannot be undone. Related athlete and match records will also be affected."
+    },
+    "stats": {
+      "totalTeams": "Total Teams",
+      "grouped": "Grouped",
+      "ungrouped": "Ungrouped",
+      "virtual": "Virtual Teams"
+    }
   }
 }

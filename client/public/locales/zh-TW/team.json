@@ -63,5 +63,41 @@
     "enterDescription": "請輸入隊伍描述",
     "selectCaptain": "請選擇隊長",
     "enterContactInfo": "請輸入聯絡資訊"
+  },
+  "list": {
+    "title": "錦標賽隊伍管理",
+    "subtitle": "管理參賽隊伍",
+    "addTeam": "新增隊伍",
+    "searchPlaceholder": "搜索隊伍名稱",
+    "allGroups": "所有小組",
+    "unassigned": "未分配",
+    "group": "小組",
+    "showingTeams": "顯示 {{count}} / {{total}} 支隊伍",
+    "noTeams": "暫無隊伍",
+    "noTeamsDescription": "點擊「新增隊伍」按鈕創建第一支隊伍",
+    "columns": {
+      "team": "隊伍",
+      "group": "所屬小組",
+      "type": "隊伍類型",
+      "createdAt": "創建時間",
+      "actions": "操作"
+    },
+    "teamType": {
+      "real": "真實隊伍",
+      "virtual": "虛擬隊伍"
+    },
+    "actions": {
+      "viewDetails": "查看詳情",
+      "editTeam": "編輯隊伍",
+      "deleteTeam": "刪除隊伍",
+      "deleteConfirmation": "確定要刪除這支隊伍嗎？",
+      "deleteWarning": "刪除後將無法恢復，相關的運動員和比賽記錄也會被影響。"
+    },
+    "stats": {
+      "totalTeams": "總隊伍數",
+      "grouped": "已分組",
+      "ungrouped": "未分組",
+      "virtual": "虛擬隊伍"
+    }
   }
 }
