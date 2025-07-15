@@ -56,5 +56,19 @@
     "enterDescription": "請輸入錦標賽描述",
     "selectType": "請選擇錦標賽類型",
     "selectLocation": "請選擇比賽地點"
+  },
+  "navigation": {
+    "overview": "錦標賽概覽",
+    "teamManagement": "隊伍管理",
+    "groupManagement": "小組管理",
+    "matchManagement": "比賽管理",
+    "athleteManagement": "運動員管理",
+    "leaderboard": "積分榜",
+    "groupLeaderboard": "小組積分榜",
+    "overallLeaderboard": "總積分榜",
+    "statisticsData": "統計數據 (開發中)",
+    "bestTeamsStats": "最佳球隊統計",
+    "knockoutBracket": "淘汰賽對戰表",
+    "management": "管理"
   }
 }

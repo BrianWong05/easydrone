@@ -23,7 +23,6 @@ const LanguageSwitcher = ({ size = 'default', style = {} }) => {
     i18n.changeLanguage(languageCode);
   };
 
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
 
   return (
     <Space style={style}>

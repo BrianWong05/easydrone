@@ -8,6 +8,7 @@ import { Toaster } from 'react-hot-toast';
 
 import App from './App';
 import './index.css';
+import './i18n'; // Initialize i18n
 
 // 創建 React Query 客戶端
 const queryClient = new QueryClient({

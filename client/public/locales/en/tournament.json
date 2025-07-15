@@ -56,5 +56,19 @@
     "enterDescription": "Enter tournament description",
     "selectType": "Select tournament type",
     "selectLocation": "Select venue"
+  },
+  "navigation": {
+    "overview": "Tournament Overview",
+    "teamManagement": "Team Management",
+    "groupManagement": "Group Management",
+    "matchManagement": "Match Management",
+    "athleteManagement": "Athlete Management",
+    "leaderboard": "Leaderboard",
+    "groupLeaderboard": "Group Leaderboard",
+    "overallLeaderboard": "Overall Leaderboard",
+    "statisticsData": "Statistics Data (In Development)",
+    "bestTeamsStats": "Best Teams Statistics",
+    "knockoutBracket": "Knockout Bracket",
+    "management": "Management"
   }
 }

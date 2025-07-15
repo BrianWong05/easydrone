@@ -14,7 +14,9 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from "@ant-design/icons";
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from "../../stores/authStore";
+import LanguageSwitcher from "../LanguageSwitcher";
 
 const { Header, Sider } = Layout;
 
@@ -23,118 +25,119 @@ const MainLayout = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { logout, user } = useAuthStore();
+  const { t } = useTranslation();
 
   // Check if current page is dashboard or any non-tournament page to hide sidebar
   // const shouldHideSidebar = location.pathname === "/" || !location.pathname.startsWith("/tournaments");
   const shouldHideSidebar = true; // Always show sidebar for admin layout
   // 移除認證相關功能
 
-  // 菜單項目
+  // Menu items with i18n
   const menuItems = [
     {
       key: "/",
       icon: <DashboardOutlined />,
-      label: <Link to="/">儀表板</Link>,
+      label: <Link to="/">{t('navigation.dashboard')}</Link>,
     },
     {
       key: "/teams",
       icon: <TeamOutlined />,
-      label: "隊伍管理",
+      label: t('navigation.teams'),
       children: [
         {
           key: "/teams",
-          label: <Link to="/teams">隊伍列表</Link>,
+          label: <Link to="/teams">{t('navigation.teamList')}</Link>,
         },
         {
           key: "/teams/create",
-          label: <Link to="/teams/create">新增隊伍</Link>,
+          label: <Link to="/teams/create">{t('navigation.addTeam')}</Link>,
         },
       ],
     },
     {
       key: "/groups",
       icon: <GroupOutlined />,
-      label: "小組管理",
+      label: t('navigation.groups'),
       children: [
         {
           key: "/groups",
-          label: <Link to="/groups">小組列表</Link>,
+          label: <Link to="/groups">{t('navigation.groupList')}</Link>,
         },
         {
           key: "/groups/create",
-          label: <Link to="/groups/create">新增小組</Link>,
+          label: <Link to="/groups/create">{t('navigation.addGroup')}</Link>,
         },
         {
           key: "/groups/leaderboard",
-          label: <Link to="/groups/leaderboard">小組排行榜</Link>,
+          label: <Link to="/groups/leaderboard">{t('navigation.groupStandings')}</Link>,
         },
       ],
     },
     {
       key: "/matches",
       icon: <CalendarOutlined />,
-      label: "比賽管理",
+      label: t('navigation.matches'),
       children: [
         {
           key: "/matches",
-          label: <Link to="/matches">比賽列表</Link>,
+          label: <Link to="/matches">{t('navigation.matchList')}</Link>,
         },
         {
           key: "/matches/create",
-          label: <Link to="/matches/create">新增比賽</Link>,
+          label: <Link to="/matches/create">{t('navigation.addMatch')}</Link>,
         },
       ],
     },
     {
       key: "/athletes",
       icon: <UserOutlined />,
-      label: "運動員管理",
+      label: t('navigation.athletes'),
       children: [
         {
           key: "/athletes",
-          label: <Link to="/athletes">運動員列表</Link>,
+          label: <Link to="/athletes">{t('navigation.athleteList')}</Link>,
         },
         {
           key: "/athletes/create",
-          label: <Link to="/athletes/create">新增運動員</Link>,
+          label: <Link to="/athletes/create">{t('navigation.addAthlete')}</Link>,
         },
       ],
     },
     {
       key: "/tournaments",
       icon: <TrophyOutlined />,
-      label: "錦標賽管理",
+      label: t('navigation.tournaments'),
       children: [
         {
           key: "/tournaments",
-          label: <Link to="/tournaments">錦標賽列表</Link>,
+          label: <Link to="/tournaments">{t('navigation.tournamentList')}</Link>,
         },
         {
           key: "/tournaments/create",
-          label: <Link to="/tournaments/create">新增錦標賽</Link>,
+          label: <Link to="/tournaments/create">{t('navigation.addTournament')}</Link>,
         },
       ],
     },
     {
       key: "/stats",
       icon: <BarChartOutlined />,
-      label: "統計報表",
+      label: t('navigation.stats'),
       children: [
         {
           key: "/stats",
-          label: <Link to="/stats">統計概覽</Link>,
+          label: <Link to="/stats">{t('navigation.statsOverview')}</Link>,
         },
         {
           key: "/stats/group-standings",
-          label: <Link to="/stats/group-standings">小組積分</Link>,
+          label: <Link to="/stats/group-standings">{t('navigation.groupStandings')}</Link>,
         },
         {
           key: "/stats/overall-leaderboard",
-          label: <Link to="/stats/overall-leaderboard">總排名榜</Link>,
+          label: <Link to="/stats/overall-leaderboard">{t('navigation.overallLeaderboard')}</Link>,
         },
         {
           key: "/stats/best-teams",
-          label: <Link to="/stats/best-teams">最佳球隊統計</Link>,
+          label: <Link to="/stats/best-teams">{t('navigation.bestTeamsStats')}</Link>,
         },
       ],
     },
@@ -212,7 +215,7 @@ const MainLayout = ({ children }) => {
               fontSize: collapsed ? 14 : 16,
             }}
           >
-            {collapsed ? "DS" : "無人機足球"}
+            {collapsed ? "DS" : t('system.title').split('管理系統')[0]}
           </div>
           <Menu
             theme="dark"
@@ -250,48 +253,51 @@ const MainLayout = ({ children }) => {
             />
           )}
 
-          <Space>
-            <span style={{ color: "#666" }}>無人機足球管理系統</span>
-            <Dropdown
-              menu={{
-                items: [
-                  {
-                    key: 'profile',
-                    icon: <UserOutlined />,
-                    label: '個人資料',
-                  },
-                  {
-                    key: 'change-password',
-                    icon: <LockOutlined />,
-                    label: '修改密碼',
-                    onClick: () => {
-                      navigate('/change-password');
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+            <span style={{ color: "#666" }}>{t('system.title')}</span>
+            <Space>
+              <LanguageSwitcher size="small" />
+              <Dropdown
+                menu={{
+                  items: [
+                    {
+                      key: 'profile',
+                      icon: <UserOutlined />,
+                      label: t('user.profile'),
                     },
-                  },
-                  {
-                    type: 'divider',
-                  },
-                  {
-                    key: 'logout',
-                    icon: <LogoutOutlined />,
-                    label: '登出',
-                    onClick: () => {
-                      logout();
-                      navigate('/login');
+                    {
+                      key: 'change-password',
+                      icon: <LockOutlined />,
+                      label: t('user.changePassword'),
+                      onClick: () => {
+                        navigate('/change-password');
+                      },
                     },
-                  },
-                ],
-              }}
-              placement="bottomRight"
-            >
-              <Button type="text" style={{ height: 'auto', padding: '8px 12px' }}>
-                <Space>
-                  <Avatar size="small" icon={<UserOutlined />} />
-                  <span>{user?.username || 'Admin'}</span>
-                </Space>
-              </Button>
-            </Dropdown>
-          </Space>
+                    {
+                      type: 'divider',
+                    },
+                    {
+                      key: 'logout',
+                      icon: <LogoutOutlined />,
+                      label: t('user.logout'),
+                      onClick: () => {
+                        logout();
+                        navigate('/login');
+                      },
+                    },
+                  ],
+                }}
+                placement="bottomRight"
+              >
+                <Button type="text" style={{ height: 'auto', padding: '8px 12px' }}>
+                  <Space>
+                    <Avatar size="small" icon={<UserOutlined />} />
+                    <span>{user?.username || t('user.admin')}</span>
+                  </Space>
+                </Button>
+              </Dropdown>
+            </Space>
+          </div>
         </Header>
         {children}
       </Layout>

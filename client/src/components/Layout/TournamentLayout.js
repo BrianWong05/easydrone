@@ -17,8 +17,10 @@ import {
   HomeOutlined,
   ThunderboltOutlined,
 } from "@ant-design/icons";
+import { useTranslation } from 'react-i18next';
 import axios from "axios";
 import { useAuthStore } from "../../stores/authStore";
+import LanguageSwitcher from "../LanguageSwitcher";
 
 const { Header, Sider } = Layout;
 
@@ -29,6 +31,7 @@ const TournamentLayout = ({ children }) => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { logout, user } = useAuthStore();
+  const { t } = useTranslation(['tournament', 'common']);
 
   // Fetch tournament data
   useEffect(() => {
@@ -57,100 +60,100 @@ const TournamentLayout = ({ children }) => {
     {
       key: `/tournaments/${id}`,
       icon: <TrophyOutlined />,
-      label: <Link to={`/tournaments/${id}`}>錦標賽概覽</Link>,
+      label: <Link to={`/tournaments/${id}`}>{t('tournament:navigation.overview')}</Link>,
     },
     {
       key: `/tournaments/${id}/teams`,
       icon: <TeamOutlined />,
-      label: "隊伍管理",
+      label: t('tournament:navigation.teamManagement'),
       children: [
         {
           key: `/tournaments/${id}/teams`,
-          label: <Link to={`/tournaments/${id}/teams`}>隊伍列表</Link>,
+          label: <Link to={`/tournaments/${id}/teams`}>{t('common:navigation.teamList')}</Link>,
         },
         {
           key: `/tournaments/${id}/teams/create`,
-          label: <Link to={`/tournaments/${id}/teams/create`}>新增隊伍</Link>,
+          label: <Link to={`/tournaments/${id}/teams/create`}>{t('common:navigation.addTeam')}</Link>,
         },
       ],
     },
     {
       key: `/tournaments/${id}/groups`,
       icon: <GroupOutlined />,
-      label: "小組管理",
+      label: t('tournament:navigation.groupManagement'),
       children: [
         {
           key: `/tournaments/${id}/groups`,
-          label: <Link to={`/tournaments/${id}/groups`}>小組列表</Link>,
+          label: <Link to={`/tournaments/${id}/groups`}>{t('common:navigation.groupList')}</Link>,
         },
         {
           key: `/tournaments/${id}/groups/create`,
-          label: <Link to={`/tournaments/${id}/groups/create`}>新增小組</Link>,
+          label: <Link to={`/tournaments/${id}/groups/create`}>{t('common:navigation.addGroup')}</Link>,
         },
       ],
     },
     {
       key: `/tournaments/${id}/matches`,
       icon: <CalendarOutlined />,
-      label: "比賽管理",
+      label: t('tournament:navigation.matchManagement'),
       children: [
         {
           key: `/tournaments/${id}/matches`,
-          label: <Link to={`/tournaments/${id}/matches`}>比賽列表</Link>,
+          label: <Link to={`/tournaments/${id}/matches`}>{t('common:navigation.matchList')}</Link>,
         },
         {
           key: `/tournaments/${id}/matches/create`,
-          label: <Link to={`/tournaments/${id}/matches/create`}>新增比賽</Link>,
+          label: <Link to={`/tournaments/${id}/matches/create`}>{t('common:navigation.addMatch')}</Link>,
         },
         {
           key: `/tournaments/${id}/matches/generate`,
-          label: <Link to={`/tournaments/${id}/matches/generate`}>生成比賽</Link>,
+          label: <Link to={`/tournaments/${id}/matches/generate`}>{t('common:navigation.generateMatches')}</Link>,
         },
       ],
     },
     {
       key: `/tournaments/${id}/athletes`,
       icon: <UserOutlined />,
-      label: "運動員管理",
+      label: t('tournament:navigation.athleteManagement'),
       children: [
         {
           key: `/tournaments/${id}/athletes`,
-          label: <Link to={`/tournaments/${id}/athletes`}>運動員列表</Link>,
+          label: <Link to={`/tournaments/${id}/athletes`}>{t('common:navigation.athleteList')}</Link>,
         },
         {
           key: `/tournaments/${id}/athletes/create`,
-          label: <Link to={`/tournaments/${id}/athletes/create`}>新增運動員</Link>,
+          label: <Link to={`/tournaments/${id}/athletes/create`}>{t('common:navigation.addAthlete')}</Link>,
         },
       ],
     },
     {
       key: `/tournaments/${id}/leaderboard`,
       icon: <BarChartOutlined />,
-      label: "積分榜",
+      label: t('tournament:navigation.leaderboard'),
       children: [
         {
           key: `/tournaments/${id}/leaderboard/groups`,
-          label: <Link to={`/tournaments/${id}/leaderboard/groups`}>小組積分榜</Link>,
+          label: <Link to={`/tournaments/${id}/leaderboard/groups`}>{t('tournament:navigation.groupLeaderboard')}</Link>,
         },
         {
           key: `/tournaments/${id}/leaderboard/overall`,
-          label: <Link to={`/tournaments/${id}/leaderboard/overall`}>總積分榜</Link>,
+          label: <Link to={`/tournaments/${id}/leaderboard/overall`}>{t('tournament:navigation.overallLeaderboard')}</Link>,
         },
         {
           key: `/tournaments/${id}/leaderboard/stats`,
-          label: <span style={{ color: '#999', cursor: 'not-allowed' }}>統計數據 (開發中)</span>,
+          label: <span style={{ color: '#999', cursor: 'not-allowed' }}>{t('tournament:navigation.statisticsData')}</span>,
           disabled: true,
         },
         {
           key: `/tournaments/${id}/leaderboard/best-teams`,
-          label: <Link to={`/tournaments/${id}/leaderboard/best-teams`}>最佳球隊統計</Link>,
+          label: <Link to={`/tournaments/${id}/leaderboard/best-teams`}>{t('tournament:navigation.bestTeamsStats')}</Link>,
         },
       ],
     },
     {
       key: `/tournaments/${id}/bracket`,
       icon: <ThunderboltOutlined />,
-      label: <Link to={`/tournaments/${id}/bracket`}>淘汰賽對戰表</Link>,
+      label: <Link to={`/tournaments/${id}/bracket`}>{t('tournament:navigation.knockoutBracket')}</Link>,
     },
   ];
 
@@ -205,7 +208,7 @@ const TournamentLayout = ({ children }) => {
             fontSize: collapsed ? 14 : 16,
           }}
         >
-          {collapsed ? "DS" : "無人機足球"}
+          {collapsed ? "DS" : t('common:system.title')}
         </div>
 
         {/* Back to tournaments button */}
@@ -221,7 +224,7 @@ const TournamentLayout = ({ children }) => {
               fontSize: collapsed ? 12 : 14,
             }}
           >
-            {!collapsed && "返回錦標賽列表"}
+            {!collapsed && t('common:navigation.backToTournamentList')}
           </Button>
         </div>
 
@@ -264,32 +267,33 @@ const TournamentLayout = ({ children }) => {
             <Breadcrumb style={{ marginLeft: 16 }}>
               <Breadcrumb.Item>
                 <Link to="/">
-                  <HomeOutlined /> 首頁
+                  <HomeOutlined /> {t('common:navigation.dashboard')}
                 </Link>
               </Breadcrumb.Item>
               <Breadcrumb.Item>
-                <Link to="/">錦標賽</Link>
+                <Link to="/">{t('common:navigation.tournaments')}</Link>
               </Breadcrumb.Item>
               <Breadcrumb.Item>
-                <Link to={`/tournaments/${id}`}>{tournament ? tournament.tournament_name : "載入中..."}</Link>
+                <Link to={`/tournaments/${id}`}>{tournament ? tournament.tournament_name : t('common:messages.loading')}</Link>
               </Breadcrumb.Item>
             </Breadcrumb>
           </div>
 
           <Space>
-            <span style={{ color: "#666" }}>{tournament ? `${tournament.tournament_name} 管理` : "錦標賽管理"}</span>
+            <span style={{ color: "#666" }}>{tournament ? `${tournament.tournament_name} ${t('tournament:navigation.management')}` : t('common:navigation.tournaments')}</span>
+            <LanguageSwitcher size="small" />
             <Dropdown
               menu={{
                 items: [
                   {
                     key: 'profile',
                     icon: <UserOutlined />,
-                    label: '個人資料',
+                    label: t('common:user.profile'),
                   },
                   {
                     key: 'change-password',
                     icon: <LockOutlined />,
-                    label: '修改密碼',
+                    label: t('common:user.changePassword'),
                     onClick: () => {
                       navigate('/change-password');
                     },
@@ -300,7 +304,7 @@ const TournamentLayout = ({ children }) => {
                   {
                     key: 'logout',
                     icon: <LogoutOutlined />,
-                    label: '登出',
+                    label: t('common:user.logout'),
                     onClick: () => {
                       logout();
                       navigate('/login');
@@ -313,7 +317,7 @@ const TournamentLayout = ({ children }) => {
               <Button type="text" style={{ height: 'auto', padding: '8px 12px' }}>
                 <Space>
                   <Avatar size="small" icon={<UserOutlined />} />
-                  <span>{user?.username || 'Admin'}</span>
+                  <span>{user?.username || t('common:user.admin')}</span>
                 </Space>
               </Button>
             </Dropdown>
