@@ -32,22 +32,23 @@ router.get('/public', async (req, res) => {
   try {
     console.log('🌐 獲取公開錦標賽...');
     
-    // 首先嘗試獲取標記為公開的錦標賽
-    // 這裡可以添加一個 is_public 字段到 tournaments 表
-    // 暫時返回第一個活躍的錦標賽
+    // 首先嘗試獲取有統計數據的錦標賽
+    // 優先返回有最佳球隊統計數據的錦標賽
     const publicTournamentQuery = `
       SELECT 
-        tournament_id,
-        tournament_name,
-        tournament_type,
-        status,
-        start_date,
-        end_date,
-        created_at,
-        updated_at
-      FROM tournaments 
-      WHERE status = 'active'
-      ORDER BY created_at DESC
+        t.tournament_id,
+        t.tournament_name,
+        t.tournament_type,
+        t.status,
+        t.start_date,
+        t.end_date,
+        t.created_at,
+        t.updated_at,
+        MAX(btc.created_at) as latest_stats
+      FROM tournaments t
+      INNER JOIN best_teams_cache btc ON t.tournament_id = btc.tournament_id
+      GROUP BY t.tournament_id
+      ORDER BY latest_stats DESC
       LIMIT 1
     `;
     

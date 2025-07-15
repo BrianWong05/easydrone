@@ -1161,34 +1161,49 @@ router.get('/available-matches', async (req, res) => {
 // 獲取公開的最佳球隊統計（用於客戶端顯示）
 router.get('/best-teams-public', async (req, res) => {
   try {
-    console.log('🌐 Getting public best teams stats...');
+    const { tournament_id } = req.query;
+    console.log('🌐 Getting public best teams stats for tournament:', tournament_id);
     
     // First, ensure the cache table exists
     try {
       await query(`
         CREATE TABLE IF NOT EXISTS best_teams_cache (
           cache_id INT AUTO_INCREMENT PRIMARY KEY,
+          tournament_id INT,
           stats_data JSON NOT NULL,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          INDEX idx_created_at (created_at)
+          INDEX idx_created_at (created_at),
+          INDEX idx_tournament_id (tournament_id),
+          FOREIGN KEY (tournament_id) REFERENCES tournaments(tournament_id) ON DELETE CASCADE
         )
       `);
     } catch (createError) {
       console.log('Cache table already exists or creation failed:', createError.message);
     }
     
-    // Get the latest calculated best teams stats from cache/database
-    const latestStats = await query(`
-      SELECT stats_data, created_at 
+    // Build query based on tournament filter
+    let sql = `
+      SELECT stats_data, created_at, tournament_id
       FROM best_teams_cache 
-      ORDER BY created_at DESC 
-      LIMIT 1
-    `);
+    `;
+    let params = [];
+    
+    if (tournament_id) {
+      sql += ' WHERE tournament_id = ?';
+      params.push(tournament_id);
+    }
+    
+    sql += ' ORDER BY created_at DESC LIMIT 1';
+    
+    // Get the latest calculated best teams stats from cache/database
+    const latestStats = await query(sql, params);
     
     if (latestStats.length === 0) {
       return res.json({
         success: false,
-        message: '暫無最佳球隊統計數據，請等待管理員計算統計'
+        message: tournament_id ? 
+          `暫無錦標賽 ${tournament_id} 的最佳球隊統計數據，請等待管理員計算統計` :
+          '暫無最佳球隊統計數據，請等待管理員計算統計'
       });
     }
     
@@ -1203,6 +1218,7 @@ router.get('/best-teams-public', async (req, res) => {
     res.json({
       success: true,
       data: statsData,
+      tournament_id: latestStats[0].tournament_id,
       last_updated: latestStats[0].created_at
     });
     
@@ -1218,49 +1234,57 @@ router.get('/best-teams-public', async (req, res) => {
 // 保存最佳球隊統計到緩存（管理員計算時調用）
 router.post('/best-teams-cache', async (req, res) => {
   try {
-    const { stats_data } = req.body;
+    const { stats_data, tournament_id } = req.body;
     
-    console.log('💾 Saving best teams stats to cache...');
+    console.log('💾 Saving best teams stats to cache for tournament:', tournament_id);
     
     // Ensure the cache table exists
     try {
       await query(`
         CREATE TABLE IF NOT EXISTS best_teams_cache (
           cache_id INT AUTO_INCREMENT PRIMARY KEY,
+          tournament_id INT,
           stats_data JSON NOT NULL,
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-          INDEX idx_created_at (created_at)
+          INDEX idx_created_at (created_at),
+          INDEX idx_tournament_id (tournament_id),
+          FOREIGN KEY (tournament_id) REFERENCES tournaments(tournament_id) ON DELETE CASCADE
         )
       `);
     } catch (createError) {
       console.log('Cache table already exists or creation failed:', createError.message);
     }
     
-    // Clear old cache entries (keep only latest 5)
-    try {
-      await query(`
-        DELETE FROM best_teams_cache 
-        WHERE cache_id NOT IN (
-          SELECT * FROM (
-            SELECT cache_id FROM best_teams_cache 
-            ORDER BY created_at DESC 
-            LIMIT 4
-          ) AS latest
-        )
-      `);
-    } catch (deleteError) {
-      console.log('Failed to clean old cache entries:', deleteError.message);
+    // Clear old cache entries for this tournament (keep only latest 3 per tournament)
+    if (tournament_id) {
+      try {
+        await query(`
+          DELETE FROM best_teams_cache 
+          WHERE tournament_id = ? AND cache_id NOT IN (
+            SELECT * FROM (
+              SELECT cache_id FROM best_teams_cache 
+              WHERE tournament_id = ?
+              ORDER BY created_at DESC 
+              LIMIT 2
+            ) AS latest
+          )
+        `, [tournament_id, tournament_id]);
+      } catch (deleteError) {
+        console.log('Failed to clean old cache entries:', deleteError.message);
+      }
     }
     
     // Insert new cache entry
     await query(`
-      INSERT INTO best_teams_cache (stats_data, created_at) 
-      VALUES (?, NOW())
-    `, [JSON.stringify(stats_data)]);
+      INSERT INTO best_teams_cache (tournament_id, stats_data, created_at) 
+      VALUES (?, ?, NOW())
+    `, [tournament_id, JSON.stringify(stats_data)]);
     
     res.json({
       success: true,
-      message: '統計數據已保存到公開緩存'
+      message: tournament_id ? 
+        `錦標賽 ${tournament_id} 的統計數據已保存到公開緩存` :
+        '統計數據已保存到公開緩存'
     });
     
   } catch (error) {

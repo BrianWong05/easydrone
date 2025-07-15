@@ -9,7 +9,8 @@ import {
   Row,
   Col,
   Statistic,
-  Tag
+  Tag,
+  Select
 } from 'antd';
 import { 
   TrophyOutlined, 
@@ -27,6 +28,8 @@ const ClientBestTeamsStats = () => {
   const [loading, setLoading] = useState(true);
   const [bestTeamsData, setBestTeamsData] = useState(null);
   const [error, setError] = useState(null);
+  const [tournaments, setTournaments] = useState([]);
+  const [selectedTournament, setSelectedTournament] = useState(null);
 
   // Helper function to clean team names
   const getDisplayTeamName = (teamName) => {
@@ -57,21 +60,41 @@ const ClientBestTeamsStats = () => {
   };
 
   useEffect(() => {
-    fetchBestTeamsStats();
+    fetchTournaments();
   }, []);
+
+  useEffect(() => {
+    if (selectedTournament) {
+      fetchBestTeamsStats();
+    }
+  }, [selectedTournament]);
+
+  const fetchTournaments = async () => {
+    try {
+      const response = await axios.get('/api/tournaments/public');
+      if (response.data.success && response.data.data) {
+        setTournaments([response.data.data]);
+        setSelectedTournament(response.data.data.tournament_id);
+      }
+    } catch (error) {
+      console.error('獲取錦標賽失敗:', error);
+      setError('獲取錦標賽信息失敗');
+    }
+  };
 
   const fetchBestTeamsStats = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      // Get the latest best teams stats (this could be from a cache or latest calculation)
-      const response = await axios.get('/api/stats/best-teams-public');
+      // Get the latest best teams stats for the selected tournament
+      const params = selectedTournament ? { tournament_id: selectedTournament } : {};
+      const response = await axios.get('/api/stats/best-teams-public', { params });
       
       if (response.data.success) {
         setBestTeamsData(response.data.data);
       } else {
-        setError('暫無最佳球隊統計數據');
+        setError(response.data.message || '暫無最佳球隊統計數據');
       }
     } catch (error) {
       console.error('獲取最佳球隊統計失敗:', error);
@@ -277,6 +300,26 @@ const ClientBestTeamsStats = () => {
         <Title level={2}>
           <BarChartOutlined /> 最佳球隊統計
         </Title>
+        
+        {tournaments.length > 0 && (
+          <div style={{ marginTop: '16px', marginBottom: '16px' }}>
+            <Space>
+              <Text strong>錦標賽：</Text>
+              <Select
+                value={selectedTournament}
+                onChange={setSelectedTournament}
+                style={{ minWidth: '200px' }}
+                placeholder="選擇錦標賽"
+              >
+                {tournaments.map(tournament => (
+                  <Select.Option key={tournament.tournament_id} value={tournament.tournament_id}>
+                    {tournament.tournament_name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Space>
+          </div>
+        )}
       </div>
 
       {bestTeamsData && (
