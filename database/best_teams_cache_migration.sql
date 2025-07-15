@@ -1,3 +1,6 @@
+-- Ensure we're using the correct database
+USE drone_soccer;
+
 -- Create best_teams_cache table for storing calculated stats for public display
 CREATE TABLE IF NOT EXISTS best_teams_cache (
   cache_id INT AUTO_INCREMENT PRIMARY KEY,
