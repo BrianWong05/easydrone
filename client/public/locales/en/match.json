@@ -105,7 +105,11 @@
     "delete": "Delete",
     "continue": "Continue",
     "startPostponed": "Start Postponed Match",
-    "editPostponed": "Edit Postponed Match"
+    "editPostponed": "Edit Postponed Match",
+    "backToMatchDetail": "Back to Match Details",
+    "swapTeams": "Swap Teams",
+    "swap": "Swap",
+    "update": "Update Match"
   },
   "list": {
     "title": "Match List",
@@ -145,7 +149,14 @@
     "teamsNotDetermined": "Teams not determined, cannot start match",
     "managementDescription": "Manage all matches in the tournament, including group stage and knockout matches",
     "createDescription": "Create a new match for the tournament",
-    "createFailed": "Failed to create match"
+    "createFailed": "Failed to create match",
+    "matchNotFound": "Match not found",
+    "cannotEdit": "Cannot Edit",
+    "canOnlyEditPendingMatches": "Can only edit pending or postponed matches",
+    "editDescription": "Modify match details and settings",
+    "groupStageTeamWarning": "Group stage matches should use teams from the same group",
+    "teamsSwapped": "Teams swapped successfully!",
+    "updateFailed": "Update failed, please try again"
   },
   "statistics": {
     "totalMatches": "Total Matches",

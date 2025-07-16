@@ -105,7 +105,11 @@
     "delete": "刪除",
     "continue": "繼續",
     "startPostponed": "開始延期的比賽",
-    "editPostponed": "編輯延期比賽"
+    "editPostponed": "編輯延期比賽",
+    "backToMatchDetail": "返回比賽詳情",
+    "swapTeams": "交換隊伍",
+    "swap": "交換",
+    "update": "更新比賽"
   },
   "list": {
     "title": "比賽列表",
@@ -145,7 +149,14 @@
     "teamsNotDetermined": "比賽隊伍尚未確定，無法開始比賽",
     "managementDescription": "管理錦標賽中的所有比賽，包括小組賽和淘汰賽",
     "createDescription": "為錦標賽創建新的比賽場次",
-    "createFailed": "創建比賽失敗"
+    "createFailed": "創建比賽失敗",
+    "matchNotFound": "比賽不存在",
+    "cannotEdit": "無法編輯",
+    "canOnlyEditPendingMatches": "只能編輯未開始或延期的比賽",
+    "editDescription": "修改比賽的詳細信息和設置",
+    "groupStageTeamWarning": "小組賽建議選擇同一小組的隊伍",
+    "teamsSwapped": "隊伍已交換！",
+    "updateFailed": "更新失敗，請重試"
   },
   "statistics": {
     "totalMatches": "總比賽數",
