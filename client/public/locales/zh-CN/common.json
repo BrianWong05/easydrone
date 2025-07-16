@@ -135,5 +135,10 @@
     "endTime": "结束时间",
     "createdAt": "创建时间",
     "updatedAt": "更新时间"
+  },
+  "notFound": {
+    "title": "404",
+    "subtitle": "抱歉，您访问的页面不存在。",
+    "backHome": "返回首页"
   }
 }

@@ -135,5 +135,10 @@
     "endTime": "End Time",
     "createdAt": "Created At",
     "updatedAt": "Updated At"
+  },
+  "notFound": {
+    "title": "404",
+    "subtitle": "Sorry, the page you visited does not exist.",
+    "backHome": "Back Home"
   }
 }

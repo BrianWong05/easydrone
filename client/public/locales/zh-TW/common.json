@@ -135,5 +135,10 @@
     "endTime": "結束時間",
     "createdAt": "創建時間",
     "updatedAt": "更新時間"
+  },
+  "notFound": {
+    "title": "404",
+    "subtitle": "抱歉，您訪問的頁面不存在。",
+    "backHome": "返回首頁"
   }
 }

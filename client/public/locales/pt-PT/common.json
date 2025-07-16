@@ -135,5 +135,10 @@
     "endTime": "Hora de Fim",
     "createdAt": "Criado em",
     "updatedAt": "Atualizado em"
+  },
+  "notFound": {
+    "title": "404",
+    "subtitle": "Desculpe, a página que visitou não existe.",
+    "backHome": "Voltar ao Início"
   }
 }
