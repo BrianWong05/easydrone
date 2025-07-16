@@ -7,7 +7,7 @@
     "comparison": "Comparison Analysis",
     "trends": "Trend Analysis",
     "performance": "Performance Statistics",
-    "ranking": "Ranking Statistics",
+    "ranking": "Team Rankings",
     "bestTeams": "Best Teams Statistics",
     "topPerformers": "Top Performers",
     "systemStatus": "System Status"
@@ -22,7 +22,8 @@
     "averageGoals": "Average Goals",
     "winRate": "Win Rate",
     "drawRate": "Draw Rate",
-    "lossRate": "Loss Rate"
+    "lossRate": "Loss Rate",
+    "averagePoints": "Avg Points"
   },
   "rankings": {
     "position": "Position",
@@ -35,7 +36,8 @@
     "goalsAgainst": "Goals Against",
     "goalDifference": "Goal Difference",
     "overallRanking": "Overall Ranking",
-    "groupRanking": "Group Ranking"
+    "groupRanking": "Group Ranking",
+    "played": "Played"
   },
   "progress": {
     "groupStage": "Group Stage Progress",
@@ -56,6 +58,21 @@
     "loadingStats": "Loading statistics...",
     "dataUpdated": "Data updated",
     "refreshData": "Refresh Data",
-    "exportData": "Export Data"
+    "exportData": "Export Data",
+    "noGroup": "No Group",
+    "rankingWillShow": "Rankings will be displayed automatically after teams complete matches"
+  },
+  "pagination": {
+    "rankingTotal": "Rank {{start}}-{{end}} of {{total}} teams"
+  },
+  "rules": {
+    "rankingRules": "Ranking Rules",
+    "rankingDescription": "Group ranking → Same rank teams comparison (Points → Goal Difference → Goals Scored)",
+    "pointsRules": "Points Rules",
+    "pointsDescription": "Win 3 points, Draw 1 point, Loss 0 points",
+    "sortingRules": "Sorting Rules",
+    "sortingDescription": "Show all group 1st places first, then all group 2nd places, and so on",
+    "tagDescription": "Tag Description",
+    "tagExplanation": "indicates the team's ranking within their group"
   }
 }

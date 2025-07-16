@@ -22,7 +22,8 @@
     "averageGoals": "平均進球",
     "winRate": "勝率",
     "drawRate": "平局率",
-    "lossRate": "敗率"
+    "lossRate": "敗率",
+    "averagePoints": "場均積分"
   },
   "rankings": {
     "position": "排名",
@@ -35,7 +36,8 @@
     "goalsAgainst": "失球",
     "goalDifference": "淨勝球",
     "overallRanking": "總排名",
-    "groupRanking": "小組排名"
+    "groupRanking": "小組排名",
+    "played": "場次"
   },
   "progress": {
     "groupStage": "小組賽進度",
@@ -56,6 +58,21 @@
     "loadingStats": "載入統計數據中...",
     "dataUpdated": "數據已更新",
     "refreshData": "刷新數據",
-    "exportData": "導出數據"
+    "exportData": "導出數據",
+    "noGroup": "無小組",
+    "rankingWillShow": "當隊伍完成比賽後，排名將自動顯示"
+  },
+  "pagination": {
+    "rankingTotal": "第 {{start}}-{{end}} 名，共 {{total}} 支隊伍"
+  },
+  "rules": {
+    "rankingRules": "排名規則",
+    "rankingDescription": "小組內排名 → 同排名隊伍間比較（積分 → 淨勝球 → 進球數）",
+    "pointsRules": "積分規則",
+    "pointsDescription": "勝利 3分，平局 1分，失敗 0分",
+    "sortingRules": "排序說明",
+    "sortingDescription": "先顯示各小組第1名，再顯示各小組第2名，以此類推",
+    "tagDescription": "標籤說明",
+    "tagExplanation": "表示該隊伍在其小組內的排名"
   }
 }

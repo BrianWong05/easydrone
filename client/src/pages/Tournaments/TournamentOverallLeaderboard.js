@@ -24,11 +24,13 @@ import {
   ArrowLeftOutlined
 } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 const { Title, Text } = Typography;
 
 const TournamentOverallLeaderboard = () => {
+  const { t } = useTranslation(['stats', 'common', 'tournament']);
   const navigate = useNavigate();
   const { id: tournamentId } = useParams();
   const [loading, setLoading] = useState(true);
@@ -70,7 +72,7 @@ const TournamentOverallLeaderboard = () => {
       }
     } catch (error) {
       console.error('獲取錦標賽總排名榜失敗:', error);
-      message.error('獲取錦標賽總排名榜失敗');
+      message.error(t('messages.noRankingData', { ns: 'stats' }));
     } finally {
       setLoading(false);
     }
@@ -103,7 +105,7 @@ const TournamentOverallLeaderboard = () => {
 
   const leaderboardColumns = [
     {
-      title: '排名',
+      title: t('rankings.position', { ns: 'stats' }),
       key: 'rank',
       render: (_, record) => (
         <div style={{ textAlign: 'center' }}>
@@ -120,7 +122,7 @@ const TournamentOverallLeaderboard = () => {
       fixed: 'left',
     },
     {
-      title: '隊伍',
+      title: t('rankings.team', { ns: 'stats' }),
       key: 'team',
       render: (_, record) => (
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -149,7 +151,7 @@ const TournamentOverallLeaderboard = () => {
             <Text type="secondary" style={{ fontSize: '12px' }}>
               {record.group_name ? (
                 <>
-                  小組 {record.group_name?.includes("_") ? record.group_name.split("_")[0] : record.group_name}
+                  {t('group.group', { ns: 'group' })} {record.group_name?.includes("_") ? record.group_name.split("_")[0] : record.group_name}
                   {record.group_position && (
                     <Tag 
                       size="small" 
@@ -160,11 +162,11 @@ const TournamentOverallLeaderboard = () => {
                       }
                       style={{ marginLeft: '4px' }}
                     >
-                      第{record.group_position}名
+                      {t('rankings.position', { ns: 'stats' })}{record.group_position}
                     </Tag>
                   )}
                 </>
-              ) : '無小組'}
+              ) : t('messages.noGroup', { ns: 'stats' })}
             </Text>
           </div>
         </div>
@@ -173,14 +175,14 @@ const TournamentOverallLeaderboard = () => {
       fixed: 'left',
     },
     {
-      title: '場次',
+      title: t('rankings.played', { ns: 'stats' }),
       dataIndex: 'played',
       key: 'played',
       width: 70,
       align: 'center',
     },
     {
-      title: '勝',
+      title: t('rankings.wins', { ns: 'stats' }),
       dataIndex: 'won',
       key: 'won',
       width: 60,
@@ -188,7 +190,7 @@ const TournamentOverallLeaderboard = () => {
       render: (won) => <span style={{ color: '#52c41a', fontWeight: 'bold' }}>{won}</span>
     },
     {
-      title: '平',
+      title: t('rankings.draws', { ns: 'stats' }),
       dataIndex: 'drawn',
       key: 'drawn',
       width: 60,
@@ -196,7 +198,7 @@ const TournamentOverallLeaderboard = () => {
       render: (drawn) => <span style={{ color: '#faad14', fontWeight: 'bold' }}>{drawn}</span>
     },
     {
-      title: '負',
+      title: t('rankings.losses', { ns: 'stats' }),
       dataIndex: 'lost',
       key: 'lost',
       width: 60,
@@ -204,7 +206,7 @@ const TournamentOverallLeaderboard = () => {
       render: (lost) => <span style={{ color: '#ff4d4f', fontWeight: 'bold' }}>{lost}</span>
     },
     {
-      title: '進球',
+      title: t('rankings.goalsFor', { ns: 'stats' }),
       dataIndex: 'goals_for',
       key: 'goals_for',
       width: 70,
@@ -212,14 +214,14 @@ const TournamentOverallLeaderboard = () => {
       render: (goals) => <span style={{ fontWeight: 'bold' }}>{goals}</span>
     },
     {
-      title: '失球',
+      title: t('rankings.goalsAgainst', { ns: 'stats' }),
       dataIndex: 'goals_against',
       key: 'goals_against',
       width: 70,
       align: 'center',
     },
     {
-      title: '淨勝球',
+      title: t('rankings.goalDifference', { ns: 'stats' }),
       key: 'goal_difference',
       width: 90,
       align: 'center',
@@ -233,7 +235,7 @@ const TournamentOverallLeaderboard = () => {
       )
     },
     {
-      title: '積分',
+      title: t('rankings.points', { ns: 'stats' }),
       dataIndex: 'points',
       key: 'points',
       width: 80,
@@ -249,7 +251,7 @@ const TournamentOverallLeaderboard = () => {
       )
     },
     {
-      title: '勝率',
+      title: t('metrics.winRate', { ns: 'stats' }),
       key: 'win_rate',
       width: 80,
       align: 'center',
@@ -262,7 +264,7 @@ const TournamentOverallLeaderboard = () => {
       )
     },
     {
-      title: '場均積分',
+      title: t('metrics.averagePoints', { ns: 'stats' }),
       key: 'points_per_game',
       width: 100,
       align: 'center',
@@ -276,7 +278,7 @@ const TournamentOverallLeaderboard = () => {
     return (
       <div style={{ textAlign: 'center', padding: '50px' }}>
         <Spin size="large" />
-        <p>載入中...</p>
+        <p>{t('messages.loadingStats', { ns: 'stats' })}</p>
       </div>
     );
   }
@@ -289,27 +291,27 @@ const TournamentOverallLeaderboard = () => {
             icon={<ArrowLeftOutlined />} 
             onClick={() => navigate(`/tournaments/${tournamentId}`)}
           >
-            返回錦標賽
+            {t('navigation.backToTournamentList', { ns: 'common' })}
           </Button>
           <Title level={2} style={{ margin: 0 }}>
-            <TrophyOutlined /> {tournament?.tournament_name} - 總排名榜
+            <TrophyOutlined /> {tournament?.tournament_name} - {t('rankings.overallRanking', { ns: 'stats' })}
           </Title>
           <Button 
             icon={<ReloadOutlined />} 
             onClick={fetchTournamentLeaderboard}
             loading={loading}
           >
-            刷新
+            {t('buttons.refresh', { ns: 'common' })}
           </Button>
         </Space>
       </div>
 
       {/* 總排名榜 */}
-      <Card title={<><BarChartOutlined /> 錦標賽隊伍排名</>}>
+      <Card title={<><BarChartOutlined /> {t('stats.ranking', { ns: 'stats' })}</>}>
         {leaderboard.length === 0 ? (
           <Alert
-            message="暫無排名數據"
-            description="當隊伍完成比賽後，排名將自動顯示"
+            message={t('messages.noRankingData', { ns: 'stats' })}
+            description={t('messages.rankingWillShow', { ns: 'stats' })}
             type="info"
             showIcon
           />
@@ -322,11 +324,16 @@ const TournamentOverallLeaderboard = () => {
               pageSize: 20,
               showSizeChanger: true,
               showQuickJumper: true,
-              showTotal: (total, range) => `第 ${range[0]}-${range[1]} 名，共 ${total} 支隊伍`
+              showTotal: (total, range) => t('pagination.rankingTotal', { 
+                ns: 'stats', 
+                start: range[0], 
+                end: range[1], 
+                total: total 
+              })
             }}
             scroll={{ x: 1000 }}
             size="small"
-            locale={{ emptyText: '暫無排名數據' }}
+            locale={{ emptyText: t('messages.noRankingData', { ns: 'stats' }) }}
             rowClassName={(record) => {
               if (record.rank === 1) return 'rank-first';
               if (record.rank === 2) return 'rank-second';
@@ -340,14 +347,14 @@ const TournamentOverallLeaderboard = () => {
       {leaderboard.length > 0 && (
         <Card style={{ marginTop: '24px' }}>
           <div style={{ fontSize: '12px', color: '#666' }}>
-            <p><strong>排名規則：</strong> 小組內排名 → 同排名隊伍間比較（積分 → 淨勝球 → 進球數）</p>
-            <p><strong>積分規則：</strong> 勝利 3分，平局 1分，失敗 0分</p>
-            <p><strong>排序說明：</strong> 先顯示各小組第1名，再顯示各小組第2名，以此類推</p>
-            <p><strong>標籤說明：</strong> 
-              <Tag size="small" color="gold" style={{ margin: '0 4px' }}>第1名</Tag>
-              <Tag size="small" color="green" style={{ margin: '0 4px' }}>第2名</Tag>
-              <Tag size="small" color="blue" style={{ margin: '0 4px' }}>第3名</Tag>
-              表示該隊伍在其小組內的排名
+            <p><strong>{t('rules.rankingRules', { ns: 'stats' })}：</strong> {t('rules.rankingDescription', { ns: 'stats' })}</p>
+            <p><strong>{t('rules.pointsRules', { ns: 'stats' })}：</strong> {t('rules.pointsDescription', { ns: 'stats' })}</p>
+            <p><strong>{t('rules.sortingRules', { ns: 'stats' })}：</strong> {t('rules.sortingDescription', { ns: 'stats' })}</p>
+            <p><strong>{t('rules.tagDescription', { ns: 'stats' })}：</strong> 
+              <Tag size="small" color="gold" style={{ margin: '0 4px' }}>{t('rankings.position', { ns: 'stats' })}1</Tag>
+              <Tag size="small" color="green" style={{ margin: '0 4px' }}>{t('rankings.position', { ns: 'stats' })}2</Tag>
+              <Tag size="small" color="blue" style={{ margin: '0 4px' }}>{t('rankings.position', { ns: 'stats' })}3</Tag>
+              {t('rules.tagExplanation', { ns: 'stats' })}
             </p>
           </div>
         </Card>

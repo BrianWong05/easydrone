@@ -1,6 +1,7 @@
 {
   "group": {
     "name": "小組名稱",
+    "group": "小組",
     "list": "小組列表",
     "detail": "小組詳情",
     "create": "創建小組",
