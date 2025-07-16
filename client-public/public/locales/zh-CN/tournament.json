@@ -1,0 +1,91 @@
+{
+  "tournament": {
+    "name": "锦标赛名称",
+    "overview": "锦标赛概览",
+    "management": "锦标赛管理",
+    "create": "创建锦标赛",
+    "edit": "编辑锦标赛",
+    "delete": "删除锦标赛",
+    "status": "锦标赛状态",
+    "type": "锦标赛类型",
+    "description": "锦标赛描述",
+    "startDate": "开始日期",
+    "endDate": "结束日期",
+    "location": "比赛地点",
+    "organizer": "主办单位",
+    "maxTeams": "最大队伍数",
+    "currentTeams": "当前队伍数",
+    "registrationDeadline": "报名截止日期",
+    "rules": "比赛规则",
+    "prizes": "奖项设置",
+    "format": "赛制格式",
+    "progress": "比赛进度",
+    "groupStageProgress": "小组赛进度",
+    "knockoutProgress": "淘汰赛进度",
+    "overallProgress": "总体进度"
+  },
+  "types": {
+    "groupStage": "小组赛",
+    "knockout": "淘汰赛",
+    "mixed": "混合赛制",
+    "roundRobin": "循环赛",
+    "singleElimination": "单淘汰",
+    "doubleElimination": "双淘汰"
+  },
+  "messages": {
+    "noTournaments": "暂无锦标赛数据",
+    "createFirstTournament": "点击上方「新增锦标赛」按钮创建您的第一个锦标赛",
+    "loadingTournaments": "载入锦标赛资料中...",
+    "loadingKnockoutData": "载入淘汰赛资料中...",
+    "noActiveTournament": "目前没有可显示的锦标赛",
+    "tournamentLoadFailed": "载入锦标赛资料失败",
+    "tournamentCreated": "锦标赛创建成功",
+    "tournamentUpdated": "锦标赛更新成功",
+    "tournamentDeleted": "锦标赛删除成功",
+    "tournamentActivated": "锦标赛激活成功",
+    "tournamentDeactivated": "锦标赛停用成功",
+    "statusUpdateSuccess": "锦标赛状态更新成功",
+    "deleteConfirmation": "确定要删除这个锦标赛吗？",
+    "deleteWarning": "删除后将无法恢复，相关的比赛数据也会被删除。",
+    "activateTooltip": "激活锦标赛 (设为公开显示)",
+    "deactivateTooltip": "停用锦标赛 (从公开显示中移除)",
+    "reactivateTooltip": "重新激活锦标赛",
+    "noKnockoutData": "暂无淘汰赛资料",
+    "noKnockoutDataDesc": "此锦标赛可能尚未开始淘汰赛阶段，或采用其他赛制"
+  },
+  "placeholders": {
+    "searchTournament": "搜索锦标赛名称",
+    "enterTournamentName": "请输入锦标赛名称",
+    "enterDescription": "请输入锦标赛描述",
+    "selectType": "请选择锦标赛类型",
+    "selectLocation": "请选择比赛地点"
+  },
+  "rounds": {
+    "final": "决赛",
+    "semifinal": "准决赛",
+    "quarterfinal": "八强赛",
+    "round16": "十六强赛",
+    "thirdPlace": "季军赛",
+    "roundNumber": "第{{number}}轮"
+  },
+  "bracket": {
+    "title": "淘汰赛对战表",
+    "knockout": "淘汰赛",
+    "bracket": "对战表"
+  },
+  "champion": {
+    "title": "冠军",
+    "tournament": "锦标赛冠军",
+    "congratulations": "恭喜获得 {{tournament}} 冠军！"
+  },
+  "stats": {
+    "totalRounds": "总轮数",
+    "progress": "比赛进度"
+  },
+  "actions": {
+    "viewAllMatches": "查看所有比赛",
+    "viewGroupStage": "查看小组赛"
+  },
+  "roundWinner": "第{{round}}轮胜者",
+  "teamNumber": "队伍 {{id}}"
+}

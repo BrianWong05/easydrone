@@ -1,0 +1,141 @@
+{
+  "match": {
+    "number": "比赛编号",
+    "matchNumber": "比赛场次",
+    "list": "比赛列表",
+    "totalOrder": "总顺序",
+    "detail": "比赛详情",
+    "information": "比赛资讯",
+    "statistics": "比赛统计",
+    "events": "比赛事件",
+    "duration": "比赛时长",
+    "startTime": "开始时间",
+    "endTime": "结束时间",
+    "create": "创建比赛",
+    "edit": "编辑比赛",
+    "delete": "删除比赛",
+    "management": "比赛管理",
+    "schedule": "比赛排程",
+    "result": "比赛结果",
+    "score": "比分",
+    "teams": "对战队伍",
+    "team1": "队伍1",
+    "team2": "队伍2",
+    "date": "比赛日期",
+    "time": "比赛时间",
+    "venue": "比赛场地",
+    "referee": "裁判",
+    "type": "比赛类型",
+    "round": "轮次",
+    "group": "小组",
+    "stage": "阶段",
+    "duration": "比赛时长",
+    "status": "比赛状态",
+    "winner": "获胜队伍",
+    "loser": "失败队伍",
+    "draw": "平局",
+    "overtime": "延长赛",
+    "penalty": "点球大战",
+    "recent": "最近比赛",
+    "upcoming": "即将进行",
+    "live": "实时比赛",
+    "history": "比赛历史",
+    "statistics": "比赛统计",
+    "progress": "比赛进度",
+    "generate": "生成比赛",
+    "generator": "比赛生成器"
+  },
+  "types": {
+    "groupStage": "小组赛",
+    "knockout": "淘汰赛",
+    "quarterfinal": "四分之一决赛",
+    "semifinal": "半决赛",
+    "final": "决赛",
+    "thirdPlace": "季军赛",
+    "friendly": "友谊赛"
+  },
+  "status": {
+    "scheduled": "已排程",
+    "ongoing": "进行中",
+    "finished": "已结束",
+    "cancelled": "已取消",
+    "postponed": "延期",
+    "pending": "待开始",
+    "inProgress": "进行中",
+    "completed": "已完成",
+    "notStarted": "比赛尚未开始"
+  },
+  "results": {
+    "win": "胜",
+    "loss": "败",
+    "draw": "平",
+    "pending": "待定"
+  },
+  "result": {
+    "win": "胜",
+    "loss": "负",
+    "draw": "平",
+    "winner": "胜者",
+    "loser": "败者"
+  },
+  "stats": {
+    "pendingMatches": "待开始",
+    "activeMatches": "进行中"
+  },
+  "pagination": {
+    "showTotal": "第 {{start}}-{{end}} 项，共 {{total}} 场比赛"
+  },
+  "statistics": {
+    "goals": "进球",
+    "assists": "助攻",
+    "saves": "扑救",
+    "fouls": "犯规",
+    "yellowCards": "黄牌",
+    "redCards": "红牌",
+    "possession": "控球率",
+    "shots": "射门",
+    "shotsOnTarget": "射正",
+    "corners": "角球",
+    "offsides": "越位"
+  },
+  "messages": {
+    "noMatches": "暂无比赛",
+    "noMatchData": "暂无比赛数据",
+    "loadingMatches": "载入比赛资料中...",
+    "loadingMatchDetail": "载入比赛详情中...",
+    "matchCreated": "比赛创建成功",
+    "matchUpdated": "比赛更新成功",
+    "matchDeleted": "比赛删除成功",
+    "deleteConfirmation": "确定要删除这场比赛吗？",
+    "deleteWarning": "删除后将无法恢复",
+    "noRecentMatches": "暂无最近比赛",
+    "generateSuccess": "比赛生成成功",
+    "generateFailed": "比赛生成失败",
+    "matchNotFound": "比赛不存在",
+    "matchNotFoundDesc": "找不到指定的比赛资讯"
+  },
+  "winReason": {
+    "score": "比分获胜",
+    "fouls": "犯规较少",
+    "referee": "裁判判决",
+    "draw": "平局"
+  },
+  "time": {
+    "minutes": "分钟"
+  },
+  "placeholders": {
+    "searchMatch": "搜寻队伍或场次",
+    "selectTeam1": "请选择队伍1",
+    "selectTeam2": "请选择队伍2",
+    "selectVenue": "请选择比赛场地",
+    "selectReferee": "请选择裁判",
+    "enterScore": "请输入比分",
+    "selectStatus": "请选择比赛状态",
+    "selectType": "请选择比赛类型"
+  },
+  "live": {
+    "matchTiedNeedsOvertime": "比赛结果平局，需要延长赛决定胜负！",
+    "currentScore": "当前比分",
+    "fouls": "犯规数"
+  }
+}

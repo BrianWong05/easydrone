@@ -1,0 +1,77 @@
+{
+  "team": {
+    "name": "队伍名称",
+    "list": "队伍列表",
+    "detail": "队伍详情",
+    "create": "创建队伍",
+    "edit": "编辑队伍",
+    "delete": "删除队伍",
+    "management": "队伍管理",
+    "captain": "队长",
+    "members": "队员",
+    "memberCount": "队员数量",
+    "description": "队伍描述",
+    "contactInfo": "联络资讯",
+    "registrationDate": "注册日期",
+    "status": "队伍状态",
+    "group": "小组",
+    "wins": "胜场",
+    "losses": "败场",
+    "draws": "平局",
+    "points": "积分",
+    "goalsFor": "进球数",
+    "goalsAgainst": "失球数",
+    "goalDifference": "净胜球",
+    "matchesPlayed": "已赛场次",
+    "winRate": "胜率",
+    "ranking": "排名",
+    "totalTeams": "队伍总数"
+  },
+  "positions": {
+    "attacker": "进攻手",
+    "defender": "防守员",
+    "goalkeeper": "守门员",
+    "midfielder": "中场"
+  },
+  "structure": {
+    "formation": "阵型配置",
+    "attackers": "进攻手",
+    "defenders": "防守员",
+    "standardFormation": "1进攻手+3-5防守员结构"
+  },
+  "messages": {
+    "noTeams": "暂无队伍",
+    "noTeamData": "暂无队伍数据",
+    "loadingTeams": "载入队伍资料中...",
+    "teamCreated": "队伍创建成功",
+    "teamUpdated": "队伍更新成功",
+    "teamDeleted": "队伍删除成功",
+    "deleteConfirmation": "确定要删除这个队伍吗？",
+    "deleteWarning": "删除后将无法恢复",
+    "noMatchHistory": "暂无比赛记录",
+    "unknownTeam": "未知队伍",
+    "viewAllTeamsInfo": "查看所有参赛队伍的详细资讯",
+    "teamStatistics": "队伍统计",
+    "teamsCount": "支队伍",
+    "noGroupAssigned": "未分组",
+    "loadingTeamDetail": "载入队伍详情中...",
+    "teamNotFound": "队伍不存在",
+    "teamNotFoundDesc": "找不到指定的队伍资讯"
+  },
+  "labels": {
+    "teamColor": "队伍颜色",
+    "people": "人",
+    "createdTime": "创建时间",
+    "lastUpdated": "最后更新",
+    "goalsForShort": "进",
+    "goalsAgainstShort": "失",
+    "goalDifferenceShort": "差"
+  },
+  "placeholders": {
+    "searchTeam": "搜索队伍名称",
+    "enterTeamName": "请输入队伍名称",
+    "enterDescription": "请输入队伍描述",
+    "selectCaptain": "请选择队长",
+    "enterContactInfo": "请输入联络资讯"
+  }
+}

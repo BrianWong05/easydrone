@@ -16,7 +16,7 @@ i18n
     fallbackLng: 'zh-TW',
     
     // Available languages
-    supportedLngs: ['zh-TW', 'en'],
+    supportedLngs: ['zh-TW', 'zh-CN', 'en'],
     
     // Debug mode (set to false in production)
     debug: process.env.NODE_ENV === 'development',

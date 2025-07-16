@@ -1,0 +1,62 @@
+{
+  "group": {
+    "name": "小组名称",
+    "list": "小组列表",
+    "detail": "小组详情",
+    "create": "创建小组",
+    "edit": "编辑小组",
+    "delete": "删除小组",
+    "management": "小组管理",
+    "letter": "小组字母",
+    "teams": "小组队伍",
+    "matches": "小组比赛",
+    "standings": "小组积分榜",
+    "leaderboard": "小组排行榜",
+    "stage": "小组赛阶段",
+    "maxTeams": "最大队伍数",
+    "currentTeams": "当前队伍数",
+    "description": "小组描述",
+    "status": "小组状态",
+    "progress": "小组进度",
+    "allStandings": "所有小组积分榜"
+  },
+  "standings": {
+    "position": "排名",
+    "team": "队伍",
+    "played": "已赛",
+    "won": "胜",
+    "drawn": "平",
+    "lost": "败",
+    "goalsFor": "进球",
+    "goalsAgainst": "失球",
+    "goalDifference": "净胜球",
+    "points": "积分"
+  },
+  "messages": {
+    "noGroups": "暂无小组",
+    "noGroupData": "暂无小组数据",
+    "loadingGroups": "载入小组资料中...",
+    "loadingGroupDetail": "载入小组详情中...",
+    "groupCreated": "小组创建成功",
+    "groupUpdated": "小组更新成功",
+    "groupDeleted": "小组删除成功",
+    "deleteConfirmation": "确定要删除这个小组吗？",
+    "deleteWarning": "删除后将无法恢复",
+    "noTeamsInGroup": "暂无队伍",
+    "noStandingsData": "暂无积分榜数据",
+    "noMatchesInGroup": "暂无比赛",
+    "totalGroups": "分组数量",
+    "groupNotFound": "小组不存在",
+    "groupNotFoundDesc": "找不到指定的小组资讯"
+  },
+  "stats": {
+    "participatingTeams": "参赛队伍"
+  },
+  "placeholders": {
+    "searchGroup": "搜索小组名称",
+    "enterGroupName": "请输入小组名称",
+    "enterDescription": "请输入小组描述",
+    "selectGroupLetter": "请选择小组字母",
+    "selectGroup": "请选择小组"
+  }
+}

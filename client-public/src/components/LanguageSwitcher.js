@@ -14,6 +14,10 @@ const LanguageSwitcher = ({ size = 'default', style = {} }) => {
       name: '繁體中文'
     },
     {
+      code: 'zh-CN',
+      name: '简体中文'
+    },
+    {
       code: 'en',
       name: 'English'
     }

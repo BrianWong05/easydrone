@@ -1,0 +1,26 @@
+{
+  "navigation": {
+    "leaderboard": "积分榜",
+    "teams": "队伍",
+    "groups": "小组",
+    "matches": "比赛",
+    "bracket": "淘汰赛对战表",
+    "bestTeams": "最佳球队统计"
+  },
+  "layout": {
+    "title": "锦标赛",
+    "subtitle": "公开赛事资讯",
+    "expandSidebar": "展开侧边栏",
+    "collapseSidebar": "收合侧边栏",
+    "tournamentName": "无人机足球锦标赛",
+    "loadingTournament": "载入锦标赛资料中...",
+    "loadFailed": "载入失败",
+    "noActiveTournament": "目前没有可显示的锦标赛",
+    "tournamentLoadFailed": "载入锦标赛资料失败"
+  },
+  "tournamentTypes": {
+    "group": "小组赛",
+    "knockout": "淘汰赛", 
+    "mixed": "混合赛制"
+  }
+}
