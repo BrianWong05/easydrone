@@ -732,7 +732,20 @@ const TournamentLiveMatch = () => {
               </Button>
             )}
             {matchStarted && matchData.match_status === "active" && !isHalfTime && !isOvertime && (
-              <>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", width: "400px" }}>
+                {/* Top Row */}
+                <Button danger size="large" icon={<StopOutlined />} onClick={() => setEndSessionModalVisible(true)}>
+                  {currentHalf === 1 ? t('match:actions.endFirstHalf') : currentHalf === 2 ? t('match:actions.endSecondHalf') : t('match:actions.endOvertime')}
+                </Button>
+                <Button
+                  danger
+                  type="primary"
+                  size="large"
+                  onClick={() => setEndMatchModalVisible(true)}
+                >
+                  {t('match:actions.forceEndMatch')}
+                </Button>
+                {/* Bottom Row */}
                 <Button
                   size="large"
                   icon={isRunning ? <PauseCircleOutlined /> : <PlayCircleOutlined />}
@@ -744,23 +757,10 @@ const TournamentLiveMatch = () => {
                   size="large"
                   onClick={handleOpenTimerEdit}
                   disabled={isRunning}
-                  style={{ marginLeft: "8px" }}
                 >
                   {t('match:actions.editTime')}
                 </Button>
-                <Button danger size="large" icon={<StopOutlined />} onClick={() => setEndSessionModalVisible(true)}>
-                  {currentHalf === 1 ? t('match:actions.endFirstHalf') : currentHalf === 2 ? t('match:actions.endSecondHalf') : t('match:actions.endOvertime')}
-                </Button>
-                <Button
-                  danger
-                  type="primary"
-                  size="large"
-                  onClick={() => setEndMatchModalVisible(true)}
-                  style={{ marginLeft: "8px" }}
-                >
-                  {t('match:actions.forceEndMatch')}
-                </Button>
-              </>
+              </div>
             )}
             {isHalfTime && (
               <>
