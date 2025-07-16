@@ -1,0 +1,75 @@
+{
+  "athlete": {
+    "name": "运动员姓名",
+    "list": "运动员列表",
+    "detail": "运动员详情",
+    "create": "创建运动员",
+    "edit": "编辑运动员",
+    "delete": "删除运动员",
+    "management": "运动员管理",
+    "profile": "运动员档案",
+    "statistics": "运动员统计",
+    "performance": "表现数据",
+    "team": "所属队伍",
+    "position": "位置",
+    "number": "号码",
+    "age": "年龄",
+    "height": "身高",
+    "weight": "体重",
+    "nationality": "国籍",
+    "experience": "经验",
+    "joinDate": "加入日期",
+    "status": "状态",
+    "contact": "联络方式",
+    "biography": "个人简介",
+    "achievements": "成就",
+    "totalAthletes": "运动员总数"
+  },
+  "statistics": {
+    "matchesPlayed": "出赛场次",
+    "goals": "进球数",
+    "assists": "助攻数",
+    "saves": "扑救数",
+    "fouls": "犯规次数",
+    "yellowCards": "黄牌数",
+    "redCards": "红牌数",
+    "minutesPlayed": "出场时间",
+    "averageRating": "平均评分",
+    "winRate": "胜率"
+  },
+  "positions": {
+    "attacker": "进攻手",
+    "defender": "防守员",
+    "goalkeeper": "守门员",
+    "midfielder": "中场",
+    "substitute": "替补"
+  },
+  "status": {
+    "active": "现役",
+    "inactive": "非现役",
+    "injured": "受伤",
+    "suspended": "停赛",
+    "retired": "退役"
+  },
+  "messages": {
+    "noAthletes": "暂无运动员",
+    "noAthleteData": "暂无运动员数据",
+    "loadingAthletes": "载入运动员资料中...",
+    "athleteCreated": "运动员创建成功",
+    "athleteUpdated": "运动员更新成功",
+    "athleteDeleted": "运动员删除成功",
+    "deleteConfirmation": "确定要删除这个运动员吗？",
+    "deleteWarning": "删除后将无法恢复",
+    "noStatistics": "暂无统计数据"
+  },
+  "placeholders": {
+    "searchAthlete": "搜索运动员姓名",
+    "enterAthleteName": "请输入运动员姓名",
+    "selectTeam": "请选择队伍",
+    "selectPosition": "请选择位置",
+    "enterNumber": "请输入号码",
+    "enterAge": "请输入年龄",
+    "enterHeight": "请输入身高",
+    "enterWeight": "请输入体重"
+  }
+}

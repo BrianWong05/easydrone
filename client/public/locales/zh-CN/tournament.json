@@ -1,0 +1,343 @@
+{
+  "tournament": "锦标赛",
+  "tournament": {
+    "name": "锦标赛名稱",
+    "overview": "锦标赛概覽",
+    "management": "锦标赛管理",
+    "create": "创建锦标赛",
+    "edit": "编辑锦标赛",
+    "delete": "删除锦标赛",
+    "status": "锦标赛状态",
+    "type": "锦标赛类型",
+    "description": "锦标赛描述",
+    "startDate": "开始日期",
+    "endDate": "结束日期",
+    "location": "比赛地点",
+    "organizer": "主辦單位",
+    "maxTeams": "最大队伍数",
+    "currentTeams": "当前队伍数",
+    "registrationDeadline": "報名截止日期",
+    "rules": "比赛規則",
+    "prizes": "獎項設置",
+    "format": "赛制格式",
+    "progress": "比赛进度",
+    "groupStageProgress": "小组賽进度",
+    "knockoutProgress": "淘汰赛进度",
+    "overallProgress": "总体进度"
+  },
+  "types": {
+    "groupStage": "小组賽",
+    "knockout": "淘汰赛",
+    "mixed": "混合赛制",
+    "roundRobin": "循环赛",
+    "singleElimination": "单淘汰",
+    "doubleElimination": "双淘汰"
+  },
+  "match": {
+    "groupStage": "小组賽",
+    "knockout": "淘汰赛",
+    "mixed": "混合赛制 (小组賽+淘汰赛)",
+    "allMatches": "所有比赛",
+    "thisTournament": "此锦标赛"
+  },
+  "knockout": {
+    "round32": "32強",
+    "round16": "16強",
+    "quarter": "八强",
+    "semi": "四強",
+    "third": "季军戰",
+    "final": "决赛",
+    "pureKnockout": "純淘汰赛",
+    "mixedDescription": "將根據小组賽总排名榜选择前N名队伍进行淘汰赛",
+    "knockoutDescription": "將隨機选择队伍进行淘汰赛",
+    "groupNotSupported": "小组賽类型不支持淘汰赛生成",
+    "noBracketGenerated": "尚未生成淘汰赛对战表",
+    "useGenerationFunction": "請使用上方的生成功能创建淘汰赛結構",
+    "bracketTitle": "淘汰赛对战表",
+    "deleteAllKnockout": "删除所有淘汰赛",
+    "roundNumber": "第{{number}}轮",
+    "clickToViewDetails": "點擊查看比赛詳情",
+    "timeTBD": "时间待定",
+    "winner": "胜者",
+    "thirdPlace": "季军",
+    "generateTitle": "生成淘汰赛",
+    "teamCount": "參賽队伍数量",
+    "selectTeamCount": "請选择參賽队伍数量",
+    "powerOfTwo": "必須是2的冪",
+    "available": "可選",
+    "matchDate": "比赛日期",
+    "selectMatchDate": "請选择比赛日期",
+    "startTime": "开始时间",
+    "selectStartTime": "請选择开始时间",
+    "matchDurationMinutes": "比赛时长（分钟）",
+    "matchDurationSeconds": "比赛时长（秒）",
+    "enterMinutes": "請输入分钟",
+    "enterSeconds": "請输入秒数",
+    "minutes": "分钟",
+    "seconds": "秒",
+    "intervalMinutes": "比赛間隔（分钟）",
+    "intervalSeconds": "比赛間隔（秒）",
+    "enterIntervalMinutes": "請输入間隔分钟",
+    "enterIntervalSeconds": "請输入間隔秒数",
+    "intervalDescription": "比赛間隔：每场比赛之間的时间間隔，用於準備和清场",
+    "includeThirdPlace": "包含季军賽（3rd Place Match）",
+    "thirdPlaceDescription": "勾選此選項將在準决赛和决赛之間安排季军賽，由兩场準决赛的败者进行比赛",
+    "generateBracket": "生成淘汰赛对战表"
+  },
+  "messages": {
+    "noTournaments": "暂无锦标赛数据",
+    "createFirstTournament": "點擊上方「新增锦标赛」按鈕创建您的第一個锦标赛",
+    "loadingTournaments": "载入锦标赛资料中...",
+    "noActiveTournament": "目前沒有可顯示的锦标赛",
+    "tournamentLoadFailed": "载入锦标赛资料失败",
+    "tournamentCreated": "锦标赛创建成功",
+    "tournamentUpdated": "锦标赛更新成功",
+    "tournamentDeleted": "锦标赛删除成功",
+    "tournamentActivated": "锦标赛激活成功",
+    "tournamentDeactivated": "锦标赛停用成功",
+    "statusUpdateSuccess": "锦标赛状态更新成功",
+    "deleteConfirmation": "确定要删除這個锦标赛嗎？",
+    "deleteWarning": "删除後將无法恢复，相关的比赛数据也会被删除。",
+    "activateTooltip": "激活锦标赛 (設為公開顯示)",
+    "deactivateTooltip": "停用锦标赛 (從公開顯示中移除)",
+    "reactivateTooltip": "重新激活锦标赛",
+    "knockoutGenerated": "成功生成 {{teams}} 支队伍的淘汰赛，共 {{rounds}} 轮 {{matches}} 场比赛",
+    "knockoutGenerationFailed": "生成淘汰赛失败",
+    "confirmDeleteAllKnockout": "確認删除所有淘汰赛",
+    "deleteAllKnockoutWarning": "确定要删除所有淘汰赛比赛嗎？此操作將清空整個淘汰赛对战表，且无法撤銷。",
+    "allKnockoutDeleted": "所有淘汰赛比赛已删除",
+    "knockoutDeletionFailed": "删除淘汰赛失败"
+  },
+  "placeholders": {
+    "searchTournament": "搜索锦标赛名稱",
+    "enterTournamentName": "請输入锦标赛名稱",
+    "enterDescription": "請输入锦标赛描述",
+    "selectType": "請选择锦标赛类型",
+    "selectLocation": "請选择比赛地点"
+  },
+  "navigation": {
+    "overview": "锦标赛概覽",
+    "teamManagement": "队伍管理",
+    "groupManagement": "小组管理",
+    "matchManagement": "比赛管理",
+    "athleteManagement": "運動員管理",
+    "leaderboard": "積分榜",
+    "groupLeaderboard": "小组積分榜",
+    "overallLeaderboard": "总積分榜",
+    "statisticsData": "统计数据 (開發中)",
+    "bestTeamsStats": "最佳球隊统计",
+    "knockoutBracket": "淘汰赛对战表",
+    "management": "管理",
+    "backToTournamentDetail": "返回锦标赛詳情"
+  },
+  "list": {
+    "title": "锦标赛管理",
+    "addTournament": "新增锦标赛",
+    "searchPlaceholder": "搜索锦标赛名稱",
+    "selectStatus": "选择状态",
+    "selectType": "选择类型",
+    "noData": "暂无锦标赛数据",
+    "noDataDescription": "點擊上方「新增锦标赛」按鈕创建您的第一個锦标赛",
+    "columns": {
+      "name": "锦标赛名稱",
+      "type": "类型",
+      "status": "状态",
+      "progress": "比赛进度",
+      "dates": "日期",
+      "createdAt": "创建时间",
+      "actions": "操作"
+    },
+    "dates": {
+      "start": "开始",
+      "end": "结束"
+    },
+    "status": {
+      "pending": "待激活",
+      "active": "公開顯示中",
+      "completed": "已完成",
+      "publicDisplay": "(公開中)"
+    },
+    "actions": {
+      "viewDetails": "查看詳情",
+      "viewBracket": "查看淘汰赛圖表",
+      "edit": "编辑",
+      "activate": "激活",
+      "deactivate": "停用",
+      "reactivate": "重新激活",
+      "delete": "删除"
+    },
+    "tooltips": {
+      "activateTournament": "激活锦标赛 (設為公開顯示)",
+      "deactivateTournament": "停用锦标赛 (從公開顯示中移除)",
+      "reactivateTournament": "重新激活锦标赛"
+    },
+    "filters": {
+      "statusPending": "待开始",
+      "statusActive": "进行中",
+      "statusCompleted": "已完成"
+    }
+  },
+  "create": {
+    "title": "新增锦标赛",
+    "backToList": "返回列表",
+    "basicInfo": "基本信息",
+    "tournamentName": "锦标赛名稱",
+    "tournamentType": "锦标赛类型",
+    "competitionDates": "比赛日期（可選）",
+    "startDate": "开始日期",
+    "endDate": "结束日期",
+    "createTournament": "创建锦标赛",
+    "cancel": "取消",
+    "formatDescription": "赛制說明",
+    "features": "特點",
+    "selectTypePrompt": "請选择锦标赛类型查看詳細說明",
+    "creationTips": "创建提示",
+    "validation": {
+      "nameRequired": "請输入锦标赛名稱",
+      "nameMinLength": "锦标赛名稱至少需要2個字符",
+      "nameMaxLength": "锦标赛名稱不能超過100個字符",
+      "typeRequired": "請选择锦标赛类型",
+      "namePlaceholder": "請输入锦标赛名稱，例如：2024年春季無人機足球锦标赛"
+    },
+    "typeDescriptions": {
+      "group": {
+        "title": "小组赛制",
+        "description": "队伍分組进行循环赛，每組前幾名晉級下一阶段。適合參賽队伍較多的情況。",
+        "features": ["分組循环赛", "積分排名", "小组出線"]
+      },
+      "knockout": {
+        "title": "淘汰赛制",
+        "description": "單场淘汰制，败者直接出局。比赛節奏快，適合决定最終冠军。",
+        "features": ["單场淘汰", "胜者晉級", "快速決出冠军"]
+      },
+      "mixed": {
+        "title": "混合赛制",
+        "description": "結合小组賽和淘汰赛，先进行小组賽選出晉級队伍，再进行淘汰赛決出冠军。",
+        "features": ["小组賽+淘汰赛", "兩阶段比赛", "最完整的赛制"]
+      }
+    },
+    "tips": {
+      "title": "创建提示",
+      "addTeams": "锦标赛创建後可以添加參賽队伍",
+      "groupStage": "小组賽需要先创建小组並分配队伍",
+      "knockout": "淘汰赛可以直接生成对战圖表",
+      "mixed": "混合赛制結合了兩種赛制的優點"
+    }
+  },
+  "detail": {
+    "loading": "载入中...",
+    "notFound": "找不到锦标赛",
+    "editTournament": "编辑锦标赛",
+    "tournamentSettings": "锦标赛設置",
+    "startDate": "开始日期",
+    "endDate": "结束日期",
+    "createdAt": "创建时间",
+    "lastUpdated": "最後更新",
+    "notSet": "未設置",
+    "statistics": "锦标赛统计",
+    "totalTeams": "总队伍数",
+    "totalGroups": "小组数",
+    "totalMatches": "总比赛数",
+    "totalAthletes": "運動員数",
+    "completedMatches": "已完成比赛",
+    "pendingMatches": "待进行比赛",
+    "managementFunctions": "管理功能",
+    "recentMatches": "最近比赛",
+    "viewAllMatches": "查看全部比赛",
+    "viewDetails": "查看詳情",
+    "noMatchRecords": "暂无比赛記錄",
+    "score": "比分",
+    "management": {
+      "teams": {
+        "title": "队伍管理",
+        "description": "管理锦标赛队伍，新增、编辑队伍信息",
+        "viewTeams": "查看队伍",
+        "addTeam": "新增队伍"
+      },
+      "groups": {
+        "title": "小组管理",
+        "description": "管理锦标赛小组，分組和小组設置",
+        "viewGroups": "查看小组",
+        "addGroup": "新增小组"
+      },
+      "matches": {
+        "title": "比赛管理",
+        "description": "管理比赛賽程，创建和编辑比赛",
+        "viewMatches": "查看比赛",
+        "addMatch": "新增比赛"
+      },
+      "athletes": {
+        "title": "運動員管理",
+        "description": "管理運動員信息和队伍成員",
+        "viewAthletes": "查看運動員",
+        "addAthlete": "新增運動員"
+      },
+      "leaderboard": {
+        "title": "積分榜",
+        "description": "查看比赛積分榜和统计数据",
+        "groupLeaderboard": "小组積分榜",
+        "overallLeaderboard": "总積分榜"
+      }
+    },
+    "status": {
+      "pending": "待开始",
+      "active": "进行中",
+      "completed": "已完成",
+      "overtime": "延长賽"
+    }
+  },
+  "edit": {
+    "title": "编辑锦标赛",
+    "subtitle": "修改锦标赛的基本信息",
+    "backToDetail": "返回锦标赛詳情",
+    "loading": "载入锦标赛信息中...",
+    "notFound": "锦标赛不存在",
+    "cannotEdit": "无法编辑锦标赛",
+    "cannotEditDescription": "只能编辑待开始状态的锦标赛。已开始或已完成的锦标赛无法修改。",
+    "tournamentInfo": "锦标赛信息",
+    "tournamentStatus": "锦标赛状态",
+    "currentStatus": "当前状态",
+    "createdAt": "创建时间",
+    "lastUpdated": "最後更新",
+    "formatDescription": "赛制說明",
+    "features": "特點",
+    "saveChanges": "保存更改",
+    "cancel": "取消",
+    "typeChange": "锦标赛类型變更",
+    "validation": {
+      "nameRequired": "請输入锦标赛名稱",
+      "nameMinLength": "锦标赛名稱至少需要2個字符",
+      "nameMaxLength": "锦标赛名稱不能超過100個字符",
+      "typeRequired": "請选择锦标赛类型",
+      "startDateRequired": "請选择开始日期",
+      "endDateRequired": "請选择结束日期",
+      "endDateAfterStart": "结束日期不能早於开始日期",
+      "namePlaceholder": "請输入锦标赛名稱",
+      "typePlaceholder": "請选择锦标赛类型",
+      "startDatePlaceholder": "选择开始日期",
+      "endDatePlaceholder": "选择结束日期"
+    },
+    "typeChangeMessages": {
+      "groupToMixed": "允許變更：小组赛制可以隨時變更為混合赛制",
+      "groupToMixedDesc": "現有的小组和比赛数据將保留，您可以稍後添加淘汰赛阶段。",
+      "mixedToGroupBlocked": "无法變更：存在淘汰赛比赛",
+      "mixedToGroupBlockedDesc": "發現 {{count}} 场淘汰赛比赛。請先删除所有淘汰赛比赛才能變更為小组赛制。",
+      "mixedToGroupAllowed": "允許變更：混合赛制變更為小组赛制",
+      "mixedToGroupAllowedDesc": "沒有淘汰赛比赛，可以安全變更為小组赛制。",
+      "hasRelatedData": "无法變更：存在相关数据",
+      "hasRelatedDataDesc": "锦标赛已有相关数据（小组、队伍或比赛）。請先清除所有相关数据。",
+      "noRelatedData": "允許變更：無相关数据",
+      "noRelatedDataDesc": "锦标赛沒有相关数据，可以安全變更类型。",
+      "groupMatches": "小组賽比赛: {{count}} 场",
+      "knockoutMatches": "淘汰赛比赛: {{count}} 场"
+    },
+    "typeOptions": {
+      "groupTitle": "小组赛制",
+      "groupDesc": "队伍分組进行循环赛",
+      "knockoutTitle": "淘汰赛制",
+      "knockoutDesc": "單场淘汰制，快速決胜",
+      "mixedTitle": "混合赛制",
+      "mixedDesc": "小组賽+淘汰赛組合"
+    }
+  }
+}

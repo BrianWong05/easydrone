@@ -1,0 +1,120 @@
+{
+  "stats": {
+    "overview": "统计概览",
+    "dashboard": "数据仪表板",
+    "summary": "统计摘要",
+    "detailed": "详细统计",
+    "comparison": "对比分析",
+    "trends": "趋势分析",
+    "performance": "表现统计",
+    "ranking": "排名统计",
+    "bestTeams": "最佳球队统计",
+    "topPerformers": "顶级表现者",
+    "systemStatus": "系统状态",
+    "bestAttackTeam": "最佳进攻球队",
+    "bestDefenseTeam": "最佳防守球队",
+    "bestAttackTeamsRanking": "最佳进攻球队排行榜",
+    "bestDefenseTeamsRanking": "最佳防守球队排行榜",
+    "explanation": "统计说明",
+    "explanationText": "最佳进攻球队以总进球数排名，最佳防守球队以总失球数排名（越少越好）"
+  },
+  "metrics": {
+    "totalTeams": "队伍总数",
+    "totalTournaments": "锦标赛",
+    "totalMatches": "比赛场次",
+    "totalAthletes": "运动员总数",
+    "matchesPlayed": "已赛场次",
+    "goalsScored": "进球总数",
+    "averageGoals": "平均进球",
+    "winRate": "胜率",
+    "drawRate": "平局率",
+    "lossRate": "败率",
+    "averagePoints": "场均积分",
+    "analyzedMatches": "分析比赛数",
+    "analyzedTeams": "分析队伍数",
+    "totalGoalsFor": "总进球",
+    "totalGoalsAgainst": "总失球",
+    "averageGoalsFor": "平均进球",
+    "averageGoalsAgainst": "平均失球",
+    "goals": "球",
+    "conceded": "失"
+  },
+  "rankings": {
+    "position": "排名",
+    "team": "队伍",
+    "points": "积分",
+    "wins": "胜场",
+    "draws": "平局",
+    "losses": "败场",
+    "goalsFor": "进球",
+    "goalsAgainst": "失球",
+    "goalDifference": "净胜球",
+    "overallRanking": "总排名",
+    "groupRanking": "小组排名",
+    "played": "场次"
+  },
+  "progress": {
+    "groupStage": "小组赛进度",
+    "knockout": "淘汰赛进度",
+    "overall": "总体进度",
+    "completion": "完成度"
+  },
+  "system": {
+    "databaseConnection": "数据库连接",
+    "apiService": "API服务",
+    "realTimeUpdate": "即时更新",
+    "systemVersion": "系统版本",
+    "status": "状态"
+  },
+  "messages": {
+    "noData": "暂无数据",
+    "noRankingData": "暂无排名数据",
+    "loadingStats": "载入统计数据中...",
+    "dataUpdated": "数据已更新",
+    "refreshData": "刷新数据",
+    "exportData": "导出数据",
+    "noGroup": "无小组",
+    "rankingWillShow": "当队伍完成比赛后，排名将自动显示",
+    "statsUpdated": "统计数据已更新并发布到公开页面 (基于 {{basis}})",
+    "selectedMatches": "{{count}} 场选定比赛",
+    "filterCriteria": "筛选条件",
+    "noMatchesFound": "暂无符合条件的比赛",
+    "totalCompletedMatches": "共 {{count}} 场已完成的比赛可供选择",
+    "clickCalculate": "请点击「计算统计」开始分析",
+    "selectMatchTypeFirst": "请先选择比赛类型",
+    "analyzeDescription": "分析 {{tournament}} 中的{{matchType}}最佳进攻和防守球队。",
+    "selectMatchTypeInstructions": "请先选择要分析的比赛类型（小组赛、淘汰赛或混合赛制），然后设定其他筛选条件。",
+    "noGroups": "此锦标赛暂无小组",
+    "noKnockoutRounds": "此锦标赛暂无淘汰赛"
+  },
+  "pagination": {
+    "rankingTotal": "第 {{start}}-{{end}} 名，共 {{total}} 支队伍"
+  },
+  "rules": {
+    "rankingRules": "排名规则",
+    "rankingDescription": "小组内排名 → 同排名队伍间比较（积分 → 净胜球 → 进球数）",
+    "pointsRules": "积分规则",
+    "pointsDescription": "胜利 3分，平局 1分，失败 0分",
+    "sortingRules": "排序说明",
+    "sortingDescription": "先显示各小组第1名，再显示各小组第2名，以此类推",
+    "tagDescription": "标签说明",
+    "tagExplanation": "表示该队伍在其小组内的排名"
+  },
+  "filters": {
+    "title": "筛选条件",
+    "matchType": "比赛类型",
+    "selectMatchType": "请先选择比赛类型",
+    "selected": "已选",
+    "selectSpecificMatches": "选择特定比赛",
+    "knockoutRounds": "淘汰赛轮次",
+    "dateRange": "日期范围",
+    "specificMatches": "特定比赛",
+    "matches": "场比赛",
+    "summary": "筛选条件摘要",
+    "allRounds": "所有轮次",
+    "includeSubsequent": "含后续轮次"
+  },
+  "buttons": {
+    "calculate": "计算统计"
+  }
+}
