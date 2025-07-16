@@ -234,6 +234,8 @@
     "keyboardShortcuts": "鍵盤快捷鍵",
     "startMatch": "開始比賽",
     "startSecondHalf": "開始下半場",
+    "firstHalf": "上半場",
+    "secondHalf": "下半場",
     "score": "得分",
     "spacebar": "空格",
     "pauseResumeTimer": "開始/暫停計時器"

@@ -234,6 +234,8 @@
     "keyboardShortcuts": "Keyboard Shortcuts",
     "startMatch": "Start Match",
     "startSecondHalf": "Start Second Half",
+    "firstHalf": "First Half",
+    "secondHalf": "Second Half",
     "score": "Score",
     "spacebar": "Space",
     "pauseResumeTimer": "Start/Pause Timer"

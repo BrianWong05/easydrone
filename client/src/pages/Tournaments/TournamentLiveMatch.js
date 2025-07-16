@@ -828,9 +828,9 @@ const TournamentLiveMatch = () => {
                       : isOvertime
                       ? "延長賽準備"
                       : currentHalf === 1
-                      ? "上半場"
+                      ? t('live.firstHalf', { defaultValue: '上半場' })
                       : currentHalf === 2
-                      ? "下半場"
+                      ? t('live.secondHalf', { defaultValue: '下半場' })
                       : "延長賽"}
                   </Tag>
                 </div>
@@ -850,12 +850,12 @@ const TournamentLiveMatch = () => {
                   style={{ fontSize: "14px", padding: "4px 12px" }}
                 >
                   {matchData.match_status === "pending"
-                    ? "待開始"
+                    ? t('status.pending')
                     : matchData.match_status === "postponed"
-                    ? "待開始"
+                    ? t('status.pending')
                     : matchData.match_status === "active"
-                    ? "進行中"
-                    : "已完成"}
+                    ? t('status.active')
+                    : t('status.completed')}
                 </Tag>
               </div>
             </Col>
