@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, Typography, Table, Tag, Row, Col, Space, Progress, message, Button } from 'antd';
 import { TrophyOutlined, TeamOutlined, ReloadOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 const { Title, Text } = Typography;
 
 const GroupLeaderboard = () => {
+  const { t } = useTranslation(['group', 'common']);
   const { id: tournamentId } = useParams();
   const navigate = useNavigate();
   const [groups, setGroups] = useState([]);
@@ -82,11 +84,11 @@ const GroupLeaderboard = () => {
 
         setGroups(groupsWithStandings);
       } else {
-        message.error("獲取小組列表失敗");
+        message.error(t('messages.loadingGroups', { ns: 'group' }));
       }
     } catch (error) {
       console.error("獲取小組數據錯誤:", error);
-      message.error("獲取小組數據失敗");
+      message.error(t('messages.noGroupData', { ns: 'group' }));
     } finally {
       setLoading(false);
     }
@@ -94,7 +96,7 @@ const GroupLeaderboard = () => {
 
   const standingsColumns = [
     {
-      title: "排名",
+      title: t('standings.position', { ns: 'group' }),
       key: "rank",
       width: 60,
       render: (_, __, index) => (
@@ -109,7 +111,7 @@ const GroupLeaderboard = () => {
       ),
     },
     {
-      title: "隊伍",
+      title: t('standings.team', { ns: 'group' }),
       dataIndex: "name",
       key: "name",
       render: (name, record, index) => (
@@ -130,53 +132,53 @@ const GroupLeaderboard = () => {
       ),
     },
     {
-      title: "積分",
+      title: t('standings.points', { ns: 'group' }),
       dataIndex: "points",
       key: "points",
       width: 60,
       render: (points) => <span style={{ fontWeight: "bold", color: "#1890ff" }}>{points}</span>,
     },
     {
-      title: "場次",
+      title: t('standings.played', { ns: 'group' }),
       dataIndex: "played",
       key: "played",
       width: 60,
     },
     {
-      title: "勝",
+      title: t('standings.won', { ns: 'group' }),
       dataIndex: "won",
       key: "won",
       width: 50,
       render: (won) => <span style={{ color: "#52c41a" }}>{won}</span>,
     },
     {
-      title: "平",
+      title: t('standings.drawn', { ns: 'group' }),
       dataIndex: "drawn",
       key: "drawn",
       width: 50,
       render: (drawn) => <span style={{ color: "#faad14" }}>{drawn}</span>,
     },
     {
-      title: "負",
+      title: t('standings.lost', { ns: 'group' }),
       dataIndex: "lost",
       key: "lost",
       width: 50,
       render: (lost) => <span style={{ color: "#ff4d4f" }}>{lost}</span>,
     },
     {
-      title: "進球",
+      title: t('standings.goalsFor', { ns: 'group' }),
       dataIndex: "gf",
       key: "gf",
       width: 60,
     },
     {
-      title: "失球",
+      title: t('standings.goalsAgainst', { ns: 'group' }),
       dataIndex: "ga",
       key: "ga",
       width: 60,
     },
     {
-      title: "淨勝球",
+      title: t('standings.goalDifference', { ns: 'group' }),
       key: "gd",
       width: 80,
       render: (_, record) => {
@@ -200,14 +202,14 @@ const GroupLeaderboard = () => {
     <div style={{ padding: "24px" }}>
       <Space direction="vertical" size="large" style={{ width: "100%" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <Title level={2}>小組排行榜</Title>
+          <Title level={2}>{t('group.leaderboard', { ns: 'group' })}</Title>
           <Button 
             icon={<ReloadOutlined />} 
             onClick={fetchGroups}
             loading={loading}
             type="primary"
           >
-            刷新
+            {t('refresh', { ns: 'common' })}
           </Button>
         </div>
 
@@ -217,9 +219,9 @@ const GroupLeaderboard = () => {
               <Card
                 title={
                   <Space>
-                    <span style={{ fontSize: "18px", fontWeight: "bold" }}>小組 {group.group_name}</span>
+                    <span style={{ fontSize: "18px", fontWeight: "bold" }}>{t('group.name', { ns: 'group' })} {group.group_name}</span>
                     <Tag color="blue">
-                      {group.current_teams}/{group.max_teams} 隊伍
+                      {group.current_teams}/{group.max_teams} {t('group.teams', { ns: 'group' })}
                     </Tag>
                   </Space>
                 }
@@ -227,7 +229,7 @@ const GroupLeaderboard = () => {
               >
                 <Space direction="vertical" style={{ width: "100%" }} size="middle">
                   <div>
-                    <Text type="secondary">隊伍完整度</Text>
+                    <Text type="secondary">{t('list.teamCompletion', { ns: 'group' })}</Text>
                     <Progress
                       percent={(group.current_teams / group.max_teams) * 100}
                       size="small"
@@ -236,7 +238,7 @@ const GroupLeaderboard = () => {
                   </div>
 
                   <div>
-                    <Text type="secondary">比賽進度</Text>
+                    <Text type="secondary">{t('group.progress', { ns: 'group' })}</Text>
                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                       <Progress
                         percent={group.total_matches > 0 ? Math.round((group.completed_matches / group.total_matches) * 1000) / 10 : 0}
@@ -244,14 +246,14 @@ const GroupLeaderboard = () => {
                         status={group.completed_matches === group.total_matches && group.total_matches > 0 ? "success" : "active"}
                       />
                       <Text style={{ fontSize: "12px", color: "#666", whiteSpace: "nowrap" }}>
-                        ({group.completed_matches}/{group.total_matches}比賽)
+                        ({group.completed_matches}/{group.total_matches}{t('group.matches', { ns: 'group' })})
                       </Text>
                     </div>
                   </div>
 
                   <div>
                     <Text strong style={{ marginBottom: 8, display: "block" }}>
-                      積分榜
+                      {t('group.standings', { ns: 'group' })}
                     </Text>
                     <Table
                       columns={standingsColumns}
@@ -271,7 +273,7 @@ const GroupLeaderboard = () => {
         {groups.length === 0 && !loading && (
           <Card>
             <div style={{ textAlign: "center", padding: "40px 0" }}>
-              <Text type="secondary">暫無小組數據</Text>
+              <Text type="secondary">{t('messages.noGroupData', { ns: 'group' })}</Text>
             </div>
           </Card>
         )}
