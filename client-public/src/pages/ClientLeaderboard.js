@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Typography, Table, Tag, Space, Statistic, Row, Col, Spin, Alert, Tabs, Avatar } from "antd";
+import { Card, Typography, Table, Tag, Statistic, Spin, Alert, Tabs, Avatar, Space, Row, Col } from "antd";
 import {
   TrophyOutlined,
   TeamOutlined,
@@ -193,12 +193,17 @@ const ClientLeaderboard = () => {
         }
 
         return (
-          <Space>
+          <div className="flex items-center space-x-2">
             {icon}
-            <Text strong style={{ color, fontSize: 16 }}>
+            <Text strong className={`text-base font-bold ${
+              rank === 1 ? 'text-warning-500' : 
+              rank === 2 ? 'text-gray-400' : 
+              rank === 3 ? 'text-orange-600' : 
+              'text-gray-600'
+            }`}>
               {rank}
             </Text>
-          </Space>
+          </div>
         );
       },
     },
@@ -207,37 +212,32 @@ const ClientLeaderboard = () => {
       dataIndex: "team_name",
       key: "team_name",
       render: (name, record) => (
-        <Space>
+        <div className="flex items-center space-x-3">
           <Avatar
             style={{
               backgroundColor: record.team_color || "#1890ff",
               border: `2px solid ${record.team_color || "#1890ff"}`,
-              color: "#fff",
             }}
+            className="flex-shrink-0"
             icon={<TeamOutlined />}
           />
-          <div>
+          <div className="min-w-0 flex-1">
             <Text
               strong
-              style={{
-                fontSize: 16,
-                color: record.team_color || "#1890ff",
-                cursor: "pointer",
-                textDecoration: "underline",
-              }}
+              className="text-base font-semibold cursor-pointer hover:underline transition-colors duration-200 block truncate"
+              style={{ color: record.team_color || "#1890ff" }}
               onClick={() => navigate(`/teams/${record.team_id}`)}
+              title={getDisplayTeamName(name)}
             >
               {getDisplayTeamName(name)}
             </Text>
             {record.group_name && (
-              <div>
-                <Text type="secondary" style={{ fontSize: 12 }}>
-                  {t('team:team.group')} {getDisplayGroupName(record.group_name)}
-                </Text>
-              </div>
+              <Text type="secondary" className="text-xs text-gray-500 block truncate">
+                {t('team:team.group')} {getDisplayGroupName(record.group_name)}
+              </Text>
             )}
           </div>
-        </Space>
+        </div>
       ),
     },
     {
@@ -246,7 +246,7 @@ const ClientLeaderboard = () => {
       key: "points",
       width: 100,
       render: (points) => (
-        <Text strong style={{ fontSize: 18, color: "#1890ff", fontWeight: "bold" }}>
+        <Text strong className="text-lg font-bold text-primary-600">
           {points || 0}
         </Text>
       ),
@@ -269,7 +269,7 @@ const ClientLeaderboard = () => {
           key: "won",
           width: 50,
           align: "center",
-          render: (won) => <Text style={{ color: "#52c41a" }}>{won || 0}</Text>,
+          render: (won) => <Text className="text-success-600 font-medium">{won || 0}</Text>,
         },
         {
           title: t('team:team.draws'),
@@ -277,7 +277,7 @@ const ClientLeaderboard = () => {
           key: "drawn",
           width: 50,
           align: "center",
-          render: (drawn) => <Text style={{ color: "#faad14" }}>{drawn || 0}</Text>,
+          render: (drawn) => <Text className="text-warning-600 font-medium">{drawn || 0}</Text>,
         },
         {
           title: t('team:team.losses'),
@@ -285,7 +285,7 @@ const ClientLeaderboard = () => {
           key: "lost",
           width: 50,
           align: "center",
-          render: (lost) => <Text style={{ color: "#ff4d4f" }}>{lost || 0}</Text>,
+          render: (lost) => <Text className="text-error-500 font-medium">{lost || 0}</Text>,
         },
       ],
     },
@@ -334,10 +334,10 @@ const ClientLeaderboard = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: 24, textAlign: "center" }}>
+      <div className="flex flex-col items-center justify-center py-16 px-6">
         <Spin size="large" />
-        <div style={{ marginTop: 16 }}>
-          <Text>{t('stats:messages.loadingStats')}</Text>
+        <div className="mt-4">
+          <Text className="text-gray-600 animate-pulse">{t('stats:messages.loadingStats')}</Text>
         </div>
       </div>
     );

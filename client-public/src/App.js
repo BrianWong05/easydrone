@@ -17,27 +17,29 @@ const { Content } = Layout;
 
 function App() {
   return (
-    <div className="App">
+    <div className="min-h-screen bg-gray-50">
       <ClientLayout>
-        <Content className="main-content">
-          <Routes>
-            {/* Default route redirects to leaderboard */}
-            <Route path="/" element={<Navigate to="/leaderboard" replace />} />
-            
-            {/* Client pages */}
-            <Route path="/leaderboard" element={<ClientLeaderboard />} />
-            <Route path="/teams" element={<ClientTeamList />} />
-            <Route path="/teams/:teamId" element={<ClientTeamDetail />} />
-            <Route path="/groups" element={<ClientGroupList />} />
-            <Route path="/groups/:groupId" element={<ClientGroupDetail />} />
-            <Route path="/matches" element={<ClientMatchList />} />
-            <Route path="/matches/:matchId" element={<ClientMatchDetail />} />
-            <Route path="/bracket" element={<ClientKnockoutBracket />} />
-            <Route path="/best-teams" element={<ClientBestTeamsStats />} />
-            
-            {/* Catch all route */}
-            <Route path="*" element={<Navigate to="/leaderboard" replace />} />
-          </Routes>
+        <Content className="main-content min-h-[calc(100vh-64px)] bg-gray-50">
+          <div className="animate-fade-in">
+            <Routes>
+              {/* Default route redirects to leaderboard */}
+              <Route path="/" element={<Navigate to="/leaderboard" replace />} />
+
+              {/* Client pages */}
+              <Route path="/leaderboard" element={<ClientLeaderboard />} />
+              <Route path="/teams" element={<ClientTeamList />} />
+              <Route path="/teams/:teamId" element={<ClientTeamDetail />} />
+              <Route path="/groups" element={<ClientGroupList />} />
+              <Route path="/groups/:groupId" element={<ClientGroupDetail />} />
+              <Route path="/matches" element={<ClientMatchList />} />
+              <Route path="/matches/:matchId" element={<ClientMatchDetail />} />
+              <Route path="/bracket" element={<ClientKnockoutBracket />} />
+              <Route path="/best-teams" element={<ClientBestTeamsStats />} />
+
+              {/* Catch all route */}
+              <Route path="*" element={<Navigate to="/leaderboard" replace />} />
+            </Routes>
+          </div>
         </Content>
       </ClientLayout>
     </div>

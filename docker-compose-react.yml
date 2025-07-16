@@ -76,7 +76,7 @@ services:
     networks:
       - drone-soccer-network
     environment:
-      REACT_APP_API_URL: http://localhost:3001/api
+      REACT_APP_API_URL: http://localhost:8001
 
   # Nginx Reverse Proxy
   nginx:

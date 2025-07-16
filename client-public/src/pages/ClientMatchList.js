@@ -457,7 +457,7 @@ const ClientMatchList = () => {
       sorter: (a, b) => (a.totalOrder || 0) - (b.totalOrder || 0),
       sortDirections: ['ascend', 'descend'],
       render: (totalOrder) => (
-        <span style={{ fontWeight: 'bold', color: '#1890ff', fontSize: '16px' }}>
+        <span className="font-bold text-blue-600 text-base">
           {totalOrder}
         </span>
       ),
@@ -473,7 +473,7 @@ const ClientMatchList = () => {
       render: (number, record) => (
         <Button
           type="link"
-          style={{ padding: 0, height: "auto", fontWeight: "bold" }}
+          className="p-0 h-auto font-bold text-blue-600 hover:text-blue-800"
           onClick={() => navigate(`/matches/${record.match_id}`)}
         >
           {number}
@@ -484,34 +484,26 @@ const ClientMatchList = () => {
       title: t('match:match.teams'),
       key: 'teams',
       render: (_, record) => (
-        <Space direction="vertical" size="small">
-          <Space>
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-2">
             <div 
-              style={{ 
-                width: 12, 
-                height: 12, 
-                backgroundColor: record.team1_color || '#1890ff',
-                borderRadius: '50%'
-              }}
+              className="w-3 h-3 rounded-full"
+              style={{ backgroundColor: record.team1_color || '#1890ff' }}
             />
-            <Text strong>{getTeamDisplayNameWithReference(record, 'team1')}</Text>
-            <Text type="secondary">vs</Text>
+            <Text strong className="text-gray-800">{getTeamDisplayNameWithReference(record, 'team1')}</Text>
+            <Text type="secondary" className="text-gray-500 mx-1">vs</Text>
             <div 
-              style={{ 
-                width: 12, 
-                height: 12, 
-                backgroundColor: record.team2_color || '#52c41a',
-                borderRadius: '50%'
-              }}
+              className="w-3 h-3 rounded-full"
+              style={{ backgroundColor: record.team2_color || '#52c41a' }}
             />
-            <Text strong>{getTeamDisplayNameWithReference(record, 'team2')}</Text>
-          </Space>
+            <Text strong className="text-gray-800">{getTeamDisplayNameWithReference(record, 'team2')}</Text>
+          </div>
           {record.match_status === 'completed' && (
-            <Text style={{ fontSize: '16px', fontWeight: 'bold', color: '#1890ff' }}>
+            <Text className="text-base font-bold text-blue-600">
               {record.team1_score || 0} - {record.team2_score || 0}
             </Text>
           )}
-        </Space>
+        </div>
       ),
     },
     {
@@ -525,12 +517,12 @@ const ClientMatchList = () => {
       },
       sortDirections: ['ascend', 'descend'],
       render: (date) => (
-        <Space direction="vertical" size="small">
-          <Text>{date ? moment(date).format('MM/DD') : '-'}</Text>
-          <Text type="secondary" style={{ fontSize: '12px' }}>
+        <div className="flex flex-col gap-1">
+          <Text className="text-gray-800">{date ? moment(date).format('MM/DD') : '-'}</Text>
+          <Text type="secondary" className="text-xs text-gray-500">
             {date ? moment(date).format('HH:mm') : '-'}
           </Text>
-        </Space>
+        </div>
       ),
     },
     {
@@ -604,10 +596,10 @@ const ClientMatchList = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: 24, textAlign: 'center' }}>
+      <div className="p-6 text-center bg-gray-50 min-h-screen">
         <Spin size="large" />
-        <div style={{ marginTop: 16 }}>
-          <Text>{t('match:messages.loadingMatches')}</Text>
+        <div className="mt-4">
+          <Text className="text-gray-600">{t('match:messages.loadingMatches')}</Text>
         </div>
       </div>
     );
@@ -615,7 +607,7 @@ const ClientMatchList = () => {
 
   if (error) {
     return (
-      <div style={{ padding: 24 }}>
+      <div className="p-6 bg-gray-50 min-h-screen">
         <Alert
           message={t('common:messages.loadFailed')}
           description={error}
@@ -626,120 +618,111 @@ const ClientMatchList = () => {
               {t('common:actions.reload')}
             </Button>
           }
+          className="bg-white shadow-sm"
         />
       </div>
     );
   }
 
   return (
-    <div style={{ padding: 24 }}>
+    <div className="p-6 bg-gray-50 min-h-screen">
       {/* Tournament Header */}
       {tournament && (
-        <Card style={{ marginBottom: 24 }}>
-          <Row align="middle" justify="space-between">
-            <Col>
-              <Space direction="vertical" size="small">
-                <Title level={2} style={{ margin: 0 }}>
-                  <TrophyOutlined style={{ marginRight: 8, color: '#faad14' }} />
-                  {tournament.tournament_name}
-                </Title>
-                <Text type="secondary">{t('match:match.list')}</Text>
-              </Space>
-            </Col>
-            <Col>
-              <Tag color="blue" style={{ fontSize: '14px', padding: '4px 12px' }}>
+        <Card className="mb-6 bg-white shadow-sm">
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-1">
+              <Title level={2} className="m-0 text-gray-800 font-bold flex items-center">
+                <TrophyOutlined className="mr-2 text-yellow-500" />
+                {tournament.tournament_name}
+              </Title>
+              <Text type="secondary" className="text-gray-600">{t('match:match.list')}</Text>
+            </div>
+            <div>
+              <Tag color="blue" className="text-sm px-3 py-1">
                 {tournament.status === 'active' ? t('common:status.inProgress') : tournament.status}
               </Tag>
-            </Col>
-          </Row>
+            </div>
+          </div>
         </Card>
       )}
 
       {/* Statistics Cards */}
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <Statistic
-              title={t('common:stats.totalMatches')}
-              value={stats.totalMatches}
-              prefix={<CalendarOutlined style={{ color: '#1890ff' }} />}
-              valueStyle={{ color: '#1890ff' }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <Statistic
-              title={t('match:stats.pendingMatches')}
-              value={stats.pendingMatches}
-              prefix={<ClockCircleOutlined style={{ color: '#faad14' }} />}
-              valueStyle={{ color: '#faad14' }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <Statistic
-              title={t('match:stats.activeMatches')}
-              value={stats.activeMatches}
-              prefix={<PlayCircleOutlined style={{ color: '#f5222d' }} />}
-              valueStyle={{ color: '#f5222d' }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <Statistic
-              title={t('common:stats.completedMatches')}
-              value={stats.completedMatches}
-              prefix={<CheckCircleOutlined style={{ color: '#52c41a' }} />}
-              valueStyle={{ color: '#52c41a' }}
-            />
-          </Card>
-        </Col>
-      </Row>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <Card className="bg-white shadow-sm hover:shadow-md transition-shadow duration-200">
+          <Statistic
+            title={<span className="text-gray-600 text-sm">{t('common:stats.totalMatches')}</span>}
+            value={stats.totalMatches}
+            prefix={<CalendarOutlined className="text-blue-500" />}
+            valueStyle={{ color: '#1890ff', fontSize: '20px', fontWeight: 'bold' }}
+          />
+        </Card>
+        <Card className="bg-white shadow-sm hover:shadow-md transition-shadow duration-200">
+          <Statistic
+            title={<span className="text-gray-600 text-sm">{t('match:stats.pendingMatches')}</span>}
+            value={stats.pendingMatches}
+            prefix={<ClockCircleOutlined className="text-yellow-500" />}
+            valueStyle={{ color: '#faad14', fontSize: '20px', fontWeight: 'bold' }}
+          />
+        </Card>
+        <Card className="bg-white shadow-sm hover:shadow-md transition-shadow duration-200">
+          <Statistic
+            title={<span className="text-gray-600 text-sm">{t('match:stats.activeMatches')}</span>}
+            value={stats.activeMatches}
+            prefix={<PlayCircleOutlined className="text-red-500" />}
+            valueStyle={{ color: '#f5222d', fontSize: '20px', fontWeight: 'bold' }}
+          />
+        </Card>
+        <Card className="bg-white shadow-sm hover:shadow-md transition-shadow duration-200">
+          <Statistic
+            title={<span className="text-gray-600 text-sm">{t('common:stats.completedMatches')}</span>}
+            value={stats.completedMatches}
+            prefix={<CheckCircleOutlined className="text-green-500" />}
+            valueStyle={{ color: '#52c41a', fontSize: '20px', fontWeight: 'bold' }}
+          />
+        </Card>
+      </div>
 
       {/* Filters */}
-      <Card style={{ marginBottom: 24 }}>
-        <Row gutter={[16, 16]} align="middle">
-          <Col xs={24} sm={12} md={4}>
-            <Text strong>
-              <FilterOutlined style={{ marginRight: 8 }} />
+      <Card className="mb-6 bg-white shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 items-center">
+          <div className="col-span-1">
+            <Text strong className="text-gray-700">
+              <FilterOutlined className="mr-2 text-blue-500" />
               {t('common:filters.title')}
             </Text>
-          </Col>
-          <Col xs={24} sm={12} md={4}>
+          </div>
+          <div className="col-span-1">
             <Select
               placeholder={t('match:placeholders.selectStatus')}
               value={filters.status}
               onChange={(value) => handleFilterChange('status', value)}
-              style={{ width: '100%' }}
+              className="w-full"
               allowClear
             >
               <Option value="pending">{t('match:status.pending')}</Option>
               <Option value="active">{t('match:status.inProgress')}</Option>
               <Option value="completed">{t('match:status.completed')}</Option>
             </Select>
-          </Col>
-          <Col xs={24} sm={12} md={4}>
+          </div>
+          <div className="col-span-1">
             <Select
               placeholder={t('match:placeholders.selectType')}
               value={filters.type}
               onChange={(value) => handleFilterChange('type', value)}
-              style={{ width: '100%' }}
+              className="w-full"
               allowClear
             >
               <Option value="group">{t('match:types.groupStage')}</Option>
               <Option value="knockout">{t('match:types.knockout')}</Option>
               <Option value="friendly">{t('match:types.friendly')}</Option>
             </Select>
-          </Col>
-          <Col xs={24} sm={12} md={4}>
+          </div>
+          <div className="col-span-1">
             <Select
               placeholder={t('group:placeholders.selectGroup')}
               value={filters.group_id}
               onChange={(value) => handleFilterChange('group_id', value)}
-              style={{ width: '100%' }}
+              className="w-full"
               allowClear
             >
               {groups.map(group => (
@@ -748,29 +731,33 @@ const ClientMatchList = () => {
                 </Option>
               ))}
             </Select>
-          </Col>
-          <Col xs={24} sm={12} md={4}>
+          </div>
+          <div className="col-span-1">
             <Input
               placeholder={t('match:placeholders.searchMatch')}
               value={filters.search}
               onChange={(e) => handleFilterChange('search', e.target.value)}
               prefix={<SearchOutlined />}
               allowClear
+              className="w-full"
             />
-          </Col>
-          <Col xs={24} sm={12} md={4}>
-            <Button onClick={clearFilters}>
+          </div>
+          <div className="col-span-1">
+            <Button 
+              onClick={clearFilters}
+              className="w-full border-gray-300 hover:border-blue-500 hover:text-blue-500"
+            >
               {t('common:actions.clearFilters')}
             </Button>
-          </Col>
-        </Row>
+          </div>
+        </div>
       </Card>
 
       {/* Matches Table */}
-      <Card>
-        <div style={{ marginBottom: 16 }}>
-          <Title level={3}>
-            <PlayCircleOutlined style={{ marginRight: 8 }} />
+      <Card className="bg-white shadow-sm">
+        <div className="mb-4">
+          <Title level={3} className="text-gray-800 font-bold flex items-center">
+            <PlayCircleOutlined className="mr-2 text-blue-500" />
             {t('match:match.list')}
           </Title>
         </div>
@@ -795,15 +782,16 @@ const ClientMatchList = () => {
           }}
           locale={{
             emptyText: (
-              <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                <CalendarOutlined style={{ fontSize: '48px', color: '#d9d9d9' }} />
-                <div style={{ marginTop: 16 }}>
-                  <Text type="secondary">{t('match:messages.noMatches')}</Text>
+              <div className="text-center py-10">
+                <CalendarOutlined className="text-5xl text-gray-300 mb-4" />
+                <div className="mt-4">
+                  <Text type="secondary" className="text-gray-500">{t('match:messages.noMatches')}</Text>
                 </div>
               </div>
             )
           }}
           scroll={{ x: 800 }}
+          className="overflow-x-auto"
         />
       </Card>
     </div>

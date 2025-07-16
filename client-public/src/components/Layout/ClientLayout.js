@@ -131,48 +131,34 @@ const ClientLayout = ({ children }) => {
 
   const renderSidebarContent = () => (
     <>
-      <div
-        style={{
-          padding: "16px",
-          borderBottom: "1px solid #f0f0f0",
-          textAlign: "center",
-        }}
-      >
-        <Space direction="vertical" size="small">
-          <TrophyOutlined style={{ fontSize: 32, color: "#faad14" }} />
+      <div className="p-4 border-b border-gray-200 text-center">
+        <div className="flex flex-col items-center gap-2">
+          <TrophyOutlined className="text-3xl text-yellow-500" />
           {(!collapsed || isMobile) && (
             <>
-              <Title level={4} style={{ margin: 0, fontSize: 16 }}>
+              <Title level={4} className="m-0 text-base text-gray-800 font-semibold">
                 {tournament?.tournament_name || t('public:layout.title')}
               </Title>
-              <Text type="secondary" style={{ fontSize: 12 }}>
+              <Text type="secondary" className="text-xs text-gray-500">
                 {tournament?.tournament_type === "group" && t('public:tournamentTypes.group')}
                 {tournament?.tournament_type === "knockout" && t('public:tournamentTypes.knockout')}
                 {tournament?.tournament_type === "mixed" && t('public:tournamentTypes.mixed')}
               </Text>
             </>
           )}
-        </Space>
+        </div>
       </div>
 
-      <Menu mode="inline" selectedKeys={[location.pathname]} items={menuItems} style={{ borderRight: 0 }} />
+      <Menu mode="inline" selectedKeys={[location.pathname]} items={menuItems} className="border-r-0" />
     </>
   );
 
   if (loading) {
     return (
-      <Layout style={{ minHeight: "100vh" }}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100vh",
-            flexDirection: "column",
-          }}
-        >
+      <Layout className="min-h-screen">
+        <div className="flex justify-center items-center h-screen flex-col">
           <Spin size="large" />
-          <Text style={{ marginTop: 16 }}>{t('public:layout.loadingTournament')}</Text>
+          <Text className="mt-4 text-gray-600">{t('public:layout.loadingTournament')}</Text>
         </div>
       </Layout>
     );
@@ -180,24 +166,22 @@ const ClientLayout = ({ children }) => {
 
   if (error) {
     return (
-      <Layout style={{ minHeight: "100vh" }}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100vh",
-            padding: "0 24px",
-          }}
-        >
-          <Alert message={t('public:layout.loadFailed')} description={error} type="error" showIcon />
+      <Layout className="min-h-screen">
+        <div className="flex justify-center items-center h-screen px-6">
+          <Alert 
+            message={t('public:layout.loadFailed')} 
+            description={error} 
+            type="error" 
+            showIcon 
+            className="max-w-md"
+          />
         </div>
       </Layout>
     );
   }
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout className="min-h-screen">
       {/* Mobile Drawer */}
       {isMobile && (
         <Drawer
@@ -207,6 +191,7 @@ const ClientLayout = ({ children }) => {
           open={mobileDrawerOpen}
           bodyStyle={{ padding: 0 }}
           width={250}
+          className="md:hidden"
         >
           {renderSidebarContent()}
         </Drawer>
@@ -215,15 +200,9 @@ const ClientLayout = ({ children }) => {
       {/* Desktop Sidebar */}
       {!isMobile && (
         <div
+          className="fixed left-0 top-0 h-screen overflow-hidden transition-all duration-300 ease-out z-50"
           style={{
             width: sidebarHidden ? 0 : collapsed ? 80 : 250,
-            transition: "width 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-            overflow: "hidden",
-            position: "fixed",
-            left: 0,
-            top: 0,
-            zIndex: 1001,
-            height: "100vh",
           }}
         >
           <Sider
@@ -233,14 +212,9 @@ const ClientLayout = ({ children }) => {
             onCollapse={setCollapsed}
             theme="light"
             width={250}
+            className="h-screen fixed left-0 top-0 z-10 transition-transform duration-300 ease-out shadow-lg"
             style={{
-              height: "100vh",
-              position: "fixed",
-              left: 0,
-              top: 0,
-              zIndex: 1,
               transform: sidebarHidden ? "translateX(-100%)" : "translateX(0)",
-              transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
             }}
           >
             {renderSidebarContent()}
@@ -248,61 +222,31 @@ const ClientLayout = ({ children }) => {
         </div>
       )}
 
-      <Layout style={{ marginLeft: isMobile ? 0 : collapsed ? 80 : 250, minHeight: "100vh" }}>
-        <Header
+      <Layout 
+        className="min-h-screen transition-all duration-300 ease-out"
+        style={{ marginLeft: isMobile ? 0 : collapsed ? 80 : 250 }}
+      >
+        <Header className="bg-white border-b border-gray-200 flex items-center justify-between sticky top-0 z-40 shadow-sm transition-all duration-300 ease-out"
           style={{
-            background: "#fff",
             padding: isMobile ? "0 16px" : "0 24px",
-            borderBottom: "1px solid #f0f0f0",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
             height: isMobile ? 56 : 64,
-            transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-            position: "sticky",
-            top: 0,
-            zIndex: 99,
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.06)",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center" }}>
+          <div className="flex items-center">
             {isMobile ? (
               <MenuOutlined
-                className="mobile-menu-trigger"
+                className="mobile-menu-trigger mr-4 text-lg cursor-pointer text-gray-600 hover:text-blue-600 transition-colors duration-200"
                 onClick={() => setMobileDrawerOpen(true)}
-                style={{ marginRight: 16, fontSize: 18, cursor: "pointer" }}
               />
             ) : (
               <div
                 onClick={() => setCollapsed(!collapsed)}
-                style={{
-                  marginRight: 16,
-                  fontSize: 18,
-                  cursor: "pointer",
-                  padding: "4px",
-                  borderRadius: "4px",
-                  transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "32px",
-                  height: "32px",
-                  transform: "scale(1)",
-                  backgroundColor: "transparent",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = "#f5f5f5";
-                  e.currentTarget.style.transform = "scale(1.1)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                  e.currentTarget.style.transform = "scale(1)";
-                }}
+                className="mr-4 text-lg cursor-pointer p-1 rounded flex items-center justify-center w-8 h-8 hover:bg-gray-100 hover:scale-110 transition-all duration-300 ease-out"
                 title={collapsed ? t('public:layout.expandSidebar') : t('public:layout.collapseSidebar')}
               >
                 <div
+                  className="transition-transform duration-200 ease-in-out"
                   style={{
-                    transition: "transform 0.2s ease-in-out",
                     transform: collapsed ? "rotate(180deg)" : "rotate(0deg)",
                   }}
                 >
@@ -312,20 +256,24 @@ const ClientLayout = ({ children }) => {
             )}
             <Title
               level={3}
+              className="m-0 text-gray-800 font-bold"
               style={{
-                margin: 0,
                 fontSize: isMobile ? 16 : 24,
               }}
             >
               {isMobile ? t('public:layout.title') : tournament?.tournament_name || t('public:layout.tournamentName')}
             </Title>
           </div>
-          <Space>
+          <div className="flex items-center gap-3">
             <LanguageSwitcher size="small" />
-            <Text type="secondary" style={{ fontSize: isMobile ? 12 : 14 }}>
+            <Text 
+              type="secondary" 
+              className="text-gray-500"
+              style={{ fontSize: isMobile ? 12 : 14 }}
+            >
               {t('public:layout.subtitle')}
             </Text>
-          </Space>
+          </div>
         </Header>
         {children}
       </Layout>

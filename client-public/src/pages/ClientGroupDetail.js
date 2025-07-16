@@ -2,16 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { 
   Card, 
   Typography, 
-  Space, 
   Tag,
   Spin,
   Alert,
   Statistic,
-  Row,
-  Col,
   Table,
-  Descriptions,
-  Divider,
   Button,
   Progress
 } from 'antd';
@@ -19,10 +14,7 @@ import {
   TeamOutlined,
   TrophyOutlined,
   CalendarOutlined,
-  FireOutlined,
   ArrowLeftOutlined,
-  StarOutlined,
-  ThunderboltOutlined,
   UsergroupAddOutlined,
   PlayCircleOutlined,
   CheckCircleOutlined
@@ -170,17 +162,11 @@ const ClientGroupDetail = () => {
       align: 'center',
       width: 60,
       render: (_, record, index) => (
-        <div style={{ 
-          width: 30, 
-          height: 30, 
-          borderRadius: '50%', 
-          backgroundColor: index < 2 ? '#faad14' : '#d9d9d9',
-          color: index < 2 ? 'white' : '#666',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          fontWeight: 'bold'
-        }}>
+        <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
+          index < 2 
+            ? 'bg-warning-500 text-white shadow-md' 
+            : 'bg-gray-300 text-gray-600'
+        } transition-all duration-200`}>
           {index + 1}
         </div>
       ),
@@ -190,27 +176,19 @@ const ClientGroupDetail = () => {
       dataIndex: 'team_name',
       key: 'team_name',
       render: (name, record) => (
-        <Space>
+        <div className="flex items-center space-x-3">
           <div 
-            style={{ 
-              width: 16, 
-              height: 16, 
-              backgroundColor: record.team_color || '#1890ff',
-              borderRadius: '50%'
-            }}
+            className="w-4 h-4 rounded-full border border-gray-200 flex-shrink-0"
+            style={{ backgroundColor: record.team_color || '#1890ff' }}
           />
           <Text 
             strong 
-            style={{ 
-              color: '#1890ff', 
-              cursor: 'pointer',
-              textDecoration: 'underline'
-            }}
+            className="text-primary-600 cursor-pointer hover:text-primary-700 hover:underline transition-colors duration-200 font-semibold"
             onClick={() => navigate(`/teams/${record.team_id}`)}
           >
             {getDisplayTeamName(name)}
           </Text>
-        </Space>
+        </div>
       ),
     },
     {
@@ -290,7 +268,11 @@ const ClientGroupDetail = () => {
         const goalsAgainst = record.goals_against || record.goals_conceded || record.ga || 0;
         const diff = goalsFor - goalsAgainst;
         return (
-          <Text style={{ color: diff > 0 ? '#52c41a' : diff < 0 ? '#f5222d' : '#666' }}>
+          <Text className={`font-semibold ${
+            diff > 0 ? 'text-success-600' : 
+            diff < 0 ? 'text-error-500' : 
+            'text-gray-600'
+          }`}>
             {diff > 0 ? '+' : ''}{diff}
           </Text>
         );
@@ -335,18 +317,18 @@ const ClientGroupDetail = () => {
       title: t('match:match.teams'),
       key: 'teams',
       render: (_, record) => (
-        <Space direction="vertical" size="small">
-          <Space>
-            <Text strong>{getDisplayTeamName(record.team1_name)}</Text>
-            <Text type="secondary">vs</Text>
-            <Text strong>{getDisplayTeamName(record.team2_name)}</Text>
-          </Space>
+        <div className="space-y-2">
+          <div className="flex items-center space-x-2">
+            <Text strong className="text-gray-800">{getDisplayTeamName(record.team1_name)}</Text>
+            <Text type="secondary" className="text-gray-500">vs</Text>
+            <Text strong className="text-gray-800">{getDisplayTeamName(record.team2_name)}</Text>
+          </div>
           {record.match_status === 'completed' && (
-            <Text style={{ fontSize: '18px', fontWeight: 'bold', color: '#1890ff' }}>
+            <Text className="text-lg font-bold text-primary-600">
               {record.team1_score || 0} - {record.team2_score || 0}
             </Text>
           )}
-        </Space>
+        </div>
       ),
     },
     {
@@ -380,10 +362,10 @@ const ClientGroupDetail = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: 24, textAlign: 'center' }}>
+      <div className="flex flex-col items-center justify-center py-16 px-6">
         <Spin size="large" />
-        <div style={{ marginTop: 16 }}>
-          <Text>{t('group:messages.loadingGroupDetail')}</Text>
+        <div className="mt-4">
+          <Text className="text-gray-600 animate-pulse">{t('group:messages.loadingGroupDetail')}</Text>
         </div>
       </div>
     );
@@ -391,31 +373,41 @@ const ClientGroupDetail = () => {
 
   if (error) {
     return (
-      <div style={{ padding: 24 }}>
-        <Alert
-          message={t('common:messages.loadFailed')}
-          description={error}
-          type="error"
-          showIcon
-          action={
-            <Button size="small" onClick={fetchGroupDetail}>
-              {t('common:actions.reload')}
-            </Button>
-          }
-        />
+      <div className="p-6 max-w-4xl mx-auto">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 animate-fade-in">
+          <Alert
+            message={t('common:messages.loadFailed')}
+            description={error}
+            type="error"
+            showIcon
+            className="border-0 bg-transparent"
+            action={
+              <Button 
+                size="small" 
+                onClick={fetchGroupDetail}
+                className="bg-red-600 hover:bg-red-700 border-red-600 hover:border-red-700"
+              >
+                {t('common:actions.reload')}
+              </Button>
+            }
+          />
+        </div>
       </div>
     );
   }
 
   if (!group) {
     return (
-      <div style={{ padding: 24 }}>
-        <Alert
-          message={t('group:messages.groupNotFound')}
-          description={t('group:messages.groupNotFoundDesc')}
-          type="warning"
-          showIcon
-        />
+      <div className="p-6 max-w-4xl mx-auto">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 animate-fade-in">
+          <Alert
+            message={t('group:messages.groupNotFound')}
+            description={t('group:messages.groupNotFoundDesc')}
+            type="warning"
+            showIcon
+            className="border-0 bg-transparent"
+          />
+        </div>
       </div>
     );
   }
@@ -425,98 +417,104 @@ const ClientGroupDetail = () => {
   const matchProgress = totalMatches > 0 ? Math.round((completedMatches / totalMatches) * 100) : 0;
 
   return (
-    <div style={{ padding: 24 }}>
+    <div className="p-6 max-w-7xl mx-auto animate-fade-in">
       {/* Back Button */}
       <Button 
         icon={<ArrowLeftOutlined />} 
         onClick={() => navigate('/groups')}
-        style={{ marginBottom: 16 }}
+        className="mb-6 hover:bg-primary-50 hover:border-primary-300 transition-colors duration-200"
       >
         {t('common:actions.backToGroupList')}
       </Button>
 
       {/* Group Header */}
-      <Card style={{ marginBottom: 24 }}>
-        <Row align="middle" justify="space-between">
-          <Col>
-            <Space direction="vertical" size="small">
-              <Title level={2} style={{ margin: 0 }}>
-                <UsergroupAddOutlined style={{ marginRight: 8, color: '#1890ff' }} />
+      <Card className="mb-8 shadow-md hover:shadow-lg transition-shadow duration-300 border-l-4 border-primary-500">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+          <div className="space-y-2">
+            <Title level={2} className="m-0 flex items-center text-gray-800">
+              <UsergroupAddOutlined className="mr-3 text-primary-600" />
+              <span className="bg-gradient-to-r from-primary-600 to-primary-700 bg-clip-text text-transparent">
                 {getDisplayGroupName(group.group_name)}
-              </Title>
-              {tournament && (
-                <Text type="secondary">{tournament.tournament_name}</Text>
-              )}
-            </Space>
-          </Col>
-          <Col>
-            <Space>
-              <Tag color="blue" style={{ fontSize: '14px', padding: '4px 12px' }}>
-                {teams.length} / {group.max_teams} {t('group:group.teams')}
-              </Tag>
-              <Tag color={matchProgress === 100 ? 'success' : 'processing'}>
-                {t('group:group.progress')} {matchProgress}%
-              </Tag>
-            </Space>
-          </Col>
-        </Row>
+              </span>
+            </Title>
+            {tournament && (
+              <Text type="secondary" className="text-gray-600 text-base">
+                {tournament.tournament_name}
+              </Text>
+            )}
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Tag 
+              color="blue" 
+              className="text-sm px-3 py-1 font-medium bg-blue-50 border-blue-200 text-blue-700"
+            >
+              {teams.length} / {group.max_teams} {t('group:group.teams')}
+            </Tag>
+            <Tag 
+              color={matchProgress === 100 ? 'success' : 'processing'}
+              className={`text-sm px-3 py-1 font-medium ${
+                matchProgress === 100 
+                  ? 'bg-success-50 border-success-200 text-success-700' 
+                  : 'bg-warning-50 border-warning-200 text-warning-700'
+              }`}
+            >
+              {t('group:group.progress')} {matchProgress}%
+            </Tag>
+          </div>
+        </div>
       </Card>
 
       {/* Statistics */}
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <Statistic
-              title={t('group:stats.participatingTeams')}
-              value={teams.length}
-              prefix={<TeamOutlined style={{ color: '#1890ff' }} />}
-              suffix={`/ ${group.max_teams}`}
-              valueStyle={{ color: '#1890ff' }}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <Card className="hover:shadow-lg transition-shadow duration-300 border-l-4 border-primary-500">
+          <Statistic
+            title={t('group:stats.participatingTeams')}
+            value={teams.length}
+            prefix={<TeamOutlined className="text-primary-600" />}
+            suffix={`/ ${group.max_teams}`}
+            valueStyle={{ color: '#2563eb', fontWeight: 'bold' }}
+          />
+        </Card>
+        
+        <Card className="hover:shadow-lg transition-shadow duration-300 border-l-4 border-warning-500">
+          <Statistic
+            title={t('common:stats.totalMatches')}
+            value={totalMatches}
+            prefix={<CalendarOutlined className="text-warning-600" />}
+            valueStyle={{ color: '#d97706', fontWeight: 'bold' }}
+          />
+        </Card>
+        
+        <Card className="hover:shadow-lg transition-shadow duration-300 border-l-4 border-success-500">
+          <Statistic
+            title={t('common:stats.completedMatches')}
+            value={completedMatches}
+            prefix={<CheckCircleOutlined className="text-success-600" />}
+            valueStyle={{ color: '#16a34a', fontWeight: 'bold' }}
+          />
+        </Card>
+        
+        <Card className="hover:shadow-lg transition-shadow duration-300 border-l-4 border-gray-400">
+          <div className="text-center">
+            <Text type="secondary" className="block mb-2 text-gray-600 font-medium">
+              {t('group:group.progress')}
+            </Text>
+            <Progress 
+              type="circle" 
+              percent={matchProgress} 
+              size={80}
+              strokeColor={matchProgress === 100 ? '#16a34a' : '#2563eb'}
+              className="animate-bounce-gentle"
             />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <Statistic
-              title={t('common:stats.totalMatches')}
-              value={totalMatches}
-              prefix={<CalendarOutlined style={{ color: '#faad14' }} />}
-              valueStyle={{ color: '#faad14' }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <Statistic
-              title={t('common:stats.completedMatches')}
-              value={completedMatches}
-              prefix={<CheckCircleOutlined style={{ color: '#52c41a' }} />}
-              valueStyle={{ color: '#52c41a' }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <div style={{ textAlign: 'center' }}>
-              <Text type="secondary" style={{ display: 'block', marginBottom: 8 }}>
-                {t('group:group.progress')}
-              </Text>
-              <Progress 
-                type="circle" 
-                percent={matchProgress} 
-                size={60}
-                status={matchProgress === 100 ? 'success' : 'active'}
-              />
-            </div>
-          </Card>
-        </Col>
-      </Row>
+          </div>
+        </Card>
+      </div>
 
       {/* Group Standings */}
-      <Card style={{ marginBottom: 24 }}>
-        <Title level={3}>
-          <TrophyOutlined style={{ marginRight: 8 }} />
-          {t('group:group.standings')}
+      <Card className="mb-8 shadow-md hover:shadow-lg transition-shadow duration-300 border-t-4 border-warning-500">
+        <Title level={3} className="flex items-center text-gray-800 mb-6">
+          <TrophyOutlined className="mr-3 text-warning-600" />
+          <span className="font-semibold">{t('group:group.standings')}</span>
         </Title>
         <Table
           columns={standingsColumns}
@@ -524,12 +522,15 @@ const ClientGroupDetail = () => {
           rowKey="team_id"
           pagination={false}
           size="small"
+          className="overflow-x-auto"
           locale={{
             emptyText: (
-              <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                <TrophyOutlined style={{ fontSize: '48px', color: '#d9d9d9' }} />
-                <div style={{ marginTop: 16 }}>
-                  <Text type="secondary">{t('group:messages.noStandingsData')}</Text>
+              <div className="text-center py-16">
+                <TrophyOutlined className="text-6xl text-gray-300 mb-4" />
+                <div className="mt-4">
+                  <Text type="secondary" className="text-gray-500">
+                    {t('group:messages.noStandingsData')}
+                  </Text>
                 </div>
               </div>
             )
@@ -538,10 +539,10 @@ const ClientGroupDetail = () => {
       </Card>
 
       {/* Group Matches */}
-      <Card>
-        <Title level={3}>
-          <PlayCircleOutlined style={{ marginRight: 8 }} />
-          {t('group:group.matches')}
+      <Card className="shadow-md hover:shadow-lg transition-shadow duration-300 border-t-4 border-primary-500">
+        <Title level={3} className="flex items-center text-gray-800 mb-6">
+          <PlayCircleOutlined className="mr-3 text-primary-600" />
+          <span className="font-semibold">{t('group:group.matches')}</span>
         </Title>
         <Table
           columns={matchesColumns}
@@ -561,12 +562,15 @@ const ClientGroupDetail = () => {
                 defaultValue: `第 ${range[0]}-${range[1]} 項，共 ${total} 場比賽`
               }),
           }}
+          className="overflow-x-auto"
           locale={{
             emptyText: (
-              <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                <CalendarOutlined style={{ fontSize: '48px', color: '#d9d9d9' }} />
-                <div style={{ marginTop: 16 }}>
-                  <Text type="secondary">{t('group:messages.noMatchesInGroup')}</Text>
+              <div className="text-center py-16">
+                <CalendarOutlined className="text-6xl text-gray-300 mb-4" />
+                <div className="mt-4">
+                  <Text type="secondary" className="text-gray-500">
+                    {t('group:messages.noMatchesInGroup')}
+                  </Text>
                 </div>
               </div>
             )

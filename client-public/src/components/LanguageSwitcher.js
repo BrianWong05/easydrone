@@ -1,5 +1,5 @@
 import React from 'react';
-import { Select, Space } from 'antd';
+import { Select } from 'antd';
 import { GlobalOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 
@@ -34,13 +34,13 @@ const LanguageSwitcher = ({ size = 'default', style = {} }) => {
   const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
 
   return (
-    <Space style={style}>
-      <GlobalOutlined />
+    <div className="flex items-center space-x-2" style={style}>
+      <GlobalOutlined className="text-gray-600" />
       <Select
         value={i18n.language}
         onChange={handleLanguageChange}
         size={size}
-        style={{ minWidth: 120 }}
+        className="min-w-[120px]"
         dropdownMatchSelectWidth={false}
       >
         {languages.map(language => (
@@ -49,7 +49,7 @@ const LanguageSwitcher = ({ size = 'default', style = {} }) => {
           </Option>
         ))}
       </Select>
-    </Space>
+    </div>
   );
 };
 

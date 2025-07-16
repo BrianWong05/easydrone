@@ -3,13 +3,11 @@ import {
   Card, 
   Typography, 
   Table, 
-  Space, 
   Spin, 
   Alert,
   Row,
   Col,
-  Statistic,
-  Tag
+  Statistic
 } from 'antd';
 import { 
   TrophyOutlined, 
@@ -182,7 +180,7 @@ const ClientBestTeamsStats = () => {
       key: 'goals_for',
       width: 100,
       align: 'center',
-      render: (goals) => <span style={{ fontWeight: 'bold', color: '#52c41a' }}>{goals}</span>
+      render: (goals) => <span className="font-bold text-success-600">{goals}</span>
     },
     {
       title: t('metrics.averageGoals'),
@@ -206,12 +204,13 @@ const ClientBestTeamsStats = () => {
       title: t('rankings.position'),
       key: 'rank',
       render: (_, record, index) => (
-        <div style={{ textAlign: 'center' }}>
-          <span style={{ 
-            fontSize: index === 0 ? '18px' : '16px',
-            fontWeight: 'bold',
-            color: index === 0 ? '#faad14' : index === 1 ? '#52c41a' : index === 2 ? '#1890ff' : '#666'
-          }}>
+        <div className="text-center">
+          <span className={`font-bold ${
+            index === 0 ? 'text-lg text-warning-500' : 
+            index === 1 ? 'text-base text-success-500' : 
+            index === 2 ? 'text-base text-primary-500' : 
+            'text-base text-gray-600'
+          }`}>
             {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1}
           </span>
         </div>
@@ -266,7 +265,7 @@ const ClientBestTeamsStats = () => {
       key: 'goals_against',
       width: 100,
       align: 'center',
-      render: (goals) => <span style={{ fontWeight: 'bold', color: '#ff4d4f' }}>{goals}</span>
+      render: (goals) => <span className="font-bold text-error-500">{goals}</span>
     },
     {
       title: t('metrics.averageGoalsAgainst'),
@@ -274,7 +273,7 @@ const ClientBestTeamsStats = () => {
       key: 'avg_goals_against',
       width: 100,
       align: 'center',
-      render: (avg) => <span style={{ fontWeight: 'bold' }}>{avg}</span>
+      render: (avg) => <span className="font-bold text-gray-800">{avg}</span>
     },
     {
       title: t('rankings.goalsFor'),
@@ -287,85 +286,92 @@ const ClientBestTeamsStats = () => {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px' }}>
+      <div className="flex flex-col items-center justify-center py-16 px-6">
         <Spin size="large" />
-        <p>{t('messages.loadingStats')}</p>
+        <p className="mt-4 text-gray-600 animate-pulse">{t('messages.loadingStats')}</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div style={{ padding: '24px' }}>
-        <Alert
-          message={t('messages.noData')}
-          description={error}
-          type="info"
-          showIcon
-        />
+      <div className="p-6 max-w-4xl mx-auto">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 animate-fade-in">
+          <Alert
+            message={t('messages.noData')}
+            description={error}
+            type="info"
+            showIcon
+            className="border-0 bg-transparent"
+          />
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: '24px' }}>
-      <div style={{ marginBottom: '24px' }}>
-        <Title level={2}>
-          <BarChartOutlined /> {t('stats.bestTeams')}
+    <div className="p-6 max-w-7xl mx-auto animate-fade-in">
+      <div className="mb-8">
+        <Title level={2} className="flex items-center text-gray-800">
+          <BarChartOutlined className="mr-3 text-primary-600" /> 
+          <span className="bg-gradient-to-r from-primary-600 to-primary-700 bg-clip-text text-transparent">
+            {t('stats.bestTeams')}
+          </span>
         </Title>
-        
       </div>
 
       {bestTeamsData && (
         <>
           {/* Summary */}
-          <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
-            <Col xs={24} sm={12} md={6}>
-              <Card>
-                <Statistic
-                  title={t('metrics.totalMatches')}
-                  value={bestTeamsData.summary?.total_matches_analyzed || 0}
-                  prefix={<BarChartOutlined />}
-                />
-              </Card>
-            </Col>
-            <Col xs={24} sm={12} md={6}>
-              <Card>
-                <Statistic
-                  title={t('metrics.totalTeams')}
-                  value={bestTeamsData.summary?.teams_analyzed || 0}
-                  prefix={<TrophyOutlined />}
-                />
-              </Card>
-            </Col>
-            <Col xs={24} sm={12} md={6}>
-              <Card style={{ backgroundColor: '#f6ffed' }}>
-                <Statistic
-                  title={t('stats.bestAttackTeam')}
-                  value={getDisplayTeamName(bestTeamsData.best_attack_team?.team_name)}
-                  suffix={`${bestTeamsData.best_attack_team?.goals_for || 0} ${t('common:goals')}`}
-                  prefix={<FireOutlined style={{ color: '#52c41a' }} />}
-                  valueStyle={{ color: '#52c41a', fontSize: '16px' }}
-                />
-              </Card>
-            </Col>
-            <Col xs={24} sm={12} md={6}>
-              <Card style={{ backgroundColor: '#e6f7ff' }}>
-                <Statistic
-                  title={t('stats.bestDefenseTeam')}
-                  value={getDisplayTeamName(bestTeamsData.best_defense_team?.team_name)}
-                  suffix={`${t('common:conceded')} ${bestTeamsData.best_defense_team?.goals_against || 0} ${t('common:goals')}`}
-                  prefix={<SafetyOutlined style={{ color: '#1890ff' }} />}
-                  valueStyle={{ color: '#1890ff', fontSize: '16px' }}
-                />
-              </Card>
-            </Col>
-          </Row>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <Card className="hover:shadow-lg transition-shadow duration-300 border-l-4 border-primary-500">
+              <Statistic
+                title={t('metrics.totalMatches')}
+                value={bestTeamsData.summary?.total_matches_analyzed || 0}
+                prefix={<BarChartOutlined className="text-primary-600" />}
+                valueStyle={{ color: '#1f2937', fontWeight: 'bold' }}
+              />
+            </Card>
+            
+            <Card className="hover:shadow-lg transition-shadow duration-300 border-l-4 border-warning-500">
+              <Statistic
+                title={t('metrics.totalTeams')}
+                value={bestTeamsData.summary?.teams_analyzed || 0}
+                prefix={<TrophyOutlined className="text-warning-600" />}
+                valueStyle={{ color: '#1f2937', fontWeight: 'bold' }}
+              />
+            </Card>
+            
+            <Card className="bg-gradient-to-br from-success-50 to-success-100 hover:shadow-lg transition-all duration-300 border-l-4 border-success-500">
+              <Statistic
+                title={t('stats.bestAttackTeam')}
+                value={getDisplayTeamName(bestTeamsData.best_attack_team?.team_name)}
+                suffix={`${bestTeamsData.best_attack_team?.goals_for || 0} ${t('common:goals')}`}
+                prefix={<FireOutlined className="text-success-600" />}
+                valueStyle={{ color: '#16a34a', fontSize: '16px', fontWeight: 'bold' }}
+              />
+            </Card>
+            
+            <Card className="bg-gradient-to-br from-primary-50 to-primary-100 hover:shadow-lg transition-all duration-300 border-l-4 border-primary-500">
+              <Statistic
+                title={t('stats.bestDefenseTeam')}
+                value={getDisplayTeamName(bestTeamsData.best_defense_team?.team_name)}
+                suffix={`${t('common:conceded')} ${bestTeamsData.best_defense_team?.goals_against || 0} ${t('common:goals')}`}
+                prefix={<SafetyOutlined className="text-primary-600" />}
+                valueStyle={{ color: '#2563eb', fontSize: '16px', fontWeight: 'bold' }}
+              />
+            </Card>
+          </div>
 
           {/* Top Attack Teams */}
           <Card 
-            title={<><FireOutlined style={{ color: '#52c41a' }} /> {t('stats.bestAttackTeamsRanking')}</>} 
-            style={{ marginBottom: '24px' }}
+            title={
+              <div className="flex items-center space-x-2">
+                <FireOutlined className="text-success-600" />
+                <span className="font-semibold text-gray-800">{t('stats.bestAttackTeamsRanking')}</span>
+              </div>
+            }
+            className="mb-6 shadow-md hover:shadow-lg transition-shadow duration-300 border-t-4 border-success-500"
           >
             <Table
               columns={attackTeamsColumns}
@@ -374,13 +380,19 @@ const ClientBestTeamsStats = () => {
               pagination={false}
               size="small"
               locale={{ emptyText: t('messages.noData') }}
+              className="overflow-x-auto"
             />
           </Card>
 
           {/* Top Defense Teams */}
           <Card 
-            title={<><SafetyOutlined style={{ color: '#1890ff' }} /> {t('stats.bestDefenseTeamsRanking')}</>}
-            style={{ marginBottom: '24px' }}
+            title={
+              <div className="flex items-center space-x-2">
+                <SafetyOutlined className="text-primary-600" />
+                <span className="font-semibold text-gray-800">{t('stats.bestDefenseTeamsRanking')}</span>
+              </div>
+            }
+            className="mb-6 shadow-md hover:shadow-lg transition-shadow duration-300 border-t-4 border-primary-500"
           >
             <Table
               columns={defenseTeamsColumns}
@@ -389,14 +401,30 @@ const ClientBestTeamsStats = () => {
               pagination={false}
               size="small"
               locale={{ emptyText: t('messages.noData') }}
+              className="overflow-x-auto"
             />
           </Card>
 
           {/* Analysis Info */}
-          <Card title={t('stats.analysisInfo')} size="small">
-            <div style={{ fontSize: '12px', color: '#666' }}>
-              <p><strong>{t('stats.analysisDescription')}:</strong> {t('stats.rankingMethodDescription')}</p>
-              <p><strong>{t('stats.dataUpdate')}:</strong> {t('stats.dataUpdateDescription')}</p>
+          <Card 
+            title={
+              <div className="flex items-center space-x-2">
+                <BarChartOutlined className="text-gray-600" />
+                <span className="font-semibold text-gray-800">{t('stats.analysisInfo')}</span>
+              </div>
+            }
+            size="small" 
+            className="bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 shadow-sm"
+          >
+            <div className="text-xs text-gray-600 space-y-2">
+              <p className="flex flex-col sm:flex-row">
+                <strong className="text-gray-700 mb-1 sm:mb-0 sm:mr-2">{t('stats.analysisDescription')}:</strong> 
+                <span>{t('stats.rankingMethodDescription')}</span>
+              </p>
+              <p className="flex flex-col sm:flex-row">
+                <strong className="text-gray-700 mb-1 sm:mb-0 sm:mr-2">{t('stats.dataUpdate')}:</strong> 
+                <span>{t('stats.dataUpdateDescription')}</span>
+              </p>
             </div>
           </Card>
         </>

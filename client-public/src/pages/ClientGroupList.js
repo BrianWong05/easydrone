@@ -3,13 +3,10 @@ import {
   Card, 
   Typography, 
   Table, 
-  Space, 
   Tag,
   Spin,
   Alert,
   Statistic,
-  Row,
-  Col,
   Progress,
   Button
 } from 'antd';
@@ -17,7 +14,6 @@ import {
   TeamOutlined,
   TrophyOutlined,
   CalendarOutlined,
-  FireOutlined,
   UsergroupAddOutlined,
   PlayCircleOutlined
 } from '@ant-design/icons';
@@ -183,14 +179,16 @@ const ClientGroupList = () => {
       dataIndex: 'group_name',
       key: 'group_name',
       render: (name, record) => (
-        <Space direction="vertical" size="small">
-          <Text strong style={{ fontSize: '16px' }}>{getDisplayGroupName(name)}</Text>
+        <div className="space-y-1">
+          <Text strong className="text-base font-semibold text-gray-800 block">
+            {getDisplayGroupName(name)}
+          </Text>
           {record.tournament_name && (
-            <Text type="secondary" style={{ fontSize: '12px' }}>
+            <Text type="secondary" className="text-xs text-gray-500 block">
               {record.tournament_name}
             </Text>
           )}
-        </Space>
+        </div>
       ),
     },
     {
@@ -199,14 +197,14 @@ const ClientGroupList = () => {
       key: 'team_count',
       align: 'center',
       render: (count, record) => (
-        <Space direction="vertical" size="small" style={{ textAlign: 'center' }}>
-          <Text strong style={{ fontSize: '16px', color: '#1890ff' }}>
+        <div className="text-center space-y-1">
+          <Text strong className="text-base font-bold text-primary-600 block">
             {count || 0}
           </Text>
-          <Text type="secondary" style={{ fontSize: '12px' }}>
+          <Text type="secondary" className="text-xs text-gray-500 block">
             / {record.max_teams || 4}
           </Text>
-        </Space>
+        </div>
       ),
     },
     {
@@ -219,17 +217,17 @@ const ClientGroupList = () => {
         const completed = record.completed_matches || 0;
         
         return (
-          <Space direction="vertical" size="small" style={{ textAlign: 'center' }}>
+          <div className="text-center space-y-2">
             <Progress 
               percent={progress} 
               size="small" 
               status={progress === 100 ? 'success' : 'active'}
-              style={{ minWidth: '80px' }}
+              className="min-w-[80px]"
             />
-            <Text type="secondary" style={{ fontSize: '12px' }}>
+            <Text type="secondary" className="text-xs text-gray-500 block">
               {completed} / {total}
             </Text>
-          </Space>
+          </div>
         );
       },
     },
@@ -252,6 +250,7 @@ const ClientGroupList = () => {
           size="small"
           icon={<TeamOutlined />}
           onClick={() => navigate(`/groups/${record.group_id}`)}
+          className="bg-primary-600 hover:bg-primary-700 border-primary-600 hover:border-primary-700 transition-colors duration-200"
         >
           {t('common:actions.viewDetails')}
         </Button>
@@ -261,10 +260,10 @@ const ClientGroupList = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: 24, textAlign: 'center' }}>
+      <div className="flex flex-col items-center justify-center py-16 px-6">
         <Spin size="large" />
-        <div style={{ marginTop: 16 }}>
-          <Text>{t('messages.loadingGroups')}</Text>
+        <div className="mt-4">
+          <Text className="text-gray-600 animate-pulse">{t('messages.loadingGroups')}</Text>
         </div>
       </div>
     );
@@ -272,96 +271,103 @@ const ClientGroupList = () => {
 
   if (error) {
     return (
-      <div style={{ padding: 24 }}>
-        <Alert
-          message={t('common:messages.loadFailed')}
-          description={error}
-          type="error"
-          showIcon
-          action={
-            <Button size="small" onClick={fetchGroupsData}>
-              {t('common:actions.reload')}
-            </Button>
-          }
-        />
+      <div className="p-6 max-w-4xl mx-auto">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 animate-fade-in">
+          <Alert
+            message={t('common:messages.loadFailed')}
+            description={error}
+            type="error"
+            showIcon
+            className="border-0 bg-transparent"
+            action={
+              <Button 
+                size="small" 
+                onClick={fetchGroupsData}
+                className="bg-red-600 hover:bg-red-700 border-red-600 hover:border-red-700"
+              >
+                {t('common:actions.reload')}
+              </Button>
+            }
+          />
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: 24 }}>
+    <div className="p-6 max-w-7xl mx-auto animate-fade-in">
       {/* Tournament Header */}
       {tournament && (
-        <Card style={{ marginBottom: 24 }}>
-          <Row align="middle" justify="space-between">
-            <Col>
-              <Space direction="vertical" size="small">
-                <Title level={2} style={{ margin: 0 }}>
-                  <TrophyOutlined style={{ marginRight: 8, color: '#faad14' }} />
+        <Card className="mb-8 shadow-md hover:shadow-lg transition-shadow duration-300 border-l-4 border-warning-500">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+            <div className="space-y-2">
+              <Title level={2} className="m-0 flex items-center text-gray-800">
+                <TrophyOutlined className="mr-3 text-warning-600" />
+                <span className="bg-gradient-to-r from-warning-600 to-warning-700 bg-clip-text text-transparent">
                   {tournament.tournament_name}
-                </Title>
-                <Text type="secondary">{t('group:group.list')}</Text>
-              </Space>
-            </Col>
-            <Col>
-              <Tag color="blue" style={{ fontSize: '14px', padding: '4px 12px' }}>
+                </span>
+              </Title>
+              <Text type="secondary" className="text-gray-600 text-base">
+                {t('group:group.list')}
+              </Text>
+            </div>
+            <div>
+              <Tag 
+                color="blue" 
+                className="text-sm px-3 py-1 font-medium bg-blue-50 border-blue-200 text-blue-700"
+              >
                 {tournament.status === 'active' ? t('common:status.inProgress') : tournament.status}
               </Tag>
-            </Col>
-          </Row>
+            </div>
+          </div>
         </Card>
       )}
 
       {/* Statistics Cards */}
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <Statistic
-              title={t('messages.totalGroups')}
-              value={stats.totalGroups}
-              prefix={<UsergroupAddOutlined style={{ color: '#1890ff' }} />}
-              valueStyle={{ color: '#1890ff' }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <Statistic
-              title={t('common:stats.totalTeams')}
-              value={stats.totalTeams}
-              prefix={<TeamOutlined style={{ color: '#52c41a' }} />}
-              valueStyle={{ color: '#52c41a' }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <Statistic
-              title={t('common:stats.totalMatches')}
-              value={stats.totalMatches}
-              prefix={<CalendarOutlined style={{ color: '#faad14' }} />}
-              valueStyle={{ color: '#faad14' }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card>
-            <Statistic
-              title={t('common:stats.completedMatches')}
-              value={stats.completedMatches}
-              prefix={<PlayCircleOutlined style={{ color: '#f5222d' }} />}
-              valueStyle={{ color: '#f5222d' }}
-            />
-          </Card>
-        </Col>
-      </Row>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <Card className="hover:shadow-lg transition-shadow duration-300 border-l-4 border-primary-500">
+          <Statistic
+            title={t('messages.totalGroups')}
+            value={stats.totalGroups}
+            prefix={<UsergroupAddOutlined className="text-primary-600" />}
+            valueStyle={{ color: '#2563eb', fontWeight: 'bold' }}
+          />
+        </Card>
+        
+        <Card className="hover:shadow-lg transition-shadow duration-300 border-l-4 border-success-500">
+          <Statistic
+            title={t('common:stats.totalTeams')}
+            value={stats.totalTeams}
+            prefix={<TeamOutlined className="text-success-600" />}
+            valueStyle={{ color: '#16a34a', fontWeight: 'bold' }}
+          />
+        </Card>
+        
+        <Card className="hover:shadow-lg transition-shadow duration-300 border-l-4 border-warning-500">
+          <Statistic
+            title={t('common:stats.totalMatches')}
+            value={stats.totalMatches}
+            prefix={<CalendarOutlined className="text-warning-600" />}
+            valueStyle={{ color: '#d97706', fontWeight: 'bold' }}
+          />
+        </Card>
+        
+        <Card className="hover:shadow-lg transition-shadow duration-300 border-l-4 border-error-500">
+          <Statistic
+            title={t('common:stats.completedMatches')}
+            value={stats.completedMatches}
+            prefix={<PlayCircleOutlined className="text-error-600" />}
+            valueStyle={{ color: '#dc2626', fontWeight: 'bold' }}
+          />
+        </Card>
+      </div>
 
       {/* Groups Table */}
-      <Card>
-        <div style={{ marginBottom: 16 }}>
-          <Title level={3}>
-            <UsergroupAddOutlined style={{ marginRight: 8 }} />
-            {t('group:group.list')}
+      <Card className="shadow-md hover:shadow-lg transition-shadow duration-300 border-t-4 border-primary-500">
+        <div className="mb-6">
+          <Title level={3} className="flex items-center text-gray-800">
+            <UsergroupAddOutlined className="mr-3 text-primary-600" />
+            <span className="font-semibold">{t('group:group.list')}</span>
           </Title>
         </div>
         
@@ -369,6 +375,7 @@ const ClientGroupList = () => {
           columns={columns}
           dataSource={groups}
           rowKey="group_id"
+          className="overflow-x-auto"
           pagination={{
             pageSize: 20,
             showSizeChanger: true,
@@ -385,10 +392,12 @@ const ClientGroupList = () => {
           }}
           locale={{
             emptyText: (
-              <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                <UsergroupAddOutlined style={{ fontSize: '48px', color: '#d9d9d9' }} />
-                <div style={{ marginTop: 16 }}>
-                  <Text type="secondary">{t('messages.noGroups')}</Text>
+              <div className="text-center py-16">
+                <UsergroupAddOutlined className="text-6xl text-gray-300 mb-4" />
+                <div className="mt-4">
+                  <Text type="secondary" className="text-gray-500">
+                    {t('messages.noGroups')}
+                  </Text>
                 </div>
               </div>
             )

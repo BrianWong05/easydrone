@@ -281,10 +281,10 @@ const ClientTeamDetail = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: 24, textAlign: 'center' }}>
+      <div className="p-6 text-center bg-gray-50 min-h-screen">
         <Spin size="large" />
-        <div style={{ marginTop: 16 }}>
-          <Text>{t('team:messages.loadingTeamDetail', { defaultValue: '載入隊伍詳情中...' })}</Text>
+        <div className="mt-4">
+          <Text className="text-gray-600">{t('team:messages.loadingTeamDetail', { defaultValue: '載入隊伍詳情中...' })}</Text>
         </div>
       </div>
     );
@@ -292,12 +292,13 @@ const ClientTeamDetail = () => {
 
   if (error) {
     return (
-      <div style={{ padding: 24 }}>
+      <div className="p-6 bg-gray-50 min-h-screen">
         <Alert
           message={t('common:messages.error')}
           description={error}
           type="error"
           showIcon
+          className="bg-white shadow-sm"
         />
       </div>
     );
@@ -305,125 +306,137 @@ const ClientTeamDetail = () => {
 
   if (!team) {
     return (
-      <div style={{ padding: 24 }}>
+      <div className="p-6 bg-gray-50 min-h-screen">
         <Alert
           message={t('team:messages.teamNotFound', { defaultValue: '隊伍不存在' })}
           description={t('team:messages.teamNotFoundDesc', { defaultValue: '找不到指定的隊伍資訊' })}
           type="warning"
           showIcon
+          className="bg-white shadow-sm"
         />
       </div>
     );
   }
 
   return (
-    <div style={{ padding: 24 }}>
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+    <div className="p-6 bg-gray-50 min-h-screen max-w-7xl mx-auto">
+      <div className="flex flex-col gap-6">
         {/* Back Button and Header */}
-        <Card>
-          <Space direction="vertical" style={{ width: '100%' }}>
+        <Card className="bg-white shadow-sm border-l-4 border-l-blue-500">
+          <div className="flex flex-col gap-4">
             <Text 
-              style={{ color: '#1890ff', cursor: 'pointer' }}
+              className="text-blue-600 cursor-pointer hover:text-blue-800 transition-colors duration-200"
               onClick={() => navigate('/teams')}
             >
-              <ArrowLeftOutlined /> 返回隊伍列表
+              <ArrowLeftOutlined className="mr-2" /> 返回隊伍列表
             </Text>
             
-            <Row align="middle" justify="space-between">
-              <Col>
-                <Space align="center">
-                  <Avatar 
-                    size={64}
-                    style={{ 
-                      backgroundColor: team.team_color || '#1890ff',
-                      border: `3px solid ${team.team_color || '#1890ff'}`,
-                      color: '#fff'
-                    }} 
-                    icon={<TeamOutlined />} 
-                  />
-                  <div>
-                    <Title level={2} style={{ margin: 0, color: team.team_color || '#000' }}>
-                      {getDisplayTeamName(team.team_name)}
-                    </Title>
-                    <Space>
-                      {team.group_name && (
-                        <Tag color="blue" style={{ fontSize: 14 }}>
-                          {getDisplayGroupName(team.group_name)}
-                        </Tag>
-                      )}
-                      <Text type="secondary">
-                        {tournament?.tournament_name}
-                      </Text>
-                    </Space>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Avatar 
+                  size={64}
+                  style={{ 
+                    backgroundColor: team.team_color || '#1890ff',
+                    border: `3px solid ${team.team_color || '#1890ff'}`,
+                    color: '#fff'
+                  }} 
+                  icon={<TeamOutlined />} 
+                  className="shadow-lg"
+                />
+                <div className="flex flex-col gap-2">
+                  <Title 
+                    level={2} 
+                    className="m-0 font-bold"
+                    style={{ color: team.team_color || '#000' }}
+                  >
+                    {getDisplayTeamName(team.team_name)}
+                  </Title>
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {team.group_name && (
+                      <Tag color="blue" className="text-sm px-3 py-1">
+                        {getDisplayGroupName(team.group_name)}
+                      </Tag>
+                    )}
+                    <Text type="secondary" className="text-gray-600">
+                      {tournament?.tournament_name}
+                    </Text>
                   </div>
-                </Space>
-              </Col>
-            </Row>
-          </Space>
+                </div>
+              </div>
+            </div>
+          </div>
         </Card>
 
         {/* Team Statistics */}
-        <Card title={t('team:messages.teamStatistics')}>
-          <Row gutter={16}>
-            <Col span={6}>
+        <Card 
+          title={
+            <div className="flex items-center gap-2">
+              <TrophyOutlined className="text-blue-500" />
+              <span className="text-gray-800 font-semibold">{t('team:messages.teamStatistics')}</span>
+            </div>
+          }
+          className="bg-white shadow-sm"
+        >
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            <Card className="bg-blue-50 border-blue-200">
               <Statistic
-                title={t('team:team.matchesPlayed')}
+                title={<span className="text-gray-600 text-sm">{t('team:team.matchesPlayed')}</span>}
                 value={stats.totalMatches}
-                prefix={<CalendarOutlined />}
-                valueStyle={{ color: '#1890ff' }}
+                prefix={<CalendarOutlined className="text-blue-500" />}
+                valueStyle={{ color: '#1890ff', fontSize: '20px', fontWeight: 'bold' }}
               />
-            </Col>
-            <Col span={6}>
+            </Card>
+            <Card className="bg-yellow-50 border-yellow-200">
               <Statistic
-                title={t('team:team.points')}
+                title={<span className="text-gray-600 text-sm">{t('team:team.points')}</span>}
                 value={stats.points}
-                prefix={<TrophyOutlined />}
-                valueStyle={{ color: '#faad14' }}
+                prefix={<TrophyOutlined className="text-yellow-500" />}
+                valueStyle={{ color: '#faad14', fontSize: '20px', fontWeight: 'bold' }}
               />
-            </Col>
-            <Col span={6}>
+            </Card>
+            <Card className="bg-green-50 border-green-200">
               <Statistic
-                title={t('team:team.goalsFor')}
+                title={<span className="text-gray-600 text-sm">{t('team:team.goalsFor')}</span>}
                 value={stats.goalsFor}
-                prefix={<FireOutlined />}
-                valueStyle={{ color: '#52c41a' }}
+                prefix={<FireOutlined className="text-green-500" />}
+                valueStyle={{ color: '#52c41a', fontSize: '20px', fontWeight: 'bold' }}
               />
-            </Col>
-            <Col span={6}>
+            </Card>
+            <Card className="bg-red-50 border-red-200">
               <Statistic
-                title={t('team:team.goalsAgainst')}
+                title={<span className="text-gray-600 text-sm">{t('team:team.goalsAgainst')}</span>}
                 value={stats.goalsAgainst}
-                prefix={<ThunderboltOutlined />}
-                valueStyle={{ color: '#ff4d4f' }}
+                prefix={<ThunderboltOutlined className="text-red-500" />}
+                valueStyle={{ color: '#ff4d4f', fontSize: '20px', fontWeight: 'bold' }}
               />
-            </Col>
-          </Row>
+            </Card>
+          </div>
           
-          <Divider />
-          
-          <Row gutter={16}>
-            <Col span={8}>
-              <Statistic
-                title={t('team:team.wins')}
-                value={stats.wins}
-                valueStyle={{ color: '#52c41a' }}
-              />
-            </Col>
-            <Col span={8}>
-              <Statistic
-                title={t('team:team.draws')}
-                value={stats.draws}
-                valueStyle={{ color: '#faad14' }}
-              />
-            </Col>
-            <Col span={8}>
-              <Statistic
-                title={t('team:team.losses')}
-                value={stats.losses}
-                valueStyle={{ color: '#ff4d4f' }}
-              />
-            </Col>
-          </Row>
+          <div className="border-t border-gray-200 pt-4">
+            <div className="grid grid-cols-3 gap-4">
+              <Card className="bg-green-50 border-green-200">
+                <Statistic
+                  title={<span className="text-gray-600 text-sm">{t('team:team.wins')}</span>}
+                  value={stats.wins}
+                  valueStyle={{ color: '#52c41a', fontSize: '18px', fontWeight: 'bold' }}
+                />
+              </Card>
+              <Card className="bg-yellow-50 border-yellow-200">
+                <Statistic
+                  title={<span className="text-gray-600 text-sm">{t('team:team.draws')}</span>}
+                  value={stats.draws}
+                  valueStyle={{ color: '#faad14', fontSize: '18px', fontWeight: 'bold' }}
+                />
+              </Card>
+              <Card className="bg-red-50 border-red-200">
+                <Statistic
+                  title={<span className="text-gray-600 text-sm">{t('team:team.losses')}</span>}
+                  value={stats.losses}
+                  valueStyle={{ color: '#ff4d4f', fontSize: '18px', fontWeight: 'bold' }}
+                />
+              </Card>
+            </div>
+          </div>
         </Card>
 
         {/* Team Information */}
@@ -471,10 +484,10 @@ const ClientTeamDetail = () => {
             pagination={false}
             locale={{
               emptyText: (
-                <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                  <UserOutlined style={{ fontSize: 48, color: '#d9d9d9', marginBottom: 16 }} />
+                <div className="text-center py-10">
+                  <UserOutlined className="text-5xl text-gray-300 mb-4" />
                   <div>
-                    <Text type="secondary" style={{ fontSize: 16 }}>{t('athlete:messages.noAthleteData')}</Text>
+                    <Text type="secondary" className="text-base text-gray-500">{t('athlete:messages.noAthleteData')}</Text>
                   </div>
                 </div>
               )
@@ -488,10 +501,10 @@ const ClientTeamDetail = () => {
             dataSource={matches.slice(0, 10)}
             locale={{
               emptyText: (
-                <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                  <CalendarOutlined style={{ fontSize: 48, color: '#d9d9d9', marginBottom: 16 }} />
+                <div className="text-center py-10">
+                  <CalendarOutlined className="text-5xl text-gray-300 mb-4" />
                   <div>
-                    <Text type="secondary" style={{ fontSize: 16 }}>{t('team:messages.noMatchHistory')}</Text>
+                    <Text type="secondary" className="text-base text-gray-500">{t('team:messages.noMatchHistory')}</Text>
                   </div>
                 </div>
               )
@@ -554,7 +567,7 @@ const ClientTeamDetail = () => {
             }}
           />
         </Card>
-      </Space>
+      </div>
     </div>
   );
 };
