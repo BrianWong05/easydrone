@@ -74,7 +74,7 @@ const GroupLeaderboard = () => {
             group_name: group.group_name?.includes("_") ? group.group_name.split("_")[0] : group.group_name,
             internal_name: group.group_name,
             max_teams: group.max_teams,
-            current_teams: groupStandings.length,
+            current_teams: group.team_count || groupStandings.length,
             teams: groupStandings,
             team_count: group.team_count || 0,
             total_matches: group.total_matches || 0,
@@ -219,9 +219,9 @@ const GroupLeaderboard = () => {
               <Card
                 title={
                   <Space>
-                    <span style={{ fontSize: "18px", fontWeight: "bold" }}>{t('group.name', { ns: 'group' })} {group.group_name}</span>
+                    <span style={{ fontSize: "18px", fontWeight: "bold" }}>{t('group.group', { ns: 'group' })} {group.group_name}</span>
                     <Tag color="blue">
-                      {group.current_teams}/{group.max_teams} {t('group.teams', { ns: 'group' })}
+                      {group.current_teams || group.team_count || 0}/{group.max_teams} {t('match:match.teams')}
                     </Tag>
                   </Space>
                 }
@@ -241,7 +241,7 @@ const GroupLeaderboard = () => {
                     <Text type="secondary">{t('group.progress', { ns: 'group' })}</Text>
                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                       <Progress
-                        percent={group.total_matches > 0 ? Math.round((group.completed_matches / group.total_matches) * 1000) / 10 : 0}
+                        percent={group.total_matches > 0 ? Math.round((group.completed_matches / group.total_matches) * 100) : 0}
                         size="small"
                         status={group.completed_matches === group.total_matches && group.total_matches > 0 ? "success" : "active"}
                       />

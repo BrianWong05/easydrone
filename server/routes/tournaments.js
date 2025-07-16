@@ -235,13 +235,14 @@ router.get('/:id/groups', async (req, res) => {
       SELECT 
         g.group_id,
         g.group_name,
+        g.max_teams,
         g.tournament_id,
         g.created_at,
         COUNT(t.team_id) as team_count
       FROM team_groups g
       LEFT JOIN teams t ON g.group_id = t.group_id
       WHERE g.tournament_id = ?
-      GROUP BY g.group_id, g.group_name, g.tournament_id, g.created_at
+      GROUP BY g.group_id, g.group_name, g.max_teams, g.tournament_id, g.created_at
       ORDER BY g.group_name
     `, [id]);
 
