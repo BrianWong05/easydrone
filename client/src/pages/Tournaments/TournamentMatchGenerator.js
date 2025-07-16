@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import {
   Card,
   Button,
@@ -135,6 +136,7 @@ function calculateMatchScore(match, teamLastPlayed, currentRound) {
 }
 
 const TournamentMatchGenerator = () => {
+  const { t } = useTranslation(['match', 'common']);
   const { id: tournamentId } = useParams();
   const navigate = useNavigate();
 
@@ -168,7 +170,7 @@ const TournamentMatchGenerator = () => {
       }
     } catch (error) {
       console.error("Error fetching tournament:", error);
-      message.error("獲取錦標賽信息失敗");
+      message.error(t('messages.tournamentNotFound'));
     }
   };
 
@@ -231,7 +233,10 @@ const TournamentMatchGenerator = () => {
         const teams = teamsResponse.data.success ? teamsResponse.data.data?.teams || [] : [];
 
         if (teams.length < 2) {
-          message.warning(`小組 ${group.group_name} 隊伍不足，跳過生成比賽`);
+          message.warning(t('generator.insufficientTeams', { 
+            groupName: group.group_name,
+            defaultValue: `小組 ${group.group_name} 隊伍不足，跳過生成比賽`
+          }));
           return;
         }
       }
@@ -262,18 +267,25 @@ const TournamentMatchGenerator = () => {
             }
           });
           
-          message.success(`成功生成 ${successCount} 場比賽！${balanceInfo}使用圓桌法確保完美主客場平衡`);
+          message.success(t('generator.generateSuccess', { 
+            count: successCount,
+            balanceInfo,
+            defaultValue: `成功生成 ${successCount} 場比賽！${balanceInfo}使用圓桌法確保完美主客場平衡`
+          }));
           navigate(`/tournaments/${tournamentId}/matches`);
         } else {
-          message.error(response.data.message || "比賽生成失敗");
+          message.error(response.data.message || t('generator.generateFailed', { defaultValue: '比賽生成失敗' }));
         }
       } catch (error) {
         console.error("Error generating matches with optimized algorithm:", error);
-        message.error(`比賽生成失敗: ${error.response?.data?.message || error.message}`);
+        message.error(t('generator.generateError', { 
+          error: error.response?.data?.message || error.message,
+          defaultValue: `比賽生成失敗: ${error.response?.data?.message || error.message}`
+        }));
       }
     } catch (error) {
       console.error("Error generating matches:", error);
-      message.error("比賽生成失敗");
+      message.error(t('generator.generateFailed', { defaultValue: '比賽生成失敗' }));
     } finally {
       setLoading(false);
     }
@@ -289,18 +301,18 @@ const TournamentMatchGenerator = () => {
           onClick={() => navigate(`/tournaments/${tournamentId}/matches`)}
           style={{ marginBottom: 16 }}
         >
-          返回比賽列表
+          {t('actions.backToMatchList', { defaultValue: '返回比賽列表' })}
         </Button>
-        <Title level={2}>{tournament?.tournament_name} - 生成比賽</Title>
-        <p style={{ color: "#666", marginBottom: 0 }}>自動為選中的小組生成循環賽比賽</p>
+        <Title level={2}>{tournament?.tournament_name} - {t('match.generate')}</Title>
+        <p style={{ color: "#666", marginBottom: 0 }}>{t('generator.description', { defaultValue: '自動為選中的小組生成循環賽比賽' })}</p>
       </div>
 
       <Row gutter={24}>
         <Col span={16}>
-          <Card title="小組選擇" style={{ marginBottom: 24 }}>
+          <Card title={t('generator.groupSelection', { defaultValue: '小組選擇' })} style={{ marginBottom: 24 }}>
             <Alert
-              message="選擇要生成比賽的小組"
-              description="系統將為每個選中的小組生成循環賽（每支隊伍與其他隊伍各比賽一場）"
+              message={t('generator.selectGroups', { defaultValue: '選擇要生成比賽的小組' })}
+              description={t('generator.roundRobinDescription', { defaultValue: '系統將為每個選中的小組生成循環賽（每支隊伍與其他隊伍各比賽一場）' })}
               type="info"
               style={{ marginBottom: 16 }}
             />
@@ -312,10 +324,10 @@ const TournamentMatchGenerator = () => {
                     <Checkbox value={group.group_id}>
                       <Space direction="vertical" size={0}>
                         <Text strong>
-                          小組 {group.group_name?.includes("_") ? group.group_name.split("_")[0] : group.group_name}
+                          {t('match.group')} {group.group_name?.includes("_") ? group.group_name.split("_")[0] : group.group_name}
                         </Text>
                         <Text type="secondary" style={{ fontSize: "12px" }}>
-                          {group.team_count || 0} 支隊伍
+                          {group.team_count || 0} {t('generator.teams', { defaultValue: '支隊伍' })}
                         </Text>
                       </Space>
                     </Checkbox>
@@ -325,28 +337,28 @@ const TournamentMatchGenerator = () => {
             </Checkbox.Group>
           </Card>
 
-          <Card title="時間設置">
+          <Card title={t('generator.timeSettings', { defaultValue: '時間設置' })}>
             <Row gutter={16}>
               <Col span={12}>
                 <div style={{ marginBottom: 16 }}>
-                  <Text strong>開始日期</Text>
+                  <Text strong>{t('generator.startDate', { defaultValue: '開始日期' })}</Text>
                   <DatePicker
                     value={startDate}
                     onChange={setStartDate}
                     style={{ width: "100%", marginTop: 8 }}
-                    placeholder="選擇開始日期"
+                    placeholder={t('generator.selectStartDate', { defaultValue: '選擇開始日期' })}
                   />
                 </div>
               </Col>
               <Col span={12}>
                 <div style={{ marginBottom: 16 }}>
-                  <Text strong>開始時間</Text>
+                  <Text strong>{t('generator.startTime', { defaultValue: '開始時間' })}</Text>
                   <TimePicker
                     value={startTime}
                     onChange={setStartTime}
                     format="HH:mm"
                     style={{ width: "100%", marginTop: 8 }}
-                    placeholder="選擇開始時間"
+                    placeholder={t('generator.selectStartTime', { defaultValue: '選擇開始時間' })}
                   />
                 </div>
               </Col>
@@ -355,7 +367,7 @@ const TournamentMatchGenerator = () => {
             <Row gutter={16}>
               <Col span={12}>
                 <div style={{ marginBottom: 16 }}>
-                  <Text strong>比賽時長</Text>
+                  <Text strong>{t('match.duration')}</Text>
                   <Row gutter={8} style={{ marginTop: 8 }}>
                     <Col span={12}>
                       <InputNumber
@@ -364,8 +376,8 @@ const TournamentMatchGenerator = () => {
                         min={0}
                         max={60}
                         style={{ width: "100%" }}
-                        placeholder="分鐘"
-                        addonAfter="分"
+                        placeholder={t('form.minutesPlaceholder')}
+                        addonAfter={t('common:time.minutes', { defaultValue: '分' })}
                       />
                     </Col>
                     <Col span={12}>
@@ -375,19 +387,19 @@ const TournamentMatchGenerator = () => {
                         min={0}
                         max={59}
                         style={{ width: "100%" }}
-                        placeholder="秒"
-                        addonAfter="秒"
+                        placeholder={t('form.secondsPlaceholder')}
+                        addonAfter={t('common:time.seconds', { defaultValue: '秒' })}
                       />
                     </Col>
                   </Row>
                   <div style={{ fontSize: "12px", color: "#666", marginTop: "4px" }}>
-                    總時長: {matchDuration} 秒 ({Math.floor(matchDuration / 60)}分{matchDuration % 60}秒)
+                    {t('generator.totalDuration', { defaultValue: '總時長' })}: {matchDuration} {t('common:time.seconds', { defaultValue: '秒' })} ({Math.floor(matchDuration / 60)}{t('common:time.minutes', { defaultValue: '分' })}{matchDuration % 60}{t('common:time.seconds', { defaultValue: '秒' })})
                   </div>
                 </div>
               </Col>
               <Col span={12}>
                 <div style={{ marginBottom: 16 }}>
-                  <Text strong>比賽間隔</Text>
+                  <Text strong>{t('generator.matchInterval', { defaultValue: '比賽間隔' })}</Text>
                   <Row gutter={8} style={{ marginTop: 8 }}>
                     <Col span={12}>
                       <InputNumber
@@ -396,8 +408,8 @@ const TournamentMatchGenerator = () => {
                         min={0}
                         max={30}
                         style={{ width: "100%" }}
-                        placeholder="分鐘"
-                        addonAfter="分"
+                        placeholder={t('form.minutesPlaceholder')}
+                        addonAfter={t('common:time.minutes', { defaultValue: '分' })}
                       />
                     </Col>
                     <Col span={12}>
@@ -407,13 +419,13 @@ const TournamentMatchGenerator = () => {
                         min={0}
                         max={59}
                         style={{ width: "100%" }}
-                        placeholder="秒"
-                        addonAfter="秒"
+                        placeholder={t('form.secondsPlaceholder')}
+                        addonAfter={t('common:time.seconds', { defaultValue: '秒' })}
                       />
                     </Col>
                   </Row>
                   <div style={{ fontSize: "12px", color: "#666", marginTop: "4px" }}>
-                    總間隔: {breakDuration} 秒 ({Math.floor(breakDuration / 60)}分{breakDuration % 60}秒)
+                    {t('generator.totalInterval', { defaultValue: '總間隔' })}: {breakDuration} {t('common:time.seconds', { defaultValue: '秒' })} ({Math.floor(breakDuration / 60)}{t('common:time.minutes', { defaultValue: '分' })}{breakDuration % 60}{t('common:time.seconds', { defaultValue: '秒' })})
                   </div>
                 </div>
               </Col>
@@ -422,16 +434,16 @@ const TournamentMatchGenerator = () => {
         </Col>
 
         <Col span={8}>
-          <Card title="生成預覽">
+          <Card title={t('generator.preview', { defaultValue: '生成預覽' })}>
             <Space direction="vertical" style={{ width: "100%" }}>
-              <Statistic title="選中小組" value={stats.selectedGroups} suffix="個" />
-              <Statistic title="預計生成比賽" value={stats.totalMatches} suffix="場" />
-              <Statistic title="預計總時長" value={Math.ceil(stats.estimatedDuration)} suffix="分鐘" />
+              <Statistic title={t('generator.selectedGroups', { defaultValue: '選中小組' })} value={stats.selectedGroups} suffix={t('generator.groupsUnit', { defaultValue: '個' })} />
+              <Statistic title={t('generator.estimatedMatches', { defaultValue: '預計生成比賽' })} value={stats.totalMatches} suffix={t('generator.matchesUnit', { defaultValue: '場' })} />
+              <Statistic title={t('generator.estimatedDuration', { defaultValue: '預計總時長' })} value={Math.ceil(stats.estimatedDuration)} suffix={t('common:time.minutes', { defaultValue: '分鐘' })} />
 
               <Divider />
 
               <div>
-                <Text strong>開始時間：</Text>
+                <Text strong>{t('generator.startTime', { defaultValue: '開始時間' })}：</Text>
                 <br />
                 <Text>
                   {startDate?.format("YYYY-MM-DD")} {startTime?.format("HH:mm")}
@@ -439,7 +451,7 @@ const TournamentMatchGenerator = () => {
               </div>
 
               <div>
-                <Text strong>預計結束：</Text>
+                <Text strong>{t('generator.estimatedEnd', { defaultValue: '預計結束' })}：</Text>
                 <br />
                 <Text>
                   {(() => {
@@ -463,11 +475,16 @@ const TournamentMatchGenerator = () => {
                 block
                 size="large"
               >
-                生成比賽
+                {t('match.generate')}
               </Button>
 
               {stats.totalMatches === 0 && (
-                <Alert message="無法生成比賽" description="請確保選中的小組至少有2支隊伍" type="warning" showIcon />
+                <Alert 
+                  message={t('generator.cannotGenerate', { defaultValue: '無法生成比賽' })} 
+                  description={t('generator.ensureMinimumTeams', { defaultValue: '請確保選中的小組至少有2支隊伍' })} 
+                  type="warning" 
+                  showIcon 
+                />
               )}
             </Space>
           </Card>
