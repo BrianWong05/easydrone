@@ -118,7 +118,11 @@
     "itemsPerPage": "條/頁"
   },
   "filters": {
-    "all": "全部"
+    "all": "全部",
+    "allStatus": "全部狀態",
+    "allMatchTypes": "全部比賽類型",
+    "allGroups": "全部小組",
+    "allTeams": "全部隊伍"
   },
   "date": {
     "startDate": "開始日期",

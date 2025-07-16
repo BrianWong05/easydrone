@@ -163,10 +163,6 @@
     "teamsSwapped": "Teams swapped successfully!",
     "updateFailed": "Update failed, please try again"
   },
-  "statistics": {
-    "totalMatches": "Total Matches",
-    "others": "Others"
-  },
   "form": {
     "matchNumberRequired": "Please enter match number",
     "matchNumberPattern": "Match number can only contain letters, numbers, hyphens and underscores",
@@ -241,6 +237,7 @@
     "pauseResumeTimer": "Start/Pause Timer"
   },
   "statistics": {
+    "totalMatches": "Total Matches",
     "goals": "Goals",
     "assists": "Assists",
     "saves": "Saves",

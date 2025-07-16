@@ -163,10 +163,6 @@
     "teamsSwapped": "隊伍已交換！",
     "updateFailed": "更新失敗，請重試"
   },
-  "statistics": {
-    "totalMatches": "總比賽數",
-    "others": "其他"
-  },
   "form": {
     "matchNumberRequired": "請輸入比賽場次",
     "matchNumberPattern": "比賽場次只能包含字母、數字、連字符和下劃線",
@@ -241,6 +237,7 @@
     "pauseResumeTimer": "開始/暫停計時器"
   },
   "statistics": {
+    "totalMatches": "總比賽數",
     "goals": "進球",
     "assists": "助攻",
     "saves": "撲救",

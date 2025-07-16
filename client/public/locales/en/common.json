@@ -118,7 +118,11 @@
     "itemsPerPage": "/ page"
   },
   "filters": {
-    "all": "All"
+    "all": "All",
+    "allStatus": "All Status",
+    "allMatchTypes": "All Match Types",
+    "allGroups": "All Groups",
+    "allTeams": "All Teams"
   },
   "date": {
     "startDate": "Start Date",

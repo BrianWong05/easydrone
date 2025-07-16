@@ -838,7 +838,7 @@ const TournamentMatchList = () => {
                 }}
                 style={{ width: 120 }}
               >
-                <Option value="all">{t('common:filters.all')}</Option>
+                <Option value="all">{t('common:filters.allStatus')}</Option>
                 <Option value="pending">{t('match:status.pending')}</Option>
                 <Option value="active">{t('match:status.active')}</Option>
                 <Option value="completed">{t('match:status.completed')}</Option>
@@ -853,7 +853,7 @@ const TournamentMatchList = () => {
                 }}
                 style={{ width: 120 }}
               >
-                <Option value="all">{t('common:filters.all')}</Option>
+                <Option value="all">{t('common:filters.allMatchTypes')}</Option>
                 <Option value="group">{t('match:types.groupStage')}</Option>
                 <Option value="knockout">{t('match:types.knockout')}</Option>
                 <Option value="friendly">{t('match:types.friendly')}</Option>
@@ -867,7 +867,7 @@ const TournamentMatchList = () => {
                 }}
                 style={{ width: 120 }}
               >
-                <Option value="all">{t('common:filters.all')}</Option>
+                <Option value="all">{t('common:filters.allGroups')}</Option>
                 {groups.map((group) => (
                   <Option key={group.group_id} value={group.group_id}>
                     {t('match:match.group')} {group.group_name?.includes("_") ? group.group_name.split("_")[0] : group.group_name}
@@ -885,7 +885,7 @@ const TournamentMatchList = () => {
                 showSearch
                 optionFilterProp="children"
               >
-                <Option value="all">{t('common:filters.all')}</Option>
+                <Option value="all">{t('common:filters.allTeams')}</Option>
                 {teams.map((team) => (
                   <Option key={team.team_id} value={team.team_id}>
                     {getDisplayTeamName(team.team_name)}
