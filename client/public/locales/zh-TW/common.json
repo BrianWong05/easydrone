@@ -123,6 +123,10 @@
   },
   "time": {
     "minutes": "分鐘",
-    "seconds": "秒"
+    "seconds": "秒",
+    "startTime": "開始時間",
+    "endTime": "結束時間",
+    "createdAt": "創建時間",
+    "updatedAt": "更新時間"
   }
 }

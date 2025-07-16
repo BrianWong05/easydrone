@@ -107,9 +107,11 @@
     "startPostponed": "開始延期的比賽",
     "editPostponed": "編輯延期比賽",
     "backToMatchDetail": "返回比賽詳情",
+    "backToMatchList": "返回比賽列表",
     "swapTeams": "交換隊伍",
     "swap": "交換",
-    "update": "更新比賽"
+    "update": "更新比賽",
+    "editResult": "編輯結果"
   },
   "list": {
     "title": "比賽列表",
@@ -144,8 +146,11 @@
     "loadingMatches": "獲取比賽列表失敗",
     "tournamentNotFound": "錦標賽不存在",
     "matchDeleted": "比賽刪除成功",
-    "deleteConfirmation": "確定要刪除這場比賽嗎？",
+    "deleteConfirmation": "確認刪除",
+    "deleteMatchConfirmation": "確定要刪除比賽 \"{{matchNumber}}\" 嗎？此操作無法撤銷。",
+    "deleteFailed": "刪除失敗，請重試",
     "noMatches": "暫無比賽數據",
+    "noMatchData": "獲取比賽詳情失敗",
     "teamsNotDetermined": "比賽隊伍尚未確定，無法開始比賽",
     "managementDescription": "管理錦標賽中的所有比賽，包括小組賽和淘汰賽",
     "createDescription": "為錦標賽創建新的比賽場次",
@@ -182,5 +187,27 @@
     "durationRequired": "比賽時長不能為0",
     "minutesPlaceholder": "分鐘",
     "secondsPlaceholder": "秒數"
+  },
+  "events": {
+    "event": "事件",
+    "matchEvents": "比賽事件",
+    "noEvents": "暫無比賽事件記錄",
+    "timeout": "暫停",
+    "penalty": "點球",
+    "substitution": "換人",
+    "other": "其他"
+  },
+  "statistics": {
+    "goals": "進球",
+    "assists": "助攻",
+    "saves": "撲救",
+    "fouls": "犯規",
+    "yellowCards": "黃牌",
+    "redCards": "紅牌",
+    "possession": "控球率",
+    "shots": "射門",
+    "shotsOnTarget": "射正",
+    "corners": "角球",
+    "offsides": "越位"
   }
 }

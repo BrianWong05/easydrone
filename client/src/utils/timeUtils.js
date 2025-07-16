@@ -1,25 +1,31 @@
 // Utility functions for formatting match time display
+import i18n from '../i18n';
 
 /**
  * Format seconds to "x minute y second" format
  * @param {number} totalSeconds - Total seconds (e.g., 70 for 1 min 10 sec)
- * @returns {string} - Formatted string like "1 分鐘 10 秒"
+ * @returns {string} - Formatted string like "1 分鐘 10 秒" or "1 minutes 10 seconds"
  */
 export const formatMatchDuration = (totalSeconds) => {
   if (!totalSeconds || totalSeconds <= 0) {
-    return '0 分鐘 0 秒';
+    const minuteText = i18n.t('common:time.minutes', { defaultValue: '分鐘' });
+    const secondText = i18n.t('common:time.seconds', { defaultValue: '秒' });
+    return `0 ${minuteText} 0 ${secondText}`;
   }
   
   const seconds = parseInt(totalSeconds);
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
   
+  const minuteText = i18n.t('common:time.minutes', { defaultValue: '分鐘' });
+  const secondText = i18n.t('common:time.seconds', { defaultValue: '秒' });
+  
   if (minutes === 0) {
-    return `${remainingSeconds} 秒`;
+    return `${remainingSeconds} ${secondText}`;
   } else if (remainingSeconds === 0) {
-    return `${minutes} 分鐘`;
+    return `${minutes} ${minuteText}`;
   } else {
-    return `${minutes} 分鐘 ${remainingSeconds} 秒`;
+    return `${minutes} ${minuteText} ${remainingSeconds} ${secondText}`;
   }
 };
 

@@ -107,9 +107,11 @@
     "startPostponed": "Start Postponed Match",
     "editPostponed": "Edit Postponed Match",
     "backToMatchDetail": "Back to Match Details",
+    "backToMatchList": "Back to Match List",
     "swapTeams": "Swap Teams",
     "swap": "Swap",
-    "update": "Update Match"
+    "update": "Update Match",
+    "editResult": "Edit Result"
   },
   "list": {
     "title": "Match List",
@@ -144,8 +146,11 @@
     "loadingMatches": "Failed to load match list",
     "tournamentNotFound": "Tournament not found",
     "matchDeleted": "Match deleted successfully",
-    "deleteConfirmation": "Are you sure you want to delete this match?",
+    "deleteConfirmation": "Confirm Delete",
+    "deleteMatchConfirmation": "Are you sure you want to delete match \"{{matchNumber}}\"? This action cannot be undone.",
+    "deleteFailed": "Delete failed, please try again",
     "noMatches": "No match data available",
+    "noMatchData": "Failed to load match details",
     "teamsNotDetermined": "Teams not determined, cannot start match",
     "managementDescription": "Manage all matches in the tournament, including group stage and knockout matches",
     "createDescription": "Create a new match for the tournament",
@@ -182,5 +187,27 @@
     "durationRequired": "Match duration cannot be 0",
     "minutesPlaceholder": "Minutes",
     "secondsPlaceholder": "Seconds"
+  },
+  "events": {
+    "event": "Event",
+    "matchEvents": "Match Events",
+    "noEvents": "No match events recorded",
+    "timeout": "Timeout",
+    "penalty": "Penalty",
+    "substitution": "Substitution",
+    "other": "Other"
+  },
+  "statistics": {
+    "goals": "Goals",
+    "assists": "Assists",
+    "saves": "Saves",
+    "fouls": "Fouls",
+    "yellowCards": "Yellow Cards",
+    "redCards": "Red Cards",
+    "possession": "Possession",
+    "shots": "Shots",
+    "shotsOnTarget": "Shots on Target",
+    "corners": "Corners",
+    "offsides": "Offsides"
   }
 }

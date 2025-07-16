@@ -25,6 +25,7 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import moment from "moment";
 import axios from "axios";
 import { formatMatchDuration } from "../../utils/timeUtils";
@@ -33,6 +34,7 @@ import { getMatchTypeText } from "../../utils/matchUtils";
 const { Title, Text } = Typography;
 
 const MatchDetail = () => {
+  const { t } = useTranslation(['match', 'common']);
   const navigate = useNavigate();
   const { id: tournamentId, matchId } = useParams();
   const [loading, setLoading] = useState(true);
@@ -52,12 +54,12 @@ const MatchDetail = () => {
         setMatchData(response.data.data.match);
         setEvents(response.data.data.events || []);
       } else {
-        message.error("獲取比賽詳情失敗");
+        message.error(t('messages.noMatchData'));
         navigate(`/tournaments/${tournamentId}/matches`);
       }
     } catch (error) {
       console.error("獲取比賽詳情錯誤:", error);
-      message.error("獲取比賽詳情失敗");
+      message.error(t('messages.noMatchData'));
       navigate(`/tournaments/${tournamentId}/matches`);
     } finally {
       setLoading(false);
@@ -78,27 +80,30 @@ const MatchDetail = () => {
 
   const handleDeleteMatch = () => {
     Modal.confirm({
-      title: "確認刪除",
-      content: `確定要刪除比賽 "${matchData.match_number}" 嗎？此操作無法撤銷。`,
-      okText: "確認刪除",
+      title: t('messages.deleteConfirmation'),
+      content: t('messages.deleteMatchConfirmation', { 
+        matchNumber: matchData.match_number,
+        defaultValue: `確定要刪除比賽 "${matchData.match_number}" 嗎？此操作無法撤銷。`
+      }),
+      okText: t('common:actions.confirmDelete', { defaultValue: '確認刪除' }),
       okType: "danger",
-      cancelText: "取消",
+      cancelText: t('common:actions.cancel', { defaultValue: '取消' }),
       onOk: async () => {
         try {
           const response = await axios.delete(`/api/matches/${matchId}`);
 
           if (response.data.success) {
-            message.success("比賽刪除成功！");
+            message.success(t('messages.matchDeleted'));
             navigate(`/tournaments/${tournamentId}/matches`);
           } else {
-            message.error(response.data.message || "刪除失敗");
+            message.error(response.data.message || t('messages.deleteFailed', { defaultValue: '刪除失敗' }));
           }
         } catch (error) {
           console.error("刪除比賽錯誤:", error);
           if (error.response?.data?.message) {
             message.error(error.response.data.message);
           } else {
-            message.error("刪除失敗，請重試");
+            message.error(t('messages.deleteFailed', { defaultValue: '刪除失敗，請重試' }));
           }
         }
       },
@@ -123,13 +128,13 @@ const MatchDetail = () => {
   const getStatusText = (status) => {
     switch (status) {
       case "pending":
-        return "待開始";
+        return t('status.pending');
       case "active":
-        return "進行中";
+        return t('status.active');
       case "completed":
-        return "已完成";
+        return t('status.completed');
       case "overtime":
-        return "延長賽";
+        return t('status.overtime');
       default:
         return status;
     }
@@ -155,17 +160,17 @@ const MatchDetail = () => {
   const getEventText = (eventType) => {
     switch (eventType) {
       case "goal":
-        return "進球";
+        return t('statistics.goals');
       case "foul":
-        return "犯規";
+        return t('statistics.fouls');
       case "timeout":
-        return "暫停";
+        return t('events.timeout', { defaultValue: '暫停' });
       case "penalty":
-        return "點球";
+        return t('events.penalty', { defaultValue: '點球' });
       case "substitution":
-        return "換人";
+        return t('events.substitution', { defaultValue: '換人' });
       default:
-        return "其他";
+        return t('events.other', { defaultValue: '其他' });
     }
   };
 
@@ -193,7 +198,7 @@ const MatchDetail = () => {
 
   // 獲取隊伍顯示名稱，如果沒有隊伍則顯示來源比賽的勝者
   const getTeamDisplayName = (teamPosition) => {
-    if (!matchData) return "待定";
+    if (!matchData) return t('common:status.pending', { defaultValue: '待定' });
 
     const teamName = teamPosition === "team1" ? matchData.team1_name : matchData.team2_name;
 
@@ -264,23 +269,23 @@ const MatchDetail = () => {
     if (progression) {
       const sourceMatch = progression[teamPosition];
       // 季軍賽顯示敗者，其他比賽顯示勝者
-      const resultType = matchNum === 'TP01' ? '敗者' : '勝者';
+      const resultType = matchNum === 'TP01' ? t('results.loss') : t('results.win');
       return `${sourceMatch}${resultType}`;
     }
     
     // 如果是第一輪比賽（沒有來源），返回待定
     if (matchNum.startsWith('QU') || matchNum.startsWith('R16') || matchNum.startsWith('R32')) {
-      return "待定";
+      return t('common:status.pending', { defaultValue: '待定' });
     }
     
-    return "待定";
+    return t('common:status.pending', { defaultValue: '待定' });
   };
 
   if (loading) {
     return (
       <div style={{ padding: "24px", textAlign: "center" }}>
         <Spin size="large" />
-        <div style={{ marginTop: 16 }}>載入比賽詳情中...</div>
+        <div style={{ marginTop: 16 }}>{t('messages.loadingMatches')}</div>
       </div>
     );
   }
@@ -288,22 +293,22 @@ const MatchDetail = () => {
   if (!matchData) {
     return (
       <div style={{ padding: "24px", textAlign: "center" }}>
-        <Title level={3}>比賽不存在</Title>
-        <Button onClick={handleBack}>返回比賽列表</Button>
+        <Title level={3}>{t('messages.matchNotFound', { defaultValue: '比賽不存在' })}</Title>
+        <Button onClick={handleBack}>{t('actions.backToMatchList', { defaultValue: '返回比賽列表' })}</Button>
       </div>
     );
   }
 
   const eventsColumns = [
     {
-      title: "時間",
+      title: t('match.time'),
       dataIndex: "event_time",
       key: "event_time",
       width: 80,
       render: (time) => <Text code>{time}</Text>,
     },
     {
-      title: "事件",
+      title: t('events.event', { defaultValue: '事件' }),
       dataIndex: "event_type",
       key: "event_type",
       width: 100,
@@ -315,21 +320,21 @@ const MatchDetail = () => {
       ),
     },
     {
-      title: "隊伍",
+      title: t('match.teams'),
       dataIndex: "team_name",
       key: "team_name",
       width: 150,
       render: (teamName) => getDisplayTeamName(teamName),
     },
     {
-      title: "球員",
+      title: t('common:athlete', { defaultValue: '球員' }),
       dataIndex: "athlete_name",
       key: "athlete_name",
       width: 120,
       render: (name) => name || "-",
     },
     {
-      title: "描述",
+      title: t('common:description', { defaultValue: '描述' }),
       dataIndex: "description",
       key: "description",
       render: (desc) => desc || "-",
@@ -343,10 +348,10 @@ const MatchDetail = () => {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
             <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
-              返回比賽列表
+              {t('actions.backToMatchList', { defaultValue: '返回比賽列表' })}
             </Button>
             <Title level={2} style={{ margin: 0 }}>
-              比賽詳情
+              {t('match.detail')}
             </Title>
           </div>
 
@@ -357,23 +362,23 @@ const MatchDetail = () => {
                   icon={<EditOutlined />}
                   onClick={handleEdit}
                   disabled={!matchData.team1_name || !matchData.team2_name}
-                  title={!matchData.team1_name || !matchData.team2_name ? "比賽隊伍尚未確定，無法編輯比賽" : "編輯比賽"}
+                  title={!matchData.team1_name || !matchData.team2_name ? t('messages.teamsNotDetermined') : t('actions.edit')}
                 >
-                  編輯比賽
+                  {t('actions.edit')}
                 </Button>
                 <Button
                   type="primary"
                   icon={<PlayCircleOutlined />}
                   onClick={handleStartMatch}
                   disabled={!matchData.team1_name || !matchData.team2_name}
-                  title={!matchData.team1_name || !matchData.team2_name ? "比賽隊伍尚未確定，無法開始比賽" : "開始比賽"}
+                  title={!matchData.team1_name || !matchData.team2_name ? t('messages.teamsNotDetermined') : t('actions.start')}
                 >
-                  開始比賽
+                  {t('actions.start')}
                 </Button>
               </>
             )}
             <Button danger icon={<DeleteOutlined />} onClick={handleDeleteMatch}>
-              刪除比賽
+              {t('actions.delete')}
             </Button>
             {matchData.match_status === "postponed" && (
               <>
@@ -382,11 +387,11 @@ const MatchDetail = () => {
                   onClick={handleEdit}
                   disabled={!matchData.team1_name || !matchData.team2_name}
                   title={
-                    !matchData.team1_name || !matchData.team2_name ? "比賽隊伍尚未確定，無法編輯比賽" : "編輯延期比賽"
+                    !matchData.team1_name || !matchData.team2_name ? t('messages.teamsNotDetermined') : t('actions.editPostponed')
                   }
                   style={{ color: "#fa8c16", borderColor: "#fa8c16" }}
                 >
-                  編輯比賽
+                  {t('actions.edit')}
                 </Button>
                 <Button
                   type="primary"
@@ -394,11 +399,11 @@ const MatchDetail = () => {
                   onClick={handleStartMatch}
                   disabled={!matchData.team1_name || !matchData.team2_name}
                   title={
-                    !matchData.team1_name || !matchData.team2_name ? "比賽隊伍尚未確定，無法開始比賽" : "開始延期的比賽"
+                    !matchData.team1_name || !matchData.team2_name ? t('messages.teamsNotDetermined') : t('actions.startPostponed')
                   }
                   style={{ backgroundColor: "#fa8c16" }}
                 >
-                  開始比賽
+                  {t('actions.start')}
                 </Button>
               </>
             )}
@@ -409,7 +414,7 @@ const MatchDetail = () => {
                 onClick={handleStartMatch}
                 style={{ backgroundColor: "#52c41a" }}
               >
-                即時比賽
+                {t('match.live')}
               </Button>
             )}
             {matchData.match_status === "completed" && (
@@ -418,7 +423,7 @@ const MatchDetail = () => {
                 icon={<EditOutlined />}
                 onClick={() => navigate(`/tournaments/${tournamentId}/matches/${matchId}/result-edit`)}
               >
-                編輯結果
+                {t('actions.editResult', { defaultValue: '編輯結果' })}
               </Button>
             )}
           </Space>
@@ -448,7 +453,7 @@ const MatchDetail = () => {
                   </Tag>
                   {matchData.group_name && (
                     <Tag color="blue" style={{ fontSize: "14px", padding: "4px 12px", marginLeft: 8 }}>
-                      小組 {getDisplayGroupName(matchData.group_name)}
+                      {t('match.group')} {getDisplayGroupName(matchData.group_name)}
                     </Tag>
                   )}
                 </div>
@@ -458,17 +463,17 @@ const MatchDetail = () => {
             <Col xs={24} lg={12}>
               <Row gutter={16}>
                 <Col span={12}>
-                  <Statistic title={`${getTeamDisplayName("team1")} 犯規`} value={matchData.team1_fouls} prefix="🟨" />
+                  <Statistic title={`${getTeamDisplayName("team1")} ${t('statistics.fouls')}`} value={matchData.team1_fouls} prefix="🟨" />
                 </Col>
                 <Col span={12}>
-                  <Statistic title={`${getTeamDisplayName("team2")} 犯規`} value={matchData.team2_fouls} prefix="🟨" />
+                  <Statistic title={`${getTeamDisplayName("team2")} ${t('statistics.fouls')}`} value={matchData.team2_fouls} prefix="🟨" />
                 </Col>
               </Row>
               {matchData.winner_name && (
                 <div style={{ marginTop: 16, textAlign: "center" }}>
                   <TrophyOutlined style={{ color: "#faad14", fontSize: "20px", marginRight: 8 }} />
                   <Text strong style={{ fontSize: "16px" }}>
-                    獲勝者：{getDisplayTeamName(matchData.winner_name)}
+                    {t('match.winner')}：{getDisplayTeamName(matchData.winner_name)}
                   </Text>
                 </div>
               )}
@@ -477,43 +482,43 @@ const MatchDetail = () => {
         </Card>
 
         {/* 比賽詳細信息 */}
-        <Card title="比賽信息" extra={<CalendarOutlined />}>
+        <Card title={t('match.detail')} extra={<CalendarOutlined />}>
           <Descriptions bordered column={2}>
-            <Descriptions.Item label="比賽編號">{matchData.match_number}</Descriptions.Item>
-            <Descriptions.Item label="比賽類型">
+            <Descriptions.Item label={t('match.number')}>{matchData.match_number}</Descriptions.Item>
+            <Descriptions.Item label={t('match.type')}>
               <Tag color="cyan">{getMatchTypeText(matchData)}</Tag>
             </Descriptions.Item>
-            <Descriptions.Item label="比賽時間">
+            <Descriptions.Item label={t('match.time')}>
               {moment(matchData.match_date).format("YYYY-MM-DD HH:mm")}
             </Descriptions.Item>
-            <Descriptions.Item label="比賽時長">{formatMatchDuration(matchData.match_time)}</Descriptions.Item>
+            <Descriptions.Item label={t('match.duration')}>{formatMatchDuration(matchData.match_time)}</Descriptions.Item>
             {matchData.tournament_stage && (
-              <Descriptions.Item label="錦標賽階段" span={2}>
+              <Descriptions.Item label={t('match.stage')} span={2}>
                 {matchData.tournament_stage}
               </Descriptions.Item>
             )}
             {matchData.start_time && (
-              <Descriptions.Item label="開始時間">
+              <Descriptions.Item label={t('common:time.startTime', { defaultValue: '開始時間' })}>
                 {moment(matchData.start_time).format("YYYY-MM-DD HH:mm:ss")}
               </Descriptions.Item>
             )}
             {matchData.end_time && (
-              <Descriptions.Item label="結束時間">
+              <Descriptions.Item label={t('common:time.endTime', { defaultValue: '結束時間' })}>
                 {moment(matchData.end_time).format("YYYY-MM-DD HH:mm:ss")}
               </Descriptions.Item>
             )}
             {matchData.overtime_time && (
-              <Descriptions.Item label="延長賽時間">{matchData.overtime_time} 分鐘</Descriptions.Item>
+              <Descriptions.Item label={t('match.overtime')}>{matchData.overtime_time} {t('common:time.minutes', { defaultValue: '分鐘' })}</Descriptions.Item>
             )}
             {matchData.referee_decision && (
-              <Descriptions.Item label="裁判決定" span={2}>
-                <Tag color="red">是</Tag>
+              <Descriptions.Item label={t('match.referee')} span={2}>
+                <Tag color="red">{t('common:yes', { defaultValue: '是' })}</Tag>
               </Descriptions.Item>
             )}
-            <Descriptions.Item label="創建時間">
+            <Descriptions.Item label={t('common:time.createdAt', { defaultValue: '創建時間' })}>
               {moment(matchData.created_at).format("YYYY-MM-DD HH:mm:ss")}
             </Descriptions.Item>
-            <Descriptions.Item label="更新時間">
+            <Descriptions.Item label={t('common:time.updatedAt', { defaultValue: '更新時間' })}>
               {moment(matchData.updated_at).format("YYYY-MM-DD HH:mm:ss")}
             </Descriptions.Item>
           </Descriptions>
@@ -521,17 +526,17 @@ const MatchDetail = () => {
 
         {/* 比賽事件 */}
         {events.length > 0 && (
-          <Card title="比賽事件" extra={<TeamOutlined />}>
+          <Card title={t('events.matchEvents', { defaultValue: '比賽事件' })} extra={<TeamOutlined />}>
             <Table columns={eventsColumns} dataSource={events} rowKey="event_id" pagination={false} size="small" />
           </Card>
         )}
 
         {/* 如果沒有事件，顯示提示 */}
         {events.length === 0 && matchData.match_status !== "pending" && (
-          <Card title="比賽事件">
+          <Card title={t('events.matchEvents', { defaultValue: '比賽事件' })}>
             <div style={{ textAlign: "center", padding: "40px", color: "#999" }}>
               <TeamOutlined style={{ fontSize: "48px", marginBottom: 16 }} />
-              <div>暫無比賽事件記錄</div>
+              <div>{t('events.noEvents', { defaultValue: '暫無比賽事件記錄' })}</div>
             </div>
           </Card>
         )}

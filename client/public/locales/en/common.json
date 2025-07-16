@@ -123,6 +123,10 @@
   },
   "time": {
     "minutes": "minutes",
-    "seconds": "seconds"
+    "seconds": "seconds",
+    "startTime": "Start Time",
+    "endTime": "End Time",
+    "createdAt": "Created At",
+    "updatedAt": "Updated At"
   }
 }
