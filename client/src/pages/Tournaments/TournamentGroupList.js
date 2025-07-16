@@ -64,7 +64,7 @@ const TournamentGroupList = () => {
             group_id: group.group_id,
             group_name: group.group_name?.includes("_") ? group.group_name.split("_")[0] : group.group_name, // Show only letter part
             internal_name: group.group_name, // Keep internal name for reference
-            max_teams: group.max_teams,
+            max_teams: group.max_teams || 4, // Default to 4 if not provided
             current_teams: groupStandings.length,
             teams: groupStandings,
             team_count: group.team_count || 0, // Add team count from API
@@ -245,9 +245,10 @@ const TournamentGroupList = () => {
                   <div>
                     <Text type="secondary">{t('group:list.teamCompletion')}</Text>
                     <Progress
-                      percent={(group.current_teams / group.max_teams) * 100}
+                      percent={group.max_teams > 0 ? Math.round((group.current_teams / group.max_teams) * 100) : 0}
                       size="small"
                       status={group.current_teams === group.max_teams ? "success" : "active"}
+                      format={(percent) => `${group.current_teams || 0}/${group.max_teams || 4}`}
                     />
                   </div>
 
