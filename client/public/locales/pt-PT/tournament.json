@@ -1,0 +1,343 @@
+{
+  "tournament": "Tournament",
+  "tournament": {
+    "name": "Tournament Name",
+    "overview": "Tournament Overview",
+    "management": "Tournament Management",
+    "create": "Create Tournament",
+    "edit": "Edit Tournament",
+    "delete": "Delete Tournament",
+    "status": "Tournament Status",
+    "type": "Tournament Type",
+    "description": "Tournament Description",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "location": "Venue",
+    "organizer": "Organizer",
+    "maxTeams": "Maximum Teams",
+    "currentTeams": "Current Teams",
+    "registrationDeadline": "Registration Deadline",
+    "rules": "Tournament Rules",
+    "prizes": "Prize Setup",
+    "format": "Tournament Format",
+    "progress": "Tournament Progress",
+    "groupStageProgress": "Group Stage Progress",
+    "knockoutProgress": "Knockout Progress",
+    "overallProgress": "Overall Progress"
+  },
+  "types": {
+    "groupStage": "Group Stage",
+    "knockout": "Knockout",
+    "mixed": "Mixed Format",
+    "roundRobin": "Round Robin",
+    "singleElimination": "Single Elimination",
+    "doubleElimination": "Double Elimination"
+  },
+  "match": {
+    "groupStage": "Group Stage",
+    "knockout": "Knockout",
+    "mixed": "Mixed Format (Group Stage + Knockout)",
+    "allMatches": "All Matches",
+    "thisTournament": "This Tournament"
+  },
+  "knockout": {
+    "round32": "Round of 32",
+    "round16": "Round of 16",
+    "quarter": "Quarterfinals",
+    "semi": "Semifinals",
+    "third": "Third Place",
+    "final": "Final",
+    "pureKnockout": "Pure Knockout",
+    "mixedDescription": "Select top N teams from group stage overall ranking for knockout",
+    "knockoutDescription": "Randomly select teams for knockout",
+    "groupNotSupported": "Group stage type does not support knockout generation",
+    "noBracketGenerated": "Knockout bracket not yet generated",
+    "useGenerationFunction": "Please use the generation function above to create knockout structure",
+    "bracketTitle": "Knockout Bracket",
+    "deleteAllKnockout": "Delete All Knockout",
+    "roundNumber": "Round {{number}}",
+    "clickToViewDetails": "Click to view match details",
+    "timeTBD": "Time TBD",
+    "winner": "Winner",
+    "thirdPlace": "Third Place",
+    "generateTitle": "Generate Knockout",
+    "teamCount": "Number of Teams",
+    "selectTeamCount": "Please select number of teams",
+    "powerOfTwo": "Must be power of 2",
+    "available": "Available",
+    "matchDate": "Match Date",
+    "selectMatchDate": "Please select match date",
+    "startTime": "Start Time",
+    "selectStartTime": "Please select start time",
+    "matchDurationMinutes": "Match Duration (Minutes)",
+    "matchDurationSeconds": "Match Duration (Seconds)",
+    "enterMinutes": "Please enter minutes",
+    "enterSeconds": "Please enter seconds",
+    "minutes": "minutes",
+    "seconds": "seconds",
+    "intervalMinutes": "Match Interval (Minutes)",
+    "intervalSeconds": "Match Interval (Seconds)",
+    "enterIntervalMinutes": "Please enter interval minutes",
+    "enterIntervalSeconds": "Please enter interval seconds",
+    "intervalDescription": "Match interval: Time between matches for preparation and cleanup",
+    "includeThirdPlace": "Include Third Place Match",
+    "thirdPlaceDescription": "Check this option to arrange a third place match between semi-final losers",
+    "generateBracket": "Generate Knockout Bracket"
+  },
+  "messages": {
+    "noTournaments": "No tournament data available",
+    "createFirstTournament": "Click the 'Add Tournament' button above to create your first tournament",
+    "loadingTournaments": "Loading tournament data...",
+    "noActiveTournament": "No active tournament to display",
+    "tournamentLoadFailed": "Failed to load tournament data",
+    "tournamentCreated": "Tournament created successfully",
+    "tournamentUpdated": "Tournament updated successfully",
+    "tournamentDeleted": "Tournament deleted successfully",
+    "tournamentActivated": "Tournament activated successfully",
+    "tournamentDeactivated": "Tournament deactivated successfully",
+    "statusUpdateSuccess": "Tournament status updated successfully",
+    "deleteConfirmation": "Are you sure you want to delete this tournament?",
+    "deleteWarning": "This action cannot be undone. Related match data will also be deleted.",
+    "activateTooltip": "Activate tournament (set as public display)",
+    "deactivateTooltip": "Deactivate tournament (remove from public display)",
+    "reactivateTooltip": "Reactivate tournament",
+    "knockoutGenerated": "Successfully generated knockout for {{teams}} teams, {{rounds}} rounds with {{matches}} matches",
+    "knockoutGenerationFailed": "Failed to generate knockout",
+    "confirmDeleteAllKnockout": "Confirm Delete All Knockout",
+    "deleteAllKnockoutWarning": "Are you sure you want to delete all knockout matches? This will clear the entire knockout bracket and cannot be undone.",
+    "allKnockoutDeleted": "All knockout matches deleted",
+    "knockoutDeletionFailed": "Failed to delete knockout matches"
+  },
+  "placeholders": {
+    "searchTournament": "Search tournament name",
+    "enterTournamentName": "Enter tournament name",
+    "enterDescription": "Enter tournament description",
+    "selectType": "Select tournament type",
+    "selectLocation": "Select venue"
+  },
+  "navigation": {
+    "overview": "Tournament Overview",
+    "teamManagement": "Team Management",
+    "groupManagement": "Group Management",
+    "matchManagement": "Match Management",
+    "athleteManagement": "Athlete Management",
+    "leaderboard": "Leaderboard",
+    "groupLeaderboard": "Group Leaderboard",
+    "overallLeaderboard": "Overall Leaderboard",
+    "statisticsData": "Statistics Data (In Development)",
+    "bestTeamsStats": "Best Teams Statistics",
+    "knockoutBracket": "Knockout Bracket",
+    "management": "Management",
+    "backToTournamentDetail": "Back to Tournament Detail"
+  },
+  "list": {
+    "title": "Tournament Management",
+    "addTournament": "Add Tournament",
+    "searchPlaceholder": "Search tournament name",
+    "selectStatus": "Select Status",
+    "selectType": "Select Type",
+    "noData": "No tournament data available",
+    "noDataDescription": "Click the 'Add Tournament' button above to create your first tournament",
+    "columns": {
+      "name": "Tournament Name",
+      "type": "Type",
+      "status": "Status",
+      "progress": "Match Progress",
+      "dates": "Dates",
+      "createdAt": "Created At",
+      "actions": "Actions"
+    },
+    "dates": {
+      "start": "Start",
+      "end": "End"
+    },
+    "status": {
+      "pending": "Pending",
+      "active": "Active",
+      "completed": "Completed",
+      "publicDisplay": "(Public)"
+    },
+    "actions": {
+      "viewDetails": "View Details",
+      "viewBracket": "View Knockout Bracket",
+      "edit": "Edit",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "reactivate": "Reactivate",
+      "delete": "Delete"
+    },
+    "tooltips": {
+      "activateTournament": "Activate tournament (set as public display)",
+      "deactivateTournament": "Deactivate tournament (remove from public display)",
+      "reactivateTournament": "Reactivate tournament"
+    },
+    "filters": {
+      "statusPending": "Pending",
+      "statusActive": "Active",
+      "statusCompleted": "Completed"
+    }
+  },
+  "create": {
+    "title": "Add Tournament",
+    "backToList": "Back to List",
+    "basicInfo": "Basic Information",
+    "tournamentName": "Tournament Name",
+    "tournamentType": "Tournament Type",
+    "competitionDates": "Competition Dates (Optional)",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "createTournament": "Create Tournament",
+    "cancel": "Cancel",
+    "formatDescription": "Format Description",
+    "features": "Features",
+    "selectTypePrompt": "Please select a tournament type to view detailed description",
+    "creationTips": "Creation Tips",
+    "validation": {
+      "nameRequired": "Please enter tournament name",
+      "nameMinLength": "Tournament name must be at least 2 characters",
+      "nameMaxLength": "Tournament name cannot exceed 100 characters",
+      "typeRequired": "Please select tournament type",
+      "namePlaceholder": "Please enter tournament name, e.g.: 2024 Spring Drone Soccer Championship"
+    },
+    "typeDescriptions": {
+      "group": {
+        "title": "Group Stage Format",
+        "description": "Teams are divided into groups for round-robin matches, with top teams from each group advancing. Suitable for tournaments with many participating teams.",
+        "features": ["Group round-robin", "Points ranking", "Group qualification"]
+      },
+      "knockout": {
+        "title": "Knockout Format",
+        "description": "Single elimination format where losers are directly eliminated. Fast-paced matches, suitable for determining the final champion.",
+        "features": ["Single elimination", "Winner advances", "Quick championship decision"]
+      },
+      "mixed": {
+        "title": "Mixed Format",
+        "description": "Combines group stage and knockout, first conducting group matches to select advancing teams, then knockout rounds to determine the champion.",
+        "features": ["Group stage + Knockout", "Two-stage competition", "Most comprehensive format"]
+      }
+    },
+    "tips": {
+      "title": "Creation Tips",
+      "addTeams": "Teams can be added after tournament creation",
+      "groupStage": "Group stage requires creating groups and assigning teams first",
+      "knockout": "Knockout format can directly generate bracket charts",
+      "mixed": "Mixed format combines advantages of both formats"
+    }
+  },
+  "detail": {
+    "loading": "Loading...",
+    "notFound": "Tournament not found",
+    "editTournament": "Edit Tournament",
+    "tournamentSettings": "Tournament Settings",
+    "startDate": "Start Date",
+    "endDate": "End Date",
+    "createdAt": "Created At",
+    "lastUpdated": "Last Updated",
+    "notSet": "Not Set",
+    "statistics": "Tournament Statistics",
+    "totalTeams": "Total Teams",
+    "totalGroups": "Groups",
+    "totalMatches": "Total Matches",
+    "totalAthletes": "Athletes",
+    "completedMatches": "Completed Matches",
+    "pendingMatches": "Pending Matches",
+    "managementFunctions": "Management Functions",
+    "recentMatches": "Recent Matches",
+    "viewAllMatches": "View All Matches",
+    "viewDetails": "View Details",
+    "noMatchRecords": "No match records",
+    "score": "Score",
+    "management": {
+      "teams": {
+        "title": "Team Management",
+        "description": "Manage tournament teams, add and edit team information",
+        "viewTeams": "View Teams",
+        "addTeam": "Add Team"
+      },
+      "groups": {
+        "title": "Group Management", 
+        "description": "Manage tournament groups, grouping and group settings",
+        "viewGroups": "View Groups",
+        "addGroup": "Add Group"
+      },
+      "matches": {
+        "title": "Match Management",
+        "description": "Manage match schedules, create and edit matches",
+        "viewMatches": "View Matches",
+        "addMatch": "Add Match"
+      },
+      "athletes": {
+        "title": "Athlete Management",
+        "description": "Manage athlete information and team members",
+        "viewAthletes": "View Athletes",
+        "addAthlete": "Add Athlete"
+      },
+      "leaderboard": {
+        "title": "Leaderboard",
+        "description": "View match leaderboards and statistics",
+        "groupLeaderboard": "Group Leaderboard",
+        "overallLeaderboard": "Overall Leaderboard"
+      }
+    },
+    "status": {
+      "pending": "Pending",
+      "active": "Active", 
+      "completed": "Completed",
+      "overtime": "Overtime"
+    }
+  },
+  "edit": {
+    "title": "Edit Tournament",
+    "subtitle": "Modify tournament basic information",
+    "backToDetail": "Back to Tournament Detail",
+    "loading": "Loading tournament information...",
+    "notFound": "Tournament does not exist",
+    "cannotEdit": "Cannot Edit Tournament",
+    "cannotEditDescription": "Only tournaments in pending status can be edited. Started or completed tournaments cannot be modified.",
+    "tournamentInfo": "Tournament Information",
+    "tournamentStatus": "Tournament Status",
+    "currentStatus": "Current Status",
+    "createdAt": "Created At",
+    "lastUpdated": "Last Updated",
+    "formatDescription": "Format Description",
+    "features": "Features",
+    "saveChanges": "Save Changes",
+    "cancel": "Cancel",
+    "typeChange": "Tournament Type Change",
+    "validation": {
+      "nameRequired": "Please enter tournament name",
+      "nameMinLength": "Tournament name must be at least 2 characters",
+      "nameMaxLength": "Tournament name cannot exceed 100 characters",
+      "typeRequired": "Please select tournament type",
+      "startDateRequired": "Please select start date",
+      "endDateRequired": "Please select end date",
+      "endDateAfterStart": "End date cannot be earlier than start date",
+      "namePlaceholder": "Please enter tournament name",
+      "typePlaceholder": "Please select tournament type",
+      "startDatePlaceholder": "Select start date",
+      "endDatePlaceholder": "Select end date"
+    },
+    "typeChangeMessages": {
+      "groupToMixed": "Change allowed: Group stage can be changed to mixed format anytime",
+      "groupToMixedDesc": "Existing group and match data will be retained, you can add knockout stage later.",
+      "mixedToGroupBlocked": "Cannot change: Knockout matches exist",
+      "mixedToGroupBlockedDesc": "Found {{count}} knockout matches. Please delete all knockout matches before changing to group stage format.",
+      "mixedToGroupAllowed": "Change allowed: Mixed format to group stage format",
+      "mixedToGroupAllowedDesc": "No knockout matches found, can safely change to group stage format.",
+      "hasRelatedData": "Cannot change: Related data exists",
+      "hasRelatedDataDesc": "Tournament has related data (groups, teams or matches). Please clear all related data first.",
+      "noRelatedData": "Change allowed: No related data",
+      "noRelatedDataDesc": "Tournament has no related data, type can be changed safely.",
+      "groupMatches": "Group stage matches: {{count}} matches",
+      "knockoutMatches": "Knockout matches: {{count}} matches"
+    },
+    "typeOptions": {
+      "groupTitle": "Group Stage Format",
+      "groupDesc": "Teams divided into groups for round-robin",
+      "knockoutTitle": "Knockout Format", 
+      "knockoutDesc": "Single elimination, quick decision",
+      "mixedTitle": "Mixed Format",
+      "mixedDesc": "Group stage + Knockout combination"
+    }
+  }
+}

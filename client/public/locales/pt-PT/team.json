@@ -1,0 +1,77 @@
+{
+  "team": {
+    "name": "Nome da Equipa",
+    "list": "Lista de Equipas",
+    "detail": "Detalhes da Equipa",
+    "create": "Criar Equipa",
+    "edit": "Editar Equipa",
+    "delete": "Eliminar Equipa",
+    "management": "Gestão de Equipas",
+    "captain": "Capitão",
+    "members": "Membros",
+    "memberCount": "Número de Membros",
+    "description": "Descrição da Equipa",
+    "contactInfo": "Informação de Contacto",
+    "registrationDate": "Data de Registo",
+    "status": "Estado da Equipa",
+    "group": "Grupo",
+    "wins": "Vitórias",
+    "losses": "Derrotas",
+    "draws": "Empates",
+    "points": "Pontos",
+    "goalsFor": "Golos Marcados",
+    "goalsAgainst": "Golos Sofridos",
+    "goalDifference": "Diferença de Golos",
+    "matchesPlayed": "Jogos Disputados",
+    "winRate": "Taxa de Vitórias",
+    "ranking": "Classificação",
+    "totalTeams": "Total de Equipas"
+  },
+  "positions": {
+    "attacker": "Atacante",
+    "defender": "Defesa",
+    "goalkeeper": "Guarda-redes",
+    "midfielder": "Médio"
+  },
+  "structure": {
+    "formation": "Formação",
+    "attackers": "Atacantes",
+    "defenders": "Defesas",
+    "standardFormation": "Estrutura 1 Atacante + 3-5 Defesas"
+  },
+  "messages": {
+    "noTeams": "Sem equipas disponíveis",
+    "noTeamData": "Sem dados de equipas disponíveis",
+    "loadingTeams": "A carregar dados das equipas...",
+    "teamCreated": "Equipa criada com sucesso",
+    "teamUpdated": "Equipa atualizada com sucesso",
+    "teamDeleted": "Equipa eliminada com sucesso",
+    "deleteConfirmation": "Tem a certeza que quer eliminar esta equipa?",
+    "deleteWarning": "Esta ação não pode ser desfeita",
+    "noMatchHistory": "Sem histórico de jogos disponível",
+    "unknownTeam": "Equipa Desconhecida",
+    "viewAllTeamsInfo": "Ver informação detalhada de todas as equipas participantes",
+    "teamStatistics": "Estatísticas da Equipa",
+    "teamsCount": "equipas",
+    "noGroupAssigned": "Sem Grupo",
+    "loadingTeamDetail": "A carregar detalhes da equipa...",
+    "teamNotFound": "Equipa Não Encontrada",
+    "teamNotFoundDesc": "A informação da equipa especificada não foi encontrada"
+  },
+  "labels": {
+    "teamColor": "Cor da Equipa",
+    "people": "pessoas",
+    "createdTime": "Hora de Criação",
+    "lastUpdated": "Última Atualização",
+    "goalsForShort": "Marcados",
+    "goalsAgainstShort": "Sofridos",
+    "goalDifferenceShort": "Dif"
+  },
+  "placeholders": {
+    "searchTeam": "Pesquisar nome da equipa",
+    "enterTeamName": "Inserir nome da equipa",
+    "enterDescription": "Inserir descrição da equipa",
+    "selectCaptain": "Selecionar capitão",
+    "enterContactInfo": "Inserir informação de contacto"
+  }
+}

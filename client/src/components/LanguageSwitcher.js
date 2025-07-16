@@ -20,6 +20,10 @@ const LanguageSwitcher = ({ size = 'default', style = {} }) => {
     {
       code: 'en',
       name: 'English'
+    },
+    {
+      code: 'pt-PT',
+      name: 'Português'
     }
   ];
 
