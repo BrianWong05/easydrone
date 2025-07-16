@@ -10,7 +10,13 @@
     "ranking": "排名統計",
     "bestTeams": "最佳球隊統計",
     "topPerformers": "頂級表現者",
-    "systemStatus": "系統狀態"
+    "systemStatus": "系統狀態",
+    "bestAttackTeam": "最佳進攻球隊",
+    "bestDefenseTeam": "最佳防守球隊",
+    "bestAttackTeamsRanking": "最佳進攻球隊排行榜",
+    "bestDefenseTeamsRanking": "最佳防守球隊排行榜",
+    "explanation": "統計說明",
+    "explanationText": "最佳進攻球隊以總進球數排名，最佳防守球隊以總失球數排名（越少越好）"
   },
   "metrics": {
     "totalTeams": "隊伍總數",
@@ -23,7 +29,15 @@
     "winRate": "勝率",
     "drawRate": "平局率",
     "lossRate": "敗率",
-    "averagePoints": "場均積分"
+    "averagePoints": "場均積分",
+    "analyzedMatches": "分析比賽數",
+    "analyzedTeams": "分析隊伍數",
+    "totalGoalsFor": "總進球",
+    "totalGoalsAgainst": "總失球",
+    "averageGoalsFor": "平均進球",
+    "averageGoalsAgainst": "平均失球",
+    "goals": "球",
+    "conceded": "失"
   },
   "rankings": {
     "position": "排名",
@@ -60,7 +74,18 @@
     "refreshData": "刷新數據",
     "exportData": "導出數據",
     "noGroup": "無小組",
-    "rankingWillShow": "當隊伍完成比賽後，排名將自動顯示"
+    "rankingWillShow": "當隊伍完成比賽後，排名將自動顯示",
+    "statsUpdated": "統計數據已更新並發布到公開頁面 (基於 {{basis}})",
+    "selectedMatches": "{{count}} 場選定比賽",
+    "filterCriteria": "篩選條件",
+    "noMatchesFound": "暫無符合條件的比賽",
+    "totalCompletedMatches": "共 {{count}} 場已完成的比賽可供選擇",
+    "clickCalculate": "請點擊「計算統計」開始分析",
+    "selectMatchTypeFirst": "請先選擇比賽類型",
+    "analyzeDescription": "分析 {{tournament}} 中的{{matchType}}最佳進攻和防守球隊。",
+    "selectMatchTypeInstructions": "請先選擇要分析的比賽類型（小組賽、淘汰賽或混合賽制），然後設定其他篩選條件。",
+    "noGroups": "此錦標賽暫無小組",
+    "noKnockoutRounds": "此錦標賽暫無淘汰賽"
   },
   "pagination": {
     "rankingTotal": "第 {{start}}-{{end}} 名，共 {{total}} 支隊伍"
@@ -74,5 +99,22 @@
     "sortingDescription": "先顯示各小組第1名，再顯示各小組第2名，以此類推",
     "tagDescription": "標籤說明",
     "tagExplanation": "表示該隊伍在其小組內的排名"
+  },
+  "filters": {
+    "title": "篩選條件",
+    "matchType": "比賽類型",
+    "selectMatchType": "請先選擇比賽類型",
+    "selected": "已選",
+    "selectSpecificMatches": "選擇特定比賽",
+    "knockoutRounds": "淘汰賽輪次",
+    "dateRange": "日期範圍",
+    "specificMatches": "特定比賽",
+    "matches": "場比賽",
+    "summary": "篩選條件摘要",
+    "allRounds": "所有輪次",
+    "includeSubsequent": "含後續輪次"
+  },
+  "buttons": {
+    "calculate": "計算統計"
   }
 }

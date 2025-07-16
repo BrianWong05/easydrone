@@ -10,7 +10,13 @@
     "ranking": "Team Rankings",
     "bestTeams": "Best Teams Statistics",
     "topPerformers": "Top Performers",
-    "systemStatus": "System Status"
+    "systemStatus": "System Status",
+    "bestAttackTeam": "Best Attack Team",
+    "bestDefenseTeam": "Best Defense Team",
+    "bestAttackTeamsRanking": "Best Attack Teams Ranking",
+    "bestDefenseTeamsRanking": "Best Defense Teams Ranking",
+    "explanation": "Statistics Explanation",
+    "explanationText": "Best attack teams ranked by total goals scored, best defense teams ranked by total goals conceded (lower is better)"
   },
   "metrics": {
     "totalTeams": "Total Teams",
@@ -23,7 +29,15 @@
     "winRate": "Win Rate",
     "drawRate": "Draw Rate",
     "lossRate": "Loss Rate",
-    "averagePoints": "Avg Points"
+    "averagePoints": "Avg Points",
+    "analyzedMatches": "Analyzed Matches",
+    "analyzedTeams": "Analyzed Teams",
+    "totalGoalsFor": "Total Goals",
+    "totalGoalsAgainst": "Total Goals Against",
+    "averageGoalsFor": "Average Goals",
+    "averageGoalsAgainst": "Average Goals Against",
+    "goals": "goals",
+    "conceded": "conceded"
   },
   "rankings": {
     "position": "Position",
@@ -60,7 +74,18 @@
     "refreshData": "Refresh Data",
     "exportData": "Export Data",
     "noGroup": "No Group",
-    "rankingWillShow": "Rankings will be displayed automatically after teams complete matches"
+    "rankingWillShow": "Rankings will be displayed automatically after teams complete matches",
+    "statsUpdated": "Statistics updated and published to public page (based on {{basis}})",
+    "selectedMatches": "{{count}} selected matches",
+    "filterCriteria": "filter criteria",
+    "noMatchesFound": "No matches found matching criteria",
+    "totalCompletedMatches": "Total {{count}} completed matches available for selection",
+    "clickCalculate": "Click 'Calculate Statistics' to start analysis",
+    "selectMatchTypeFirst": "Please select match type first",
+    "analyzeDescription": "Analyze best attack and defense teams in {{matchType}} of {{tournament}}.",
+    "selectMatchTypeInstructions": "Please first select the match type to analyze (Group Stage, Knockout, or Mixed), then set other filter criteria.",
+    "noGroups": "This tournament has no groups",
+    "noKnockoutRounds": "This tournament has no knockout rounds"
   },
   "pagination": {
     "rankingTotal": "Rank {{start}}-{{end}} of {{total}} teams"
@@ -74,5 +99,22 @@
     "sortingDescription": "Show all group 1st places first, then all group 2nd places, and so on",
     "tagDescription": "Tag Description",
     "tagExplanation": "indicates the team's ranking within their group"
+  },
+  "filters": {
+    "title": "Filter Criteria",
+    "matchType": "Match Type",
+    "selectMatchType": "Please select match type first",
+    "selected": "selected",
+    "selectSpecificMatches": "Select Specific Matches",
+    "knockoutRounds": "Knockout Rounds",
+    "dateRange": "Date Range",
+    "specificMatches": "Specific Matches",
+    "matches": "matches",
+    "summary": "Filter Summary",
+    "allRounds": "All Rounds",
+    "includeSubsequent": "includes subsequent rounds"
+  },
+  "buttons": {
+    "calculate": "Calculate Statistics"
   }
 }

@@ -15,6 +15,7 @@ import {
   Select,
   DatePicker,
   Checkbox,
+  Radio,
   Divider,
   Form,
   Input
@@ -30,6 +31,7 @@ import {
   SearchOutlined
 } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import moment from 'moment';
 
@@ -38,6 +40,7 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 const TournamentBestTeamsStats = () => {
+  const { t } = useTranslation(['stats', 'common', 'tournament']);
   const navigate = useNavigate();
   const { id: tournamentId } = useParams();
   const [loading, setLoading] = useState(false);
@@ -93,7 +96,7 @@ const TournamentBestTeamsStats = () => {
       await fetchAvailableKnockoutRounds();
     } catch (error) {
       console.error('獲取錦標賽數據失敗:', error);
-      message.error('獲取錦標賽數據失敗');
+      message.error(t('messages.loadingStats', { ns: 'stats' }));
       // Set default empty arrays on error
       setGroups([]);
       setAvailableKnockoutRounds([]);
@@ -171,7 +174,7 @@ const TournamentBestTeamsStats = () => {
       }
     } catch (error) {
       console.error('獲取可用比賽失敗:', error);
-      message.error('獲取可用比賽失敗');
+      message.error(t('messages.noData', { ns: 'stats' }));
     } finally {
       setMatchesLoading(false);
     }
@@ -298,11 +301,16 @@ const TournamentBestTeamsStats = () => {
           console.error('Failed to save to public cache:', cacheError);
         }
         
-        message.success(`統計數據已更新並發布到公開頁面 (基於 ${selectedMatches.length > 0 ? selectedMatches.length + ' 場選定比賽' : '篩選條件'})`);
+        message.success(t('messages.statsUpdated', { 
+          ns: 'stats',
+          basis: selectedMatches.length > 0 ? 
+            t('messages.selectedMatches', { ns: 'stats', count: selectedMatches.length }) : 
+            t('messages.filterCriteria', { ns: 'stats' })
+        }));
       }
     } catch (error) {
       console.error('獲取最佳球隊統計失敗:', error);
-      message.error('獲取最佳球隊統計失敗');
+      message.error(t('messages.loadingStats', { ns: 'stats' }));
     } finally {
       setLoading(false);
     }
@@ -354,27 +362,27 @@ const TournamentBestTeamsStats = () => {
 
   // Knockout rounds mapping - including common variations
   const knockoutRounds = [
-    { value: 'round_of_32', label: '32強' },
-    { value: 'round_of_16', label: '16強' },
-    { value: 'quarter_final', label: '八強' },
-    { value: 'quarterfinal', label: '八強' },
-    { value: 'quarter-final', label: '八強' },
-    { value: 'top8', label: '八強' },
-    { value: 'semi_final', label: '四強' },
-    { value: 'semifinal', label: '四強' },
-    { value: 'semi-final', label: '四強' },
-    { value: 'top4', label: '四強' },
-    { value: 'third_place', label: '季軍戰' },
-    { value: 'third-place', label: '季軍戰' },
-    { value: 'bronze', label: '季軍戰' },
-    { value: 'final', label: '決賽' },
-    { value: 'finals', label: '決賽' },
-    { value: 'gold', label: '決賽' }
+    { value: 'round_of_32', label: t('knockout.round32', { ns: 'tournament' }) },
+    { value: 'round_of_16', label: t('knockout.round16', { ns: 'tournament' }) },
+    { value: 'quarter_final', label: t('knockout.quarter', { ns: 'tournament' }) },
+    { value: 'quarterfinal', label: t('knockout.quarter', { ns: 'tournament' }) },
+    { value: 'quarter-final', label: t('knockout.quarter', { ns: 'tournament' }) },
+    { value: 'top8', label: t('knockout.quarter', { ns: 'tournament' }) },
+    { value: 'semi_final', label: t('knockout.semi', { ns: 'tournament' }) },
+    { value: 'semifinal', label: t('knockout.semi', { ns: 'tournament' }) },
+    { value: 'semi-final', label: t('knockout.semi', { ns: 'tournament' }) },
+    { value: 'top4', label: t('knockout.semi', { ns: 'tournament' }) },
+    { value: 'third_place', label: t('knockout.third', { ns: 'tournament' }) },
+    { value: 'third-place', label: t('knockout.third', { ns: 'tournament' }) },
+    { value: 'bronze', label: t('knockout.third', { ns: 'tournament' }) },
+    { value: 'final', label: t('knockout.final', { ns: 'tournament' }) },
+    { value: 'finals', label: t('knockout.final', { ns: 'tournament' }) },
+    { value: 'gold', label: t('knockout.final', { ns: 'tournament' }) }
   ];
 
   const attackTeamsColumns = [
     {
-      title: '排名',
+      title: t('rankings.position', { ns: 'stats' }),
       key: 'rank',
       render: (_, record, index) => (
         <div style={{ textAlign: 'center' }}>
@@ -390,7 +398,7 @@ const TournamentBestTeamsStats = () => {
       width: 80,
     },
     {
-      title: '隊伍',
+      title: t('rankings.team', { ns: 'stats' }),
       key: 'team',
       render: (_, record) => (
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -417,7 +425,7 @@ const TournamentBestTeamsStats = () => {
               {getDisplayTeamName(record.team_name)}
             </div>
             <Text type="secondary" style={{ fontSize: '12px' }}>
-              {record.group_name ? `小組 ${getDisplayGroupName(record.group_name)}` : '無小組'}
+              {record.group_name ? `${t('group.group', { ns: 'group' })} ${getDisplayGroupName(record.group_name)}` : t('messages.noGroup', { ns: 'stats' })}
             </Text>
           </div>
         </div>
@@ -425,14 +433,14 @@ const TournamentBestTeamsStats = () => {
       width: 200,
     },
     {
-      title: '比賽場次',
+      title: t('metrics.matchesPlayed', { ns: 'stats' }),
       dataIndex: 'matches_played',
       key: 'matches_played',
       width: 100,
       align: 'center',
     },
     {
-      title: '總進球',
+      title: t('metrics.totalGoalsFor', { ns: 'stats' }),
       dataIndex: 'goals_for',
       key: 'goals_for',
       width: 100,
@@ -440,7 +448,7 @@ const TournamentBestTeamsStats = () => {
       render: (goals) => <span style={{ fontWeight: 'bold', color: '#52c41a' }}>{goals}</span>
     },
     {
-      title: '平均進球',
+      title: t('metrics.averageGoalsFor', { ns: 'stats' }),
       dataIndex: 'avg_goals_for',
       key: 'avg_goals_for',
       width: 100,
@@ -448,7 +456,7 @@ const TournamentBestTeamsStats = () => {
       render: (avg) => <span style={{ fontWeight: 'bold' }}>{avg}</span>
     },
     {
-      title: '失球',
+      title: t('rankings.goalsAgainst', { ns: 'stats' }),
       dataIndex: 'goals_against',
       key: 'goals_against',
       width: 80,
@@ -458,7 +466,7 @@ const TournamentBestTeamsStats = () => {
 
   const defenseTeamsColumns = [
     {
-      title: '排名',
+      title: t('rankings.position', { ns: 'stats' }),
       key: 'rank',
       render: (_, record, index) => (
         <div style={{ textAlign: 'center' }}>
@@ -474,7 +482,7 @@ const TournamentBestTeamsStats = () => {
       width: 80,
     },
     {
-      title: '隊伍',
+      title: t('rankings.team', { ns: 'stats' }),
       key: 'team',
       render: (_, record) => (
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -501,7 +509,7 @@ const TournamentBestTeamsStats = () => {
               {getDisplayTeamName(record.team_name)}
             </div>
             <Text type="secondary" style={{ fontSize: '12px' }}>
-              {record.group_name ? `小組 ${getDisplayGroupName(record.group_name)}` : '無小組'}
+              {record.group_name ? `${t('group.group', { ns: 'group' })} ${getDisplayGroupName(record.group_name)}` : t('messages.noGroup', { ns: 'stats' })}
             </Text>
           </div>
         </div>
@@ -509,14 +517,14 @@ const TournamentBestTeamsStats = () => {
       width: 200,
     },
     {
-      title: '比賽場次',
+      title: t('metrics.matchesPlayed', { ns: 'stats' }),
       dataIndex: 'matches_played',
       key: 'matches_played',
       width: 100,
       align: 'center',
     },
     {
-      title: '總失球',
+      title: t('metrics.totalGoalsAgainst', { ns: 'stats' }),
       dataIndex: 'goals_against',
       key: 'goals_against',
       width: 100,
@@ -524,7 +532,7 @@ const TournamentBestTeamsStats = () => {
       render: (goals) => <span style={{ fontWeight: 'bold', color: '#ff4d4f' }}>{goals}</span>
     },
     {
-      title: '平均失球',
+      title: t('metrics.averageGoalsAgainst', { ns: 'stats' }),
       dataIndex: 'avg_goals_against',
       key: 'avg_goals_against',
       width: 100,
@@ -532,7 +540,7 @@ const TournamentBestTeamsStats = () => {
       render: (avg) => <span style={{ fontWeight: 'bold' }}>{avg}</span>
     },
     {
-      title: '進球',
+      title: t('rankings.goalsFor', { ns: 'stats' }),
       dataIndex: 'goals_for',
       key: 'goals_for',
       width: 80,
@@ -544,11 +552,11 @@ const TournamentBestTeamsStats = () => {
     <div style={{ padding: '24px' }}>
       <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Title level={2}>
-          <BarChartOutlined /> {tournament?.tournament_name || '錦標賽'} - 最佳球隊統計
+          <BarChartOutlined /> {tournament?.tournament_name || t('tournament.tournament', { ns: 'tournament' })} - {t('stats.bestTeams', { ns: 'stats' })}
         </Title>
         <Space>
           <Button onClick={resetFilters}>
-            重置篩選
+            {t('buttons.reset', { ns: 'common' })}
           </Button>
           <Button 
             type="primary"
@@ -556,20 +564,20 @@ const TournamentBestTeamsStats = () => {
             onClick={fetchBestTeamsStats}
             loading={loading}
           >
-            計算統計
+            {t('buttons.calculate', { ns: 'stats' })}
           </Button>
         </Space>
       </div>
 
       {/* Filters */}
-      <Card title={<><FilterOutlined /> 篩選條件</>} style={{ marginBottom: '24px' }}>
+      <Card title={<><FilterOutlined /> {t('filters.title', { ns: 'stats' })}</>} style={{ marginBottom: '24px' }}>
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={12} md={selectedMatchType === 'knockout' ? 12 : 8}>
             <div>
-              <Text strong>比賽類型 <span style={{ color: '#ff4d4f' }}>*</span></Text>
+              <Text strong>{t('filters.matchType', { ns: 'stats' })} <span style={{ color: '#ff4d4f' }}>*</span></Text>
               <Select
                 style={{ width: '100%', marginTop: '4px' }}
-                placeholder="請先選擇比賽類型"
+                placeholder={t('filters.selectMatchType', { ns: 'stats' })}
                 allowClear
                 value={selectedMatchType}
                 onChange={(value) => {
@@ -583,16 +591,16 @@ const TournamentBestTeamsStats = () => {
                   }
                 }}
               >
-                <Option value="group">小組賽</Option>
-                <Option value="knockout">淘汰賽</Option>
-                <Option value="mixed">混合賽制 (小組賽+淘汰賽)</Option>
+                <Option value="group">{t('match.groupStage', { ns: 'tournament' })}</Option>
+                <Option value="knockout">{t('match.knockout', { ns: 'tournament' })}</Option>
+                <Option value="mixed">{t('match.mixed', { ns: 'tournament' })}</Option>
               </Select>
             </div>
           </Col>
           {(selectedMatchType === 'group' || selectedMatchType === 'mixed') && (
             <Col xs={24} sm={12} md={8}>
               <div>
-                <Text strong>小組 ({selectedGroups.length} 已選)</Text>
+                <Text strong>{t('group.group', { ns: 'group' })} ({selectedGroups.length} {t('filters.selected', { ns: 'stats' })})</Text>
                 <div style={{ 
                   marginTop: '8px', 
                   border: '1px solid #d9d9d9', 
@@ -614,7 +622,7 @@ const TournamentBestTeamsStats = () => {
                         }
                       }}
                     >
-                      <Text strong>全選</Text>
+                      <Text strong>{t('buttons.selectAll', { ns: 'common' })}</Text>
                     </Checkbox>
                   </div>
                   {Array.isArray(groups) && groups.map(group => (
@@ -635,7 +643,7 @@ const TournamentBestTeamsStats = () => {
                   ))}
                   {groups.length === 0 && (
                     <Text type="secondary" style={{ fontSize: '12px' }}>
-                      此錦標賽暫無小組
+                      {t('messages.noGroups', { ns: 'stats' })}
                     </Text>
                   )}
                 </div>
@@ -645,7 +653,7 @@ const TournamentBestTeamsStats = () => {
           {(selectedMatchType === 'knockout' || selectedMatchType === 'mixed') && (
             <Col xs={24} sm={12} md={8}>
               <div>
-                <Text strong>淘汰賽輪次 ({selectedKnockoutRounds.length} 已選)</Text>
+                <Text strong>{t('filters.knockoutRounds', { ns: 'stats' })} ({selectedKnockoutRounds.length} {t('filters.selected', { ns: 'stats' })})</Text>
                 <div style={{ 
                   marginTop: '8px', 
                   border: '1px solid #d9d9d9', 
@@ -655,45 +663,38 @@ const TournamentBestTeamsStats = () => {
                   overflowY: 'auto',
                   backgroundColor: '#fafafa'
                 }}>
-                  <div style={{ marginBottom: '8px' }}>
-                    <Checkbox
-                      indeterminate={selectedKnockoutRounds.length > 0 && selectedKnockoutRounds.length < availableKnockoutRounds.length}
-                      checked={selectedKnockoutRounds.length === availableKnockoutRounds.length && availableKnockoutRounds.length > 0}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setSelectedKnockoutRounds(availableKnockoutRounds.map(r => r.value));
-                        } else {
-                          setSelectedKnockoutRounds([]);
-                        }
-                      }}
-                    >
-                      <Text strong>全選</Text>
-                    </Checkbox>
-                  </div>
-                  {availableKnockoutRounds.length === 0 && (
-                    <Text type="secondary" style={{ fontSize: '12px' }}>
-                      此錦標賽暫無淘汰賽
-                    </Text>
-                  )}
-                  {availableKnockoutRounds.map(round => (
-                    <div key={round.value} style={{ marginBottom: '4px' }}>
-                      <Checkbox
-                        checked={selectedKnockoutRounds.includes(round.value)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedKnockoutRounds([...selectedKnockoutRounds, round.value]);
-                          } else {
-                            setSelectedKnockoutRounds(selectedKnockoutRounds.filter(r => r !== round.value));
-                          }
-                        }}
-                      >
-                        <span>{round.label}</span>
-                        <span style={{ fontSize: '10px', color: '#999', marginLeft: '4px' }}>
-                          (含後續輪次)
-                        </span>
-                      </Checkbox>
+                  <Radio.Group
+                    value={selectedKnockoutRounds.length > 0 ? selectedKnockoutRounds[0] : undefined}
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        setSelectedKnockoutRounds([e.target.value]);
+                      } else {
+                        setSelectedKnockoutRounds([]);
+                      }
+                    }}
+                    style={{ width: '100%' }}
+                  >
+                    <div style={{ marginBottom: '8px' }}>
+                      <Radio value={undefined}>
+                        <Text strong>{t('filters.allRounds', { ns: 'stats' })}</Text>
+                      </Radio>
                     </div>
-                  ))}
+                    {availableKnockoutRounds.length === 0 && (
+                      <Text type="secondary" style={{ fontSize: '12px' }}>
+                        {t('messages.noKnockoutRounds', { ns: 'stats' })}
+                      </Text>
+                    )}
+                    {availableKnockoutRounds.map(round => (
+                      <div key={round.value} style={{ marginBottom: '4px' }}>
+                        <Radio value={round.value}>
+                          <span>{round.label}</span>
+                          <span style={{ fontSize: '10px', color: '#999', marginLeft: '4px' }}>
+                            ({t('filters.includeSubsequent', { ns: 'stats' })})
+                          </span>
+                        </Radio>
+                      </div>
+                    ))}
+                  </Radio.Group>
                 </div>
               </div>
             </Col>
@@ -703,7 +704,7 @@ const TournamentBestTeamsStats = () => {
             selectedMatchType === 'mixed' ? 4 : 8
           }>
             <div>
-              <Text strong>日期範圍</Text>
+              <Text strong>{t('filters.dateRange', { ns: 'stats' })}</Text>
               <RangePicker
                 style={{ width: '100%', marginTop: '4px' }}
                 value={selectedDateRange}
@@ -717,12 +718,12 @@ const TournamentBestTeamsStats = () => {
         
         <div>
           <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Text strong>選擇特定比賽 ({selectedMatches.length}/{availableMatches.length})</Text>
+            <Text strong>{t('filters.selectSpecificMatches', { ns: 'stats' })} ({selectedMatches.length}/{availableMatches.length})</Text>
             <Checkbox
               checked={selectAllMatches}
               onChange={(e) => handleSelectAllMatches(e.target.checked)}
             >
-              全選
+              {t('buttons.selectAll', { ns: 'common' })}
             </Checkbox>
           </div>
           
@@ -739,7 +740,7 @@ const TournamentBestTeamsStats = () => {
             }}>
               {availableMatches.length === 0 && (
                 <Text type="secondary" style={{ fontSize: '12px' }}>
-                  暫無符合條件的比賽
+                  {t('messages.noMatchesFound', { ns: 'stats' })}
                 </Text>
               )}
               {Array.isArray(availableMatches) && availableMatches.map(match => (
@@ -761,7 +762,7 @@ const TournamentBestTeamsStats = () => {
                   >
                     <div style={{ fontSize: '12px' }}>
                       <div style={{ fontWeight: 'bold' }}>
-                        {moment(match.match_date).format('MM/DD HH:mm')} - {match.match_type === 'group' ? '小組賽' : '淘汰賽'}
+                        {moment(match.match_date).format('MM/DD HH:mm')} - {match.match_type === 'group' ? t('match.groupStage', { ns: 'tournament' }) : t('match.knockout', { ns: 'tournament' })}
                         {match.match_number && (
                           <span style={{ marginLeft: '8px', color: '#1890ff' }}>
                             🏟️ {match.match_number}
@@ -792,7 +793,7 @@ const TournamentBestTeamsStats = () => {
           {availableMatches.length > 0 && (
             <div style={{ marginTop: '8px' }}>
               <Text type="secondary" style={{ fontSize: '12px' }}>
-                共 {availableMatches.length} 場已完成的比賽可供選擇
+                {t('messages.totalCompletedMatches', { ns: 'stats', count: availableMatches.length })}
               </Text>
             </div>
           )}
@@ -807,7 +808,7 @@ const TournamentBestTeamsStats = () => {
             <Col xs={24} sm={12} md={6}>
               <Card>
                 <Statistic
-                  title="分析比賽數"
+                  title={t('metrics.analyzedMatches', { ns: 'stats' })}
                   value={bestTeamsData.summary.total_matches_analyzed}
                   prefix={<BarChartOutlined />}
                 />
@@ -816,7 +817,7 @@ const TournamentBestTeamsStats = () => {
             <Col xs={24} sm={12} md={6}>
               <Card>
                 <Statistic
-                  title="分析隊伍數"
+                  title={t('metrics.analyzedTeams', { ns: 'stats' })}
                   value={bestTeamsData.summary.teams_analyzed}
                   prefix={<TrophyOutlined />}
                 />
@@ -825,9 +826,9 @@ const TournamentBestTeamsStats = () => {
             <Col xs={24} sm={12} md={6}>
               <Card style={{ backgroundColor: '#f6ffed' }}>
                 <Statistic
-                  title="最佳進攻球隊"
+                  title={t('stats.bestAttackTeam', { ns: 'stats' })}
                   value={getDisplayTeamName(bestTeamsData.best_attack_team?.team_name)}
-                  suffix={`${bestTeamsData.best_attack_team?.goals_for || 0} 球`}
+                  suffix={`${bestTeamsData.best_attack_team?.goals_for || 0} ${t('metrics.goals', { ns: 'stats' })}`}
                   prefix={<FireOutlined style={{ color: '#52c41a' }} />}
                   valueStyle={{ color: '#52c41a', fontSize: '16px' }}
                 />
@@ -836,9 +837,9 @@ const TournamentBestTeamsStats = () => {
             <Col xs={24} sm={12} md={6}>
               <Card style={{ backgroundColor: '#e6f7ff' }}>
                 <Statistic
-                  title="最佳防守球隊"
+                  title={t('stats.bestDefenseTeam', { ns: 'stats' })}
                   value={getDisplayTeamName(bestTeamsData.best_defense_team?.team_name)}
-                  suffix={`失 ${bestTeamsData.best_defense_team?.goals_against || 0} 球`}
+                  suffix={`${t('metrics.conceded', { ns: 'stats' })} ${bestTeamsData.best_defense_team?.goals_against || 0} ${t('metrics.goals', { ns: 'stats' })}`}
                   prefix={<SafetyOutlined style={{ color: '#1890ff' }} />}
                   valueStyle={{ color: '#1890ff', fontSize: '16px' }}
                 />
@@ -848,7 +849,7 @@ const TournamentBestTeamsStats = () => {
 
           {/* Top Attack Teams */}
           <Card 
-            title={<><FireOutlined style={{ color: '#52c41a' }} /> 最佳進攻球隊排行榜</>} 
+            title={<><FireOutlined style={{ color: '#52c41a' }} /> {t('stats.bestAttackTeamsRanking', { ns: 'stats' })}</>} 
             style={{ marginBottom: '24px' }}
           >
             <Table
@@ -857,13 +858,13 @@ const TournamentBestTeamsStats = () => {
               rowKey="team_id"
               pagination={false}
               size="small"
-              locale={{ emptyText: '暫無數據' }}
+              locale={{ emptyText: t('messages.noData', { ns: 'stats' }) }}
             />
           </Card>
 
           {/* Top Defense Teams */}
           <Card 
-            title={<><SafetyOutlined style={{ color: '#1890ff' }} /> 最佳防守球隊排行榜</>}
+            title={<><SafetyOutlined style={{ color: '#1890ff' }} /> {t('stats.bestDefenseTeamsRanking', { ns: 'stats' })}</>}
             style={{ marginBottom: '24px' }}
           >
             <Table
@@ -872,55 +873,55 @@ const TournamentBestTeamsStats = () => {
               rowKey="team_id"
               pagination={false}
               size="small"
-              locale={{ emptyText: '暫無數據' }}
+              locale={{ emptyText: t('messages.noData', { ns: 'stats' }) }}
             />
           </Card>
 
           {/* Applied Filters Summary */}
-          <Card title="篩選條件摘要" size="small">
+          <Card title={t('filters.summary', { ns: 'stats' })} size="small">
             <div style={{ fontSize: '12px', color: '#666' }}>
-              <p><strong>錦標賽：</strong> {tournament?.tournament_name || '未知'}</p>
+              <p><strong>{t('tournament.tournament', { ns: 'tournament' })}：</strong> {tournament?.tournament_name || t('common.unknown', { ns: 'common' })}</p>
               {bestTeamsData.summary.filters_applied.group_id && (
-                <p><strong>小組：</strong> {
+                <p><strong>{t('group.group', { ns: 'group' })}：</strong> {
                   (() => {
-                    if (!Array.isArray(groups)) return '未知';
+                    if (!Array.isArray(groups)) return t('common.unknown', { ns: 'common' });
                     const groupIds = bestTeamsData.summary.filters_applied.group_id.split(',');
                     const groupNames = groupIds.map(id => {
                       const group = groups.find(g => g.group_id == id);
-                      return group ? getDisplayGroupName(group.group_name) : `未知(${id})`;
+                      return group ? getDisplayGroupName(group.group_name) : `${t('common.unknown', { ns: 'common' })}(${id})`;
                     });
                     return groupNames.join(', ');
                   })()
                 }</p>
               )}
               {bestTeamsData.summary.filters_applied.tournament_stage && (
-                <p><strong>淘汰賽輪次：</strong> {
+                <p><strong>{t('filters.knockoutRounds', { ns: 'stats' })}：</strong> {
                   (() => {
                     const stageIds = bestTeamsData.summary.filters_applied.tournament_stage.split(',');
                     const stageNames = stageIds.map(id => 
                       availableKnockoutRounds.find(r => r.value === id)?.label || 
                       knockoutRounds.find(r => r.value === id)?.label || 
-                      `未知(${id})`
+                      `${t('common.unknown', { ns: 'common' })}(${id})`
                     );
                     return stageNames.join(', ');
                   })()
                 }</p>
               )}
               {bestTeamsData.summary.filters_applied.match_type && (
-                <p><strong>比賽類型：</strong> {
-                  bestTeamsData.summary.filters_applied.match_type === 'group' ? '小組賽' : 
-                  bestTeamsData.summary.filters_applied.match_type === 'knockout' ? '淘汰賽' : 
-                  bestTeamsData.summary.filters_applied.match_type === 'mixed' ? '混合賽制' : 
+                <p><strong>{t('filters.matchType', { ns: 'stats' })}：</strong> {
+                  bestTeamsData.summary.filters_applied.match_type === 'group' ? t('match.groupStage', { ns: 'tournament' }) : 
+                  bestTeamsData.summary.filters_applied.match_type === 'knockout' ? t('match.knockout', { ns: 'tournament' }) : 
+                  bestTeamsData.summary.filters_applied.match_type === 'mixed' ? t('match.mixed', { ns: 'tournament' }) : 
                   bestTeamsData.summary.filters_applied.match_type
                 }</p>
               )}
               {bestTeamsData.summary.filters_applied.date_range && (
-                <p><strong>日期範圍：</strong> {bestTeamsData.summary.filters_applied.date_range}</p>
+                <p><strong>{t('filters.dateRange', { ns: 'stats' })}：</strong> {bestTeamsData.summary.filters_applied.date_range}</p>
               )}
               {bestTeamsData.summary.filters_applied.specific_matches && (
-                <p><strong>特定比賽：</strong> {bestTeamsData.summary.filters_applied.specific_matches} 場比賽</p>
+                <p><strong>{t('filters.specificMatches', { ns: 'stats' })}：</strong> {bestTeamsData.summary.filters_applied.specific_matches} {t('filters.matches', { ns: 'stats' })}</p>
               )}
-              <p><strong>統計說明：</strong> 最佳進攻球隊以總進球數排名，最佳防守球隊以總失球數排名（越少越好）</p>
+              <p><strong>{t('stats.explanation', { ns: 'stats' })}：</strong> {t('stats.explanationText', { ns: 'stats' })}</p>
             </div>
           </Card>
         </>
@@ -929,15 +930,17 @@ const TournamentBestTeamsStats = () => {
       {!bestTeamsData && (
         <Card>
           <Alert
-            message={selectedMatchType ? "請點擊「計算統計」開始分析" : "請先選擇比賽類型"}
+            message={selectedMatchType ? t('messages.clickCalculate', { ns: 'stats' }) : t('messages.selectMatchTypeFirst', { ns: 'stats' })}
             description={
               selectedMatchType 
-                ? `分析 ${tournament?.tournament_name || '此錦標賽'} 中的${
-                    selectedMatchType === 'group' ? '小組賽' : 
-                    selectedMatchType === 'knockout' ? '淘汰賽' : 
-                    '所有比賽'
-                  }最佳進攻和防守球隊。`
-                : `請先選擇要分析的比賽類型（小組賽、淘汰賽或混合賽制），然後設定其他篩選條件。`
+                ? t('messages.analyzeDescription', { 
+                    ns: 'stats',
+                    tournament: tournament?.tournament_name || t('tournament.thisTournament', { ns: 'tournament' }),
+                    matchType: selectedMatchType === 'group' ? t('match.groupStage', { ns: 'tournament' }) : 
+                              selectedMatchType === 'knockout' ? t('match.knockout', { ns: 'tournament' }) : 
+                              t('match.allMatches', { ns: 'tournament' })
+                  })
+                : t('messages.selectMatchTypeInstructions', { ns: 'stats' })
             }
             type={selectedMatchType ? "info" : "warning"}
             showIcon

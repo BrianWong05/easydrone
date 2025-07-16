@@ -47,7 +47,8 @@
     "import": "Import",
     "activate": "Activate",
     "deactivate": "Deactivate",
-    "reactivate": "Reactivate"
+    "reactivate": "Reactivate",
+    "selectAll": "Select All"
   },
   "actions": {
     "confirm": "Confirm",

@@ -33,6 +33,21 @@
     "singleElimination": "單淘汰",
     "doubleElimination": "雙淘汰"
   },
+  "match": {
+    "groupStage": "小組賽",
+    "knockout": "淘汰賽",
+    "mixed": "混合賽制 (小組賽+淘汰賽)",
+    "allMatches": "所有比賽",
+    "thisTournament": "此錦標賽"
+  },
+  "knockout": {
+    "round32": "32強",
+    "round16": "16強",
+    "quarter": "八強",
+    "semi": "四強",
+    "third": "季軍戰",
+    "final": "決賽"
+  },
   "messages": {
     "noTournaments": "暫無錦標賽數據",
     "createFirstTournament": "點擊上方「新增錦標賽」按鈕創建您的第一個錦標賽",

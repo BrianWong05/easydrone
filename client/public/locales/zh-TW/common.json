@@ -47,7 +47,8 @@
     "import": "導入",
     "activate": "激活",
     "deactivate": "停用",
-    "reactivate": "重新激活"
+    "reactivate": "重新激活",
+    "selectAll": "全選"
   },
   "actions": {
     "confirm": "確定",
