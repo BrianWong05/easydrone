@@ -1,0 +1,141 @@
+{
+  "match": {
+    "number": "Número do Jogo",
+    "matchNumber": "Número do Jogo",
+    "list": "Lista de Jogos",
+    "totalOrder": "Ordem Total",
+    "detail": "Detalhes do Jogo",
+    "information": "Informação do Jogo",
+    "statistics": "Estatísticas do Jogo",
+    "events": "Eventos do Jogo",
+    "duration": "Duração do Jogo",
+    "startTime": "Hora de Início",
+    "endTime": "Hora de Fim",
+    "create": "Criar Jogo",
+    "edit": "Editar Jogo",
+    "delete": "Eliminar Jogo",
+    "management": "Gestão de Jogos",
+    "schedule": "Calendário de Jogos",
+    "result": "Resultado do Jogo",
+    "score": "Resultado",
+    "teams": "Equipas",
+    "team1": "Equipa 1",
+    "team2": "Equipa 2",
+    "date": "Data do Jogo",
+    "time": "Hora do Jogo",
+    "venue": "Local",
+    "referee": "Árbitro",
+    "type": "Tipo de Jogo",
+    "round": "Ronda",
+    "group": "Grupo",
+    "stage": "Fase",
+    "duration": "Duração",
+    "status": "Estado do Jogo",
+    "winner": "Vencedor",
+    "loser": "Perdedor",
+    "draw": "Empate",
+    "overtime": "Prolongamento",
+    "penalty": "Desempate por Penáltis",
+    "recent": "Jogos Recentes",
+    "upcoming": "Próximos Jogos",
+    "live": "Jogo ao Vivo",
+    "history": "Histórico de Jogos",
+    "statistics": "Estatísticas do Jogo",
+    "progress": "Progresso do Jogo",
+    "generate": "Gerar Jogos",
+    "generator": "Gerador de Jogos"
+  },
+  "types": {
+    "groupStage": "Fase de Grupos",
+    "knockout": "Eliminatórias",
+    "quarterfinal": "Quartos-de-final",
+    "semifinal": "Semi-final",
+    "final": "Final",
+    "thirdPlace": "Terceiro Lugar",
+    "friendly": "Amigável"
+  },
+  "status": {
+    "scheduled": "Agendado",
+    "ongoing": "Em curso",
+    "finished": "Terminado",
+    "cancelled": "Cancelado",
+    "postponed": "Adiado",
+    "pending": "Pendente",
+    "inProgress": "Em progresso",
+    "completed": "Concluído",
+    "notStarted": "Não iniciado"
+  },
+  "results": {
+    "win": "Vitória",
+    "loss": "Derrota",
+    "draw": "Empate",
+    "pending": "Pendente"
+  },
+  "result": {
+    "win": "V",
+    "loss": "D",
+    "draw": "E",
+    "winner": "Vencedor",
+    "loser": "Perdedor"
+  },
+  "stats": {
+    "pendingMatches": "Pendentes",
+    "activeMatches": "Em Progresso"
+  },
+  "pagination": {
+    "showTotal": "{{start}}-{{end}} de {{total}} jogos"
+  },
+  "statistics": {
+    "goals": "Golos",
+    "assists": "Assistências",
+    "saves": "Defesas",
+    "fouls": "Faltas",
+    "yellowCards": "Cartões Amarelos",
+    "redCards": "Cartões Vermelhos",
+    "possession": "Posse de Bola",
+    "shots": "Remates",
+    "shotsOnTarget": "Remates à Baliza",
+    "corners": "Cantos",
+    "offsides": "Foras-de-jogo"
+  },
+  "messages": {
+    "noMatches": "Sem jogos disponíveis",
+    "noMatchData": "Sem dados de jogos disponíveis",
+    "loadingMatches": "A carregar dados dos jogos...",
+    "loadingMatchDetail": "A carregar detalhes do jogo...",
+    "matchCreated": "Jogo criado com sucesso",
+    "matchUpdated": "Jogo atualizado com sucesso",
+    "matchDeleted": "Jogo eliminado com sucesso",
+    "deleteConfirmation": "Tem a certeza que quer eliminar este jogo?",
+    "deleteWarning": "Esta ação não pode ser desfeita",
+    "noRecentMatches": "Sem jogos recentes",
+    "generateSuccess": "Jogos gerados com sucesso",
+    "generateFailed": "Falha ao gerar jogos",
+    "matchNotFound": "Jogo Não Encontrado",
+    "matchNotFoundDesc": "A informação do jogo especificado não foi encontrada"
+  },
+  "winReason": {
+    "score": "Vitória por Resultado",
+    "fouls": "Menos Faltas",
+    "referee": "Decisão do Árbitro",
+    "draw": "Empate"
+  },
+  "time": {
+    "minutes": "minutos"
+  },
+  "placeholders": {
+    "searchMatch": "Pesquisar equipas ou jogos",
+    "selectTeam1": "Selecionar Equipa 1",
+    "selectTeam2": "Selecionar Equipa 2",
+    "selectVenue": "Selecionar local",
+    "selectReferee": "Selecionar árbitro",
+    "enterScore": "IIntroduza resultado",
+    "selectStatus": "Selecionar estado do jogo",
+    "selectType": "Selecionar tipo de jogo"
+  },
+  "live": {
+    "matchTiedNeedsOvertime": "O jogo está empatado e precisa de prolongamento para determinar o vencedor!",
+    "currentScore": "Resultado Atual",
+    "fouls": "Faltas"
+  }
+}

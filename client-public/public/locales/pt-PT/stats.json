@@ -1,0 +1,81 @@
+{
+  "stats": {
+    "overview": "Resumo de Estatísticas",
+    "dashboard": "Painel de Dados",
+    "summary": "Resumo de Estatísticas",
+    "detailed": "Estatísticas Detalhadas",
+    "comparison": "Análise Comparativa",
+    "trends": "Análise de Tendências",
+    "performance": "Estatísticas de Desempenho",
+    "ranking": "Estatísticas de Classificação",
+    "bestTeams": "Estatísticas das Melhores Equipas",
+    "topPerformers": "Melhores Desempenhos",
+    "systemStatus": "Estado do Sistema",
+    "bestAttackTeam": "Melhor Equipa de Ataque",
+    "bestDefenseTeam": "Melhor Equipa de Defesa",
+    "bestAttackTeamsRanking": "Classificação das Melhores Equipas de Ataque",
+    "bestDefenseTeamsRanking": "Classificação das Melhores Equipas de Defesa",
+    "analysisInfo": "Informação de Análise",
+    "analysisDescription": "Descrição da Análise",
+    "rankingMethodDescription": "Melhores equipas de ataque classificadas por total de golos marcados, melhores equipas de defesa classificadas por total de golos sofridos (menor é melhor)",
+    "dataUpdate": "Atualização de Dados",
+    "dataUpdateDescription": "Os dados estatísticos são automaticamente atualizados após cálculo pelos administradores"
+  },
+  "metrics": {
+    "totalTeams": "Total de Equipas",
+    "totalTournaments": "Torneios",
+    "totalMatches": "Número de Jogos",
+    "totalAthletes": "Total de Atletas",
+    "matchesPlayed": "Jogos Disputados",
+    "goalsScored": "Golos Marcados",
+    "averageGoals": "Média de Golos",
+    "averageGoalsAgainst": "Média de Golos Sofridos",
+    "winRate": "Taxa de Vitórias",
+    "drawRate": "Taxa de Empates",
+    "lossRate": "Taxa de Derrotas"
+  },
+  "rankings": {
+    "position": "Posição",
+    "team": "Equipa",
+    "points": "Pontos",
+    "wins": "Vitórias",
+    "draws": "Empates",
+    "losses": "Derrotas",
+    "goalsFor": "Golos Marcados",
+    "goalsAgainst": "Golos Sofridos",
+    "goalDifference": "Diferença de Golos",
+    "overallRanking": "Classificação Geral",
+    "groupRanking": "Classificação do Grupo"
+  },
+  "progress": {
+    "groupStage": "Progresso da Fase de Grupos",
+    "knockout": "Progresso das Eliminatórias",
+    "overall": "Progresso Geral",
+    "completion": "Conclusão"
+  },
+  "system": {
+    "databaseConnection": "Ligação à Base de Dados",
+    "apiService": "Serviço API",
+    "realTimeUpdate": "Atualização em Tempo Real",
+    "systemVersion": "Versão do Sistema",
+    "status": "Estado"
+  },
+  "messages": {
+    "noData": "Sem dados disponíveis",
+    "noRankingData": "Sem dados de classificação disponíveis",
+    "loadingStats": "A carregar estatísticas...",
+    "dataUpdated": "Dados atualizados",
+    "refreshData": "Atualizar Dados",
+    "exportData": "Exportar Dados",
+    "lastUpdated": "Última Atualização",
+    "completedMatches": "Jogos Concluídos"
+  },
+  "rules": {
+    "rankingRules": "Regras de Classificação",
+    "rankingDescription": "Classificação do grupo depois comparação de equipas com a mesma classificação (Pontos, Diferença de golos, Golos marcados)",
+    "pointsRules": "Regras de Pontos",
+    "pointsDescription": "Vitória 3 pontos, Empate 1 ponto, Derrota 0 pontos",
+    "sortingRules": "Regras de Ordenação",
+    "sortingDescription": "Mostrar todos os primeiros lugares dos grupos primeiro, depois todos os segundos lugares, e assim por diante"
+  }
+}

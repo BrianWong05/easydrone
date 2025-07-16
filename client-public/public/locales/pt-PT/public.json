@@ -1,0 +1,26 @@
+{
+  "navigation": {
+    "leaderboard": "Classificação",
+    "teams": "Equipas",
+    "groups": "Grupos",
+    "matches": "Jogos",
+    "bracket": "Chave Eliminatória",
+    "bestTeams": "Estatísticas das Melhores Equipas"
+  },
+  "layout": {
+    "title": "Torneio",
+    "subtitle": "Informação Pública do Evento",
+    "expandSidebar": "Expandir Barra Lateral",
+    "collapseSidebar": "Recolher Barra Lateral",
+    "tournamentName": "Torneio de Futebol de Drones",
+    "loadingTournament": "A carregar dados do torneio...",
+    "loadFailed": "Carregamento Falhado",
+    "noActiveTournament": "Nenhum torneio ativo para mostrar",
+    "tournamentLoadFailed": "Falha ao carregar dados do torneio"
+  },
+  "tournamentTypes": {
+    "group": "Fase de Grupos",
+    "knockout": "Eliminatórias",
+    "mixed": "Formato Misto"
+  }
+}

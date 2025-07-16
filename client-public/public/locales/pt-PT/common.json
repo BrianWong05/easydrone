@@ -1,0 +1,139 @@
+{
+  "navigation": {
+    "dashboard": "Painel",
+    "teams": "Gestão de Equipas",
+    "teamList": "Lista de Equipas",
+    "addTeam": "Adicionar Equipa",
+    "groups": "Gestão de Grupos",
+    "groupList": "Lista de Grupos",
+    "addGroup": "Adicionar Grupo",
+    "matches": "Gestão de Jogos",
+    "matchList": "Lista de Jogos",
+    "addMatch": "Adicionar Jogo",
+    "generateMatches": "Gerar Jogos",
+    "athletes": "Gestão de Atletas",
+    "athleteList": "Lista de Atletas",
+    "addAthlete": "Adicionar Atleta",
+    "tournaments": "Gestão de Torneios",
+    "tournamentList": "Lista de Torneios",
+    "addTournament": "Adicionar Torneio",
+    "stats": "Estatísticas",
+    "statsOverview": "Resumo de Estatísticas",
+    "groupStandings": "Classificação dos Grupos",
+    "overallLeaderboard": "Classificação Geral",
+    "bestTeamsStats": "Estatísticas das Melhores Equipas",
+    "leaderboard": "Classificação",
+    "bracket": "Chave Eliminatória",
+    "backToTournamentList": "Voltar à Lista de Torneios"
+  },
+  "buttons": {
+    "add": "Adicionar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "view": "Ver",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "search": "Pesquisar",
+    "reset": "Repor",
+    "submit": "Submeter",
+    "back": "Voltar",
+    "next": "Seguinte",
+    "previous": "Anterior",
+    "close": "Fechar",
+    "refresh": "Atualizar",
+    "export": "Exportar",
+    "import": "Importar",
+    "activate": "Ativar",
+    "deactivate": "Desativar",
+    "reactivate": "Reativar"
+  },
+  "status": {
+    "active": "Ativo",
+    "inactive": "Inativo",
+    "pending": "Pendente",
+    "completed": "Concluído",
+    "cancelled": "Cancelado",
+    "postponed": "Adiado",
+    "ongoing": "Em curso",
+    "scheduled": "Agendado",
+    "finished": "Terminado",
+    "normal": "Normal",
+    "running": "A decorrer",
+    "enabled": "Ativado",
+    "notStarted": "Não iniciado",
+    "inProgress": "Em progresso"
+  },
+  "messages": {
+    "success": "Operação bem-sucedida",
+    "error": "Operação falhada",
+    "loading": "A carregar...",
+    "noData": "Sem dados disponíveis",
+    "confirmDelete": "Tem a certeza que quer eliminar?",
+    "deleteWarning": "Esta ação não pode ser desfeita",
+    "saveSuccess": "Guardado com sucesso",
+    "deleteSuccess": "Eliminado com sucesso",
+    "updateSuccess": "Atualizado com sucesso",
+    "createSuccess": "Criado com sucesso",
+    "operationFailed": "Operação falhada, tente novamente mais tarde",
+    "networkError": "Erro de rede, verifique a sua ligação",
+    "dataLoadFailed": "Falha ao carregar dados",
+    "loadFailed": "Carregamento falhado",
+    "loadingError": "Carregamento falhado, tente novamente mais tarde"
+  },
+  "forms": {
+    "required": "Este campo é obrigatório",
+    "invalidFormat": "Formato inválido",
+    "tooShort": "Demasiado curto",
+    "tooLong": "Demasiado longo",
+    "invalidEmail": "Formato de email inválido",
+    "passwordMismatch": "As palavras-passe não coincidem"
+  },
+  "system": {
+    "title": "Sistema de Gestão de Futebol de Drones",
+    "publicTitle": "Torneio de Futebol de Drones",
+    "publicSubtitle": "Informação Pública do Evento",
+    "version": "Versão do Sistema",
+    "databaseConnection": "Ligação à Base de Dados",
+    "apiService": "Serviço API",
+    "realTimeUpdate": "Atualização em Tempo Real"
+  },
+  "group": "Grupo",
+  "noGroup": "Sem Grupo",
+  "goals": "golos",
+  "conceded": "sofridos",
+  "user": {
+    "profile": "Perfil",
+    "changePassword": "Alterar Palavra-passe",
+    "logout": "Sair",
+    "admin": "Admin"
+  },
+  "pagination": {
+    "total": "{{start}}-{{end}} de {{total}} itens",
+    "showTotal": "{{start}}-{{end}} de {{total}} grupos",
+    "showSizeChanger": true,
+    "showQuickJumper": true
+  },
+  "actions": {
+    "actions": "Ações",
+    "viewDetails": "Ver Detalhes",
+    "reload": "Recarregar",
+    "backToGroupList": "Voltar à Lista de Grupos",
+    "clearFilters": "Limpar Filtros",
+    "backToMatchList": "Voltar à Lista de Jogos",
+    "view": "Ver",
+    "viewGroupDetails": "Ver Detalhes do Grupo"
+  },
+  "navigation": {
+    "relatedPages": "Páginas Relacionadas"
+  },
+  "filters": {
+    "title": "Condições de Filtro"
+  },
+  "stats": {
+    "totalTeams": "Total de Equipas",
+    "totalMatches": "Total de Jogos",
+    "completedMatches": "Jogos Concluídos",
+    "completed": "Concluído"
+  }
+}

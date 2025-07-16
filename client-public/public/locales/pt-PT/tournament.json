@@ -1,0 +1,91 @@
+{
+  "tournament": {
+    "name": "Nome do Torneio",
+    "overview": "Resumo do Torneio",
+    "management": "Gestão de Torneios",
+    "create": "Criar Torneio",
+    "edit": "Editar Torneio",
+    "delete": "Eliminar Torneio",
+    "status": "Estado do Torneio",
+    "type": "Tipo de Torneio",
+    "description": "Descrição do Torneio",
+    "startDate": "Data de Início",
+    "endDate": "Data de Fim",
+    "location": "Local",
+    "organizer": "Organizador",
+    "maxTeams": "Máximo de Equipas",
+    "currentTeams": "Equipas Atuais",
+    "registrationDeadline": "Prazo de Inscrição",
+    "rules": "Regras do Torneio",
+    "prizes": "Configuração de Prémios",
+    "format": "Formato do Torneio",
+    "progress": "Progresso do Torneio",
+    "groupStageProgress": "Progresso da Fase de Grupos",
+    "knockoutProgress": "Progresso das Eliminatórias",
+    "overallProgress": "Progresso Geral"
+  },
+  "types": {
+    "groupStage": "Fase de Grupos",
+    "knockout": "Eliminatórias",
+    "mixed": "Formato Misto",
+    "roundRobin": "Todos contra Todos",
+    "singleElimination": "Eliminação Simples",
+    "doubleElimination": "Eliminação Dupla"
+  },
+  "messages": {
+    "noTournaments": "Sem dados de torneios disponíveis",
+    "createFirstTournament": "Clique no botão 'Adicionar Torneio' acima para criar o seu primeiro torneio",
+    "loadingTournaments": "A carregar dados do torneio...",
+    "loadingKnockoutData": "A carregar dados das eliminatórias...",
+    "noActiveTournament": "Nenhum torneio ativo para mostrar",
+    "tournamentLoadFailed": "Falha ao carregar dados do torneio",
+    "tournamentCreated": "Torneio criado com sucesso",
+    "tournamentUpdated": "Torneio atualizado com sucesso",
+    "tournamentDeleted": "Torneio eliminado com sucesso",
+    "tournamentActivated": "Torneio ativado com sucesso",
+    "tournamentDeactivated": "Torneio desativado com sucesso",
+    "statusUpdateSuccess": "Estado do torneio atualizado com sucesso",
+    "deleteConfirmation": "Tem a certeza que quer eliminar este torneio?",
+    "deleteWarning": "Esta ação não pode ser desfeita. Os dados dos jogos relacionados também serão eliminados.",
+    "activateTooltip": "Ativar torneio (definir como exibição pública)",
+    "deactivateTooltip": "Desativar torneio (remover da exibição pública)",
+    "reactivateTooltip": "Reativar torneio",
+    "noKnockoutData": "Sem dados de eliminatórias disponíveis",
+    "noKnockoutDataDesc": "Este torneio pode ainda não ter iniciado a fase eliminatória, ou usa um formato diferente"
+  },
+  "placeholders": {
+    "searchTournament": "Pesquisar nome do torneio",
+    "enterTournamentName": "Inserir nome do torneio",
+    "enterDescription": "Inserir descrição do torneio",
+    "selectType": "Selecionar tipo de torneio",
+    "selectLocation": "Selecionar local"
+  },
+  "rounds": {
+    "final": "Final",
+    "semifinal": "Meia-final",
+    "quarterfinal": "Quartos-de-final",
+    "round16": "Oitavos-de-final",
+    "thirdPlace": "Terceiro Lugar",
+    "roundNumber": "Ronda {{number}}"
+  },
+  "bracket": {
+    "title": "Chave Eliminatória",
+    "knockout": "Eliminatórias",
+    "bracket": "Chave"
+  },
+  "champion": {
+    "title": "Campeão",
+    "tournament": "Campeão do Torneio",
+    "congratulations": "Parabéns por ganhar o campeonato {{tournament}}!"
+  },
+  "stats": {
+    "totalRounds": "Total de Rondas",
+    "progress": "Progresso dos Jogos"
+  },
+  "actions": {
+    "viewAllMatches": "Ver Todos os Jogos",
+    "viewGroupStage": "Ver Fase de Grupos"
+  },
+  "roundWinner": "Vencedor da Ronda {{round}}",
+  "teamNumber": "Equipa {{id}}"
+}

@@ -1,0 +1,75 @@
+{
+  "athlete": {
+    "name": "Nome do Atleta",
+    "list": "Lista de Atletas",
+    "detail": "Detalhes do Atleta",
+    "create": "Criar Atleta",
+    "edit": "Editar Atleta",
+    "delete": "Eliminar Atleta",
+    "management": "Gestão de Atletas",
+    "profile": "Perfil do Atleta",
+    "statistics": "Estatísticas do Atleta",
+    "performance": "Dados de Desempenho",
+    "team": "Equipa",
+    "position": "Posição",
+    "number": "Número",
+    "age": "Idade",
+    "height": "Altura",
+    "weight": "Peso",
+    "nationality": "Nacionalidade",
+    "experience": "Experiência",
+    "joinDate": "Data de Entrada",
+    "status": "Estado",
+    "contact": "Contacto",
+    "biography": "Biografia",
+    "achievements": "Conquistas",
+    "totalAthletes": "Total de Atletas"
+  },
+  "statistics": {
+    "matchesPlayed": "Jogos Disputados",
+    "goals": "Golos",
+    "assists": "Assistências",
+    "saves": "Defesas",
+    "fouls": "Faltas",
+    "yellowCards": "Cartões Amarelos",
+    "redCards": "Cartões Vermelhos",
+    "minutesPlayed": "Minutos Jogados",
+    "averageRating": "Classificação Média",
+    "winRate": "Taxa de Vitórias"
+  },
+  "positions": {
+    "attacker": "Atacante",
+    "defender": "Defesa",
+    "goalkeeper": "Guarda-redes",
+    "midfielder": "Médio",
+    "substitute": "Suplente"
+  },
+  "status": {
+    "active": "Ativo",
+    "inactive": "Inativo",
+    "injured": "Lesionado",
+    "suspended": "Suspenso",
+    "retired": "Reformado"
+  },
+  "messages": {
+    "noAthletes": "Sem atletas disponíveis",
+    "noAthleteData": "Sem dados de atletas disponíveis",
+    "loadingAthletes": "A carregar dados dos atletas...",
+    "athleteCreated": "Atleta criado com sucesso",
+    "athleteUpdated": "Atleta atualizado com sucesso",
+    "athleteDeleted": "Atleta eliminado com sucesso",
+    "deleteConfirmation": "Tem a certeza que quer eliminar este atleta?",
+    "deleteWarning": "Esta ação não pode ser desfeita",
+    "noStatistics": "Sem estatísticas disponíveis"
+  },
+  "placeholders": {
+    "searchAthlete": "Pesquisar nome do atleta",
+    "enterAthleteName": "Introduza o nome do atleta",
+    "selectTeam": "Selecionar equipa",
+    "selectPosition": "Selecionar posição",
+    "enterNumber": "Introduza o número",
+    "enterAge": "Introduza a idade",
+    "enterHeight": "Introduza a altura",
+    "enterWeight": "Introduza o peso"
+  }
+}

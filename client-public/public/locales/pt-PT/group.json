@@ -1,0 +1,62 @@
+{
+  "group": {
+    "name": "Nome do Grupo",
+    "list": "Lista de Grupos",
+    "detail": "Detalhes do Grupo",
+    "create": "Criar Grupo",
+    "edit": "Editar Grupo",
+    "delete": "Eliminar Grupo",
+    "management": "Gestão de Grupos",
+    "letter": "Letra do Grupo",
+    "teams": "Equipas do Grupo",
+    "matches": "Jogos do Grupo",
+    "standings": "Classificação do Grupo",
+    "leaderboard": "Tabela Classificativa do Grupo",
+    "stage": "Fase de Grupos",
+    "maxTeams": "Máximo de Equipas",
+    "currentTeams": "Equipas Atuais",
+    "description": "Descrição do Grupo",
+    "status": "Estado do Grupo",
+    "progress": "Progresso do Grupo",
+    "allStandings": "Classificação de Todos os Grupos"
+  },
+  "standings": {
+    "position": "Posição",
+    "team": "Equipa",
+    "played": "Jogados",
+    "won": "Vitórias",
+    "drawn": "Empates",
+    "lost": "Derrotas",
+    "goalsFor": "Golos Marcados",
+    "goalsAgainst": "Golos Sofridos",
+    "goalDifference": "Diferença de Golos",
+    "points": "Pontos"
+  },
+  "messages": {
+    "noGroups": "Sem grupos disponíveis",
+    "noGroupData": "Sem dados de grupos disponíveis",
+    "loadingGroups": "A carregar dados dos grupos...",
+    "loadingGroupDetail": "A carregar detalhes do grupo...",
+    "groupCreated": "Grupo criado com sucesso",
+    "groupUpdated": "Grupo atualizado com sucesso",
+    "groupDeleted": "Grupo eliminado com sucesso",
+    "deleteConfirmation": "Tem a certeza que quer eliminar este grupo?",
+    "deleteWarning": "Esta ação não pode ser desfeita",
+    "noTeamsInGroup": "Sem equipas no grupo",
+    "noStandingsData": "Sem dados de classificação disponíveis",
+    "noMatchesInGroup": "Sem jogos no grupo",
+    "totalGroups": "Total de Grupos",
+    "groupNotFound": "Grupo Não Encontrado",
+    "groupNotFoundDesc": "A informação do grupo especificado não foi encontrada"
+  },
+  "stats": {
+    "participatingTeams": "Equipas Participantes"
+  },
+  "placeholders": {
+    "searchGroup": "Pesquisar nome do grupo",
+    "enterGroupName": "Introduza nome do grupo",
+    "enterDescription": "Introduza descrição do grupo",
+    "selectGroupLetter": "Selecionar letra do grupo",
+    "selectGroup": "Selecionar grupo"
+  }
+}
