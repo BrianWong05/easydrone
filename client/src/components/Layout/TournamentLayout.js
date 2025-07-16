@@ -183,6 +183,7 @@ const TournamentLayout = ({ children }) => {
         trigger={null}
         collapsible
         collapsed={collapsed}
+        width={250}
         style={{
           overflow: "auto",
           height: "100vh",
@@ -237,7 +238,7 @@ const TournamentLayout = ({ children }) => {
         />
       </Sider>
 
-      <Layout style={{ marginLeft: collapsed ? 80 : 200, minHeight: "100vh" }}>
+      <Layout style={{ marginLeft: collapsed ? 80 : 250, minHeight: "100vh" }}>
         <Header
           style={{
             padding: "0 24px",
