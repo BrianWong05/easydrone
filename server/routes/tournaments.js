@@ -246,6 +246,23 @@ router.get('/:id/groups', async (req, res) => {
       ORDER BY g.group_name
     `, [id]);
 
+    // Add match statistics for each group
+    for (let group of groups) {
+      try {
+        const matchCount = await query(
+          'SELECT COUNT(*) as total, COUNT(CASE WHEN match_status = "completed" THEN 1 END) as completed FROM matches WHERE group_id = ?',
+          [group.group_id]
+        );
+        group.total_matches = matchCount[0].total;
+        group.completed_matches = matchCount[0].completed;
+        console.log(`🏁 小組 ${group.group_name} 比賽統計: 總計 ${group.total_matches}, 已完成 ${group.completed_matches}`);
+      } catch (error) {
+        console.error(`獲取小組 ${group.group_id} 統計失敗:`, error);
+        group.total_matches = 0;
+        group.completed_matches = 0;
+      }
+    }
+
     res.json({
       success: true,
       data: { groups }
