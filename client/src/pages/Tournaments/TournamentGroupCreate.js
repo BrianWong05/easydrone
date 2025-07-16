@@ -152,6 +152,10 @@ const TournamentGroupCreate = () => {
                 size="large"
                 maxLength={1}
                 style={{ textTransform: 'uppercase' }}
+                onChange={(e) => {
+                  const upperValue = e.target.value.toUpperCase();
+                  form.setFieldsValue({ group_name: upperValue });
+                }}
               />
             </Form.Item>
 
