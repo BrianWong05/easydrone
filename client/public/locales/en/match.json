@@ -225,6 +225,19 @@
     "generateFailed": "Match generation failed",
     "generateError": "Match generation failed: {{error}}"
   },
+  "live": {
+    "controlPanel": "Live Match Control Panel",
+    "startFailed": "Failed to start match",
+    "halfTimeStarted": "Half-time timer started! Duration: {{minutes}} minutes {{seconds}} seconds",
+    "timeExceedsLimit": "Time cannot exceed 60 minutes",
+    "timerSet": "Timer set to {{minutes}} minutes {{seconds}} seconds",
+    "keyboardShortcuts": "Keyboard Shortcuts",
+    "startMatch": "Start Match",
+    "startSecondHalf": "Start Second Half",
+    "score": "Score",
+    "spacebar": "Space",
+    "pauseResumeTimer": "Start/Pause Timer"
+  },
   "statistics": {
     "goals": "Goals",
     "assists": "Assists",

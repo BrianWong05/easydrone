@@ -26,6 +26,7 @@ import {
   TrophyOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import moment from "moment";
 import axios from "axios";
 import { formatMatchDuration } from "../../utils/timeUtils";
@@ -36,6 +37,7 @@ const { Title, Text } = Typography;
 const { Option } = Select;
 
 const TournamentLiveMatch = () => {
+  const { t } = useTranslation(['match', 'common']);
   const navigate = useNavigate();
   const { matchId } = useParams();
 
@@ -387,8 +389,8 @@ const TournamentLiveMatch = () => {
         message.error(response.data.message || "開始比賽失敗");
       }
     } catch (error) {
-      console.error("開始比賽錯誤:", error);
-      message.error("開始比賽失敗");
+      console.error("獲取比賽詳情錯誤:", error);
+      message.error(t('messages.noMatchData'));
     }
   };
 
@@ -416,7 +418,11 @@ const TournamentLiveMatch = () => {
     const totalHalfTimeSeconds = halfTimeMinutes * 60 + halfTimeSeconds;
     setHalfTimeRemaining(totalHalfTimeSeconds);
     setHalfTimeRunning(true);
-    message.success(`中場休息計時器開始！時長：${halfTimeMinutes}分${halfTimeSeconds}秒`);
+    message.success(t('live.halfTimeStarted', { 
+      minutes: halfTimeMinutes, 
+      seconds: halfTimeSeconds,
+      defaultValue: `中場休息計時器開始！時長：${halfTimeMinutes}分${halfTimeSeconds}秒`
+    }));
     console.log(`開始中場休息計時器 - 設置倒數計時: ${totalHalfTimeSeconds}秒`);
   };
 
@@ -445,13 +451,17 @@ const TournamentLiveMatch = () => {
       return;
     }
     if (newTime > 3600) { // 限制最大1小時
-      message.error("時間不能超過60分鐘");
+      message.error(t('live.timeExceedsLimit', { defaultValue: '時間不能超過60分鐘' }));
       return;
     }
     
     setRemainingTime(newTime);
     setTimerEditModalVisible(false);
-    message.success(`計時器已設置為 ${editMinutes}分${editSeconds}秒`);
+    message.success(t('live.timerSet', { 
+      minutes: editMinutes, 
+      seconds: editSeconds,
+      defaultValue: `計時器已設置為 ${editMinutes}分${editSeconds}秒`
+    }));
     console.log(`手動設置計時器: ${newTime}秒 (${editMinutes}分${editSeconds}秒)`);
   };
 
@@ -619,11 +629,11 @@ const TournamentLiveMatch = () => {
         // 更新比賽狀態
         setMatchData((prev) => ({ ...prev, match_status: "completed" }));
       } else {
-        message.error(response.data.message || "結束比賽失敗");
+        message.error(response.data.message || t('live.startFailed', { defaultValue: '開始比賽失敗' }));
       }
     } catch (error) {
-      console.error("結束比賽錯誤:", error);
-      message.error("結束比賽失敗");
+      console.error("開始比賽錯誤:", error);
+      message.error(t('live.startFailed', { defaultValue: '開始比賽失敗' }));
     }
   };
 
@@ -678,7 +688,7 @@ const TournamentLiveMatch = () => {
     return (
       <div style={{ padding: "24px", textAlign: "center" }}>
         <Spin size="large" />
-        <div style={{ marginTop: 16 }}>載入比賽數據中...</div>
+        <div style={{ marginTop: 16 }}>{t('messages.loadingMatches')}</div>
       </div>
     );
   }
@@ -686,8 +696,8 @@ const TournamentLiveMatch = () => {
   if (!matchData) {
     return (
       <div style={{ padding: "24px", textAlign: "center" }}>
-        <Title level={3}>比賽不存在</Title>
-        <Button onClick={handleBack}>返回比賽列表</Button>
+        <Title level={3}>{t('messages.matchNotFound', { defaultValue: '比賽不存在' })}</Title>
+        <Button onClick={handleBack}>{t('actions.backToMatchList', { defaultValue: '返回比賽列表' })}</Button>
       </div>
     );
   }
@@ -699,7 +709,7 @@ const TournamentLiveMatch = () => {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
             <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
-              返回
+              {t('common:actions.back', { defaultValue: '返回' })}
             </Button>
             <Title level={2} style={{ margin: 0, color: "#fff" }}>
               <span
@@ -710,7 +720,7 @@ const TournamentLiveMatch = () => {
                   color: "#fff",
                 }}
               >
-                🎮 即時比賽控制台
+                🎮 {t('live.controlPanel', { defaultValue: '即時比賽控制台' })}
               </span>
             </Title>
           </div>
@@ -718,7 +728,7 @@ const TournamentLiveMatch = () => {
           <Space>
             {!matchStarted && (matchData.match_status === "pending" || matchData.match_status === "postponed") && (
               <Button type="primary" size="large" icon={<PlayCircleOutlined />} onClick={handleStartMatch}>
-                開始比賽
+                {t('actions.start')}
               </Button>
             )}
             {matchStarted && matchData.match_status === "active" && !isHalfTime && !isOvertime && (
@@ -891,7 +901,7 @@ const TournamentLiveMatch = () => {
                 </div>
 
                 <div>
-                  <Text strong>犯規: </Text>
+                  <Text strong>{t('statistics.fouls')}: </Text>
                   <span style={{ fontSize: "24px", color: "#faad14" }}>{team1Fouls}</span>
                   <div style={{ marginTop: 8 }}>
                     <Button
@@ -900,14 +910,14 @@ const TournamentLiveMatch = () => {
                       disabled={!matchStarted || matchData.match_status !== "active"}
                       style={{ marginRight: 4 }}
                     >
-                      +犯規
+                      +{t('statistics.fouls')}
                     </Button>
                     <Button
                       size="small"
                       onClick={() => handleScoreChange(1, "foul", -1)}
                       disabled={!matchStarted || matchData.match_status !== "active"}
                     >
-                      -犯規
+                      -{t('statistics.fouls')}
                     </Button>
                   </div>
                 </div>
@@ -952,7 +962,7 @@ const TournamentLiveMatch = () => {
                 </div>
 
                 <div>
-                  <Text strong>犯規: </Text>
+                  <Text strong>{t('statistics.fouls')}: </Text>
                   <span style={{ fontSize: "24px", color: "#faad14" }}>{team2Fouls}</span>
                   <div style={{ marginTop: 8 }}>
                     <Button
@@ -961,14 +971,14 @@ const TournamentLiveMatch = () => {
                       disabled={!matchStarted || matchData.match_status !== "active"}
                       style={{ marginRight: 4 }}
                     >
-                      +犯規
+                      +{t('statistics.fouls')}
                     </Button>
                     <Button
                       size="small"
                       onClick={() => handleScoreChange(2, "foul", -1)}
                       disabled={!matchStarted || matchData.match_status !== "active"}
                     >
-                      -犯規
+                      -{t('statistics.fouls')}
                     </Button>
                   </div>
                 </div>
@@ -980,7 +990,7 @@ const TournamentLiveMatch = () => {
         {/* 鍵盤快捷鍵說明 */}
         {!matchStarted && matchData.match_status === "pending" && (
           <Card
-            title="🎮 鍵盤快捷鍵"
+            title={`🎮 ${t('live.keyboardShortcuts', { defaultValue: '鍵盤快捷鍵' })}`}
             size="small"
             style={{
               background: "linear-gradient(135deg, #1890ff 0%, #096dd9 100%)",
@@ -1000,7 +1010,7 @@ const TournamentLiveMatch = () => {
                 >
                   Enter
                 </kbd>
-                : 開始比賽
+                : {t('live.startMatch', { defaultValue: '開始比賽' })}
               </Text>
             </div>
           </Card>
@@ -1009,7 +1019,7 @@ const TournamentLiveMatch = () => {
         {/* 中場休息時的鍵盤快捷鍵說明 */}
         {isHalfTime && (
           <Card
-            title="🎮 鍵盤快捷鍵"
+            title={`🎮 ${t('live.keyboardShortcuts', { defaultValue: '鍵盤快捷鍵' })}`}
             size="small"
             style={{
               background: "linear-gradient(135deg, #fa8c16 0%, #d46b08 100%)",
@@ -1029,7 +1039,7 @@ const TournamentLiveMatch = () => {
                 >
                   Enter
                 </kbd>
-                : 開始下半場
+                : {t('live.startSecondHalf', { defaultValue: '開始下半場' })}
               </Text>
             </div>
           </Card>
@@ -1037,7 +1047,7 @@ const TournamentLiveMatch = () => {
 
         {matchStarted && matchData.match_status === "active" && (
           <Card
-            title="🎮 鍵盤快捷鍵"
+            title={`🎮 ${t('live.keyboardShortcuts', { defaultValue: '鍵盤快捷鍵' })}`}
             size="small"
             style={{
               background: "linear-gradient(135deg, #52c41a 0%, #389e0d 100%)",
@@ -1048,27 +1058,27 @@ const TournamentLiveMatch = () => {
             <Row gutter={[16, 8]} style={{ color: "#fff" }}>
               <Col xs={12} sm={6}>
                 <Text style={{ color: "#fff" }}>
-                  <kbd>Q</kbd>/<kbd>W</kbd>: {getDisplayTeamName(matchData.team1_name)} 得分 +/-
+                  <kbd>Q</kbd>/<kbd>W</kbd>: {getDisplayTeamName(matchData.team1_name)} {t('live.score', { defaultValue: '得分' })} +/-
                 </Text>
               </Col>
               <Col xs={12} sm={6}>
                 <Text style={{ color: "#fff" }}>
-                  <kbd>O</kbd>/<kbd>P</kbd>: {getDisplayTeamName(matchData.team2_name)} 得分 +/-
+                  <kbd>O</kbd>/<kbd>P</kbd>: {getDisplayTeamName(matchData.team2_name)} {t('live.score', { defaultValue: '得分' })} +/-
                 </Text>
               </Col>
               <Col xs={12} sm={6}>
                 <Text style={{ color: "#fff" }}>
-                  <kbd>A</kbd>/<kbd>S</kbd>: {getDisplayTeamName(matchData.team1_name)} 犯規 +/-
+                  <kbd>A</kbd>/<kbd>S</kbd>: {getDisplayTeamName(matchData.team1_name)} {t('statistics.fouls')} +/-
                 </Text>
               </Col>
               <Col xs={12} sm={6}>
                 <Text style={{ color: "#fff" }}>
-                  <kbd>K</kbd>/<kbd>L</kbd>: {getDisplayTeamName(matchData.team2_name)} 犯規 +/-
+                  <kbd>K</kbd>/<kbd>L</kbd>: {getDisplayTeamName(matchData.team2_name)} {t('statistics.fouls')} +/-
                 </Text>
               </Col>
               <Col xs={24} sm={24} style={{ textAlign: "center", marginTop: 8 }}>
                 <Text style={{ color: "#fff", fontSize: "16px" }}>
-                  <kbd style={{ fontSize: "14px", padding: "4px 8px" }}>空格</kbd>: 開始/暫停計時器
+                  <kbd style={{ fontSize: "14px", padding: "4px 8px" }}>{t('live.spacebar', { defaultValue: '空格' })}</kbd>: {t('live.pauseResumeTimer', { defaultValue: '開始/暫停計時器' })}
                 </Text>
               </Col>
             </Row>

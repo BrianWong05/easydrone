@@ -225,6 +225,19 @@
     "generateFailed": "比賽生成失敗",
     "generateError": "比賽生成失敗: {{error}}"
   },
+  "live": {
+    "controlPanel": "即時比賽控制台",
+    "startFailed": "開始比賽失敗",
+    "halfTimeStarted": "中場休息計時器開始！時長：{{minutes}}分{{seconds}}秒",
+    "timeExceedsLimit": "時間不能超過60分鐘",
+    "timerSet": "計時器已設置為 {{minutes}}分{{seconds}}秒",
+    "keyboardShortcuts": "鍵盤快捷鍵",
+    "startMatch": "開始比賽",
+    "startSecondHalf": "開始下半場",
+    "score": "得分",
+    "spacebar": "空格",
+    "pauseResumeTimer": "開始/暫停計時器"
+  },
   "statistics": {
     "goals": "進球",
     "assists": "助攻",
