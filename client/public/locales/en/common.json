@@ -48,7 +48,9 @@
     "activate": "Activate",
     "deactivate": "Deactivate",
     "reactivate": "Reactivate",
-    "selectAll": "Select All"
+    "selectAll": "Select All",
+    "confirmDelete": "Confirm Delete",
+    "unknown": "Unknown"
   },
   "actions": {
     "confirm": "Confirm",

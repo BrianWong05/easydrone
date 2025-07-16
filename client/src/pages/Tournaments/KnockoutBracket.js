@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useTranslation } from 'react-i18next';
 import {
   Card,
   Typography,
@@ -26,6 +27,7 @@ import moment from "moment";
 const { Title, Text } = Typography;
 
 const KnockoutBracket = () => {
+  const { t } = useTranslation(['tournament', 'common', 'match']);
   const { id: tournamentId } = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
@@ -72,7 +74,7 @@ const KnockoutBracket = () => {
       }
     } catch (error) {
       console.error("Error fetching tournament:", error);
-      message.error("獲取錦標賽信息失敗");
+      message.error(t('messages.tournamentLoadFailed', { ns: 'tournament' }));
     }
   };
 
@@ -132,7 +134,12 @@ const KnockoutBracket = () => {
         // 顯示生成結果
         const data = response.data.data;
         message.info(
-          `成功生成 ${data.selected_teams} 支隊伍的淘汰賽，共 ${data.total_rounds} 輪 ${data.total_matches} 場比賽`,
+          t('messages.knockoutGenerated', { 
+            ns: 'tournament',
+            teams: data.selected_teams,
+            rounds: data.total_rounds,
+            matches: data.total_matches
+          })
         );
 
         // 重新獲取對戰表
@@ -140,7 +147,7 @@ const KnockoutBracket = () => {
       }
     } catch (error) {
       console.error("Error generating knockout:", error);
-      const errorMsg = error.response?.data?.message || "生成淘汰賽失敗";
+      const errorMsg = error.response?.data?.message || t('messages.knockoutGenerationFailed', { ns: 'tournament' });
       message.error(errorMsg);
     } finally {
       setGenerating(false);
@@ -149,10 +156,10 @@ const KnockoutBracket = () => {
 
   const deleteAllKnockoutMatches = () => {
     Modal.confirm({
-      title: "確認刪除所有淘汰賽",
-      content: "確定要刪除所有淘汰賽比賽嗎？此操作將清空整個淘汰賽對戰表，且無法撤銷。",
-      okText: "確定刪除",
-      cancelText: "取消",
+      title: t('messages.confirmDeleteAllKnockout', { ns: 'tournament' }),
+      content: t('messages.deleteAllKnockoutWarning', { ns: 'tournament' }),
+      okText: t('buttons.confirmDelete', { ns: 'common' }),
+      cancelText: t('buttons.cancel', { ns: 'common' }),
       okType: "danger",
       onOk: async () => {
         try {
@@ -160,13 +167,13 @@ const KnockoutBracket = () => {
           const response = await axios.delete(`/api/tournaments/${tournamentId}/knockout`);
 
           if (response.data.success) {
-            message.success("所有淘汰賽比賽已刪除");
+            message.success(t('messages.allKnockoutDeleted', { ns: 'tournament' }));
             setBrackets({});
             await fetchBrackets();
           }
         } catch (error) {
           console.error("Error deleting knockout matches:", error);
-          const errorMsg = error.response?.data?.message || "刪除淘汰賽失敗";
+          const errorMsg = error.response?.data?.message || t('messages.knockoutDeletionFailed', { ns: 'tournament' });
           message.error(errorMsg);
         } finally {
           setDeleting(false);
@@ -186,20 +193,20 @@ const KnockoutBracket = () => {
     switch (tournament.tournament_type) {
       case "mixed":
         return {
-          type: "混合賽制",
-          description: "將根據小組賽總排名榜選擇前N名隊伍進行淘汰賽",
+          type: t('types.mixed', { ns: 'tournament' }),
+          description: t('knockout.mixedDescription', { ns: 'tournament' }),
           color: "blue",
         };
       case "knockout":
         return {
-          type: "純淘汰賽",
-          description: "將隨機選擇隊伍進行淘汰賽",
+          type: t('knockout.pureKnockout', { ns: 'tournament' }),
+          description: t('knockout.knockoutDescription', { ns: 'tournament' }),
           color: "red",
         };
       case "group":
         return {
-          type: "小組賽",
-          description: "小組賽類型不支持淘汰賽生成",
+          type: t('types.groupStage', { ns: 'tournament' }),
+          description: t('knockout.groupNotSupported', { ns: 'tournament' }),
           color: "default",
         };
       default:
@@ -214,9 +221,9 @@ const KnockoutBracket = () => {
           <div style={{ textAlign: "center", padding: "40px" }}>
             <TrophyOutlined style={{ fontSize: "48px", color: "#ccc", marginBottom: "16px" }} />
             <Title level={4} style={{ color: "#999" }}>
-              尚未生成淘汰賽對戰表
+              {t('knockout.noBracketGenerated', { ns: 'tournament' })}
             </Title>
-            <Text type="secondary">請使用上方的生成功能創建淘汰賽結構</Text>
+            <Text type="secondary">{t('knockout.useGenerationFunction', { ns: 'tournament' })}</Text>
           </div>
         </Card>
       );
@@ -243,10 +250,10 @@ const KnockoutBracket = () => {
 
     return (
       <Card
-        title="淘汰賽對戰表"
+        title={t('knockout.bracketTitle', { ns: 'tournament' })}
         extra={
           <Button danger icon={<DeleteOutlined />} onClick={deleteAllKnockoutMatches} loading={deleting}>
-            刪除所有淘汰賽
+            {t('knockout.deleteAllKnockout', { ns: 'tournament' })}
           </Button>
         }
       >
@@ -279,7 +286,7 @@ const KnockoutBracket = () => {
                         e.target.style.borderColor = "#d9d9d9";
                       }}
                       onClick={() => navigate(`/tournaments/${tournamentId}/matches/${match.match_id}`)}
-                      title="點擊查看比賽詳情"
+                      title={t('knockout.clickToViewDetails', { ns: 'tournament' })}
                     >
                       <div style={{ fontWeight: "bold", marginBottom: "4px" }}>{getMatchDisplayName(match)}</div>
                       <div style={{ fontSize: "12px" }}>
@@ -290,7 +297,7 @@ const KnockoutBracket = () => {
                         {match.match_date ? (
                           <>📅 {moment(match.match_date).format('MM/DD HH:mm')}</>
                         ) : (
-                          <span style={{ color: '#ccc' }}>📅 時間待定</span>
+                          <span style={{ color: '#ccc' }}>📅 {t('knockout.timeTBD', { ns: 'tournament' })}</span>
                         )}
                       </div>
                       {match.match_status === "completed" && (
@@ -299,7 +306,7 @@ const KnockoutBracket = () => {
                             {match.team1_score || 0} : {match.team2_score || 0}
                           </div>
                           <div style={{ fontSize: "12px", color: "#52c41a", marginTop: "2px" }}>
-                            勝者: {getDisplayTeamName(match.winner_name)}
+                            {t('knockout.winner', { ns: 'tournament' })}: {getDisplayTeamName(match.winner_name)}
                           </div>
                         </>
                       )}
@@ -318,7 +325,7 @@ const KnockoutBracket = () => {
         {thirdPlaceMatches.length > 0 && (
           <Row gutter={16} style={{ marginTop: "16px" }}>
             <Col span={24}>
-              <Card size="small" title="季軍賽" style={{ backgroundColor: "#fff7e6", borderColor: "#ffa940" }}>
+              <Card size="small" title={t('knockout.third', { ns: 'tournament' })} style={{ backgroundColor: "#fff7e6", borderColor: "#ffa940" }}>
                 {thirdPlaceMatches.map((match) => (
                   <div
                     key={match.match_id}
@@ -340,7 +347,7 @@ const KnockoutBracket = () => {
                       e.target.style.borderColor = "#ffa940";
                     }}
                     onClick={() => navigate(`/tournaments/${tournamentId}/matches/${match.match_id}`)}
-                    title="點擊查看比賽詳情"
+                    title={t('knockout.clickToViewDetails', { ns: 'tournament' })}
                   >
                     <div style={{ fontWeight: "bold", marginBottom: "4px", color: "#fa8c16" }}>🥉 {getMatchDisplayName(match)}</div>
                     <div style={{ fontSize: "12px" }}>
@@ -351,7 +358,7 @@ const KnockoutBracket = () => {
                       {match.match_date ? (
                         <>📅 {moment(match.match_date).format('MM/DD HH:mm')}</>
                       ) : (
-                        <span style={{ color: '#ffb84d' }}>📅 時間待定</span>
+                        <span style={{ color: '#ffb84d' }}>📅 {t('knockout.timeTBD', { ns: 'tournament' })}</span>
                       )}
                     </div>
                     {match.match_status === "completed" && (
@@ -360,7 +367,7 @@ const KnockoutBracket = () => {
                           {match.team1_score || 0} : {match.team2_score || 0}
                         </div>
                         <div style={{ fontSize: "12px", color: "#fa8c16", marginTop: "2px" }}>
-                          季軍: {getDisplayTeamName(match.winner_name)}
+                          {t('knockout.thirdPlace', { ns: 'tournament' })}: {getDisplayTeamName(match.winner_name)}
                         </div>
                       </>
                     )}
@@ -381,21 +388,21 @@ const KnockoutBracket = () => {
     const remainingRounds = totalRounds - roundNum + 1;
     switch (remainingRounds) {
       case 1:
-        return "決賽";
+        return t('knockout.final', { ns: 'tournament' });
       case 2:
-        return "準決賽";
+        return t('knockout.semi', { ns: 'tournament' });
       case 3:
-        return "八強賽";
+        return t('knockout.quarter', { ns: 'tournament' });
       case 4:
-        return "十六強賽";
+        return t('knockout.round16', { ns: 'tournament' });
       default:
-        return `第${roundNum}輪`;
+        return t('knockout.roundNumber', { ns: 'tournament', number: roundNum });
     }
   };
 
   const getMatchDisplayName = (match) => {
     if (match.tournament_stage === 'third_place') {
-      return '季軍賽';
+      return t('knockout.third', { ns: 'tournament' });
     }
     return match.match_number;
   };
@@ -416,13 +423,13 @@ const KnockoutBracket = () => {
   const getStatusText = (status) => {
     switch (status) {
       case "completed":
-        return "已完成";
+        return t('status.completed', { ns: 'common' });
       case "active":
-        return "進行中";
+        return t('status.ongoing', { ns: 'common' });
       case "pending":
-        return "待開始";
+        return t('status.pending', { ns: 'common' });
       default:
-        return "未知";
+        return t('common.unknown', { ns: 'common' });
     }
   };
 
@@ -501,14 +508,14 @@ const KnockoutBracket = () => {
           onClick={() => navigate(`/tournaments/${tournamentId}`)}
           style={{ marginBottom: 16 }}
         >
-          返回錦標賽詳情
+          {t('navigation.backToTournamentDetail', { ns: 'tournament' })}
         </Button>
-        <Title level={2}>{tournament?.tournament_name} - 淘汰賽對戰表</Title>
+        <Title level={2}>{tournament?.tournament_name} - {t('knockout.bracketTitle', { ns: 'tournament' })}</Title>
       </div>
 
       {typeInfo && (
         <Alert
-          message={`錦標賽類型：${typeInfo.type}`}
+          message={`${t('tournament.type', { ns: 'tournament' })}：${typeInfo.type}`}
           description={typeInfo.description}
           type={tournament?.tournament_type === "group" ? "warning" : "info"}
           style={{ marginBottom: 24 }}
@@ -517,47 +524,47 @@ const KnockoutBracket = () => {
       )}
 
       {tournament?.tournament_type !== "group" && (
-        <Card title="生成淘汰賽" style={{ marginBottom: 24 }}>
+        <Card title={t('knockout.generateTitle', { ns: 'tournament' })} style={{ marginBottom: 24 }}>
           <Form form={form} layout="vertical" onFinish={generateKnockout}>
             <Row gutter={16}>
               <Col span={6}>
                 <Form.Item
-                  label="參賽隊伍數量"
+                  label={t('knockout.teamCount', { ns: 'tournament' })}
                   name="team_count"
-                  rules={[{ required: true, message: "請選擇參賽隊伍數量" }]}
+                  rules={[{ required: true, message: t('knockout.selectTeamCount', { ns: 'tournament' }) }]}
                 >
-                  <InputNumber min={2} max={32} style={{ width: "100%" }} placeholder="必須是2的冪" />
+                  <InputNumber min={2} max={32} style={{ width: "100%" }} placeholder={t('knockout.powerOfTwo', { ns: 'tournament' })} />
                 </Form.Item>
                 <div style={{ fontSize: "12px", color: "#666", marginTop: "-16px", marginBottom: "16px" }}>
-                  可選: {getTeamCountOptions().join(", ")}
+                  {t('knockout.available', { ns: 'tournament' })}: {getTeamCountOptions().join(", ")}
                 </div>
               </Col>
               <Col span={6}>
-                <Form.Item label="比賽日期" name="match_date" rules={[{ required: true, message: "請選擇比賽日期" }]}>
+                <Form.Item label={t('knockout.matchDate', { ns: 'tournament' })} name="match_date" rules={[{ required: true, message: t('knockout.selectMatchDate', { ns: 'tournament' }) }]}>
                   <DatePicker style={{ width: "100%" }} />
                 </Form.Item>
               </Col>
               <Col span={6}>
-                <Form.Item label="開始時間" name="match_time" rules={[{ required: true, message: "請選擇開始時間" }]}>
+                <Form.Item label={t('knockout.startTime', { ns: 'tournament' })} name="match_time" rules={[{ required: true, message: t('knockout.selectStartTime', { ns: 'tournament' }) }]}>
                   <TimePicker style={{ width: "100%" }} format="HH:mm" />
                 </Form.Item>
               </Col>
               <Col span={3}>
                 <Form.Item
-                  label="比賽時長（分鐘）"
+                  label={t('knockout.matchDurationMinutes', { ns: 'tournament' })}
                   name="match_minutes"
-                  rules={[{ required: true, message: "請輸入分鐘" }]}
+                  rules={[{ required: true, message: t('knockout.enterMinutes', { ns: 'tournament' }) }]}
                 >
-                  <InputNumber min={1} max={60} style={{ width: "100%" }} placeholder="分鐘" />
+                  <InputNumber min={1} max={60} style={{ width: "100%" }} placeholder={t('knockout.minutes', { ns: 'tournament' })} />
                 </Form.Item>
               </Col>
               <Col span={3}>
                 <Form.Item
-                  label="比賽時長（秒）"
+                  label={t('knockout.matchDurationSeconds', { ns: 'tournament' })}
                   name="match_seconds"
-                  rules={[{ required: true, message: "請輸入秒數" }]}
+                  rules={[{ required: true, message: t('knockout.enterSeconds', { ns: 'tournament' }) }]}
                 >
-                  <InputNumber min={0} max={59} style={{ width: "100%" }} placeholder="秒" />
+                  <InputNumber min={0} max={59} style={{ width: "100%" }} placeholder={t('knockout.seconds', { ns: 'tournament' })} />
                 </Form.Item>
               </Col>
             </Row>
@@ -565,26 +572,26 @@ const KnockoutBracket = () => {
             <Row gutter={16} style={{ marginTop: "16px" }}>
               <Col span={6}>
                 <Form.Item
-                  label="比賽間隔（分鐘）"
+                  label={t('knockout.intervalMinutes', { ns: 'tournament' })}
                   name="interval_minutes"
-                  rules={[{ required: true, message: "請輸入間隔分鐘" }]}
+                  rules={[{ required: true, message: t('knockout.enterIntervalMinutes', { ns: 'tournament' }) }]}
                 >
-                  <InputNumber min={0} max={120} style={{ width: "100%" }} placeholder="分鐘" />
+                  <InputNumber min={0} max={120} style={{ width: "100%" }} placeholder={t('knockout.minutes', { ns: 'tournament' })} />
                 </Form.Item>
               </Col>
               <Col span={6}>
                 <Form.Item
-                  label="比賽間隔（秒）"
+                  label={t('knockout.intervalSeconds', { ns: 'tournament' })}
                   name="interval_seconds"
-                  rules={[{ required: true, message: "請輸入間隔秒數" }]}
+                  rules={[{ required: true, message: t('knockout.enterIntervalSeconds', { ns: 'tournament' }) }]}
                 >
-                  <InputNumber min={0} max={59} style={{ width: "100%" }} placeholder="秒" />
+                  <InputNumber min={0} max={59} style={{ width: "100%" }} placeholder={t('knockout.seconds', { ns: 'tournament' })} />
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <div style={{ padding: "8px 0", color: "#666" }}>
                   <Text type="secondary">
-                    比賽間隔：每場比賽之間的時間間隔，用於準備和清場
+                    {t('knockout.intervalDescription', { ns: 'tournament' })}
                   </Text>
                 </div>
               </Col>
@@ -597,12 +604,12 @@ const KnockoutBracket = () => {
                   valuePropName="checked"
                 >
                   <Checkbox>
-                    包含季軍賽（3rd Place Match）
+                    {t('knockout.includeThirdPlace', { ns: 'tournament' })}
                   </Checkbox>
                 </Form.Item>
                 <div style={{ marginTop: "8px", color: "#666", fontSize: "12px" }}>
                   <Text type="secondary">
-                    勾選此選項將在準決賽和決賽之間安排季軍賽，由兩場準決賽的敗者進行比賽
+                    {t('knockout.thirdPlaceDescription', { ns: 'tournament' })}
                   </Text>
                 </div>
               </Col>
@@ -617,7 +624,7 @@ const KnockoutBracket = () => {
                   loading={generating}
                   size="large"
                 >
-                  生成淘汰賽對戰表
+                  {t('knockout.generateBracket', { ns: 'tournament' })}
                 </Button>
               </Space>
             </Form.Item>

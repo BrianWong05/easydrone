@@ -48,7 +48,9 @@
     "activate": "激活",
     "deactivate": "停用",
     "reactivate": "重新激活",
-    "selectAll": "全選"
+    "selectAll": "全選",
+    "confirmDelete": "確定刪除",
+    "unknown": "未知"
   },
   "actions": {
     "confirm": "確定",
