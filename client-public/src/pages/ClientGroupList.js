@@ -103,16 +103,38 @@ const ClientGroupList = () => {
         const filteredGroups = groupsList.filter(group => 
           !group.tournament_id || group.tournament_id === tournamentId
         );
+
+        // Fetch matches data for each group to calculate progress
+        const groupsWithMatches = await Promise.all(
+          filteredGroups.map(async (group) => {
+            try {
+              const matchesResponse = await axios.get(`/api/tournaments/${tournamentId}/groups/${group.group_id}/matches`);
+              if (matchesResponse.data.success) {
+                const matches = matchesResponse.data.data || [];
+                const completedMatches = matches.filter(match => match.match_status === 'completed').length;
+                return {
+                  ...group,
+                  matches,
+                  completed_matches: completedMatches,
+                  total_matches: matches.length
+                };
+              }
+            } catch (error) {
+              console.warn(`Failed to fetch matches for group ${group.group_id}:`, error);
+            }
+            return group;
+          })
+        );
         
-        setGroups(filteredGroups);
+        setGroups(groupsWithMatches);
         
         // Calculate statistics
-        const totalTeams = filteredGroups.reduce((sum, group) => sum + (group.team_count || 0), 0);
-        const totalMatches = filteredGroups.reduce((sum, group) => sum + (group.total_matches || 0), 0);
-        const completedMatches = filteredGroups.reduce((sum, group) => sum + (group.completed_matches || 0), 0);
+        const totalTeams = groupsWithMatches.reduce((sum, group) => sum + (group.team_count || 0), 0);
+        const totalMatches = groupsWithMatches.reduce((sum, group) => sum + (group.total_matches || 0), 0);
+        const completedMatches = groupsWithMatches.reduce((sum, group) => sum + (group.completed_matches || 0), 0);
         
         setStats({
-          totalGroups: filteredGroups.length,
+          totalGroups: groupsWithMatches.length,
           totalTeams,
           totalMatches,
           completedMatches
@@ -145,6 +167,13 @@ const ClientGroupList = () => {
   const getMatchProgress = (group) => {
     const total = group.total_matches || 0;
     const completed = group.completed_matches || 0;
+    
+    // If completed_matches is not provided or is 0, but we have matches data, calculate it
+    if (completed === 0 && group.matches && Array.isArray(group.matches)) {
+      const calculatedCompleted = group.matches.filter(match => match.match_status === 'completed').length;
+      return total > 0 ? Math.round((calculatedCompleted / total) * 100) : 0;
+    }
+    
     return total > 0 ? Math.round((completed / total) * 100) : 0;
   };
 

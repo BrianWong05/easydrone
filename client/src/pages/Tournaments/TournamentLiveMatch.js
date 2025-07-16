@@ -219,7 +219,7 @@ const TournamentLiveMatch = () => {
               setIsHalfTime(true);
               setHalfTimeModalVisible(true);
               // 不自動開始計時器，等待用戶手動設置和啟動
-              message.info("上半場結束！進入中場休息");
+              message.info(t('match:live.firstHalfEnded'));
               console.log("上半場結束，進入中場休息");
             } else if (currentHalf === 2) {
               // 下半場結束，檢查勝負條件
@@ -236,7 +236,7 @@ const TournamentLiveMatch = () => {
                 // 真正的平局，需要延長賽
                 setIsOvertime(true);
                 setOvertimeModalVisible(true);
-                message.info("比賽平局！需要延長賽");
+                message.info(t('match:live.matchTied'));
                 console.log("下半場結束，比賽平局，需要延長賽");
               } else {
                 // 有獲勝者
@@ -250,7 +250,7 @@ const TournamentLiveMatch = () => {
               }
             } else {
               // 延長賽結束，比賽結束
-              message.warning("延長賽結束！比賽結束");
+              message.warning(t('match:live.overtimeEnded'));
               console.log("延長賽結束，比賽結束");
             }
             return 0;
@@ -282,7 +282,7 @@ const TournamentLiveMatch = () => {
           console.log(`中場休息倒數: ${newTime}秒`);
           if (newTime <= 0) {
             setHalfTimeRunning(false);
-            message.info("中場休息時間結束！可以開始下半場了");
+            message.info(t('match:live.halfTimeEnded'));
             console.log("中場休息時間結束");
             return 0;
           }
@@ -428,7 +428,7 @@ const TournamentLiveMatch = () => {
 
   const handlePauseResumeHalfTime = () => {
     setHalfTimeRunning(!halfTimeRunning);
-    message.info(halfTimeRunning ? "中場休息計時器已暫停" : "中場休息計時器已恢復");
+    message.info(halfTimeRunning ? t('match:live.halfTimeTimerPaused') : t('match:live.halfTimeTimerResumed'));
   };
 
   const handleOpenTimerEdit = () => {
@@ -440,7 +440,7 @@ const TournamentLiveMatch = () => {
       setEditSeconds(seconds);
       setTimerEditModalVisible(true);
     } else {
-      message.warning("請先暫停計時器才能編輯時間");
+      message.warning(t('match:live.pauseTimerFirst'));
     }
   };
 
@@ -552,7 +552,7 @@ const TournamentLiveMatch = () => {
       setIsHalfTime(true);
       setHalfTimeModalVisible(true);
       // 不自動開始計時器，等待用戶手動設置和啟動
-      message.info("上半場結束！進入中場休息");
+      message.info(t('match:live.firstHalfEnded'));
       console.log("手動結束上半場，進入中場休息");
     } else if (currentHalf === 2) {
       // 結束下半場，檢查勝負條件
@@ -697,7 +697,7 @@ const TournamentLiveMatch = () => {
     return (
       <div style={{ padding: "24px", textAlign: "center" }}>
         <Title level={3}>{t('messages.matchNotFound', { defaultValue: '比賽不存在' })}</Title>
-        <Button onClick={handleBack}>{t('actions.backToMatchList', { defaultValue: '返回比賽列表' })}</Button>
+        <Button onClick={handleBack}>{t('match:actions.backToMatchList')}</Button>
       </div>
     );
   }
@@ -709,7 +709,7 @@ const TournamentLiveMatch = () => {
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
             <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
-              {t('common:actions.back', { defaultValue: '返回' })}
+              {t('common:buttons.back')}
             </Button>
             <Title level={2} style={{ margin: 0, color: "#fff" }}>
               <span
@@ -738,7 +738,7 @@ const TournamentLiveMatch = () => {
                   icon={isRunning ? <PauseCircleOutlined /> : <PlayCircleOutlined />}
                   onClick={handlePauseResume}
                 >
-                  {isRunning ? "暫停" : "繼續"}
+                  {isRunning ? t('match:actions.pause') : t('match:actions.continue')}
                 </Button>
                 <Button
                   size="large"
@@ -746,10 +746,10 @@ const TournamentLiveMatch = () => {
                   disabled={isRunning}
                   style={{ marginLeft: "8px" }}
                 >
-                  編輯時間
+                  {t('match:actions.editTime')}
                 </Button>
                 <Button danger size="large" icon={<StopOutlined />} onClick={() => setEndSessionModalVisible(true)}>
-                  {currentHalf === 1 ? "結束上半場" : currentHalf === 2 ? "結束下半場" : "結束延長賽"}
+                  {currentHalf === 1 ? t('match:actions.endFirstHalf') : currentHalf === 2 ? t('match:actions.endSecondHalf') : t('match:actions.endOvertime')}
                 </Button>
                 <Button
                   danger
@@ -758,14 +758,14 @@ const TournamentLiveMatch = () => {
                   onClick={() => setEndMatchModalVisible(true)}
                   style={{ marginLeft: "8px" }}
                 >
-                  強制結束比賽
+                  {t('match:actions.forceEndMatch')}
                 </Button>
               </>
             )}
             {isHalfTime && (
               <>
                 <Button type="primary" size="large" icon={<PlayCircleOutlined />} onClick={handleStartSecondHalf}>
-                  開始下半場
+                  {t('match:live.startSecondHalf')}
                 </Button>
                 <Button 
                   size="large" 
@@ -773,7 +773,7 @@ const TournamentLiveMatch = () => {
                   onClick={() => setHalfTimeModalVisible(true)}
                   style={{ marginLeft: "8px" }}
                 >
-                  中場休息計時器
+                  {t('match:actions.halfTimeTimer')}
                 </Button>
               </>
             )}
@@ -824,7 +824,7 @@ const TournamentLiveMatch = () => {
                     style={{ fontSize: "12px" }}
                   >
                     {isHalfTime
-                      ? "中場休息"
+                      ? t('match:actions.halfTime')
                       : isOvertime
                       ? "延長賽準備"
                       : currentHalf === 1
@@ -1039,7 +1039,7 @@ const TournamentLiveMatch = () => {
                 >
                   Enter
                 </kbd>
-                : {t('live.startSecondHalf', { defaultValue: '開始下半場' })}
+                : {t('match:live.startSecondHalf')}
               </Text>
             </div>
           </Card>
@@ -1110,19 +1110,19 @@ const TournamentLiveMatch = () => {
 
         {/* 中場休息模態框 */}
         <Modal
-          title="上半場結束"
+          title={t('match:live.firstHalfEnded')}
           open={halfTimeModalVisible}
           onOk={handleStartSecondHalf}
           onCancel={() => setHalfTimeModalVisible(false)}
-          okText="開始下半場"
-          cancelText="繼續休息"
+          okText={t('match:live.startSecondHalf')}
+          cancelText={t('match:actions.continueRest')}
           closable={false}
           maskClosable={false}
           width={600}
         >
           <div style={{ textAlign: "center", padding: "20px 0" }}>
-            <Title level={3}>⏰ 中場休息</Title>
-            <p>上半場已結束，當前比分：</p>
+            <Title level={3}>⏰ {t('match:actions.halfTime')}</Title>
+            <p>{t('match:live.firstHalfEndedMessage')}</p>
             <p style={{ fontSize: "24px", fontWeight: "bold", color: "#1890ff" }}>
               {getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score}{" "}
               {getDisplayTeamName(matchData.team2_name)}
@@ -1130,7 +1130,7 @@ const TournamentLiveMatch = () => {
 
             {/* 中場休息計時器 */}
             <div style={{ margin: "30px 0", padding: "20px", backgroundColor: "#f5f5f5", borderRadius: "8px" }}>
-              <Title level={4} style={{ marginBottom: "16px" }}>中場休息計時器</Title>
+              <Title level={4} style={{ marginBottom: "16px" }}>{t('match:actions.halfTimeTimer')}</Title>
               
               {/* 計時器顯示 */}
               <div style={{ marginBottom: "20px" }}>
@@ -1153,7 +1153,7 @@ const TournamentLiveMatch = () => {
 
               {/* 時間設置 - 始終顯示，就像延長賽設置一樣 */}
               <div style={{ marginBottom: "16px" }}>
-                <Text strong>中場休息時長：</Text>
+                <Text strong>{t('match:live.duration')}：</Text>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", marginTop: "8px" }}>
                   <InputNumber
                     min={0}
@@ -1175,7 +1175,7 @@ const TournamentLiveMatch = () => {
                   <Text>秒</Text>
                 </div>
                 <div style={{ marginTop: "8px", color: "#666", fontSize: "12px" }}>
-                  總時長：{halfTimeMinutes}分{halfTimeSeconds}秒 ({halfTimeMinutes * 60 + halfTimeSeconds}秒)
+                  {t('match:live.totalDurationSeconds', { minutes: halfTimeMinutes, seconds: halfTimeSeconds, totalSeconds: halfTimeMinutes * 60 + halfTimeSeconds })}
                 </div>
               </div>
 
@@ -1188,7 +1188,7 @@ const TournamentLiveMatch = () => {
                     onClick={handleStartHalfTimeTimer}
                     disabled={halfTimeMinutes === 0 && halfTimeSeconds === 0}
                   >
-                    {halfTimeRemaining === 0 ? "開始中場休息計時器" : "恢復計時器"}
+                    {halfTimeRemaining === 0 ? t('match:live.startHalfTimeTimer') : t('match:live.resumeTimer')}
                   </Button>
                 )}
                 {halfTimeRunning && (
@@ -1196,7 +1196,7 @@ const TournamentLiveMatch = () => {
                     icon={<PauseCircleOutlined />}
                     onClick={handlePauseResumeHalfTime}
                   >
-                    暫停計時器
+                    {t('match:live.pauseTimer')}
                   </Button>
                 )}
               </Space>
@@ -1204,8 +1204,8 @@ const TournamentLiveMatch = () => {
 
             <p style={{ color: "#666" }}>
               {halfTimeRemaining > 0 
-                ? "中場休息進行中，可以隨時開始下半場" 
-                : "準備好開始下半場了嗎？"
+                ? t('match:live.halfTimeInProgress')
+                : t('match:live.readyForSecondHalf')
               }
             </p>
           </div>
@@ -1213,32 +1213,32 @@ const TournamentLiveMatch = () => {
 
         {/* 延長賽模態框 */}
         <Modal
-          title="比賽平局 - 需要延長賽"
+          title={`${t('match:live.tie')} - ${t('match:live.overtimeNeeded')}`}
           open={overtimeModalVisible}
           onOk={handleStartOvertime}
           onCancel={() => setOvertimeModalVisible(false)}
-          okText="開始延長賽"
-          cancelText="稍後開始"
+          okText={t('match:live.startOvertime')}
+          cancelText={t('match:live.continueWithoutOvertime')}
           closable={false}
           maskClosable={false}
         >
           <div style={{ textAlign: "center", padding: "20px 0" }}>
-            <Title level={3}>🏆 延長賽</Title>
-            <p>比賽結果平局，需要延長賽決定勝負！</p>
-            <p>當前比分：</p>
+            <Title level={3}>🏆 {t('match:live.overtimeTitle')}</Title>
+            <p>{t('match:live.matchTiedNeedsOvertimeDesc')}</p>
+            <p>{t('match:live.currentScoreLabel')}：</p>
             <p style={{ fontSize: "24px", fontWeight: "bold", color: "#1890ff" }}>
               {getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score}{" "}
               {getDisplayTeamName(matchData.team2_name)}
             </p>
             <p>
-              犯規數：{team1Fouls} : {team2Fouls}
+              {t('match:live.foulsLabel')}：{team1Fouls} : {team2Fouls}
             </p>
             <p style={{ color: "#666", fontSize: "14px" }}>
-              ⚽ 勝負條件：分數優先，分數相同時犯規較少者獲勝，分數和犯規都相同時延長賽
+              ⚽ {t('match:live.winCondition')}
             </p>
 
             <div style={{ margin: "20px 0" }}>
-              <Text strong>延長賽時長：</Text>
+              <Text strong>{t('match:live.overtimeDuration')}：</Text>
               <div
                 style={{
                   display: "flex",
@@ -1255,7 +1255,7 @@ const TournamentLiveMatch = () => {
                   onChange={setOvertimeMinutes}
                   style={{ width: "80px" }}
                 />
-                <Text>分</Text>
+                <Text>{t('match:live.minutes')}</Text>
                 <InputNumber
                   min={0}
                   max={59}
@@ -1263,48 +1263,47 @@ const TournamentLiveMatch = () => {
                   onChange={setOvertimeSeconds}
                   style={{ width: "80px" }}
                 />
-                <Text>秒</Text>
+                <Text>{t('match:live.seconds')}</Text>
               </div>
               <div style={{ marginTop: "8px", color: "#666", fontSize: "12px" }}>
-                總時長：{overtimeMinutes}分{overtimeSeconds}秒 ({overtimeMinutes * 60 + overtimeSeconds}秒)
+                {t('match:live.totalDurationSeconds', { minutes: overtimeMinutes, seconds: overtimeSeconds, totalSeconds: overtimeMinutes * 60 + overtimeSeconds })}
               </div>
             </div>
 
-            <p style={{ color: "#666" }}>延長賽期間，先得分的隊伍獲勝（黃金進球）</p>
           </div>
         </Modal>
 
         {/* 結束比賽確認模態框 */}
         <Modal
-          title="確認強制結束比賽"
+          title={`${t('common:buttons.confirm')}${t('match:actions.forceEndMatch')}`}
           open={endMatchModalVisible}
           onOk={() => handleEndMatch()}
           onCancel={() => setEndMatchModalVisible(false)}
-          okText="確認結束"
-          cancelText="取消"
+          okText={t('match:live.confirmForceEnd')}
+          cancelText={t('common:buttons.cancel')}
           okType="danger"
         >
-          <p>⚠️ 確定要強制結束這場比賽嗎？</p>
-          <p>這將立即結束整場比賽，無論當前是哪個階段。</p>
+          <p>⚠️ {t('match:live.confirmForceEndMatch')}</p>
+          <p>{t('match:live.forceEndWarning')}</p>
           <p>
-            當前比分：{getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score}{" "}
+            {t('match:live.currentScore')}：{getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score}{" "}
             {getDisplayTeamName(matchData.team2_name)}
           </p>
-          <p>當前階段：{currentHalf === 1 ? "上半場" : currentHalf === 2 ? "下半場" : "延長賽"}</p>
+          <p>{t('match:live.currentStage')}：{currentHalf === 1 ? t('match:live.firstHalf') : currentHalf === 2 ? t('match:live.secondHalf') : t('match:live.overtime')}</p>
           <p>
-            犯規數：{team1Fouls} : {team2Fouls}
+            {t('match:live.fouls')}：{team1Fouls} : {team2Fouls}
           </p>
           <p>
-            當前狀態：
+            {t('match:live.currentStatus')}：
             {isHalfTime
-              ? "中場休息"
+              ? t('match:actions.halfTime')
               : isOvertime
-              ? "延長賽準備"
+              ? t('match:live.overtime')
               : currentHalf === 1
-              ? "上半場"
+              ? t('match:live.firstHalf')
               : currentHalf === 2
-              ? "下半場"
-              : "延長賽"}
+              ? t('match:live.secondHalf')
+              : t('match:live.overtime')}
           </p>
           {(() => {
             const { winnerId, reason } = determineWinner(
@@ -1327,63 +1326,63 @@ const TournamentLiveMatch = () => {
                 </p>
               );
             } else {
-              return <p style={{ color: "#faad14", fontWeight: "bold" }}>結果：平局</p>;
+              return <p style={{ color: "#faad14", fontWeight: "bold" }}>{t('match:live.result')}：{t('match:live.tie')}</p>;
             }
           })()}
-          <p style={{ color: "#999" }}>此操作無法撤銷，比賽結束後將自動計算勝負和積分。</p>
+          <p style={{ color: "#999" }}>{t('match:live.irreversibleAction')}</p>
         </Modal>
 
         {/* 結束當前階段確認模態框 */}
         <Modal
-          title={`確認${currentHalf === 1 ? "結束上半場" : currentHalf === 2 ? "結束下半場" : "結束延長賽"}`}
+          title={`${t('common:buttons.confirm')}${currentHalf === 1 ? t('match:actions.endFirstHalf') : currentHalf === 2 ? t('match:actions.endSecondHalf') : t('match:actions.endOvertime')}`}
           open={endSessionModalVisible}
           onOk={() => {
             handleEndCurrentSession();
             setEndSessionModalVisible(false);
           }}
           onCancel={() => setEndSessionModalVisible(false)}
-          okText="確認結束"
-          cancelText="取消"
+          okText={t('match:live.confirmEnd')}
+          cancelText={t('common:buttons.cancel')}
           okType="primary"
         >
-          <p>確定要{currentHalf === 1 ? "結束上半場" : currentHalf === 2 ? "結束下半場" : "結束延長賽"}嗎？</p>
+          <p>{t('match:live.confirmEndHalf', { action: currentHalf === 1 ? t('match:actions.endFirstHalf') : currentHalf === 2 ? t('match:actions.endSecondHalf') : t('match:actions.endOvertime') })}</p>
           <p>
-            當前比分：{getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score}{" "}
+            {t('match:live.currentScore')}：{getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score}{" "}
             {getDisplayTeamName(matchData.team2_name)}
           </p>
           <p>
-            剩餘時間：{Math.floor(remainingTime / 60)}:{(remainingTime % 60).toString().padStart(2, "0")}
+            {t('match:live.remainingTime')}：{Math.floor(remainingTime / 60)}:{(remainingTime % 60).toString().padStart(2, "0")}
           </p>
           {currentHalf === 2 && team1Score === team2Score && (
-            <p style={{ color: "#ff6b35", fontWeight: "bold" }}>⚠️ 當前比分平局，結束下半場後將進入延長賽</p>
+            <p style={{ color: "#ff6b35", fontWeight: "bold" }}>⚠️ {t('match:live.tieGameWarning')}</p>
           )}
         </Modal>
 
         {/* 計時器編輯模態框 */}
         <Modal
-          title="編輯比賽計時器"
+          title={t('match:actions.editTime')}
           open={timerEditModalVisible}
           onOk={handleTimerEdit}
           onCancel={() => setTimerEditModalVisible(false)}
-          okText="確認修改"
-          cancelText="取消"
+          okText={t('match:live.confirmEdit')}
+          cancelText={t('common:buttons.cancel')}
           okType="primary"
         >
           <div style={{ textAlign: "center", padding: "20px 0" }}>
-            <Title level={4}>⏰ 設置剩餘時間</Title>
+            <Title level={4}>⏰ {t('match:live.setRemainingTime')}</Title>
             <p style={{ color: "#666", marginBottom: "20px" }}>
-              只有在計時器暫停時才能編輯時間
+              {t('match:live.canOnlyEditWhenPaused')}
             </p>
             
             <div style={{ marginBottom: "20px" }}>
-              <Text strong>當前剩餘時間：</Text>
+              <Text strong>{t('match:live.currentRemainingTime')}：</Text>
               <span style={{ fontSize: "24px", color: "#1890ff", marginLeft: "8px" }}>
                 {formatTime(remainingTime)}
               </span>
             </div>
 
             <div style={{ margin: "20px 0" }}>
-              <Text strong>設置新時間：</Text>
+              <Text strong>{t('match:live.setNewTime')}：</Text>
               <div
                 style={{
                   display: "flex",
@@ -1400,7 +1399,7 @@ const TournamentLiveMatch = () => {
                   onChange={setEditMinutes}
                   style={{ width: "80px" }}
                 />
-                <Text>分</Text>
+                <Text>{t('common:time.minutes')}</Text>
                 <InputNumber
                   min={0}
                   max={59}
@@ -1408,21 +1407,21 @@ const TournamentLiveMatch = () => {
                   onChange={setEditSeconds}
                   style={{ width: "80px" }}
                 />
-                <Text>秒</Text>
+                <Text>{t('common:time.seconds')}</Text>
               </div>
               <div style={{ marginTop: "8px", color: "#666", fontSize: "12px" }}>
-                總時長：{editMinutes}分{editSeconds}秒 ({editMinutes * 60 + editSeconds}秒)
+                {t('match:live.totalDuration')}：{editMinutes}{t('common:time.minutes')}{editSeconds}{t('common:time.seconds')} ({editMinutes * 60 + editSeconds}{t('common:time.seconds')})
               </div>
             </div>
 
             <div style={{ marginTop: "16px", padding: "12px", backgroundColor: "#f0f2f5", borderRadius: "6px" }}>
               <Text style={{ fontSize: "16px", color: "#1890ff" }}>
-                預覽：{formatTime(editMinutes * 60 + editSeconds)}
+                {t('match:live.preview')}：{formatTime(editMinutes * 60 + editSeconds)}
               </Text>
             </div>
             
             <p style={{ color: "#999", fontSize: "12px", marginTop: "16px" }}>
-              注意：修改計時器不會影響比賽記錄，僅調整當前顯示時間
+              {t('match:live.editTimerNote')}
             </p>
           </div>
         </Modal>

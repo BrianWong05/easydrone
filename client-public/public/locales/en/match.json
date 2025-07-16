@@ -132,5 +132,10 @@
     "enterScore": "Enter score",
     "selectStatus": "Select match status",
     "selectType": "Select match type"
+  },
+  "live": {
+    "matchTiedNeedsOvertime": "The match is tied and needs overtime to determine the winner!",
+    "currentScore": "Current Score",
+    "fouls": "Fouls"
   }
 }

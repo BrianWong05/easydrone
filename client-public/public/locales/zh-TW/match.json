@@ -34,7 +34,7 @@
     "winner": "獲勝隊伍",
     "loser": "失敗隊伍",
     "draw": "平局",
-    "overtime": "加時賽",
+    "overtime": "延長賽",
     "penalty": "點球大戰",
     "recent": "最近比賽",
     "upcoming": "即將進行",
@@ -132,5 +132,10 @@
     "enterScore": "請輸入比分",
     "selectStatus": "請選擇比賽狀態",
     "selectType": "請選擇比賽類型"
+  },
+  "live": {
+    "matchTiedNeedsOvertime": "比賽結果平局，需要延長賽決定勝負！",
+    "currentScore": "當前比分",
+    "fouls": "犯規數"
   }
 }
