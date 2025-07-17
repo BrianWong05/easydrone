@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
-  Typography, 
   Table, 
   Tag,
   Spin,
@@ -21,7 +20,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
-const { Title, Text } = Typography;
 
 const ClientGroupList = () => {
   const navigate = useNavigate();
@@ -180,13 +178,13 @@ const ClientGroupList = () => {
       key: 'group_name',
       render: (name, record) => (
         <div className="space-y-1">
-          <Text strong className="text-base font-semibold text-gray-800 block">
+          <span className="text-base font-semibold text-gray-800 block font-bold">
             {getDisplayGroupName(name)}
-          </Text>
+          </span>
           {record.tournament_name && (
-            <Text type="secondary" className="text-xs text-gray-500 block">
+            <span className="text-xs text-gray-500 block">
               {record.tournament_name}
-            </Text>
+            </span>
           )}
         </div>
       ),
@@ -198,12 +196,12 @@ const ClientGroupList = () => {
       align: 'center',
       render: (count, record) => (
         <div className="text-center space-y-1">
-          <Text strong className="text-base font-bold text-primary-600 block">
+          <span className="text-base font-bold text-primary-600 block">
             {count || 0}
-          </Text>
-          <Text type="secondary" className="text-xs text-gray-500 block">
+          </span>
+          <span className="text-xs text-gray-500 block">
             / {record.max_teams || 4}
-          </Text>
+          </span>
         </div>
       ),
     },
@@ -224,9 +222,9 @@ const ClientGroupList = () => {
               status={progress === 100 ? 'success' : 'active'}
               className="min-w-[80px]"
             />
-            <Text type="secondary" className="text-xs text-gray-500 block">
+            <span className="text-xs text-gray-500 block">
               {completed} / {total}
-            </Text>
+            </span>
           </div>
         );
       },
@@ -263,7 +261,7 @@ const ClientGroupList = () => {
       <div className="flex flex-col items-center justify-center py-16 px-6">
         <Spin size="large" />
         <div className="mt-4">
-          <Text className="text-gray-600 animate-pulse">{t('messages.loadingGroups')}</Text>
+          <span className="text-gray-600 animate-pulse">{t('messages.loadingGroups')}</span>
         </div>
       </div>
     );
@@ -301,15 +299,15 @@ const ClientGroupList = () => {
         <Card className="mb-8 shadow-md hover:shadow-lg transition-shadow duration-300 border-l-4 border-warning-500">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
             <div className="space-y-2">
-              <Title level={2} className="m-0 flex items-center text-gray-800">
+              <h2 className="m-0 flex items-center text-gray-800">
                 <TrophyOutlined className="mr-3 text-warning-600" />
                 <span className="bg-gradient-to-r from-warning-600 to-warning-700 bg-clip-text text-transparent">
                   {tournament.tournament_name}
                 </span>
-              </Title>
-              <Text type="secondary" className="text-gray-600 text-base">
+              </h2>
+              <span className="text-gray-600 text-base">
                 {t('group:group.list')}
-              </Text>
+              </span>
             </div>
             <div>
               <Tag 
@@ -365,10 +363,10 @@ const ClientGroupList = () => {
       {/* Groups Table */}
       <Card className="shadow-md hover:shadow-lg transition-shadow duration-300 border-t-4 border-primary-500">
         <div className="mb-6">
-          <Title level={3} className="flex items-center text-gray-800">
+          <h3 className="flex items-center text-gray-800">
             <UsergroupAddOutlined className="mr-3 text-primary-600" />
             <span className="font-semibold">{t('group:group.list')}</span>
-          </Title>
+          </h3>
         </div>
         
         <Table
@@ -395,9 +393,9 @@ const ClientGroupList = () => {
               <div className="text-center py-16">
                 <UsergroupAddOutlined className="text-6xl text-gray-300 mb-4" />
                 <div className="mt-4">
-                  <Text type="secondary" className="text-gray-500">
+                  <span className="text-gray-500">
                     {t('messages.noGroups')}
-                  </Text>
+                  </span>
                 </div>
               </div>
             )

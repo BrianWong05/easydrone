@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
-  Typography, 
   Tag,
   Spin,
   Alert,
@@ -24,7 +23,6 @@ import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import moment from 'moment';
 
-const { Title, Text } = Typography;
 
 const ClientGroupDetail = () => {
   const navigate = useNavigate();
@@ -181,13 +179,12 @@ const ClientGroupDetail = () => {
             className="w-4 h-4 rounded-full border border-gray-200 flex-shrink-0"
             style={{ backgroundColor: record.team_color || '#1890ff' }}
           />
-          <Text 
-            strong 
-            className="text-primary-600 cursor-pointer hover:text-primary-700 hover:underline transition-colors duration-200 font-semibold"
+          <span 
+            className="text-primary-600 cursor-pointer hover:text-primary-700 hover:underline transition-colors duration-200 font-semibold font-bold"
             onClick={() => navigate(`/teams/${record.team_id}`)}
           >
             {getDisplayTeamName(name)}
-          </Text>
+          </span>
         </div>
       ),
     },
@@ -200,7 +197,7 @@ const ClientGroupDetail = () => {
       render: (value, record) => {
         // Try different possible field names
         const played = value || record.played || record.games_played || 0;
-        return <Text>{played}</Text>;
+        return <span>{played}</span>;
       },
     },
     {
@@ -211,7 +208,7 @@ const ClientGroupDetail = () => {
       width: 50,
       render: (value, record) => {
         const wins = value || record.won || 0;
-        return <Text>{wins}</Text>;
+        return <span>{wins}</span>;
       },
     },
     {
@@ -222,7 +219,7 @@ const ClientGroupDetail = () => {
       width: 50,
       render: (value, record) => {
         const draws = value || record.drawn || record.ties || 0;
-        return <Text>{draws}</Text>;
+        return <span>{draws}</span>;
       },
     },
     {
@@ -233,7 +230,7 @@ const ClientGroupDetail = () => {
       width: 50,
       render: (value, record) => {
         const losses = value || record.lost || 0;
-        return <Text>{losses}</Text>;
+        return <span>{losses}</span>;
       },
     },
     {
@@ -244,7 +241,7 @@ const ClientGroupDetail = () => {
       width: 60,
       render: (value, record) => {
         const goalsFor = value || record.goals_scored || record.gf || 0;
-        return <Text>{goalsFor}</Text>;
+        return <span>{goalsFor}</span>;
       },
     },
     {
@@ -255,7 +252,7 @@ const ClientGroupDetail = () => {
       width: 60,
       render: (value, record) => {
         const goalsAgainst = value || record.goals_conceded || record.ga || 0;
-        return <Text>{goalsAgainst}</Text>;
+        return <span>{goalsAgainst}</span>;
       },
     },
     {
@@ -268,13 +265,13 @@ const ClientGroupDetail = () => {
         const goalsAgainst = record.goals_against || record.goals_conceded || record.ga || 0;
         const diff = goalsFor - goalsAgainst;
         return (
-          <Text className={`font-semibold ${
+          <span className={`font-semibold ${
             diff > 0 ? 'text-success-600' : 
             diff < 0 ? 'text-error-500' : 
             'text-gray-600'
           }`}>
             {diff > 0 ? '+' : ''}{diff}
-          </Text>
+          </span>
         );
       },
     },
@@ -286,7 +283,7 @@ const ClientGroupDetail = () => {
       width: 60,
       render: (points, record) => {
         const pts = points || record.pts || 0;
-        return <Text strong style={{ color: '#1890ff' }}>{pts}</Text>;
+        return <span className="font-bold" style={{ color: '#1890ff' }}>{pts}</span>;
       },
     },
   ];
@@ -300,17 +297,17 @@ const ClientGroupDetail = () => {
       width: 80,
       align: 'center',
       render: (matchNumber, record) => (
-        <Text 
-          strong 
+        <span 
+          className="font-bold"
           style={{ 
             color: '#1890ff', 
             cursor: 'pointer',
             textDecoration: 'underline'
           }}
-          onClick={() => navigate(`/matches/${record.match_id}`)}
+          onClick={() => record.match_id && navigate(`/matches/${record.match_id}`)}
         >
           {matchNumber}
-        </Text>
+        </span>
       ),
     },
     {
@@ -319,14 +316,14 @@ const ClientGroupDetail = () => {
       render: (_, record) => (
         <div className="space-y-2">
           <div className="flex items-center space-x-2">
-            <Text strong className="text-gray-800">{getDisplayTeamName(record.team1_name)}</Text>
-            <Text type="secondary" className="text-gray-500">vs</Text>
-            <Text strong className="text-gray-800">{getDisplayTeamName(record.team2_name)}</Text>
+            <span className="text-gray-800 font-bold">{getDisplayTeamName(record.team1_name)}</span>
+            <span className="text-gray-500">vs</span>
+            <span className="text-gray-800 font-bold">{getDisplayTeamName(record.team2_name)}</span>
           </div>
           {record.match_status === 'completed' && (
-            <Text className="text-lg font-bold text-primary-600">
+            <span className="text-lg font-bold text-primary-600">
               {record.team1_score || 0} - {record.team2_score || 0}
-            </Text>
+            </span>
           )}
         </div>
       ),
@@ -352,7 +349,7 @@ const ClientGroupDetail = () => {
         <Button 
           type="link" 
           size="small"
-          onClick={() => navigate(`/matches/${record.match_id}`)}
+          onClick={() => record.match_id && navigate(`/matches/${record.match_id}`)}
         >
           {t('common:actions.viewDetails')}
         </Button>
@@ -365,7 +362,7 @@ const ClientGroupDetail = () => {
       <div className="flex flex-col items-center justify-center py-16 px-6">
         <Spin size="large" />
         <div className="mt-4">
-          <Text className="text-gray-600 animate-pulse">{t('group:messages.loadingGroupDetail')}</Text>
+          <span className="text-gray-600 animate-pulse">{t('group:messages.loadingGroupDetail')}</span>
         </div>
       </div>
     );
@@ -431,16 +428,16 @@ const ClientGroupDetail = () => {
       <Card className="mb-8 shadow-md hover:shadow-lg transition-shadow duration-300 border-l-4 border-primary-500">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
           <div className="space-y-2">
-            <Title level={2} className="m-0 flex items-center text-gray-800">
+            <h2 className="m-0 flex items-center text-gray-800">
               <UsergroupAddOutlined className="mr-3 text-primary-600" />
               <span className="bg-gradient-to-r from-primary-600 to-primary-700 bg-clip-text text-transparent">
                 {getDisplayGroupName(group.group_name)}
               </span>
-            </Title>
+            </h2>
             {tournament && (
-              <Text type="secondary" className="text-gray-600 text-base">
+              <span className="text-gray-600 text-base">
                 {tournament.tournament_name}
-              </Text>
+              </span>
             )}
           </div>
           <div className="flex flex-wrap gap-3">
@@ -496,9 +493,9 @@ const ClientGroupDetail = () => {
         
         <Card className="hover:shadow-lg transition-shadow duration-300 border-l-4 border-gray-400">
           <div className="text-center">
-            <Text type="secondary" className="block mb-2 text-gray-600 font-medium">
+            <span className="block mb-2 text-gray-600 font-medium">
               {t('group:group.progress')}
-            </Text>
+            </span>
             <Progress 
               type="circle" 
               percent={matchProgress} 
@@ -512,10 +509,10 @@ const ClientGroupDetail = () => {
 
       {/* Group Standings */}
       <Card className="mb-8 shadow-md hover:shadow-lg transition-shadow duration-300 border-t-4 border-warning-500">
-        <Title level={3} className="flex items-center text-gray-800 mb-6">
+        <h3 className="flex items-center text-gray-800 mb-6">
           <TrophyOutlined className="mr-3 text-warning-600" />
           <span className="font-semibold">{t('group:group.standings')}</span>
-        </Title>
+        </h3>
         <Table
           columns={standingsColumns}
           dataSource={standings}
@@ -528,9 +525,9 @@ const ClientGroupDetail = () => {
               <div className="text-center py-16">
                 <TrophyOutlined className="text-6xl text-gray-300 mb-4" />
                 <div className="mt-4">
-                  <Text type="secondary" className="text-gray-500">
+                  <span className="text-gray-500">
                     {t('group:messages.noStandingsData')}
-                  </Text>
+                  </span>
                 </div>
               </div>
             )
@@ -540,10 +537,10 @@ const ClientGroupDetail = () => {
 
       {/* Group Matches */}
       <Card className="shadow-md hover:shadow-lg transition-shadow duration-300 border-t-4 border-primary-500">
-        <Title level={3} className="flex items-center text-gray-800 mb-6">
+        <h3 className="flex items-center text-gray-800 mb-6">
           <PlayCircleOutlined className="mr-3 text-primary-600" />
           <span className="font-semibold">{t('group:group.matches')}</span>
-        </Title>
+        </h3>
         <Table
           columns={matchesColumns}
           dataSource={matches}
@@ -568,9 +565,9 @@ const ClientGroupDetail = () => {
               <div className="text-center py-16">
                 <CalendarOutlined className="text-6xl text-gray-300 mb-4" />
                 <div className="mt-4">
-                  <Text type="secondary" className="text-gray-500">
+                  <span className="text-gray-500">
                     {t('group:messages.noMatchesInGroup')}
-                  </Text>
+                  </span>
                 </div>
               </div>
             )

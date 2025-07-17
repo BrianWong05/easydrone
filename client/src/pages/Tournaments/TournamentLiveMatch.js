@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
   Card,
-  Typography,
   Button,
   Space,
   Row,
@@ -26,18 +25,17 @@ import {
   TrophyOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import moment from "moment";
 import axios from "axios";
 import { formatMatchDuration } from "../../utils/timeUtils";
 import { determineWinner, needsOvertime, getWinReasonText } from "../../utils/winConditionUtils";
 import { getMatchTypeText } from "../../utils/matchUtils";
 
-const { Title, Text } = Typography;
 const { Option } = Select;
 
 const TournamentLiveMatch = () => {
-  const { t } = useTranslation(['match', 'common']);
+  const { t } = useTranslation(["match", "common"]);
   const navigate = useNavigate();
   const { matchId } = useParams();
 
@@ -87,7 +85,7 @@ const TournamentLiveMatch = () => {
   const [timerEditModalVisible, setTimerEditModalVisible] = useState(false); // 計時器編輯模態框
   const [editMinutes, setEditMinutes] = useState(0); // 編輯分鐘
   const [editSeconds, setEditSeconds] = useState(0); // 編輯秒數
-  
+
   // 中場休息計時器狀態
   const [halfTimeMinutes, setHalfTimeMinutes] = useState(5); // 中場休息分鐘
   const [halfTimeSeconds, setHalfTimeSeconds] = useState(0); // 中場休息秒數
@@ -219,7 +217,7 @@ const TournamentLiveMatch = () => {
               setIsHalfTime(true);
               setHalfTimeModalVisible(true);
               // 不自動開始計時器，等待用戶手動設置和啟動
-              message.info(t('match:live.firstHalfEnded'));
+              message.info(t("match:live.firstHalfEnded"));
               console.log("上半場結束，進入中場休息");
             } else if (currentHalf === 2) {
               // 下半場結束，檢查勝負條件
@@ -236,7 +234,7 @@ const TournamentLiveMatch = () => {
                 // 真正的平局，需要延長賽
                 setIsOvertime(true);
                 setOvertimeModalVisible(true);
-                message.info(t('match:live.matchTied'));
+                message.info(t("match:live.matchTied"));
                 console.log("下半場結束，比賽平局，需要延長賽");
               } else {
                 // 有獲勝者
@@ -250,7 +248,7 @@ const TournamentLiveMatch = () => {
               }
             } else {
               // 延長賽結束，比賽結束
-              message.warning(t('match:live.overtimeEnded'));
+              message.warning(t("match:live.overtimeEnded"));
               console.log("延長賽結束，比賽結束");
             }
             return 0;
@@ -282,7 +280,7 @@ const TournamentLiveMatch = () => {
           console.log(`中場休息倒數: ${newTime}秒`);
           if (newTime <= 0) {
             setHalfTimeRunning(false);
-            message.info(t('match:live.halfTimeEnded'));
+            message.info(t("match:live.halfTimeEnded"));
             console.log("中場休息時間結束");
             return 0;
           }
@@ -390,7 +388,7 @@ const TournamentLiveMatch = () => {
       }
     } catch (error) {
       console.error("獲取比賽詳情錯誤:", error);
-      message.error(t('messages.noMatchData'));
+      message.error(t("messages.noMatchData"));
     }
   };
 
@@ -418,17 +416,19 @@ const TournamentLiveMatch = () => {
     const totalHalfTimeSeconds = halfTimeMinutes * 60 + halfTimeSeconds;
     setHalfTimeRemaining(totalHalfTimeSeconds);
     setHalfTimeRunning(true);
-    message.success(t('live.halfTimeStarted', { 
-      minutes: halfTimeMinutes, 
-      seconds: halfTimeSeconds,
-      defaultValue: `中場休息計時器開始！時長：${halfTimeMinutes}分${halfTimeSeconds}秒`
-    }));
+    message.success(
+      t("live.halfTimeStarted", {
+        minutes: halfTimeMinutes,
+        seconds: halfTimeSeconds,
+        defaultValue: `中場休息計時器開始！時長：${halfTimeMinutes}分${halfTimeSeconds}秒`,
+      }),
+    );
     console.log(`開始中場休息計時器 - 設置倒數計時: ${totalHalfTimeSeconds}秒`);
   };
 
   const handlePauseResumeHalfTime = () => {
     setHalfTimeRunning(!halfTimeRunning);
-    message.info(halfTimeRunning ? t('match:live.halfTimeTimerPaused') : t('match:live.halfTimeTimerResumed'));
+    message.info(halfTimeRunning ? t("match:live.halfTimeTimerPaused") : t("match:live.halfTimeTimerResumed"));
   };
 
   const handleOpenTimerEdit = () => {
@@ -440,7 +440,7 @@ const TournamentLiveMatch = () => {
       setEditSeconds(seconds);
       setTimerEditModalVisible(true);
     } else {
-      message.warning(t('match:live.pauseTimerFirst'));
+      message.warning(t("match:live.pauseTimerFirst"));
     }
   };
 
@@ -450,18 +450,21 @@ const TournamentLiveMatch = () => {
       message.error("時間不能為負數");
       return;
     }
-    if (newTime > 3600) { // 限制最大1小時
-      message.error(t('live.timeExceedsLimit', { defaultValue: '時間不能超過60分鐘' }));
+    if (newTime > 3600) {
+      // 限制最大1小時
+      message.error(t("live.timeExceedsLimit", { defaultValue: "時間不能超過60分鐘" }));
       return;
     }
-    
+
     setRemainingTime(newTime);
     setTimerEditModalVisible(false);
-    message.success(t('live.timerSet', { 
-      minutes: editMinutes, 
-      seconds: editSeconds,
-      defaultValue: `計時器已設置為 ${editMinutes}分${editSeconds}秒`
-    }));
+    message.success(
+      t("live.timerSet", {
+        minutes: editMinutes,
+        seconds: editSeconds,
+        defaultValue: `計時器已設置為 ${editMinutes}分${editSeconds}秒`,
+      }),
+    );
     console.log(`手動設置計時器: ${newTime}秒 (${editMinutes}分${editSeconds}秒)`);
   };
 
@@ -552,7 +555,7 @@ const TournamentLiveMatch = () => {
       setIsHalfTime(true);
       setHalfTimeModalVisible(true);
       // 不自動開始計時器，等待用戶手動設置和啟動
-      message.info(t('match:live.firstHalfEnded'));
+      message.info(t("match:live.firstHalfEnded"));
       console.log("手動結束上半場，進入中場休息");
     } else if (currentHalf === 2) {
       // 結束下半場，檢查勝負條件
@@ -629,11 +632,11 @@ const TournamentLiveMatch = () => {
         // 更新比賽狀態
         setMatchData((prev) => ({ ...prev, match_status: "completed" }));
       } else {
-        message.error(response.data.message || t('live.startFailed', { defaultValue: '開始比賽失敗' }));
+        message.error(response.data.message || t("live.startFailed", { defaultValue: "開始比賽失敗" }));
       }
     } catch (error) {
       console.error("開始比賽錯誤:", error);
-      message.error(t('live.startFailed', { defaultValue: '開始比賽失敗' }));
+      message.error(t("live.startFailed", { defaultValue: "開始比賽失敗" }));
     }
   };
 
@@ -688,7 +691,7 @@ const TournamentLiveMatch = () => {
     return (
       <div className="p-6 text-center">
         <Spin size="large" />
-        <div className="mt-4">{t('messages.loadingMatches')}</div>
+        <div className="mt-4">{t("messages.loadingMatches")}</div>
       </div>
     );
   }
@@ -696,8 +699,8 @@ const TournamentLiveMatch = () => {
   if (!matchData) {
     return (
       <div className="p-6 text-center">
-        <Title level={3}>{t('messages.matchNotFound', { defaultValue: '比賽不存在' })}</Title>
-        <Button onClick={handleBack}>{t('match:actions.backToMatchList')}</Button>
+        <h3>{t("messages.matchNotFound", { defaultValue: "比賽不存在" })}</h3>
+        <Button onClick={handleBack}>{t("match:actions.backToMatchList")}</Button>
       </div>
     );
   }
@@ -709,9 +712,9 @@ const TournamentLiveMatch = () => {
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-4">
             <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
-              {t('common:buttons.back')}
+              {t("common:buttons.back")}
             </Button>
-            <Title level={2} className="m-0 text-white">
+            <h2 className="m-0 text-white">
               <span
                 style={{
                   background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
@@ -720,30 +723,29 @@ const TournamentLiveMatch = () => {
                   color: "#fff",
                 }}
               >
-                🎮 {t('live.controlPanel', { defaultValue: '即時比賽控制台' })}
+                🎮 {t("live.controlPanel", { defaultValue: "即時比賽控制台" })}
               </span>
-            </Title>
+            </h2>
           </div>
 
           <Space>
             {!matchStarted && (matchData.match_status === "pending" || matchData.match_status === "postponed") && (
               <Button type="primary" size="large" icon={<PlayCircleOutlined />} onClick={handleStartMatch}>
-                {t('actions.start')}
+                {t("actions.start")}
               </Button>
             )}
             {matchStarted && matchData.match_status === "active" && !isHalfTime && !isOvertime && (
               <div className="grid grid-cols-2 gap-2 w-96">
                 {/* Top Row */}
                 <Button danger size="large" icon={<StopOutlined />} onClick={() => setEndSessionModalVisible(true)}>
-                  {currentHalf === 1 ? t('match:actions.endFirstHalf') : currentHalf === 2 ? t('match:actions.endSecondHalf') : t('match:actions.endOvertime')}
+                  {currentHalf === 1
+                    ? t("match:actions.endFirstHalf")
+                    : currentHalf === 2
+                    ? t("match:actions.endSecondHalf")
+                    : t("match:actions.endOvertime")}
                 </Button>
-                <Button
-                  danger
-                  type="primary"
-                  size="large"
-                  onClick={() => setEndMatchModalVisible(true)}
-                >
-                  {t('match:actions.forceEndMatch')}
+                <Button danger type="primary" size="large" onClick={() => setEndMatchModalVisible(true)}>
+                  {t("match:actions.forceEndMatch")}
                 </Button>
                 {/* Bottom Row */}
                 <Button
@@ -751,29 +753,25 @@ const TournamentLiveMatch = () => {
                   icon={isRunning ? <PauseCircleOutlined /> : <PlayCircleOutlined />}
                   onClick={handlePauseResume}
                 >
-                  {isRunning ? t('match:actions.pause') : t('match:actions.continue')}
+                  {isRunning ? t("match:actions.pause") : t("match:actions.continue")}
                 </Button>
-                <Button
-                  size="large"
-                  onClick={handleOpenTimerEdit}
-                  disabled={isRunning}
-                >
-                  {t('match:actions.editTime')}
+                <Button size="large" onClick={handleOpenTimerEdit} disabled={isRunning}>
+                  {t("match:actions.editTime")}
                 </Button>
               </div>
             )}
             {isHalfTime && (
               <>
                 <Button type="primary" size="large" icon={<PlayCircleOutlined />} onClick={handleStartSecondHalf}>
-                  {t('match:live.startSecondHalf')}
+                  {t("match:live.startSecondHalf")}
                 </Button>
-                <Button 
-                  size="large" 
-                  icon={<PauseCircleOutlined />} 
+                <Button
+                  size="large"
+                  icon={<PauseCircleOutlined />}
                   onClick={() => setHalfTimeModalVisible(true)}
                   className="ml-2"
                 >
-                  {t('match:actions.halfTimeTimer')}
+                  {t("match:actions.halfTimeTimer")}
                 </Button>
               </>
             )}
@@ -795,18 +793,15 @@ const TournamentLiveMatch = () => {
         <Card className="border-none" style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
           <Row gutter={[24, 24]} align="middle">
             <Col xs={24} lg={8}>
-              <div className="text-center text-white">
-                <Title level={3} className="text-white mb-2">
-                  {matchData.match_number}
-                </Title>
-                <Text className="text-white text-base">{getMatchTypeText(matchData)}</Text>
+              <div className="text-2xl text-center text-white">
+                <h3 className="text-white mb-2">{matchData.match_number}</h3>
+                <span className="text-white">{getMatchTypeText(matchData)}</span>
               </div>
             </Col>
 
             <Col xs={24} lg={8}>
               <div className="text-center">
-                <Title
-                  level={1}
+                <h1
                   style={{
                     color: getTimeColor(),
                     margin: 0,
@@ -816,21 +811,18 @@ const TournamentLiveMatch = () => {
                   }}
                 >
                   {formatTime(remainingTime)}
-                </Title>
-                <Text className="text-white text-sm">/ {formatMatchDuration(matchData.match_time)}</Text>
+                </h1>
+                <span className="text-white text-sm">/ {formatMatchDuration(matchData.match_time)}</span>
                 <div className="mt-2">
-                  <Tag
-                    color={currentHalf === 1 ? "blue" : currentHalf === 2 ? "green" : "red"}
-                    className="text-xs"
-                  >
+                  <Tag color={currentHalf === 1 ? "blue" : currentHalf === 2 ? "green" : "red"} className="text-xs">
                     {isHalfTime
-                      ? t('match:actions.halfTime')
+                      ? t("match:actions.halfTime")
                       : isOvertime
                       ? "延長賽準備"
                       : currentHalf === 1
-                      ? t('live.firstHalf', { defaultValue: '上半場' })
+                      ? t("live.firstHalf", { defaultValue: "上半場" })
                       : currentHalf === 2
-                      ? t('live.secondHalf', { defaultValue: '下半場' })
+                      ? t("live.secondHalf", { defaultValue: "下半場" })
                       : "延長賽"}
                   </Tag>
                 </div>
@@ -850,12 +842,12 @@ const TournamentLiveMatch = () => {
                   className="text-sm px-3 py-1"
                 >
                   {matchData.match_status === "pending"
-                    ? t('status.pending')
+                    ? t("status.pending")
                     : matchData.match_status === "postponed"
-                    ? t('status.pending')
+                    ? t("status.pending")
                     : matchData.match_status === "active"
-                    ? t('status.active')
-                    : t('status.completed')}
+                    ? t("status.active")
+                    : t("status.completed")}
                 </Tag>
               </div>
             </Col>
@@ -867,17 +859,15 @@ const TournamentLiveMatch = () => {
           <Col xs={24} lg={12}>
             <Card
               title={
-                <div className="text-center text-6xl font-bold text-blue-500">
+                <div className="text-center text-6xl font-bold text-blue-500 py-6">
                   {getDisplayTeamName(matchData.team1_name)}
                 </div>
               }
-              className="h-96"
+              className="h-[32rem]"
             >
               <div className="text-center">
                 <div className="mb-6">
-                  <Title level={1} className="text-9xl m-0 text-blue-500 font-bold">
-                    {team1Score}
-                  </Title>
+                  <h1 className="text-9xl m-0 text-blue-500 font-bold">{team1Score}</h1>
                   <div className="mt-4">
                     <Button
                       type="primary"
@@ -887,7 +877,7 @@ const TournamentLiveMatch = () => {
                       disabled={!matchStarted || matchData.match_status !== "active"}
                       className="mr-2"
                     >
-                      +1
+                      1
                     </Button>
                     <Button
                       icon={<MinusOutlined />}
@@ -895,13 +885,13 @@ const TournamentLiveMatch = () => {
                       onClick={() => handleScoreChange(1, "score", -1)}
                       disabled={!matchStarted || matchData.match_status !== "active"}
                     >
-                      -1
+                      1
                     </Button>
                   </div>
                 </div>
 
                 <div>
-                  <Text strong>{t('statistics.fouls')}: </Text>
+                  <span className="font-bold">{t("statistics.fouls")}: </span>
                   <span className="text-2xl text-yellow-500">{team1Fouls}</span>
                   <div className="mt-2">
                     <Button
@@ -910,14 +900,14 @@ const TournamentLiveMatch = () => {
                       disabled={!matchStarted || matchData.match_status !== "active"}
                       className="mr-1"
                     >
-                      +{t('statistics.fouls')}
+                      +{t("statistics.fouls")}
                     </Button>
                     <Button
                       size="small"
                       onClick={() => handleScoreChange(1, "foul", -1)}
                       disabled={!matchStarted || matchData.match_status !== "active"}
                     >
-                      -{t('statistics.fouls')}
+                      -{t("statistics.fouls")}
                     </Button>
                   </div>
                 </div>
@@ -928,17 +918,15 @@ const TournamentLiveMatch = () => {
           <Col xs={24} lg={12}>
             <Card
               title={
-                <div className="text-center text-6xl font-bold text-red-500">
+                <div className="text-center text-6xl font-bold text-red-500 py-6">
                   {getDisplayTeamName(matchData.team2_name)}
                 </div>
               }
-              className="h-96"
+              className="h-[32rem]"
             >
               <div className="text-center">
                 <div className="mb-6">
-                  <Title level={1} className="text-9xl m-0 text-red-500 font-bold">
-                    {team2Score}
-                  </Title>
+                  <h1 className="text-9xl m-0 text-red-500 font-bold">{team2Score}</h1>
                   <div className="mt-4">
                     <Button
                       type="primary"
@@ -948,7 +936,7 @@ const TournamentLiveMatch = () => {
                       disabled={!matchStarted || matchData.match_status !== "active"}
                       className="mr-2"
                     >
-                      +1
+                      1
                     </Button>
                     <Button
                       icon={<MinusOutlined />}
@@ -956,13 +944,13 @@ const TournamentLiveMatch = () => {
                       onClick={() => handleScoreChange(2, "score", -1)}
                       disabled={!matchStarted || matchData.match_status !== "active"}
                     >
-                      -1
+                      1
                     </Button>
                   </div>
                 </div>
 
                 <div>
-                  <Text strong>{t('statistics.fouls')}: </Text>
+                  <span className="font-bold">{t("statistics.fouls")}: </span>
                   <span className="text-2xl text-yellow-500">{team2Fouls}</span>
                   <div className="mt-2">
                     <Button
@@ -971,14 +959,14 @@ const TournamentLiveMatch = () => {
                       disabled={!matchStarted || matchData.match_status !== "active"}
                       className="mr-1"
                     >
-                      +{t('statistics.fouls')}
+                      +{t("statistics.fouls")}
                     </Button>
                     <Button
                       size="small"
                       onClick={() => handleScoreChange(2, "foul", -1)}
                       disabled={!matchStarted || matchData.match_status !== "active"}
                     >
-                      -{t('statistics.fouls')}
+                      -{t("statistics.fouls")}
                     </Button>
                   </div>
                 </div>
@@ -990,7 +978,7 @@ const TournamentLiveMatch = () => {
         {/* 鍵盤快捷鍵說明 */}
         {!matchStarted && matchData.match_status === "pending" && (
           <Card
-            title={`🎮 ${t('live.keyboardShortcuts', { defaultValue: '鍵盤快捷鍵' })}`}
+            title={`🎮 ${t("live.keyboardShortcuts", { defaultValue: "鍵盤快捷鍵" })}`}
             size="small"
             style={{
               background: "linear-gradient(135deg, #1890ff 0%, #096dd9 100%)",
@@ -999,7 +987,7 @@ const TournamentLiveMatch = () => {
             }}
           >
             <div className="text-center py-2">
-              <Text className="text-white text-base">
+              <span className="text-white text-base">
                 <kbd
                   style={{
                     fontSize: "16px",
@@ -1010,8 +998,8 @@ const TournamentLiveMatch = () => {
                 >
                   Enter
                 </kbd>
-                : {t('live.startMatch', { defaultValue: '開始比賽' })}
-              </Text>
+                : {t("live.startMatch", { defaultValue: "開始比賽" })}
+              </span>
             </div>
           </Card>
         )}
@@ -1019,7 +1007,7 @@ const TournamentLiveMatch = () => {
         {/* 中場休息時的鍵盤快捷鍵說明 */}
         {isHalfTime && (
           <Card
-            title={`🎮 ${t('live.keyboardShortcuts', { defaultValue: '鍵盤快捷鍵' })}`}
+            title={`🎮 ${t("live.keyboardShortcuts", { defaultValue: "鍵盤快捷鍵" })}`}
             size="small"
             style={{
               background: "linear-gradient(135deg, #fa8c16 0%, #d46b08 100%)",
@@ -1028,7 +1016,7 @@ const TournamentLiveMatch = () => {
             }}
           >
             <div className="text-center py-2">
-              <Text className="text-white text-base">
+              <span className="text-white text-base">
                 <kbd
                   style={{
                     fontSize: "16px",
@@ -1039,15 +1027,15 @@ const TournamentLiveMatch = () => {
                 >
                   Enter
                 </kbd>
-                : {t('match:live.startSecondHalf')}
-              </Text>
+                : {t("match:live.startSecondHalf")}
+              </span>
             </div>
           </Card>
         )}
 
         {matchStarted && matchData.match_status === "active" && (
           <Card
-            title={`🎮 ${t('live.keyboardShortcuts', { defaultValue: '鍵盤快捷鍵' })}`}
+            title={`🎮 ${t("live.keyboardShortcuts", { defaultValue: "鍵盤快捷鍵" })}`}
             size="small"
             style={{
               background: "linear-gradient(135deg, #52c41a 0%, #389e0d 100%)",
@@ -1057,29 +1045,32 @@ const TournamentLiveMatch = () => {
           >
             <Row gutter={[16, 8]} className="text-white">
               <Col xs={12} sm={6}>
-                <Text className="text-white">
-                  <kbd>Q</kbd>/<kbd>W</kbd>: {getDisplayTeamName(matchData.team1_name)} {t('live.score', { defaultValue: '得分' })} +/-
-                </Text>
+                <span className="text-white">
+                  <kbd>Q</kbd>/<kbd>W</kbd>: {getDisplayTeamName(matchData.team1_name)}{" "}
+                  {t("live.score", { defaultValue: "得分" })} +/-
+                </span>
               </Col>
               <Col xs={12} sm={6}>
-                <Text className="text-white">
-                  <kbd>O</kbd>/<kbd>P</kbd>: {getDisplayTeamName(matchData.team2_name)} {t('live.score', { defaultValue: '得分' })} +/-
-                </Text>
+                <span className="text-white">
+                  <kbd>O</kbd>/<kbd>P</kbd>: {getDisplayTeamName(matchData.team2_name)}{" "}
+                  {t("live.score", { defaultValue: "得分" })} +/-
+                </span>
               </Col>
               <Col xs={12} sm={6}>
-                <Text className="text-white">
-                  <kbd>A</kbd>/<kbd>S</kbd>: {getDisplayTeamName(matchData.team1_name)} {t('statistics.fouls')} +/-
-                </Text>
+                <span className="text-white">
+                  <kbd>A</kbd>/<kbd>S</kbd>: {getDisplayTeamName(matchData.team1_name)} {t("statistics.fouls")} +/-
+                </span>
               </Col>
               <Col xs={12} sm={6}>
-                <Text className="text-white">
-                  <kbd>K</kbd>/<kbd>L</kbd>: {getDisplayTeamName(matchData.team2_name)} {t('statistics.fouls')} +/-
-                </Text>
+                <span className="text-white">
+                  <kbd>K</kbd>/<kbd>L</kbd>: {getDisplayTeamName(matchData.team2_name)} {t("statistics.fouls")} +/-
+                </span>
               </Col>
               <Col xs={24} sm={24} className="text-center mt-2">
-                <Text className="text-white text-base">
-                  <kbd className="text-sm px-2 py-1">{t('live.spacebar', { defaultValue: '空格' })}</kbd>: {t('live.pauseResumeTimer', { defaultValue: '開始/暫停計時器' })}
-                </Text>
+                <span className="text-white text-base">
+                  <kbd className="text-sm px-2 py-1">{t("live.spacebar", { defaultValue: "空格" })}</kbd>:{" "}
+                  {t("live.pauseResumeTimer", { defaultValue: "開始/暫停計時器" })}
+                </span>
               </Col>
             </Row>
           </Card>
@@ -1095,11 +1086,12 @@ const TournamentLiveMatch = () => {
                   color={event.event_type === "goal" ? "green" : event.event_type === "foul" ? "red" : "blue"}
                 >
                   <div>
-                    <Text strong>{event.event_time}</Text> -<Text className="ml-2">{event.team_name}</Text>
+                    <span className="font-bold">{event.event_time}</span> -
+                    <span className="ml-2">{event.team_name}</span>
                     <Tag color="blue" className="ml-2">
                       {event.event_type === "goal" ? "進球" : event.event_type === "foul" ? "犯規" : event.event_type}
                     </Tag>
-                    {event.athlete_name && <Text className="ml-2">({event.athlete_name})</Text>}
+                    {event.athlete_name && <span className="ml-2">({event.athlete_name})</span>}
                     {event.description && <div className="mt-1 text-gray-600">{event.description}</div>}
                   </div>
                 </Timeline.Item>
@@ -1110,19 +1102,19 @@ const TournamentLiveMatch = () => {
 
         {/* 中場休息模態框 */}
         <Modal
-          title={t('match:live.firstHalfEnded')}
+          title={t("match:live.firstHalfEnded")}
           open={halfTimeModalVisible}
           onOk={handleStartSecondHalf}
           onCancel={() => setHalfTimeModalVisible(false)}
-          okText={t('match:live.startSecondHalf')}
-          cancelText={t('match:actions.continueRest')}
+          okText={t("match:live.startSecondHalf")}
+          cancelText={t("match:actions.continueRest")}
           closable={false}
           maskClosable={false}
           width={600}
         >
           <div className="text-center py-5">
-            <Title level={3}>⏰ {t('match:actions.halfTime')}</Title>
-            <p>{t('match:live.firstHalfEndedMessage')}</p>
+            <h3>⏰ {t("match:actions.halfTime")}</h3>
+            <p>{t("match:live.firstHalfEndedMessage")}</p>
             <p className="text-2xl font-bold text-blue-500">
               {getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score}{" "}
               {getDisplayTeamName(matchData.team2_name)}
@@ -1130,30 +1122,29 @@ const TournamentLiveMatch = () => {
 
             {/* 中場休息計時器 */}
             <div className="my-8 p-5 bg-gray-100 rounded-lg">
-              <Title level={4} className="mb-4">{t('match:actions.halfTimeTimer')}</Title>
-              
+              <h4 className="mb-4">{t("match:actions.halfTimeTimer")}</h4>
+
               {/* 計時器顯示 */}
               <div className="mb-5">
-                <Title 
-                  level={1} 
-                  style={{ 
-                    fontSize: "80px", 
-                    margin: "0", 
+                <h1
+                  style={{
+                    fontSize: "80px",
+                    margin: "0",
                     color: halfTimeRemaining <= 60 ? "#f5222d" : "#52c41a",
                     fontWeight: "bold",
-                    textShadow: "2px 2px 4px rgba(0,0,0,0.3)"
+                    textShadow: "2px 2px 4px rgba(0,0,0,0.3)",
                   }}
                 >
                   {formatTime(halfTimeRemaining)}
-                </Title>
-                <Text className="text-sm text-gray-600">
+                </h1>
+                <span className="text-sm text-gray-600">
                   / {halfTimeMinutes}分{halfTimeSeconds}秒
-                </Text>
+                </span>
               </div>
 
               {/* 時間設置 - 始終顯示，就像延長賽設置一樣 */}
               <div className="mb-4">
-                <Text strong>{t('match:live.duration')}：</Text>
+                <span className="font-bold">{t("match:live.duration")}：</span>
                 <div className="flex items-center justify-center gap-2 mt-2">
                   <InputNumber
                     min={0}
@@ -1163,7 +1154,7 @@ const TournamentLiveMatch = () => {
                     className="w-20"
                     disabled={halfTimeRunning}
                   />
-                  <Text>分</Text>
+                  <span>分</span>
                   <InputNumber
                     min={0}
                     max={59}
@@ -1172,73 +1163,69 @@ const TournamentLiveMatch = () => {
                     className="w-20"
                     disabled={halfTimeRunning}
                   />
-                  <Text>秒</Text>
+                  <span>秒</span>
                 </div>
                 <div className="mt-2 text-gray-600 text-xs">
-                  {t('match:live.totalDurationSeconds', { minutes: halfTimeMinutes, seconds: halfTimeSeconds, totalSeconds: halfTimeMinutes * 60 + halfTimeSeconds })}
+                  {t("match:live.totalDurationSeconds", {
+                    minutes: halfTimeMinutes,
+                    seconds: halfTimeSeconds,
+                    totalSeconds: halfTimeMinutes * 60 + halfTimeSeconds,
+                  })}
                 </div>
               </div>
 
               {/* 計時器控制按鈕 */}
               <Space>
                 {!halfTimeRunning && (
-                  <Button 
-                    type="primary" 
+                  <Button
+                    type="primary"
                     icon={<PlayCircleOutlined />}
                     onClick={handleStartHalfTimeTimer}
                     disabled={halfTimeMinutes === 0 && halfTimeSeconds === 0}
                   >
-                    {halfTimeRemaining === 0 ? t('match:live.startHalfTimeTimer') : t('match:live.resumeTimer')}
+                    {halfTimeRemaining === 0 ? t("match:live.startHalfTimeTimer") : t("match:live.resumeTimer")}
                   </Button>
                 )}
                 {halfTimeRunning && (
-                  <Button 
-                    icon={<PauseCircleOutlined />}
-                    onClick={handlePauseResumeHalfTime}
-                  >
-                    {t('match:live.pauseTimer')}
+                  <Button icon={<PauseCircleOutlined />} onClick={handlePauseResumeHalfTime}>
+                    {t("match:live.pauseTimer")}
                   </Button>
                 )}
               </Space>
             </div>
 
             <p className="text-gray-600">
-              {halfTimeRemaining > 0 
-                ? t('match:live.halfTimeInProgress')
-                : t('match:live.readyForSecondHalf')
-              }
+              {halfTimeRemaining > 0 ? t("match:live.halfTimeInProgress") : t("match:live.readyForSecondHalf")}
             </p>
           </div>
         </Modal>
 
         {/* 延長賽模態框 */}
         <Modal
-          title={`${t('match:live.tie')} - ${t('match:live.overtimeNeeded')}`}
+          title={`${t("match:live.tie")} - ${t("match:live.overtimeNeeded")}`}
           open={overtimeModalVisible}
           onOk={handleStartOvertime}
           onCancel={() => setOvertimeModalVisible(false)}
-          okText={t('match:live.startOvertime')}
-          cancelText={t('match:live.continueWithoutOvertime')}
+          okText={t("match:live.startOvertime")}
+          cancelText={t("match:live.continueWithoutOvertime")}
           closable={false}
           maskClosable={false}
         >
           <div className="text-center py-5">
-            <Title level={3}>🏆 {t('match:live.overtimeTitle')}</Title>
-            <p>{t('match:live.matchTiedNeedsOvertimeDesc')}</p>
-            <p>{t('match:live.currentScoreLabel')}：</p>
+            <h3>🏆 {t("match:live.overtimeTitle")}</h3>
+            <p>{t("match:live.matchTiedNeedsOvertimeDesc")}</p>
+            <p>{t("match:live.currentScoreLabel")}：</p>
             <p className="text-2xl font-bold text-blue-500">
               {getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score}{" "}
               {getDisplayTeamName(matchData.team2_name)}
             </p>
             <p>
-              {t('match:live.foulsLabel')}：{team1Fouls} : {team2Fouls}
+              {t("match:live.foulsLabel")}：{team1Fouls} : {team2Fouls}
             </p>
-            <p className="text-gray-600 text-sm">
-              ⚽ {t('match:live.winCondition')}
-            </p>
+            <p className="text-gray-600 text-sm">⚽ {t("match:live.winCondition")}</p>
 
             <div className="my-5">
-              <Text strong>{t('match:live.overtimeDuration')}：</Text>
+              <span className="font-bold">{t("match:live.overtimeDuration")}：</span>
               <div
                 style={{
                   display: "flex",
@@ -1248,62 +1235,60 @@ const TournamentLiveMatch = () => {
                   marginTop: "8px",
                 }}
               >
-                <InputNumber
-                  min={0}
-                  max={30}
-                  value={overtimeMinutes}
-                  onChange={setOvertimeMinutes}
-                  className="w-20"
-                />
-                <Text>{t('match:live.minutes')}</Text>
-                <InputNumber
-                  min={0}
-                  max={59}
-                  value={overtimeSeconds}
-                  onChange={setOvertimeSeconds}
-                  className="w-20"
-                />
-                <Text>{t('match:live.seconds')}</Text>
+                <InputNumber min={0} max={30} value={overtimeMinutes} onChange={setOvertimeMinutes} className="w-20" />
+                <span>{t("match:live.minutes")}</span>
+                <InputNumber min={0} max={59} value={overtimeSeconds} onChange={setOvertimeSeconds} className="w-20" />
+                <span>{t("match:live.seconds")}</span>
               </div>
               <div className="mt-2 text-gray-600 text-xs">
-                {t('match:live.totalDurationSeconds', { minutes: overtimeMinutes, seconds: overtimeSeconds, totalSeconds: overtimeMinutes * 60 + overtimeSeconds })}
+                {t("match:live.totalDurationSeconds", {
+                  minutes: overtimeMinutes,
+                  seconds: overtimeSeconds,
+                  totalSeconds: overtimeMinutes * 60 + overtimeSeconds,
+                })}
               </div>
             </div>
-
           </div>
         </Modal>
 
         {/* 結束比賽確認模態框 */}
         <Modal
-          title={`${t('common:buttons.confirm')}${t('match:actions.forceEndMatch')}`}
+          title={`${t("common:buttons.confirm")}${t("match:actions.forceEndMatch")}`}
           open={endMatchModalVisible}
           onOk={() => handleEndMatch()}
           onCancel={() => setEndMatchModalVisible(false)}
-          okText={t('match:live.confirmForceEnd')}
-          cancelText={t('common:buttons.cancel')}
+          okText={t("match:live.confirmForceEnd")}
+          cancelText={t("common:buttons.cancel")}
           okType="danger"
         >
-          <p>⚠️ {t('match:live.confirmForceEndMatch')}</p>
-          <p>{t('match:live.forceEndWarning')}</p>
+          <p>⚠️ {t("match:live.confirmForceEndMatch")}</p>
+          <p>{t("match:live.forceEndWarning")}</p>
           <p>
-            {t('match:live.currentScore')}：{getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score}{" "}
+            {t("match:live.currentScore")}：{getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score}{" "}
             {getDisplayTeamName(matchData.team2_name)}
           </p>
-          <p>{t('match:live.currentStage')}：{currentHalf === 1 ? t('match:live.firstHalf') : currentHalf === 2 ? t('match:live.secondHalf') : t('match:live.overtime')}</p>
           <p>
-            {t('match:live.fouls')}：{team1Fouls} : {team2Fouls}
+            {t("match:live.currentStage")}：
+            {currentHalf === 1
+              ? t("match:live.firstHalf")
+              : currentHalf === 2
+              ? t("match:live.secondHalf")
+              : t("match:live.overtime")}
           </p>
           <p>
-            {t('match:live.currentStatus')}：
+            {t("match:live.fouls")}：{team1Fouls} : {team2Fouls}
+          </p>
+          <p>
+            {t("match:live.currentStatus")}：
             {isHalfTime
-              ? t('match:actions.halfTime')
+              ? t("match:actions.halfTime")
               : isOvertime
-              ? t('match:live.overtime')
+              ? t("match:live.overtime")
               : currentHalf === 1
-              ? t('match:live.firstHalf')
+              ? t("match:live.firstHalf")
               : currentHalf === 2
-              ? t('match:live.secondHalf')
-              : t('match:live.overtime')}
+              ? t("match:live.secondHalf")
+              : t("match:live.overtime")}
           </p>
           {(() => {
             const { winnerId, reason } = determineWinner(
@@ -1326,63 +1311,79 @@ const TournamentLiveMatch = () => {
                 </p>
               );
             } else {
-              return <p className="text-yellow-500 font-bold">{t('match:live.result')}：{t('match:live.tie')}</p>;
+              return (
+                <p className="text-yellow-500 font-bold">
+                  {t("match:live.result")}：{t("match:live.tie")}
+                </p>
+              );
             }
           })()}
-          <p className="text-gray-400">{t('match:live.irreversibleAction')}</p>
+          <p className="text-gray-400">{t("match:live.irreversibleAction")}</p>
         </Modal>
 
         {/* 結束當前階段確認模態框 */}
         <Modal
-          title={`${t('common:buttons.confirm')}${currentHalf === 1 ? t('match:actions.endFirstHalf') : currentHalf === 2 ? t('match:actions.endSecondHalf') : t('match:actions.endOvertime')}`}
+          title={`${t("common:buttons.confirm")}${
+            currentHalf === 1
+              ? t("match:actions.endFirstHalf")
+              : currentHalf === 2
+              ? t("match:actions.endSecondHalf")
+              : t("match:actions.endOvertime")
+          }`}
           open={endSessionModalVisible}
           onOk={() => {
             handleEndCurrentSession();
             setEndSessionModalVisible(false);
           }}
           onCancel={() => setEndSessionModalVisible(false)}
-          okText={t('match:live.confirmEnd')}
-          cancelText={t('common:buttons.cancel')}
+          okText={t("match:live.confirmEnd")}
+          cancelText={t("common:buttons.cancel")}
           okType="primary"
         >
-          <p>{t('match:live.confirmEndHalf', { action: currentHalf === 1 ? t('match:actions.endFirstHalf') : currentHalf === 2 ? t('match:actions.endSecondHalf') : t('match:actions.endOvertime') })}</p>
           <p>
-            {t('match:live.currentScore')}：{getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score}{" "}
+            {t("match:live.confirmEndHalf", {
+              action:
+                currentHalf === 1
+                  ? t("match:actions.endFirstHalf")
+                  : currentHalf === 2
+                  ? t("match:actions.endSecondHalf")
+                  : t("match:actions.endOvertime"),
+            })}
+          </p>
+          <p>
+            {t("match:live.currentScore")}：{getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score}{" "}
             {getDisplayTeamName(matchData.team2_name)}
           </p>
           <p>
-            {t('match:live.remainingTime')}：{Math.floor(remainingTime / 60)}:{(remainingTime % 60).toString().padStart(2, "0")}
+            {t("match:live.remainingTime")}：{Math.floor(remainingTime / 60)}:
+            {(remainingTime % 60).toString().padStart(2, "0")}
           </p>
           {currentHalf === 2 && team1Score === team2Score && (
-            <p className="text-orange-500 font-bold">⚠️ {t('match:live.tieGameWarning')}</p>
+            <p className="text-orange-500 font-bold">⚠️ {t("match:live.tieGameWarning")}</p>
           )}
         </Modal>
 
         {/* 計時器編輯模態框 */}
         <Modal
-          title={t('match:actions.editTime')}
+          title={t("match:actions.editTime")}
           open={timerEditModalVisible}
           onOk={handleTimerEdit}
           onCancel={() => setTimerEditModalVisible(false)}
-          okText={t('match:live.confirmEdit')}
-          cancelText={t('common:buttons.cancel')}
+          okText={t("match:live.confirmEdit")}
+          cancelText={t("common:buttons.cancel")}
           okType="primary"
         >
           <div className="text-center py-5">
-            <Title level={4}>⏰ {t('match:live.setRemainingTime')}</Title>
-            <p className="text-gray-600 mb-5">
-              {t('match:live.canOnlyEditWhenPaused')}
-            </p>
-            
+            <h4>⏰ {t("match:live.setRemainingTime")}</h4>
+            <p className="text-gray-600 mb-5">{t("match:live.canOnlyEditWhenPaused")}</p>
+
             <div className="mb-5">
-              <Text strong>{t('match:live.currentRemainingTime')}：</Text>
-              <span className="text-2xl text-blue-500 ml-2">
-                {formatTime(remainingTime)}
-              </span>
+              <span className="font-bold">{t("match:live.currentRemainingTime")}：</span>
+              <span className="text-2xl text-blue-500 ml-2">{formatTime(remainingTime)}</span>
             </div>
 
             <div className="my-5">
-              <Text strong>{t('match:live.setNewTime')}：</Text>
+              <span className="font-bold">{t("match:live.setNewTime")}：</span>
               <div
                 style={{
                   display: "flex",
@@ -1392,37 +1393,27 @@ const TournamentLiveMatch = () => {
                   marginTop: "8px",
                 }}
               >
-                <InputNumber
-                  min={0}
-                  max={60}
-                  value={editMinutes}
-                  onChange={setEditMinutes}
-                  className="w-20"
-                />
-                <Text>{t('common:time.minutes')}</Text>
-                <InputNumber
-                  min={0}
-                  max={59}
-                  value={editSeconds}
-                  onChange={setEditSeconds}
-                  className="w-20"
-                />
-                <Text>{t('common:time.seconds')}</Text>
+                <InputNumber min={0} max={60} value={editMinutes} onChange={setEditMinutes} className="w-20" />
+                <span>{t("common:time.minutes")}</span>
+                <InputNumber min={0} max={59} value={editSeconds} onChange={setEditSeconds} className="w-20" />
+                <span>{t("common:time.seconds")}</span>
               </div>
               <div className="mt-2 text-gray-600 text-xs">
-                {t('match:live.totalDuration')}：{editMinutes}{t('common:time.minutes')}{editSeconds}{t('common:time.seconds')} ({editMinutes * 60 + editSeconds}{t('common:time.seconds')})
+                {t("match:live.totalDuration")}：{editMinutes}
+                {t("common:time.minutes")}
+                {editSeconds}
+                {t("common:time.seconds")} ({editMinutes * 60 + editSeconds}
+                {t("common:time.seconds")})
               </div>
             </div>
 
             <div className="mt-4 p-3 bg-gray-100 rounded-md">
-              <Text className="text-base text-blue-500">
-                {t('match:live.preview')}：{formatTime(editMinutes * 60 + editSeconds)}
-              </Text>
+              <span className="text-base text-blue-500">
+                {t("match:live.preview")}：{formatTime(editMinutes * 60 + editSeconds)}
+              </span>
             </div>
-            
-            <p className="text-gray-400 text-xs mt-4">
-              {t('match:live.editTimerNote')}
-            </p>
+
+            <p className="text-gray-400 text-xs mt-4">{t("match:live.editTimerNote")}</p>
           </div>
         </Modal>
       </Space>

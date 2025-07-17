@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Layout, Menu, Typography, Space, Spin, Alert, Drawer } from "antd";
+import { Layout, Menu, Space, Spin, Alert, Drawer } from "antd";
 import { Link, useLocation } from "react-router-dom";
 import {
   TrophyOutlined,
@@ -17,7 +17,6 @@ import axios from "axios";
 import LanguageSwitcher from "../LanguageSwitcher";
 
 const { Header, Sider } = Layout;
-const { Title, Text } = Typography;
 
 const ClientLayout = ({ children }) => {
   const { t } = useTranslation(['public', 'common']);
@@ -136,14 +135,14 @@ const ClientLayout = ({ children }) => {
           <TrophyOutlined className="text-3xl text-yellow-500" />
           {(!collapsed || isMobile) && (
             <>
-              <Title level={4} className="m-0 text-base text-gray-800 font-semibold">
+              <h4 className="m-0 text-base text-gray-800 font-semibold">
                 {tournament?.tournament_name || t('public:layout.title')}
-              </Title>
-              <Text type="secondary" className="text-xs text-gray-500">
+              </h4>
+              <span className="text-xs text-gray-500">
                 {tournament?.tournament_type === "group" && t('public:tournamentTypes.group')}
                 {tournament?.tournament_type === "knockout" && t('public:tournamentTypes.knockout')}
                 {tournament?.tournament_type === "mixed" && t('public:tournamentTypes.mixed')}
-              </Text>
+              </span>
             </>
           )}
         </div>
@@ -158,7 +157,7 @@ const ClientLayout = ({ children }) => {
       <Layout className="min-h-screen">
         <div className="flex justify-center items-center h-screen flex-col">
           <Spin size="large" />
-          <Text className="mt-4 text-gray-600">{t('public:layout.loadingTournament')}</Text>
+          <span className="mt-4 text-gray-600">{t('public:layout.loadingTournament')}</span>
         </div>
       </Layout>
     );
@@ -254,25 +253,23 @@ const ClientLayout = ({ children }) => {
                 </div>
               </div>
             )}
-            <Title
-              level={3}
+            <h3
               className="m-0 text-gray-800 font-bold"
               style={{
                 fontSize: isMobile ? 16 : 24,
               }}
             >
               {isMobile ? t('public:layout.title') : tournament?.tournament_name || t('public:layout.tournamentName')}
-            </Title>
+            </h3>
           </div>
           <div className="flex items-center gap-3">
             <LanguageSwitcher size="small" />
-            <Text 
-              type="secondary" 
+            <span 
               className="text-gray-500"
               style={{ fontSize: isMobile ? 12 : 14 }}
             >
               {t('public:layout.subtitle')}
-            </Text>
+            </span>
           </div>
         </Header>
         {children}

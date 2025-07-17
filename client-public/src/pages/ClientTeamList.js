@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
-  Typography, 
+ 
   Table, 
   Space, 
   Avatar, 
@@ -23,7 +23,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
-const { Title, Text } = Typography;
 
 const ClientTeamList = () => {
   const { t } = useTranslation(['team', 'common', 'public', 'match']);
@@ -143,14 +142,14 @@ const ClientTeamList = () => {
             className="shadow-md"
           />
           <div className="flex flex-col gap-1">
-            <Text 
+            <span 
               strong 
               className="text-base cursor-pointer underline hover:opacity-80 transition-opacity duration-200"
               style={{ color: record.team_color || '#1890ff' }}
               onClick={() => navigate(`/teams/${record.team_id}`)}
             >
               {getDisplayTeamName(name)}
-            </Text>
+            </span>
             {record.group_name && (
               <div>
                 <Tag color="blue" className="mt-1 text-xs">
@@ -171,9 +170,9 @@ const ClientTeamList = () => {
       render: (count) => (
         <div className="flex items-center gap-2 justify-center">
           <UserOutlined className="text-blue-600" />
-          <Text strong className="text-base">
+          <span className="font-bold" className="text-base">
             {count || 0}
-          </Text>
+          </span>
         </div>
       )
     },
@@ -185,7 +184,7 @@ const ClientTeamList = () => {
       render: (_, record) => (
         <div className="flex items-center gap-2 justify-center">
           <CalendarOutlined className="text-green-500" />
-          <Text className="text-gray-700">{record.total_matches || 0}</Text>
+          <span className="text-gray-700">{record.total_matches || 0}</span>
         </div>
       )
     },
@@ -196,9 +195,9 @@ const ClientTeamList = () => {
       width: 80,
       align: 'center',
       render: (wins) => (
-        <Text strong className="text-green-600 text-base">
+        <span className="font-bold" className="text-green-600 text-base">
           {wins || 0}
-        </Text>
+        </span>
       )
     },
     {
@@ -210,7 +209,7 @@ const ClientTeamList = () => {
       render: (goals) => (
         <div className="flex items-center gap-2 justify-center">
           <FireOutlined className="text-orange-500" />
-          <Text strong className="text-gray-700">{goals || 0}</Text>
+          <span className="font-bold" className="text-gray-700">{goals || 0}</span>
         </div>
       )
     },
@@ -221,9 +220,9 @@ const ClientTeamList = () => {
       width: 80,
       align: 'center',
       render: (points) => (
-        <Text strong className="text-base text-blue-600 font-bold">
+        <span className="font-bold" className="text-base text-blue-600 font-bold">
           {points || 0}
-        </Text>
+        </span>
       ),
       sorter: (a, b) => (b.points || 0) - (a.points || 0)
     },
@@ -233,12 +232,12 @@ const ClientTeamList = () => {
       width: 100,
       align: 'center',
       render: (_, record) => (
-        <Text 
+        <span 
           className="text-blue-600 cursor-pointer underline hover:text-blue-800 transition-colors duration-200"
           onClick={() => navigate(`/teams/${record.team_id}`)}
         >
           {t('common:buttons.view')}
-        </Text>
+        </span>
       )
     }
   ];
@@ -248,7 +247,7 @@ const ClientTeamList = () => {
       <div className="p-6 text-center bg-gray-50 min-h-screen">
         <Spin size="large" />
         <div className="mt-4">
-          <Text className="text-gray-600">{t('team:messages.loadingTeams')}</Text>
+          <span className="text-gray-600">{t('team:messages.loadingTeams')}</span>
         </div>
       </div>
     );
@@ -277,12 +276,12 @@ const ClientTeamList = () => {
             <div className="flex items-center gap-4">
               <TeamOutlined className="text-3xl text-blue-600" />
               <div className="flex flex-col gap-1">
-                <Title level={2} className="m-0 text-gray-800 font-bold">
+                <h2 className="m-0 text-gray-800 font-bold">
                   {tournament?.tournament_name} {t('public:navigation.teams')}
-                </Title>
-                <Text type="secondary" className="text-gray-600">
+                </h2>
+                <span className="text-gray-500" className="text-gray-600">
                   {t('team:messages.viewAllTeamsInfo', { defaultValue: '查看所有參賽隊伍的詳細資訊' })}
-                </Text>
+                </span>
               </div>
             </div>
           </div>
@@ -353,7 +352,7 @@ const ClientTeamList = () => {
                 <div className="text-center py-10">
                   <TeamOutlined className="text-5xl text-gray-300 mb-4" />
                   <div>
-                    <Text type="secondary" className="text-base text-gray-500">{t('team:messages.noTeamData')}</Text>
+                    <span className="text-gray-500" className="text-base text-gray-500">{t('team:messages.noTeamData')}</span>
                   </div>
                 </div>
               )

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
-  Typography, 
+ 
   Space, 
   Avatar, 
   Tag,
@@ -30,7 +30,6 @@ import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import moment from 'moment';
 
-const { Title, Text } = Typography;
 
 const ClientTeamDetail = () => {
   const { t } = useTranslation(['team', 'common', 'public', 'match', 'athlete']);
@@ -243,11 +242,11 @@ const ClientTeamDetail = () => {
             icon={<UserOutlined />} 
           />
           <div>
-            <Text strong>{record.name}</Text>
+            <span className="font-bold">{record.name}</span>
             <div>
-              <Text type="secondary" style={{ fontSize: 12 }}>
+              <span className="text-gray-500" style={{ fontSize: 12 }}>
                 #{record.jersey_number}
-              </Text>
+              </span>
             </div>
           </div>
         </Space>
@@ -284,7 +283,7 @@ const ClientTeamDetail = () => {
       <div className="p-6 text-center bg-gray-50 min-h-screen">
         <Spin size="large" />
         <div className="mt-4">
-          <Text className="text-gray-600">{t('team:messages.loadingTeamDetail', { defaultValue: '載入隊伍詳情中...' })}</Text>
+          <span className="text-gray-600">{t('team:messages.loadingTeamDetail', { defaultValue: '載入隊伍詳情中...' })}</span>
         </div>
       </div>
     );
@@ -324,12 +323,12 @@ const ClientTeamDetail = () => {
         {/* Back Button and Header */}
         <Card className="bg-white shadow-sm border-l-4 border-l-blue-500">
           <div className="flex flex-col gap-4">
-            <Text 
+            <span 
               className="text-blue-600 cursor-pointer hover:text-blue-800 transition-colors duration-200"
               onClick={() => navigate('/teams')}
             >
               <ArrowLeftOutlined className="mr-2" /> 返回隊伍列表
-            </Text>
+            </span>
             
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -344,22 +343,22 @@ const ClientTeamDetail = () => {
                   className="shadow-lg"
                 />
                 <div className="flex flex-col gap-2">
-                  <Title 
+                  <h2 
                     level={2} 
                     className="m-0 font-bold"
                     style={{ color: team.team_color || '#000' }}
                   >
                     {getDisplayTeamName(team.team_name)}
-                  </Title>
+                  </h2>
                   <div className="flex items-center gap-2 flex-wrap">
                     {team.group_name && (
                       <Tag color="blue" className="text-sm px-3 py-1">
                         {getDisplayGroupName(team.group_name)}
                       </Tag>
                     )}
-                    <Text type="secondary" className="text-gray-600">
+                    <span className="text-gray-500" className="text-gray-600">
                       {tournament?.tournament_name}
-                    </Text>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -469,7 +468,7 @@ const ClientTeamDetail = () => {
             </Descriptions.Item>
             {team.description && (
               <Descriptions.Item label={t('team:team.description')} span={2}>
-                <Text>{team.description}</Text>
+                <span>{team.description}</span>
               </Descriptions.Item>
             )}
           </Descriptions>
@@ -487,7 +486,7 @@ const ClientTeamDetail = () => {
                 <div className="text-center py-10">
                   <UserOutlined className="text-5xl text-gray-300 mb-4" />
                   <div>
-                    <Text type="secondary" className="text-base text-gray-500">{t('athlete:messages.noAthleteData')}</Text>
+                    <span className="text-gray-500" className="text-base text-gray-500">{t('athlete:messages.noAthleteData')}</span>
                   </div>
                 </div>
               )
@@ -504,12 +503,17 @@ const ClientTeamDetail = () => {
                 <div className="text-center py-10">
                   <CalendarOutlined className="text-5xl text-gray-300 mb-4" />
                   <div>
-                    <Text type="secondary" className="text-base text-gray-500">{t('team:messages.noMatchHistory')}</Text>
+                    <span className="text-gray-500" className="text-base text-gray-500">{t('team:messages.noMatchHistory')}</span>
                   </div>
                 </div>
               )
             }}
             renderItem={(match) => {
+              // Safety check to ensure match object has required properties
+              if (!match || !match.team1_id || !match.team2_id) {
+                return null;
+              }
+              
               const isTeam1 = match.team1_id === parseInt(teamId);
               const opponent = isTeam1 ? match.team2_name : match.team1_name;
               const teamScore = isTeam1 ? match.team1_score : match.team2_score;
@@ -531,29 +535,29 @@ const ClientTeamDetail = () => {
                     }
                     title={
                       <Space>
-                        <Text 
+                        <span 
                           strong 
                           style={{ 
                             color: '#1890ff', 
                             cursor: 'pointer',
                             textDecoration: 'underline'
                           }}
-                          onClick={() => navigate(`/matches/${match.match_id}`)}
+                          onClick={() => match.match_id && navigate(`/matches/${match.match_id}`)}
                         >
                           {getDisplayTeamName(team.team_name)} vs {getDisplayTeamName(opponent)}
-                        </Text>
+                        </span>
                         {match.match_status === 'completed' && (
-                          <Text>
+                          <span>
                             {teamScore} - {opponentScore}
-                          </Text>
+                          </span>
                         )}
                       </Space>
                     }
                     description={
                       <Space direction="vertical" size="small">
-                        <Text type="secondary">
+                        <span className="text-gray-500">
                           {moment(match.match_date).format('YYYY-MM-DD HH:mm')}
-                        </Text>
+                        </span>
                         {match.group_name && (
                           <Tag color="blue" size="small">
                             {t('team:team.group')} {getDisplayGroupName(match.group_name)}

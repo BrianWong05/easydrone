@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Card,
-  Typography,
   Space,
   Tag,
   Spin,
@@ -34,14 +33,12 @@ import { useTranslation } from "react-i18next";
 import axios from "axios";
 import moment from "moment";
 
-const { Title, Text } = Typography;
-
 const ClientMatchDetail = () => {
   const navigate = useNavigate();
   const { matchId } = useParams();
   const { t } = useTranslation(["match", "common", "group", "team"]);
 
-  // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
+  // Clean team name display (remove _{tournament_id} suffix)
   const getDisplayTeamName = (teamName) => {
     if (!teamName) return "";
     const lastUnderscoreIndex = teamName.lastIndexOf("_");
@@ -123,28 +120,28 @@ const ClientMatchDetail = () => {
     return teamName || t("match:status.pending");
   };
 
-  // 動態生成淘汰賽勝者引用
+  // Dynamically generate knockout winner reference
   const getKnockoutWinnerReference = (matchNumber, teamPosition) => {
     if (!matchNumber) return t("match:status.pending");
 
     const matchNum = matchNumber.toUpperCase();
 
-    // 定義淘汰賽進階映射
+    // Tournament match logic
     const knockoutProgression = {
-      // 決賽 (Finals) - 來自準決賽
+      // Tournament match logic
       FI01: { team1: "SE01", team2: "SE02" },
       FI02: { team1: "SE03", team2: "SE04" },
 
-      // 季軍賽 (Third Place) - 來自準決賽敗者
+      // Tournament match logic
       TP01: { team1: "SE01", team2: "SE02" },
 
-      // 準決賽 (Semifinals) - 來自八強
+      // Tournament match logic
       SE01: { team1: "QU01", team2: "QU02" },
       SE02: { team1: "QU03", team2: "QU04" },
       SE03: { team1: "QU05", team2: "QU06" },
       SE04: { team1: "QU07", team2: "QU08" },
 
-      // 八強 (Quarterfinals) - 來自十六強
+      // Quarterfinals (Quarterfinals) - fromRound of 16
       QU01: { team1: "R16_01", team2: "R16_02" },
       QU02: { team1: "R16_03", team2: "R16_04" },
       QU03: { team1: "R16_05", team2: "R16_06" },
@@ -154,7 +151,7 @@ const ClientMatchDetail = () => {
       QU07: { team1: "R16_13", team2: "R16_14" },
       QU08: { team1: "R16_15", team2: "R16_16" },
 
-      // 十六強 (Round of 16) - 來自三十二強
+      // Tournament match logic
       R16_01: { team1: "R32_01", team2: "R32_02" },
       R16_02: { team1: "R32_03", team2: "R32_04" },
       R16_03: { team1: "R32_05", team2: "R32_06" },
@@ -176,12 +173,12 @@ const ClientMatchDetail = () => {
     const progression = knockoutProgression[matchNum];
     if (progression) {
       const sourceMatch = progression[teamPosition];
-      // 季軍賽顯示敗者，其他比賽顯示勝者
+      // Tournament match logic
       const resultType = matchNum === "TP01" ? t("match:result.loser") : t("match:result.winner");
       return `${sourceMatch}${resultType}`;
     }
 
-    // 如果是第一輪比賽（沒有來源），返回待定
+    // Tournament match logic
     if (matchNum.startsWith("QU") || matchNum.startsWith("R16") || matchNum.startsWith("R32")) {
       return t("match:status.pending");
     }
@@ -204,20 +201,20 @@ const ClientMatchDetail = () => {
       // Use the comprehensive knockout progression mapping
       const matchNum = match.match_number?.toUpperCase();
       const knockoutProgression = {
-        // 決賽 (Finals) - 來自準決賽
+        // Tournament match logic
         FI01: { team1: "SE01", team2: "SE02" },
         FI02: { team1: "SE03", team2: "SE04" },
 
-        // 季軍賽 (Third Place) - 來自準決賽敗者
+        // Tournament match logic
         TP01: { team1: "SE01", team2: "SE02" },
 
-        // 準決賽 (Semifinals) - 來自八強
+        // Tournament match logic
         SE01: { team1: "QU01", team2: "QU02" },
         SE02: { team1: "QU03", team2: "QU04" },
         SE03: { team1: "QU05", team2: "QU06" },
         SE04: { team1: "QU07", team2: "QU08" },
 
-        // 八強 (Quarterfinals) - 來自十六強
+        // Quarterfinals (Quarterfinals) - fromRound of 16
         QU01: { team1: "R16_01", team2: "R16_02" },
         QU02: { team1: "R16_03", team2: "R16_04" },
         QU03: { team1: "R16_05", team2: "R16_06" },
@@ -227,7 +224,7 @@ const ClientMatchDetail = () => {
         QU07: { team1: "R16_13", team2: "R16_14" },
         QU08: { team1: "R16_15", team2: "R16_16" },
 
-        // 十六強 (Round of 16) - 來自三十二強
+        // Tournament match logic
         R16_01: { team1: "R32_01", team2: "R32_02" },
         R16_02: { team1: "R32_03", team2: "R32_04" },
         R16_03: { team1: "R32_05", team2: "R32_06" },
@@ -259,11 +256,11 @@ const ClientMatchDetail = () => {
   // Helper function to find match ID by match number
   const findMatchIdByNumber = async (matchNumber) => {
     try {
-      console.log(`🔍 Searching for match: ${matchNumber}`);
+      console.log(` Searching for match: ${matchNumber}`);
 
       // Try to find the match in current tournament first
       if (match?.tournament_id) {
-        console.log(`🏆 Searching in tournament: ${match.tournament_id}`);
+        console.log(` Searching in tournament: ${match.tournament_id}`);
         try {
           const tournamentResponse = await axios.get(`/api/tournaments/${match.tournament_id}/matches?limit=100`);
           if (tournamentResponse.data.success) {
@@ -271,10 +268,10 @@ const ClientMatchDetail = () => {
               ? tournamentResponse.data.data
               : tournamentResponse.data.data.matches || [];
 
-            console.log(`📋 Found ${matches.length} matches in tournament`);
+            console.log(` Found ${matches.length} matches in tournament`);
             const foundMatch = matches.find((m) => m.match_number === matchNumber);
             if (foundMatch) {
-              console.log(`✅ Found match ${matchNumber} with ID: ${foundMatch.match_id}`);
+              console.log(` Found match ${matchNumber} with ID: ${foundMatch.match_id}`);
               return foundMatch.match_id;
             }
           }
@@ -284,20 +281,20 @@ const ClientMatchDetail = () => {
       }
 
       // Fallback to general matches endpoint
-      console.log(`🌐 Searching in all matches`);
+      console.log(` Searching in all matches`);
       const response = await axios.get(`/api/matches?limit=100`);
       if (response.data.success) {
         const matches = Array.isArray(response.data.data) ? response.data.data : response.data.data.matches || [];
 
-        console.log(`📋 Found ${matches.length} total matches`);
+        console.log(` Found ${matches.length} total matches`);
         const foundMatch = matches.find((m) => m.match_number === matchNumber);
         if (foundMatch) {
-          console.log(`✅ Found match ${matchNumber} with ID: ${foundMatch.match_id}`);
+          console.log(` Found match ${matchNumber} with ID: ${foundMatch.match_id}`);
           return foundMatch.match_id;
         }
       }
 
-      console.log(`❌ Match ${matchNumber} not found in any search`);
+      console.log(` Match ${matchNumber} not found in any search`);
     } catch (error) {
       console.error("Error finding match by number:", error);
     }
@@ -327,7 +324,7 @@ const ClientMatchDetail = () => {
     }
   };
 
-  // 清理小組名稱顯示（移除 _{tournament_id} 後綴）
+  // Clean group name display (remove _{tournament_id} suffix)
   const getDisplayGroupName = (groupName) => {
     if (!groupName) return "";
     const lastUnderscoreIndex = groupName.lastIndexOf("_");
@@ -452,7 +449,7 @@ const ClientMatchDetail = () => {
       <div className="p-6 text-center">
         <Spin size="large" />
         <div className="mt-4">
-          <Text>{t("match:messages.loadingMatchDetail")}</Text>
+          <span>{t("match:messages.loadingMatchDetail")}</span>
         </div>
       </div>
     );
@@ -506,10 +503,10 @@ const ClientMatchDetail = () => {
         <Row align="middle" justify="space-between">
           <Col>
             <Space direction="vertical" size="small">
-              <Title level={2} className="m-0">
+              <h2 className="m-0">
                 <PlayCircleOutlined className="mr-2 text-blue-500" />
                 {match.match_number}
-              </Title>
+              </h2>
               <Space>
                 {getMatchTypeTag(match.match_type)}
                 {match.group_name && <Tag color="cyan">{getDisplayGroupName(match.group_name)}</Tag>}
@@ -560,26 +557,24 @@ const ClientMatchDetail = () => {
             <Space direction="vertical" size="large" className="w-full">
               {match.match_status === "completed" ? (
                 <div>
-                  <Title level={1} className="m-0 text-5xl" style={{ color: "#1890ff" }}>
+                  <h1 className="m-0 text-5xl">
                     {match.team1_score || 0} - {match.team2_score || 0}
-                  </Title>
-                  {winnerInfo && winnerInfo.reason && <Text type="secondary">({winnerInfo.reason})</Text>}
+                  </h1>
+                  {winnerInfo && winnerInfo.reason && <span className="text-gray-500">({winnerInfo.reason})</span>}
                 </div>
               ) : match.match_status === "active" ? (
                 <div>
-                  <Title level={1} className="m-0 text-5xl" style={{ color: "#f5222d" }}>
+                  <h1 className="m-0 text-5xl">
                     {match.team1_score || 0} - {match.team2_score || 0}
-                  </Title>
+                  </h1>
                   <Tag color="processing" icon={<PlayCircleOutlined />}>
                     {t("match:status.inProgress")}
                   </Tag>
                 </div>
               ) : (
                 <div>
-                  <Title level={1} className="m-0 text-5xl" style={{ color: "#d9d9d9" }}>
-                    - : -
-                  </Title>
-                  <Text type="secondary">{t("match:status.notStarted")}</Text>
+                  <h1 className="m-0 text-5xl">- : -</h1>
+                  <span className="text-gray-500">{t("match:status.notStarted")}</span>
                 </div>
               )}
             </Space>
@@ -623,10 +618,10 @@ const ClientMatchDetail = () => {
         {/* Match Information */}
         <Col xs={24} lg={12}>
           <Card>
-            <Title level={3}>
+            <h3>
               <CalendarOutlined className="mr-2" />
               {t("match:match.information")}
-            </Title>
+            </h3>
             <Descriptions column={1} bordered size="small">
               <Descriptions.Item label={t("match:match.time")}>
                 {match.match_date ? moment(match.match_date).format("YYYY/MM/DD HH:mm") : t("match:status.pending")}
@@ -658,10 +653,10 @@ const ClientMatchDetail = () => {
         {/* Match Statistics */}
         <Col xs={24} lg={12}>
           <Card>
-            <Title level={3}>
+            <h3>
               <ThunderboltOutlined className="mr-2" />
               {t("match:match.statistics")}
-            </Title>
+            </h3>
             <Row gutter={[16, 16]}>
               <Col span={12}>
                 <Card size="small">
@@ -713,23 +708,23 @@ const ClientMatchDetail = () => {
       {/* Match Events */}
       {events.length > 0 && (
         <Card className="mt-6">
-          <Title level={3}>
+          <h3>
             <FieldTimeOutlined className="mr-2" />
             {t("match:match.events")}
-          </Title>
+          </h3>
           <Timeline mode="left">
             {events.map((event, index) => (
               <Timeline.Item key={index} dot={getEventIcon(event.event_type)} label={formatEventTime(event.event_time)}>
                 <Space direction="vertical" size="small">
-                  <Text strong>
+                  <strong>
                     {getDisplayTeamName(event.team_name)} - {event.event_type}
-                  </Text>
+                  </strong>
                   {event.athlete_name && (
-                    <Text type="secondary">
+                    <span className="text-gray-500">
                       {t("team:athlete.name")}: {event.athlete_name}
-                    </Text>
+                    </span>
                   )}
-                  {event.description && <Text>{event.description}</Text>}
+                  {event.description && <span>{event.description}</span>}
                 </Space>
               </Timeline.Item>
             ))}
@@ -739,7 +734,7 @@ const ClientMatchDetail = () => {
 
       {/* Quick Navigation */}
       <Card className="mt-6">
-        <Title level={4}>{t("common:navigation.relatedPages")}</Title>
+        <h4>{t("common:navigation.relatedPages")}</h4>
         <Space wrap>
           <Button type="primary" icon={<TeamOutlined />} onClick={() => handleTeamNavigation(match, "team1")}>
             {t("common:actions.view")} {getTeamDisplayNameWithReference(match, "team1")}

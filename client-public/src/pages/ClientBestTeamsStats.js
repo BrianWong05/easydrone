@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
-  Typography, 
+ 
   Table, 
   Spin, 
   Alert,
@@ -19,7 +19,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
-const { Title, Text } = Typography;
 
 const ClientBestTeamsStats = () => {
   const navigate = useNavigate();
@@ -159,9 +158,9 @@ const ClientBestTeamsStats = () => {
             >
               {getDisplayTeamName(record.team_name)}
             </div>
-            <Text type="secondary" style={{ fontSize: '12px' }}>
+            <span className="text-gray-500" style={{ fontSize: '12px' }}>
               {record.group_name ? `${t('common:group')} ${getDisplayGroupName(record.group_name)}` : t('common:noGroup')}
-            </Text>
+            </span>
           </div>
         </div>
       ),
@@ -244,9 +243,9 @@ const ClientBestTeamsStats = () => {
             >
               {getDisplayTeamName(record.team_name)}
             </div>
-            <Text type="secondary" style={{ fontSize: '12px' }}>
+            <span className="text-gray-500" style={{ fontSize: '12px' }}>
               {record.group_name ? `${t('common:group')} ${getDisplayGroupName(record.group_name)}` : t('common:noGroup')}
-            </Text>
+            </span>
           </div>
         </div>
       ),
@@ -312,12 +311,12 @@ const ClientBestTeamsStats = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto animate-fade-in">
       <div className="mb-8">
-        <Title level={2} className="flex items-center text-gray-800">
+        <h2 className="flex items-center text-gray-800">
           <BarChartOutlined className="mr-3 text-primary-600" /> 
           <span className="bg-gradient-to-r from-primary-600 to-primary-700 bg-clip-text text-transparent">
             {t('stats.bestTeams')}
           </span>
-        </Title>
+        </h2>
       </div>
 
       {bestTeamsData && (

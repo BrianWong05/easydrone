@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
-  Typography, 
+ 
   Table, 
   Space, 
   Tag,
@@ -31,7 +31,6 @@ import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import moment from 'moment';
 
-const { Title, Text } = Typography;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
@@ -470,15 +469,21 @@ const ClientMatchList = () => {
       sorter: (a, b) => sortMatchNumbers(a, b),
       sortDirections: ['ascend', 'descend'],
       defaultSortOrder: 'ascend',
-      render: (number, record) => (
-        <Button
-          type="link"
-          className="p-0 h-auto font-bold text-blue-600 hover:text-blue-800"
-          onClick={() => navigate(`/matches/${record.match_id}`)}
-        >
-          {number}
-        </Button>
-      ),
+      render: (number, record) => {
+        if (!record || !record.match_id) {
+          return <span className="text-gray-400">{number}</span>;
+        }
+        
+        return (
+          <Button
+            type="link"
+            className="p-0 h-auto font-bold text-blue-600 hover:text-blue-800"
+            onClick={() => navigate(`/matches/${record.match_id}`)}
+          >
+            {number}
+          </Button>
+        );
+      },
     },
     {
       title: t('match:match.teams'),
@@ -490,18 +495,18 @@ const ClientMatchList = () => {
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: record.team1_color || '#1890ff' }}
             />
-            <Text strong className="text-gray-800">{getTeamDisplayNameWithReference(record, 'team1')}</Text>
-            <Text type="secondary" className="text-gray-500 mx-1">vs</Text>
+            <span className="font-bold" className="text-gray-800">{getTeamDisplayNameWithReference(record, 'team1')}</span>
+            <span className="text-gray-500" className="text-gray-500 mx-1">vs</span>
             <div 
               className="w-3 h-3 rounded-full"
               style={{ backgroundColor: record.team2_color || '#52c41a' }}
             />
-            <Text strong className="text-gray-800">{getTeamDisplayNameWithReference(record, 'team2')}</Text>
+            <span className="font-bold" className="text-gray-800">{getTeamDisplayNameWithReference(record, 'team2')}</span>
           </div>
           {record.match_status === 'completed' && (
-            <Text className="text-base font-bold text-blue-600">
+            <span className="text-base font-bold text-blue-600">
               {record.team1_score || 0} - {record.team2_score || 0}
-            </Text>
+            </span>
           )}
         </div>
       ),
@@ -518,10 +523,10 @@ const ClientMatchList = () => {
       sortDirections: ['ascend', 'descend'],
       render: (date) => (
         <div className="flex flex-col gap-1">
-          <Text className="text-gray-800">{date ? moment(date).format('MM/DD') : '-'}</Text>
-          <Text type="secondary" className="text-xs text-gray-500">
+          <span className="text-gray-800">{date ? moment(date).format('MM/DD') : '-'}</span>
+          <span className="text-gray-500" className="text-xs text-gray-500">
             {date ? moment(date).format('HH:mm') : '-'}
-          </Text>
+          </span>
         </div>
       ),
     },
@@ -553,7 +558,7 @@ const ClientMatchList = () => {
       render: (groupName) => groupName ? (
         <Tag color="cyan">{getDisplayGroupName(groupName)}</Tag>
       ) : (
-        <Text type="secondary">-</Text>
+        <span className="text-gray-500">-</span>
       ),
     },
     {
@@ -582,15 +587,29 @@ const ClientMatchList = () => {
       key: 'actions',
       width: 100,
       align: 'center',
-      render: (_, record) => (
-        <Button 
-          type="primary" 
-          size="small"
-          onClick={() => navigate(`/matches/${record.match_id}`)}
-        >
-          {t('common:actions.viewDetails')}
-        </Button>
-      ),
+      render: (_, record) => {
+        if (!record || !record.match_id) {
+          return (
+            <Button 
+              type="primary" 
+              size="small"
+              disabled
+            >
+              {t('common:actions.viewDetails')}
+            </Button>
+          );
+        }
+        
+        return (
+          <Button 
+            type="primary" 
+            size="small"
+            onClick={() => navigate(`/matches/${record.match_id}`)}
+          >
+            {t('common:actions.viewDetails')}
+          </Button>
+        );
+      },
     },
   ];
 
@@ -599,7 +618,7 @@ const ClientMatchList = () => {
       <div className="p-6 text-center bg-gray-50 min-h-screen">
         <Spin size="large" />
         <div className="mt-4">
-          <Text className="text-gray-600">{t('match:messages.loadingMatches')}</Text>
+          <span className="text-gray-600">{t('match:messages.loadingMatches')}</span>
         </div>
       </div>
     );
@@ -631,11 +650,11 @@ const ClientMatchList = () => {
         <Card className="mb-6 bg-white shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-1">
-              <Title level={2} className="m-0 text-gray-800 font-bold flex items-center">
+              <h2 className="m-0 text-gray-800 font-bold flex items-center">
                 <TrophyOutlined className="mr-2 text-yellow-500" />
                 {tournament.tournament_name}
-              </Title>
-              <Text type="secondary" className="text-gray-600">{t('match:match.list')}</Text>
+              </h2>
+              <span className="text-gray-500" className="text-gray-600">{t('match:match.list')}</span>
             </div>
             <div>
               <Tag color="blue" className="text-sm px-3 py-1">
@@ -686,10 +705,10 @@ const ClientMatchList = () => {
       <Card className="mb-6 bg-white shadow-sm">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 items-center">
           <div className="col-span-1">
-            <Text strong className="text-gray-700">
+            <span className="font-bold" className="text-gray-700">
               <FilterOutlined className="mr-2 text-blue-500" />
               {t('common:filters.title')}
-            </Text>
+            </span>
           </div>
           <div className="col-span-1">
             <Select
@@ -756,10 +775,10 @@ const ClientMatchList = () => {
       {/* Matches Table */}
       <Card className="bg-white shadow-sm">
         <div className="mb-4">
-          <Title level={3} className="text-gray-800 font-bold flex items-center">
+          <h2 className="text-gray-800 font-bold flex items-center">
             <PlayCircleOutlined className="mr-2 text-blue-500" />
             {t('match:match.list')}
-          </Title>
+          </h2>
         </div>
         
         <Table
@@ -785,7 +804,7 @@ const ClientMatchList = () => {
               <div className="text-center py-10">
                 <CalendarOutlined className="text-5xl text-gray-300 mb-4" />
                 <div className="mt-4">
-                  <Text type="secondary" className="text-gray-500">{t('match:messages.noMatches')}</Text>
+                  <span className="text-gray-500" className="text-gray-500">{t('match:messages.noMatches')}</span>
                 </div>
               </div>
             )

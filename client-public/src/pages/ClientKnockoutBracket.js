@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
-  Typography, 
+ 
   Tag,
   Spin,
   Alert,
@@ -27,7 +27,6 @@ import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import moment from 'moment';
 
-const { Title, Text } = Typography;
 
 const ClientKnockoutBracket = () => {
   const navigate = useNavigate();
@@ -285,16 +284,16 @@ const ClientKnockoutBracket = () => {
               ? 'border-2 border-success-500 bg-success-50' 
               : 'border border-gray-300 bg-white hover:border-primary-300'
         }`}
-        onClick={() => navigate(`/matches/${match.match_id}`)}
+        onClick={() => match.match_id && navigate(`/matches/${match.match_id}`)}
       >
         <div className="space-y-3 w-full">
           {/* Match Header */}
           <div className="flex justify-between items-center">
-            <Text strong className={`text-xs font-semibold ${
+            <span className="font-bold" className={`text-xs font-semibold ${
               isThirdPlace ? 'text-warning-600' : 'text-gray-700'
             }`}>
               {getMatchDisplayName(match)}
-            </Text>
+            </span>
             <div>
               {getMatchStatusTag(match.match_status)}
             </div>
@@ -314,7 +313,7 @@ const ClientKnockoutBracket = () => {
                       borderRadius: '50%'
                     }}
                   />
-                  <Text 
+                  <span 
                     strong={isTeam1Winner} 
                     style={{ 
                       color: isTeam1Winner ? '#52c41a' : 'inherit',
@@ -322,12 +321,12 @@ const ClientKnockoutBracket = () => {
                     }}
                   >
                     {team1Name}
-                  </Text>
+                  </span>
                   {isTeam1Winner && <TrophyOutlined style={{ color: '#faad14' }} />}
                 </Space>
               </Col>
               <Col>
-                <Text 
+                <span 
                   strong 
                   style={{ 
                     fontSize: '16px',
@@ -335,7 +334,7 @@ const ClientKnockoutBracket = () => {
                   }}
                 >
                   {isCompleted ? (match.team1_score || 0) : '-'}
-                </Text>
+                </span>
               </Col>
             </Row>
 
@@ -351,7 +350,7 @@ const ClientKnockoutBracket = () => {
                       borderRadius: '50%'
                     }}
                   />
-                  <Text 
+                  <span 
                     strong={isTeam2Winner} 
                     style={{ 
                       color: isTeam2Winner ? '#52c41a' : 'inherit',
@@ -359,12 +358,12 @@ const ClientKnockoutBracket = () => {
                     }}
                   >
                     {team2Name}
-                  </Text>
+                  </span>
                   {isTeam2Winner && <TrophyOutlined style={{ color: '#faad14' }} />}
                 </Space>
               </Col>
               <Col>
-                <Text 
+                <span 
                   strong 
                   style={{ 
                     fontSize: '16px',
@@ -372,16 +371,16 @@ const ClientKnockoutBracket = () => {
                   }}
                 >
                   {isCompleted ? (match.team2_score || 0) : '-'}
-                </Text>
+                </span>
               </Col>
             </Row>
           </div>
 
           {/* Match Date */}
           {match.match_date && (
-            <Text type="secondary" style={{ fontSize: '12px' }}>
+            <span className="text-gray-500" style={{ fontSize: '12px' }}>
               {moment(match.match_date).format('MM/DD HH:mm')}
-            </Text>
+            </span>
           )}
         </div>
       </Card>
@@ -393,7 +392,7 @@ const ClientKnockoutBracket = () => {
       <div className="flex flex-col items-center justify-center py-16 px-6">
         <Spin size="large" />
         <div className="mt-4">
-          <Text className="text-gray-600 animate-pulse">{t('tournament:messages.loadingKnockoutData')}</Text>
+          <span className="text-gray-600 animate-pulse">{t('tournament:messages.loadingKnockoutData')}</span>
         </div>
       </div>
     );
@@ -433,15 +432,15 @@ const ClientKnockoutBracket = () => {
         <Card className="mb-8 shadow-md hover:shadow-lg transition-shadow duration-300 border-l-4 border-warning-500">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
             <div className="space-y-2">
-              <Title level={2} className="m-0 flex items-center text-gray-800">
+              <h2 className="m-0 flex items-center text-gray-800">
                 <TrophyOutlined className="mr-3 text-warning-600" />
                 <span className="bg-gradient-to-r from-warning-600 to-warning-700 bg-clip-text text-transparent">
                   {tournament.tournament_name}
                 </span>
-              </Title>
-              <Text type="secondary" className="text-gray-600 text-base">
+              </h2>
+              <span className="text-gray-500" className="text-gray-600 text-base">
                 {t('tournament:bracket.title')}
-              </Text>
+              </span>
             </div>
             <div className="flex flex-wrap gap-3">
               <Tag 
@@ -497,9 +496,9 @@ const ClientKnockoutBracket = () => {
             
             <Card className="hover:shadow-lg transition-shadow duration-300 border-l-4 border-gray-400">
               <div className="text-center">
-                <Text type="secondary" className="block mb-2 text-gray-600 font-medium">
+                <span className="text-gray-500" className="block mb-2 text-gray-600 font-medium">
                   {t('tournament:stats.progress')}
-                </Text>
+                </span>
                 <Progress 
                   type="circle" 
                   percent={stats.totalMatches > 0 ? Math.round((stats.completedMatches / stats.totalMatches) * 100) : 0}
@@ -513,10 +512,10 @@ const ClientKnockoutBracket = () => {
 
           {/* Knockout Bracket */}
           <Card>
-            <Title level={3}>
+            <h2>
               <ThunderboltOutlined style={{ marginRight: 8 }} />
               {t('tournament:bracket.bracket')}
-            </Title>
+            </h2>
             
             <div style={{ overflowX: 'auto', padding: '16px 0' }}>
               <Row gutter={[24, 16]} style={{ minWidth: '800px' }}>
@@ -535,12 +534,12 @@ const ClientKnockoutBracket = () => {
                     return (
                       <Col key={roundNumber} flex="1" style={{ minWidth: '300px' }}>
                         <div style={{ textAlign: 'center', marginBottom: 16 }}>
-                          <Title level={4} style={{ margin: 0 }}>
+                          <h2 style={{ margin: 0 }}>
                             {roundName}
-                          </Title>
-                          <Text type="secondary">
+                          </h2>
+                          <span className="text-gray-500">
                             {regularMatches.filter(m => m.match_status === 'completed').length} / {regularMatches.length} {t('common:stats.completed')}
-                          </Text>
+                          </span>
                         </div>
                         
                         <div style={{ 
@@ -562,9 +561,9 @@ const ClientKnockoutBracket = () => {
               ) && (
                 <div style={{ marginTop: 24 }}>
                   <div style={{ textAlign: 'center', marginBottom: 16 }}>
-                    <Title level={4} style={{ margin: 0, color: '#fa8c16' }}>
+                    <h2 style={{ margin: 0, color: '#fa8c16' }}>
                       🥉 {t('tournament:rounds.thirdPlace')}
-                    </Title>
+                    </h2>
                   </div>
                   <Row justify="center">
                     <Col>
@@ -584,10 +583,10 @@ const ClientKnockoutBracket = () => {
           {stats.champion && (
             <Card style={{ marginTop: 24, textAlign: 'center' }}>
               <Space direction="vertical" size="large">
-                <Title level={2}>
+                <h2>
                   <CrownOutlined style={{ color: '#faad14', marginRight: 8 }} />
                   {t('tournament:champion.tournament')}
-                </Title>
+                </h2>
                 <div 
                   style={{ 
                     width: 120, 
@@ -603,12 +602,12 @@ const ClientKnockoutBracket = () => {
                 >
                   <TrophyOutlined style={{ fontSize: '48px', color: 'white' }} />
                 </div>
-                <Title level={1} style={{ color: '#faad14', margin: 0 }}>
+                <h2 style={{ color: '#faad14', margin: 0 }}>
                   {stats.champion.name}
-                </Title>
-                <Text type="secondary" style={{ fontSize: '16px' }}>
+                </h2>
+                <span className="text-gray-500" style={{ fontSize: '16px' }}>
                   {t('tournament:champion.congratulations', { tournament: tournament?.tournament_name })}
-                </Text>
+                </span>
               </Space>
             </Card>
           )}
@@ -620,12 +619,12 @@ const ClientKnockoutBracket = () => {
             image={<ThunderboltOutlined style={{ fontSize: '64px', color: '#d9d9d9' }} />}
             description={
               <Space direction="vertical" size="small">
-                <Text type="secondary" style={{ fontSize: '16px' }}>
+                <span className="text-gray-500" style={{ fontSize: '16px' }}>
                   {t('tournament:messages.noKnockoutData')}
-                </Text>
-                <Text type="secondary">
+                </span>
+                <span className="text-gray-500">
                   {t('tournament:messages.noKnockoutDataDesc')}
-                </Text>
+                </span>
               </Space>
             }
           >

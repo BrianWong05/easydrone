@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Typography, Table, Tag, Statistic, Spin, Alert, Tabs, Avatar, Space, Row, Col } from "antd";
+import { Card, Table, Tag, Statistic, Spin, Alert, Tabs, Avatar, Space, Row, Col } from "antd";
 import {
   TrophyOutlined,
   TeamOutlined,
@@ -13,7 +13,6 @@ import { useTranslation } from "react-i18next";
 import axios from "axios";
 import moment from "moment";
 
-const { Title, Text } = Typography;
 const { TabPane } = Tabs;
 
 const ClientLeaderboard = () => {
@@ -195,14 +194,14 @@ const ClientLeaderboard = () => {
         return (
           <div className="flex items-center space-x-2">
             {icon}
-            <Text strong className={`text-base font-bold ${
+            <span className={`text-base font-bold ${
               rank === 1 ? 'text-warning-500' : 
               rank === 2 ? 'text-gray-400' : 
               rank === 3 ? 'text-orange-600' : 
               'text-gray-600'
             }`}>
               {rank}
-            </Text>
+            </span>
           </div>
         );
       },
@@ -222,19 +221,18 @@ const ClientLeaderboard = () => {
             icon={<TeamOutlined />}
           />
           <div className="min-w-0 flex-1">
-            <Text
-              strong
-              className="text-base font-semibold cursor-pointer hover:underline transition-colors duration-200 block truncate"
+            <span
+              className="text-base font-semibold cursor-pointer hover:underline transition-colors duration-200 block truncate font-bold"
               style={{ color: record.team_color || "#1890ff" }}
               onClick={() => navigate(`/teams/${record.team_id}`)}
               title={getDisplayTeamName(name)}
             >
               {getDisplayTeamName(name)}
-            </Text>
+            </span>
             {record.group_name && (
-              <Text type="secondary" className="text-xs text-gray-500 block truncate">
+              <span className="text-xs text-gray-500 block truncate">
                 {t('team:team.group')} {getDisplayGroupName(record.group_name)}
-              </Text>
+              </span>
             )}
           </div>
         </div>
@@ -246,9 +244,9 @@ const ClientLeaderboard = () => {
       key: "points",
       width: 100,
       render: (points) => (
-        <Text strong className="text-lg font-bold text-primary-600">
+        <span className="text-lg font-bold text-primary-600">
           {points || 0}
-        </Text>
+        </span>
       ),
       sorter: (a, b) => (b.points || 0) - (a.points || 0),
     },
@@ -261,7 +259,7 @@ const ClientLeaderboard = () => {
           key: "played",
           width: 60,
           align: "center",
-          render: (played) => <Text strong>{played || 0}</Text>,
+          render: (played) => <span className="font-bold">{played || 0}</span>,
         },
         {
           title: t('team:team.wins'),
@@ -269,7 +267,7 @@ const ClientLeaderboard = () => {
           key: "won",
           width: 50,
           align: "center",
-          render: (won) => <Text className="text-success-600 font-medium">{won || 0}</Text>,
+          render: (won) => <span className="text-success-600 font-medium">{won || 0}</span>,
         },
         {
           title: t('team:team.draws'),
@@ -277,7 +275,7 @@ const ClientLeaderboard = () => {
           key: "drawn",
           width: 50,
           align: "center",
-          render: (drawn) => <Text className="text-warning-600 font-medium">{drawn || 0}</Text>,
+          render: (drawn) => <span className="text-warning-600 font-medium">{drawn || 0}</span>,
         },
         {
           title: t('team:team.losses'),
@@ -285,7 +283,7 @@ const ClientLeaderboard = () => {
           key: "lost",
           width: 50,
           align: "center",
-          render: (lost) => <Text className="text-error-500 font-medium">{lost || 0}</Text>,
+          render: (lost) => <span className="text-error-500 font-medium">{lost || 0}</span>,
         },
       ],
     },
@@ -299,9 +297,9 @@ const ClientLeaderboard = () => {
           width: 50,
           align: "center",
           render: (goals) => (
-            <Text strong style={{ color: "#000" }}>
+            <span className="font-bold" style={{ color: "#000" }}>
               {goals || 0}
-            </Text>
+            </span>
           ),
         },
         {
@@ -310,7 +308,7 @@ const ClientLeaderboard = () => {
           key: "goals_against",
           width: 50,
           align: "center",
-          render: (goals) => <Text style={{ color: "#000" }}>{goals || 0}</Text>,
+          render: (goals) => <span style={{ color: "#000" }}>{goals || 0}</span>,
         },
         {
           title: t('team:labels.goalDifferenceShort', { defaultValue: '差' }),
@@ -321,10 +319,10 @@ const ClientLeaderboard = () => {
           render: (diff) => {
             const color = diff > 0 ? "#52c41a" : diff < 0 ? "#ff4d4f" : "#666";
             return (
-              <Text style={{ color }}>
+              <span style={{ color }}>
                 {diff > 0 ? "+" : ""}
                 {diff || 0}
-              </Text>
+              </span>
             );
           },
         },
@@ -337,7 +335,7 @@ const ClientLeaderboard = () => {
       <div className="flex flex-col items-center justify-center py-16 px-6">
         <Spin size="large" />
         <div className="mt-4">
-          <Text className="text-gray-600 animate-pulse">{t('stats:messages.loadingStats')}</Text>
+          <span className="text-gray-600 animate-pulse">{t('stats:messages.loadingStats')}</span>
         </div>
       </div>
     );
@@ -361,16 +359,16 @@ const ClientLeaderboard = () => {
               <Space align="center">
                 <TrophyOutlined style={{ fontSize: 32, color: "#faad14" }} />
                 <div>
-                  <Title level={2} style={{ margin: 0 }}>
+                  <h2 style={{ margin: 0 }}>
                     {tournament?.tournament_name} {t('public:navigation.leaderboard')}
-                  </Title>
+                  </h2>
                   <Space>
                     <Tag color="blue">
                       {tournament?.tournament_type === "group" && t('public:tournamentTypes.group')}
                       {tournament?.tournament_type === "knockout" && t('public:tournamentTypes.knockout')}
                       {tournament?.tournament_type === "mixed" && t('public:tournamentTypes.mixed')}
                     </Tag>
-                    <Text type="secondary">{t('stats:messages.lastUpdated', { defaultValue: '最後更新' })}: {moment().format("YYYY-MM-DD HH:mm")}</Text>
+                    <span className="text-gray-500">{t('stats:messages.lastUpdated', { defaultValue: '最後更新' })}: {moment().format("YYYY-MM-DD HH:mm")}</span>
                   </Space>
                 </div>
               </Space>
@@ -430,9 +428,9 @@ const ClientLeaderboard = () => {
                     <div style={{ textAlign: "center", padding: "40px 0" }}>
                       <TrophyOutlined style={{ fontSize: 48, color: "#d9d9d9", marginBottom: 16 }} />
                       <div>
-                        <Text type="secondary" style={{ fontSize: 16 }}>
+                        <span className="text-gray-500" style={{ fontSize: 16 }}>
                           {t('stats:messages.noRankingData')}
-                        </Text>
+                        </span>
                       </div>
                     </div>
                   ),
@@ -473,9 +471,9 @@ const ClientLeaderboard = () => {
                       <div style={{ textAlign: "center", padding: "40px 0" }}>
                         <TeamOutlined style={{ fontSize: 48, color: "#d9d9d9", marginBottom: 16 }} />
                         <div>
-                          <Text type="secondary" style={{ fontSize: 16 }}>
+                          <span className="text-gray-500" style={{ fontSize: 16 }}>
                             {getDisplayGroupName(group.group_name)} {t('team:messages.noTeamData')}
-                          </Text>
+                          </span>
                         </div>
                       </div>
                     ),
