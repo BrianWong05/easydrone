@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
-  Typography, 
   Form, 
   Input, 
   Button, 
@@ -28,7 +27,6 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 
-const { Title, Text } = Typography;
 const { Option } = Select;
 
 const TournamentGroupEdit = () => {
@@ -267,13 +265,13 @@ const TournamentGroupEdit = () => {
               返回
             </Button>
             <div>
-              <Title level={2} className="m-0">
+              <h2 className="text-2xl font-bold m-0">
                 <TrophyOutlined className="mr-2 text-yellow-500" />
                 編輯小組 {displayGroupName}
-              </Title>
-              <Text type="secondary">
+              </h2>
+              <span className="text-gray-500">
                 {tournament?.tournament_name || `錦標賽 ${tournamentId}`} - 編輯小組信息
-              </Text>
+              </span>
             </div>
           </div>
         </div>
@@ -442,7 +440,7 @@ const TournamentGroupEdit = () => {
                     }
                     title={
                       <Space>
-                        <Text strong>{getDisplayTeamName(team.team_name)}</Text>
+                        <span className="font-bold">{getDisplayTeamName(team.team_name)}</span>
                         {team.is_virtual && <Tag color="orange">虛擬</Tag>}
                       </Space>
                     }
@@ -455,7 +453,7 @@ const TournamentGroupEdit = () => {
             <div className="text-center py-10">
               <TeamOutlined className="text-5xl text-gray-300 mb-4" />
               <div>
-                <Text type="secondary">此小組暫無隊伍</Text>
+                <span className="text-gray-500">此小組暫無隊伍</span>
                 <br />
                 <Button 
                   type="primary" 
@@ -547,7 +545,7 @@ const TournamentGroupEdit = () => {
         >
           <div className="mb-4">
             <div className="flex justify-between items-center mb-2">
-              <Text>選擇要添加到小組 {displayGroupName} 的隊伍：</Text>
+              <span>選擇要添加到小組 {displayGroupName} 的隊伍：</span>
               <Button 
                 type="dashed"
                 size="small"
@@ -560,9 +558,9 @@ const TournamentGroupEdit = () => {
                 創建隊伍
               </Button>
             </div>
-            <Text type="secondary" className="text-xs">
+            <span className="text-gray-500 text-xs">
               顯示錦標賽中尚未分配到任何小組的隊伍 ({availableTeams.length} 支可用)
-            </Text>
+            </span>
           </div>
           
           {availableTeams.length > 0 ? (
@@ -591,7 +589,7 @@ const TournamentGroupEdit = () => {
                     }
                     title={
                       <Space>
-                        <Text strong>{getDisplayTeamName(team.team_name)}</Text>
+                        <span className="font-bold">{getDisplayTeamName(team.team_name)}</span>
                         {team.is_virtual && <Tag color="orange" size="small">虛擬</Tag>}
                         <Tag color="green" size="small">可添加</Tag>
                       </Space>
@@ -605,11 +603,11 @@ const TournamentGroupEdit = () => {
             <div className="text-center py-10">
               <TeamOutlined className="text-5xl text-gray-300 mb-4" />
               <div>
-                <Text type="secondary">沒有可添加的隊伍</Text>
+                <span className="text-gray-500">沒有可添加的隊伍</span>
                 <br />
-                <Text type="secondary" className="text-xs">
+                <span className="text-gray-500 text-xs">
                   所有隊伍都已分配到小組或已在當前小組中
-                </Text>
+                </span>
                 <br />
                 <Button 
                   type="primary" 

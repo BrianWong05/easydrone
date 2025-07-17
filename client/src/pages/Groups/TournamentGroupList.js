@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Card, Typography, Button, Space, Row, Col, Table, Tag, Progress, message } from "antd";
+import { Card, Button, Space, Row, Col, Table, Tag, Progress, message } from "antd";
 import { PlusOutlined, EyeOutlined, EditOutlined, TrophyOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import axios from "axios";
 
-const { Title, Text } = Typography;
 
 const TournamentGroupList = () => {
   const navigate = useNavigate();
@@ -190,7 +189,7 @@ const TournamentGroupList = () => {
     <div className="p-6">
       <Space direction="vertical" size="large" className="w-full">
         <div className="flex justify-between items-center">
-          <Title level={2}>{t('group:group.list')}</Title>
+          <h2 className="text-2xl font-bold">{t('group:group.list')}</h2>
           <Button
             type="primary"
             icon={<PlusOutlined />}
@@ -234,7 +233,7 @@ const TournamentGroupList = () => {
               >
                 <Space direction="vertical" className="w-full" size="middle">
                   <div>
-                    <Text type="secondary">{t('group:list.teamCompletion')}</Text>
+                    <span className="text-gray-500">{t('group:list.teamCompletion')}</span>
                     <Progress
                       percent={group.max_teams > 0 ? Math.round((group.current_teams / group.max_teams) * 100) : 0}
                       size="small"
@@ -244,9 +243,9 @@ const TournamentGroupList = () => {
                   </div>
 
                   <div>
-                    <Text strong className="mb-2 block">
+                    <span className="font-bold mb-2 block">
                       {t('group:group.standings')}
-                    </Text>
+                    </span>
                     <Table
                       columns={standingsColumns}
                       dataSource={group.teams}
@@ -265,7 +264,7 @@ const TournamentGroupList = () => {
         {groups.length === 0 && !loading && (
           <Card>
             <div className="text-center py-10">
-              <Text type="secondary">{t('group:messages.noGroups')}</Text>
+              <span className="text-gray-500">{t('group:messages.noGroups')}</span>
               <br />
               <Button
                 type="primary"

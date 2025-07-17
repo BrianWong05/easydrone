@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Typography, Form, Input, Button, Space, InputNumber, message, Alert } from 'antd';
+import { Card, Form, Input, Button, Space, InputNumber, message, Alert } from 'antd';
 import { ArrowLeftOutlined, SaveOutlined, TrophyOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
-const { Title, Text } = Typography;
 
 const TournamentGroupCreate = () => {
   const navigate = useNavigate();
@@ -110,15 +109,15 @@ const TournamentGroupCreate = () => {
             {t('common:buttons.back')}
           </Button>
           <div>
-            <Title level={2} className="m-0">
+            <h2 className="text-2xl font-bold m-0">
               <TrophyOutlined className="mr-2 text-yellow-500" />
               {t('group:create.title')}
-            </Title>
-            <Text type="secondary">
+            </h2>
+            <span className="text-gray-500">
               {t('group:create.subtitle', { 
                 tournamentName: tournament?.tournament_name || `${t('tournament:tournament')} ${tournamentId}` 
               })}
-            </Text>
+            </span>
           </div>
         </div>
 

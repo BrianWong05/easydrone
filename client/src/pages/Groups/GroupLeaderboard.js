@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Typography, Table, Tag, Row, Col, Space, Progress, message, Button } from 'antd';
+import { Card, Table, Tag, Row, Col, Space, Progress, message, Button } from 'antd';
 import { TrophyOutlined, TeamOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
-const { Title, Text } = Typography;
 
 const GroupLeaderboard = () => {
   const { t } = useTranslation(['group', 'common']);
@@ -197,7 +196,7 @@ const GroupLeaderboard = () => {
     <div className="p-6">
       <Space direction="vertical" size="large" className="w-full">
         <div className="flex justify-between items-center">
-          <Title level={2}>{t('group.leaderboard', { ns: 'group' })}</Title>
+          <h2 className="text-2xl font-bold">{t('group.leaderboard', { ns: 'group' })}</h2>
           <Button 
             icon={<ReloadOutlined />} 
             onClick={fetchGroups}
@@ -224,7 +223,7 @@ const GroupLeaderboard = () => {
               >
                 <Space direction="vertical" className="w-full" size="middle">
                   <div>
-                    <Text type="secondary">{t('list.teamCompletion', { ns: 'group' })}</Text>
+                    <span className="text-gray-500">{t('list.teamCompletion', { ns: 'group' })}</span>
                     <Progress
                       percent={(group.current_teams / group.max_teams) * 100}
                       size="small"
@@ -233,23 +232,23 @@ const GroupLeaderboard = () => {
                   </div>
 
                   <div>
-                    <Text type="secondary">{t('group.progress', { ns: 'group' })}</Text>
+                    <span className="text-gray-500">{t('group.progress', { ns: 'group' })}</span>
                     <div className="flex items-center gap-2">
                       <Progress
                         percent={group.total_matches > 0 ? Math.round((group.completed_matches / group.total_matches) * 100) : 0}
                         size="small"
                         status={group.completed_matches === group.total_matches && group.total_matches > 0 ? "success" : "active"}
                       />
-                      <Text className="text-xs text-gray-600 whitespace-nowrap">
+                      <span className="text-xs text-gray-600 whitespace-nowrap">
                         ({group.completed_matches}/{group.total_matches}{t('group.matches', { ns: 'group' })})
-                      </Text>
+                      </span>
                     </div>
                   </div>
 
                   <div>
-                    <Text strong className="mb-2 block">
+                    <span className="font-bold mb-2 block">
                       {t('group.standings', { ns: 'group' })}
-                    </Text>
+                    </span>
                     <Table
                       columns={standingsColumns}
                       dataSource={group.teams}
@@ -268,7 +267,7 @@ const GroupLeaderboard = () => {
         {groups.length === 0 && !loading && (
           <Card>
             <div className="text-center py-10">
-              <Text type="secondary">{t('messages.noGroupData', { ns: 'group' })}</Text>
+              <span className="text-gray-500">{t('messages.noGroupData', { ns: 'group' })}</span>
             </div>
           </Card>
         )}

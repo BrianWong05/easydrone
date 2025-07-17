@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Card,
-  Typography,
   Button,
   Space,
   Row,
@@ -35,7 +34,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import axios from "axios";
 
-const { Title, Text } = Typography;
 const { Option } = Select;
 
 const TournamentGroupDetail = () => {
@@ -261,9 +259,9 @@ const TournamentGroupDetail = () => {
       key: "score",
       align: "center",
       render: (_, record) => (
-        <Text strong>
+        <span className="font-bold">
           {record.team1_score} - {record.team2_score}
-        </Text>
+        </span>
       ),
     },
     {
@@ -339,9 +337,9 @@ const TournamentGroupDetail = () => {
       key: "rank",
       width: 60,
       render: (_, __, index) => (
-        <Text strong className="text-base">
+        <span className="font-bold text-base">
           {index + 1}
-        </Text>
+        </span>
       ),
     },
     {
@@ -376,7 +374,7 @@ const TournamentGroupDetail = () => {
       key: "won",
       align: "center",
       width: 50,
-      render: (won) => <Text className="text-green-500 font-bold">{won}</Text>,
+      render: (won) => <span className="text-green-500 font-bold">{won}</span>,
     },
     {
       title: t('group:standings.drawn'),
@@ -384,7 +382,7 @@ const TournamentGroupDetail = () => {
       key: "drawn",
       align: "center",
       width: 50,
-      render: (drawn) => <Text className="text-yellow-500 font-bold">{drawn}</Text>,
+      render: (drawn) => <span className="text-yellow-500 font-bold">{drawn}</span>,
     },
     {
       title: t('group:standings.lost'),
@@ -392,7 +390,7 @@ const TournamentGroupDetail = () => {
       key: "lost",
       align: "center",
       width: 50,
-      render: (lost) => <Text className="text-red-500 font-bold">{lost}</Text>,
+      render: (lost) => <span className="text-red-500 font-bold">{lost}</span>,
     },
     {
       title: t('group:standings.goalsFor'),
@@ -416,10 +414,10 @@ const TournamentGroupDetail = () => {
       render: (_, record) => {
         const diff = record.goals_for - record.goals_against;
         return (
-          <Text className={`${diff > 0 ? "text-green-500" : diff < 0 ? "text-red-500" : "text-gray-600"}`}>
+          <span className={`${diff > 0 ? "text-green-500" : diff < 0 ? "text-red-500" : "text-gray-600"}`}>
             {diff > 0 ? "+" : ""}
             {diff}
-          </Text>
+          </span>
         );
       },
     },
@@ -430,9 +428,9 @@ const TournamentGroupDetail = () => {
       align: "center",
       width: 60,
       render: (points) => (
-        <Text strong className="text-base text-blue-500">
+        <span className="font-bold text-base text-blue-500">
           {points}
-        </Text>
+        </span>
       ),
     },
   ];
@@ -440,7 +438,7 @@ const TournamentGroupDetail = () => {
   if (loading) {
     return (
       <div className="p-6 text-center">
-        <Text>{t('common:messages.loading')}</Text>
+        <span>{t('common:messages.loading')}</span>
       </div>
     );
   }
@@ -465,11 +463,11 @@ const TournamentGroupDetail = () => {
               {t('group:detail.backToGroupList')}
             </Button>
             <div>
-              <Title level={2} className="m-0">
+              <h2 className="text-2xl font-bold m-0">
                 <TrophyOutlined className="mr-2 text-yellow-500" />
                 {t('group:group.name')} {displayGroupName}
-              </Title>
-              <Text type="secondary">{tournament?.tournament_name || `${t('tournament:tournament')} ${tournamentId}`} - {t('group:group.detail')}</Text>
+              </h2>
+              <span className="text-gray-500">{tournament?.tournament_name || `${t('tournament:tournament')} ${tournamentId}`} - {t('group:group.detail')}</span>
             </div>
           </div>
 
@@ -689,11 +687,11 @@ const TournamentGroupDetail = () => {
           <div className="text-center py-10">
             <TeamOutlined className="text-5xl text-gray-300 mb-4" />
             <div>
-              <Text type="secondary">{t('group:detail.noAvailableTeams')}</Text>
+              <span className="text-gray-500">{t('group:detail.noAvailableTeams')}</span>
               <br />
-              <Text type="secondary" className="text-xs">
+              <span className="text-gray-500 text-xs">
                 {t('group:detail.allTeamsAssigned')}
-              </Text>
+              </span>
               <br />
               <Button
                 type="primary"
