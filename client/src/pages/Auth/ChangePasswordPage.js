@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import LanguageSwitcher from '../../components/LanguageSwitcher';
 
 const { Title, Text } = Typography;
 
@@ -51,6 +52,11 @@ const ChangePasswordPage = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 p-5">
+      {/* Language Switcher - positioned at top right */}
+      <div className="absolute top-4 right-4 z-10">
+        <LanguageSwitcher />
+      </div>
+      
       <Card className="w-full max-w-lg shadow-2xl">
         <Space direction="vertical" size="large" className="w-full">
           <div className="text-center">
