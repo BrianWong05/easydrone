@@ -10,22 +10,22 @@ import LoginPage from "./pages/Auth/LoginPage";
 import ChangePasswordPage from "./pages/Auth/ChangePasswordPage";
 import { useAuthStore } from "./stores/authStore";
 // Tournament components
-import TournamentGroupCreate from "./pages/Tournaments/TournamentGroupCreate";
-import TournamentGroupDetail from "./pages/Tournaments/TournamentGroupDetail";
-import TournamentGroupEdit from "./pages/Tournaments/TournamentGroupEdit";
-import TournamentTeamList from "./pages/Tournaments/TournamentTeamList";
-import TournamentTeamCreate from "./pages/Tournaments/TournamentTeamCreate";
-import TournamentTeamDetail from "./pages/Tournaments/TournamentTeamDetail";
-import TournamentTeamEdit from "./pages/Tournaments/TournamentTeamEdit";
-import TournamentMatchList from "./pages/Tournaments/TournamentMatchList";
-import TournamentMatchCreate from "./pages/Tournaments/TournamentMatchCreate";
-import TournamentMatchGenerator from "./pages/Tournaments/TournamentMatchGenerator";
+import TournamentGroupCreate from "./pages/Groups/TournamentGroupCreate";
+import TournamentGroupDetail from "./pages/Groups/TournamentGroupDetail";
+import TournamentGroupEdit from "./pages/Groups/TournamentGroupEdit";
+import TournamentTeamList from "./pages/Teams/TournamentTeamList";
+import TournamentTeamCreate from "./pages/Teams/TournamentTeamCreate";
+import TournamentTeamDetail from "./pages/Teams/TournamentTeamDetail";
+import TournamentTeamEdit from "./pages/Teams/TournamentTeamEdit";
+import TournamentMatchList from "./pages/Matches/TournamentMatchList";
+import TournamentMatchCreate from "./pages/Matches/TournamentMatchCreate";
+import TournamentMatchGenerator from "./pages/Matches/TournamentMatchGenerator";
 import TournamentList from "./pages/Tournaments/TournamentList";
 import TournamentDetail from "./pages/Tournaments/TournamentDetail";
 import TournamentCreate from "./pages/Tournaments/TournamentCreate";
 import TournamentEdit from "./pages/Tournaments/TournamentEdit";
-import TournamentGroupList from "./pages/Tournaments/TournamentGroupList";
-import KnockoutBracket from "./pages/Tournaments/KnockoutBracket";
+import TournamentGroupList from "./pages/Groups/TournamentGroupList";
+import KnockoutBracket from "./pages/Stats/KnockoutBracket";
 
 // Groups components (only used ones)
 import GroupLeaderboard from "./pages/Groups/GroupLeaderboard";
@@ -34,12 +34,12 @@ import GroupLeaderboard from "./pages/Groups/GroupLeaderboard";
 import NotFound from "./pages/NotFound";
 
 import "./App.css";
-import TournamentMatchDetail from "./pages/Tournaments/TournamentMatchDetail.js";
-import TournamentMatchEdit from "./pages/Tournaments/TournamentMatchEdit";
-import TournamentMatchResultEdit from "./pages/Tournaments/TournamentMatchResultEdit";
-import TournamentOverallLeaderboard from "./pages/Tournaments/TournamentOverallLeaderboard";
-import TournamentLiveMatch from "./pages/Tournaments/TournamentLiveMatch";
-import TournamentBestTeamsStats from "./pages/Tournaments/TournamentBestTeamsStats";
+import TournamentMatchDetail from "./pages/Matches/TournamentMatchDetail.js";
+import TournamentMatchEdit from "./pages/Matches/TournamentMatchEdit";
+import TournamentMatchResultEdit from "./pages/Matches/TournamentMatchResultEdit";
+import TournamentOverallLeaderboard from "./pages/Stats/TournamentOverallLeaderboard";
+import TournamentLiveMatch from "./pages/Matches/TournamentLiveMatch";
+import TournamentBestTeamsStats from "./pages/Stats/TournamentBestTeamsStats";
 
 const { Content } = Layout;
 
