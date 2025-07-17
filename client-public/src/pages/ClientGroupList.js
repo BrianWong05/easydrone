@@ -49,6 +49,11 @@ const ClientGroupList = () => {
     totalMatches: 0,
     completedMatches: 0
   });
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 20,
+    total: 0
+  });
 
   useEffect(() => {
     fetchGroupsData();
@@ -73,7 +78,7 @@ const ClientGroupList = () => {
       }
 
       if (!tournamentData) {
-        setError(t('messages.noTournamentFound', { defaultValue: '找不到可顯示的錦標賽' }));
+        setError(t('messages.noTournamentFound', { defaultValue: 'No tournament found to display' }));
         return;
       }
 
@@ -133,6 +138,12 @@ const ClientGroupList = () => {
           totalMatches,
           completedMatches
         });
+
+        // Update pagination total
+        setPagination(prev => ({
+          ...prev,
+          total: groupsWithMatches.length
+        }));
       }
 
     } catch (error) {
@@ -141,6 +152,15 @@ const ClientGroupList = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleTableChange = (paginationConfig, filters, sorter) => {
+    const { current, pageSize } = paginationConfig;
+    setPagination(prev => ({
+      ...prev,
+      current,
+      pageSize
+    }));
   };
 
   const getGroupStatus = (group) => {
@@ -375,7 +395,9 @@ const ClientGroupList = () => {
           rowKey="group_id"
           className="overflow-x-auto"
           pagination={{
-            pageSize: 20,
+            current: pagination.current,
+            pageSize: pagination.pageSize,
+            total: pagination.total,
             showSizeChanger: true,
             showQuickJumper: true,
             showTotal: (total, range) => 
@@ -383,11 +405,11 @@ const ClientGroupList = () => {
                 start: range[0], 
                 end: range[1], 
                 total: total,
-                defaultValue: `第 ${range[0]}-${range[1]} 項，共 ${total} 個小組`
+                defaultValue: `${range[0]}-${range[1]} of ${total} groups`
               }),
-            pageSizeOptions: ['10', '20', '50', '100'],
-            defaultPageSize: 20
+            pageSizeOptions: ['10', '20', '50', '100']
           }}
+          onChange={handleTableChange}
           locale={{
             emptyText: (
               <div className="text-center py-16">

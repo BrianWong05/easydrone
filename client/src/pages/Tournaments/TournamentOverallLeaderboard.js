@@ -36,6 +36,11 @@ const TournamentOverallLeaderboard = () => {
   const [loading, setLoading] = useState(true);
   const [leaderboard, setLeaderboard] = useState([]);
   const [tournament, setTournament] = useState(null);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 20,
+    total: 0
+  });
 
   useEffect(() => {
     fetchTournamentData();
@@ -68,7 +73,14 @@ const TournamentOverallLeaderboard = () => {
       
       const response = await axios.get(`/api/tournaments/${tournamentId}/stats/overall-leaderboard`);
       if (response.data.success) {
-        setLeaderboard(response.data.data.leaderboard || []);
+        const leaderboardData = response.data.data.leaderboard || [];
+        setLeaderboard(leaderboardData);
+        
+        // Update pagination total
+        setPagination(prev => ({
+          ...prev,
+          total: leaderboardData.length
+        }));
       }
     } catch (error) {
       console.error('獲取錦標賽總排名榜失敗:', error);
@@ -76,6 +88,15 @@ const TournamentOverallLeaderboard = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleTableChange = (paginationConfig, filters, sorter) => {
+    const { current, pageSize } = paginationConfig;
+    setPagination(prev => ({
+      ...prev,
+      current,
+      pageSize
+    }));
   };
 
   const getRankIcon = (rank) => {
@@ -312,7 +333,9 @@ const TournamentOverallLeaderboard = () => {
             dataSource={leaderboard}
             rowKey="team_id"
             pagination={{ 
-              pageSize: 20,
+              current: pagination.current,
+              pageSize: pagination.pageSize,
+              total: pagination.total,
               showSizeChanger: true,
               showQuickJumper: true,
               showTotal: (total, range) => t('pagination.rankingTotal', { 
@@ -320,8 +343,10 @@ const TournamentOverallLeaderboard = () => {
                 start: range[0], 
                 end: range[1], 
                 total: total 
-              })
+              }),
+              pageSizeOptions: ['10', '20', '50', '100']
             }}
+            onChange={handleTableChange}
             scroll={{ x: 1000 }}
             size="small"
             locale={{ emptyText: t('messages.noRankingData', { ns: 'stats' }) }}

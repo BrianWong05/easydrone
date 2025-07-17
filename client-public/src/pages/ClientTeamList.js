@@ -67,6 +67,11 @@ const ClientTeamList = () => {
     totalAthletes: 0,
     totalGroups: 0
   });
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 20,
+    total: 0
+  });
 
   useEffect(() => {
     fetchTeamsData();
@@ -114,6 +119,12 @@ const ClientTeamList = () => {
           totalAthletes,
           totalGroups: uniqueGroups.size
         });
+
+        // Update pagination total
+        setPagination(prev => ({
+          ...prev,
+          total: teamsList.length
+        }));
       }
 
     } catch (error) {
@@ -122,6 +133,15 @@ const ClientTeamList = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleTableChange = (paginationConfig, filters, sorter) => {
+    const { current, pageSize } = paginationConfig;
+    setPagination(prev => ({
+      ...prev,
+      current,
+      pageSize
+    }));
   };
 
   const columns = [
@@ -340,13 +360,15 @@ const ClientTeamList = () => {
             dataSource={teams}
             rowKey="team_id"
             pagination={{
-              pageSize: 20,
+              current: pagination.current,
+              pageSize: pagination.pageSize,
+              total: pagination.total,
               showSizeChanger: true,
               showQuickJumper: true,
-              showTotal: (total, range) => t('common:pagination.total', { start: range[0], end: range[1], total }) + ` ${t('team:messages.teamsCount', { defaultValue: '支隊伍' })}`,
-              pageSizeOptions: ['10', '20', '50', '100'],
-              defaultPageSize: 20
+              showTotal: (total, range) => t('common:pagination.total', { start: range[0], end: range[1], total }) + ` ${t('team:messages.teamsCount', { defaultValue: ' teams' })}`,
+              pageSizeOptions: ['10', '20', '50', '100']
             }}
+            onChange={handleTableChange}
             locale={{
               emptyText: (
                 <div className="text-center py-10">

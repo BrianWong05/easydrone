@@ -380,11 +380,12 @@ const ClientMatchList = () => {
   };
 
   const handleTableChange = (paginationConfig, filters, sorter) => {
-    setPagination({
-      current: paginationConfig.current,
-      pageSize: paginationConfig.pageSize,
-      total: paginationConfig.total,
-    });
+    const { current, pageSize } = paginationConfig;
+    setPagination(prev => ({
+      ...prev,
+      current,
+      pageSize
+    }));
   };
 
   // Custom sorting function for match numbers with proper tournament progression
@@ -777,21 +778,7 @@ const ClientMatchList = () => {
                 total: total,
                 defaultValue: `${range[0]}-${range[1]} of ${total} matches`,
               }),
-            pageSizeOptions: ["10", "20", "50", "100"],
-            onChange: (page, pageSize) => {
-              setPagination((prev) => ({
-                ...prev,
-                current: page,
-                pageSize: pageSize,
-              }));
-            },
-            onShowSizeChange: (current, size) => {
-              setPagination((prev) => ({
-                ...prev,
-                current: 1,
-                pageSize: size,
-              }));
-            },
+            pageSizeOptions: ["10", "20", "50", "100"]
           }}
           onChange={handleTableChange}
           locale={{

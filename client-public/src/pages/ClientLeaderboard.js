@@ -16,7 +16,7 @@ import moment from "moment";
 const { TabPane } = Tabs;
 
 const ClientLeaderboard = () => {
-  const { t } = useTranslation(['team', 'common', 'public', 'match', 'stats', 'group']);
+  const { t } = useTranslation(["team", "common", "public", "match", "stats", "group"]);
   const navigate = useNavigate();
   // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
   const getDisplayTeamName = (teamName) => {
@@ -81,7 +81,7 @@ const ClientLeaderboard = () => {
       }
 
       if (!tournamentData) {
-        setError(t('public:layout.noActiveTournament'));
+        setError(t("public:layout.noActiveTournament"));
         return;
       }
 
@@ -164,7 +164,7 @@ const ClientLeaderboard = () => {
       });
     } catch (error) {
       console.error("Error fetching leaderboard data:", error);
-      setError(t('stats:messages.loadingStats'));
+      setError(t("stats:messages.loadingStats"));
     } finally {
       setLoading(false);
     }
@@ -172,7 +172,7 @@ const ClientLeaderboard = () => {
 
   const overallColumns = [
     {
-      title: t('stats:rankings.position'),
+      title: t("stats:rankings.position"),
       dataIndex: "rank",
       key: "rank",
       width: 80,
@@ -194,12 +194,17 @@ const ClientLeaderboard = () => {
         return (
           <div className="flex items-center space-x-2">
             {icon}
-            <span className={`text-base font-bold ${
-              rank === 1 ? 'text-warning-500' : 
-              rank === 2 ? 'text-gray-400' : 
-              rank === 3 ? 'text-orange-600' : 
-              'text-gray-600'
-            }`}>
+            <span
+              className={`text-base font-bold ${
+                rank === 1
+                  ? "text-warning-500"
+                  : rank === 2
+                  ? "text-gray-400"
+                  : rank === 3
+                  ? "text-orange-600"
+                  : "text-gray-600"
+              }`}
+            >
               {rank}
             </span>
           </div>
@@ -207,7 +212,7 @@ const ClientLeaderboard = () => {
       },
     },
     {
-      title: t('team:team.name'),
+      title: t("team:team.name"),
       dataIndex: "team_name",
       key: "team_name",
       render: (name, record) => (
@@ -222,7 +227,7 @@ const ClientLeaderboard = () => {
           />
           <div className="min-w-0 flex-1">
             <span
-              className="text-base font-semibold cursor-pointer hover:underline transition-colors duration-200 block truncate font-bold"
+              className="text-base font-semibold cursor-pointer hover:underline transition-colors duration-200 block truncate"
               style={{ color: record.team_color || "#1890ff" }}
               onClick={() => navigate(`/teams/${record.team_id}`)}
               title={getDisplayTeamName(name)}
@@ -231,7 +236,7 @@ const ClientLeaderboard = () => {
             </span>
             {record.group_name && (
               <span className="text-xs text-gray-500 block truncate">
-                {t('team:team.group')} {getDisplayGroupName(record.group_name)}
+                {t("team:team.group")} {getDisplayGroupName(record.group_name)}
               </span>
             )}
           </div>
@@ -239,22 +244,18 @@ const ClientLeaderboard = () => {
       ),
     },
     {
-      title: t('team:team.points'),
+      title: t("team:team.points"),
       dataIndex: "points",
       key: "points",
       width: 100,
-      render: (points) => (
-        <span className="text-lg font-bold text-primary-600">
-          {points || 0}
-        </span>
-      ),
+      render: (points) => <span className="text-lg font-bold text-primary-600">{points || 0}</span>,
       sorter: (a, b) => (b.points || 0) - (a.points || 0),
     },
     {
-      title: t('match:match.list'),
+      title: t("match:match.list"),
       children: [
         {
-          title: t('team:team.matchesPlayed'),
+          title: t("team:team.matchesPlayed"),
           dataIndex: "played",
           key: "played",
           width: 60,
@@ -262,7 +263,7 @@ const ClientLeaderboard = () => {
           render: (played) => <span className="font-bold">{played || 0}</span>,
         },
         {
-          title: t('team:team.wins'),
+          title: t("team:team.wins"),
           dataIndex: "won",
           key: "won",
           width: 50,
@@ -270,7 +271,7 @@ const ClientLeaderboard = () => {
           render: (won) => <span className="text-success-600 font-medium">{won || 0}</span>,
         },
         {
-          title: t('team:team.draws'),
+          title: t("team:team.draws"),
           dataIndex: "drawn",
           key: "drawn",
           width: 50,
@@ -278,7 +279,7 @@ const ClientLeaderboard = () => {
           render: (drawn) => <span className="text-warning-600 font-medium">{drawn || 0}</span>,
         },
         {
-          title: t('team:team.losses'),
+          title: t("team:team.losses"),
           dataIndex: "lost",
           key: "lost",
           width: 50,
@@ -288,10 +289,10 @@ const ClientLeaderboard = () => {
       ],
     },
     {
-      title: t('team:team.goalsFor'),
+      title: t("team:team.goalsFor"),
       children: [
         {
-          title: t('team:labels.goalsForShort', { defaultValue: '進' }),
+          title: t("team:labels.goalsForShort", { defaultValue: "進" }),
           dataIndex: "goals_for",
           key: "goals_for",
           width: 50,
@@ -303,7 +304,7 @@ const ClientLeaderboard = () => {
           ),
         },
         {
-          title: t('team:labels.goalsAgainstShort', { defaultValue: '失' }),
+          title: t("team:labels.goalsAgainstShort", { defaultValue: "失" }),
           dataIndex: "goals_against",
           key: "goals_against",
           width: 50,
@@ -311,7 +312,7 @@ const ClientLeaderboard = () => {
           render: (goals) => <span style={{ color: "#000" }}>{goals || 0}</span>,
         },
         {
-          title: t('team:labels.goalDifferenceShort', { defaultValue: '差' }),
+          title: t("team:labels.goalDifferenceShort", { defaultValue: "差" }),
           dataIndex: "goal_difference",
           key: "goal_difference",
           width: 60,
@@ -335,7 +336,7 @@ const ClientLeaderboard = () => {
       <div className="flex flex-col items-center justify-center py-16 px-6">
         <Spin size="large" />
         <div className="mt-4">
-          <span className="text-gray-600 animate-pulse">{t('stats:messages.loadingStats')}</span>
+          <span className="text-gray-600 animate-pulse">{t("stats:messages.loadingStats")}</span>
         </div>
       </div>
     );
@@ -344,7 +345,7 @@ const ClientLeaderboard = () => {
   if (error) {
     return (
       <div style={{ padding: 24 }}>
-        <Alert message={t('common:messages.error')} description={error} type="error" showIcon />
+        <Alert message={t("common:messages.error")} description={error} type="error" showIcon />
       </div>
     );
   }
@@ -360,15 +361,18 @@ const ClientLeaderboard = () => {
                 <TrophyOutlined style={{ fontSize: 32, color: "#faad14" }} />
                 <div>
                   <h2 style={{ margin: 0 }}>
-                    {tournament?.tournament_name} {t('public:navigation.leaderboard')}
+                    {tournament?.tournament_name} {t("public:navigation.leaderboard")}
                   </h2>
                   <Space>
                     <Tag color="blue">
-                      {tournament?.tournament_type === "group" && t('public:tournamentTypes.group')}
-                      {tournament?.tournament_type === "knockout" && t('public:tournamentTypes.knockout')}
-                      {tournament?.tournament_type === "mixed" && t('public:tournamentTypes.mixed')}
+                      {tournament?.tournament_type === "group" && t("public:tournamentTypes.group")}
+                      {tournament?.tournament_type === "knockout" && t("public:tournamentTypes.knockout")}
+                      {tournament?.tournament_type === "mixed" && t("public:tournamentTypes.mixed")}
                     </Tag>
-                    <span className="text-gray-500">{t('stats:messages.lastUpdated', { defaultValue: '最後更新' })}: {moment().format("YYYY-MM-DD HH:mm")}</span>
+                    <span className="text-gray-500">
+                      {t("stats:messages.lastUpdated", { defaultValue: "最後更新" })}:{" "}
+                      {moment().format("YYYY-MM-DD HH:mm")}
+                    </span>
                   </Space>
                 </div>
               </Space>
@@ -377,11 +381,11 @@ const ClientLeaderboard = () => {
         </Card>
 
         {/* Statistics */}
-        <Card title={t('stats:stats.overview')}>
+        <Card title={t("stats:stats.overview")}>
           <Row gutter={16}>
             <Col span={6}>
               <Statistic
-                title={t('team:team.totalTeams')}
+                title={t("team:team.totalTeams")}
                 value={stats.totalTeams}
                 prefix={<TeamOutlined />}
                 valueStyle={{ color: "#1890ff" }}
@@ -389,7 +393,7 @@ const ClientLeaderboard = () => {
             </Col>
             <Col span={6}>
               <Statistic
-                title={t('stats:metrics.totalMatches')}
+                title={t("stats:metrics.totalMatches")}
                 value={stats.totalMatches}
                 prefix={<CalendarOutlined />}
                 valueStyle={{ color: "#52c41a" }}
@@ -397,7 +401,7 @@ const ClientLeaderboard = () => {
             </Col>
             <Col span={6}>
               <Statistic
-                title={t('stats:messages.completedMatches')}
+                title={t("stats:messages.completedMatches")}
                 value={stats.completedMatches}
                 prefix={<RiseOutlined />}
                 valueStyle={{ color: "#faad14" }}
@@ -405,7 +409,7 @@ const ClientLeaderboard = () => {
             </Col>
             <Col span={6}>
               <Statistic
-                title={t('stats:metrics.goalsScored')}
+                title={t("stats:metrics.goalsScored")}
                 value={stats.totalGoals}
                 prefix={<FireOutlined />}
                 valueStyle={{ color: "#ff4d4f" }}
@@ -417,7 +421,7 @@ const ClientLeaderboard = () => {
         {/* Leaderboards */}
         <Card>
           <Tabs defaultActiveKey="overall" size="large">
-            <TabPane tab={t('stats:rankings.overallRanking')} key="overall">
+            <TabPane tab={t("stats:rankings.overallRanking")} key="overall">
               <Table
                 columns={overallColumns}
                 dataSource={overallLeaderboard}
@@ -429,7 +433,7 @@ const ClientLeaderboard = () => {
                       <TrophyOutlined style={{ fontSize: 48, color: "#d9d9d9", marginBottom: 16 }} />
                       <div>
                         <span className="text-gray-500" style={{ fontSize: 16 }}>
-                          {t('stats:messages.noRankingData')}
+                          {t("stats:messages.noRankingData")}
                         </span>
                       </div>
                     </div>
@@ -443,13 +447,20 @@ const ClientLeaderboard = () => {
                 <Card style={{ marginTop: "24px" }}>
                   <div style={{ fontSize: "12px", color: "#666" }}>
                     <p>
-                      <strong>{t('stats:rules.rankingRules', { defaultValue: '排名規則' })}：</strong> {t('stats:rules.rankingDescription', { defaultValue: '小組內排名 → 同排名隊伍間比較（積分 → 淨勝球 → 進球數）' })}
+                      <strong>{t("stats:rules.rankingRules", { defaultValue: "排名規則" })}：</strong>{" "}
+                      {t("stats:rules.rankingDescription", {
+                        defaultValue: "小組內排名 → 同排名隊伍間比較（積分 → 淨勝球 → 進球數）",
+                      })}
                     </p>
                     <p>
-                      <strong>{t('stats:rules.pointsRules', { defaultValue: '積分規則' })}：</strong> {t('stats:rules.pointsDescription', { defaultValue: '勝利 3分，平局 1分，失敗 0分' })}
+                      <strong>{t("stats:rules.pointsRules", { defaultValue: "積分規則" })}：</strong>{" "}
+                      {t("stats:rules.pointsDescription", { defaultValue: "勝利 3分，平局 1分，失敗 0分" })}
                     </p>
                     <p>
-                      <strong>{t('stats:rules.sortingRules', { defaultValue: '排序說明' })}：</strong> {t('stats:rules.sortingDescription', { defaultValue: '先顯示各小組第1名，再顯示各小組第2名，以此類推' })}
+                      <strong>{t("stats:rules.sortingRules", { defaultValue: "排序說明" })}：</strong>{" "}
+                      {t("stats:rules.sortingDescription", {
+                        defaultValue: "先顯示各小組第1名，再顯示各小組第2名，以此類推",
+                      })}
                     </p>
                   </div>
                 </Card>
@@ -472,7 +483,7 @@ const ClientLeaderboard = () => {
                         <TeamOutlined style={{ fontSize: 48, color: "#d9d9d9", marginBottom: 16 }} />
                         <div>
                           <span className="text-gray-500" style={{ fontSize: 16 }}>
-                            {getDisplayGroupName(group.group_name)} {t('team:messages.noTeamData')}
+                            {getDisplayGroupName(group.group_name)} {t("team:messages.noTeamData")}
                           </span>
                         </div>
                       </div>

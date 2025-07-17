@@ -31,6 +31,11 @@ const OverallLeaderboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [leaderboard, setLeaderboard] = useState([]);
+  const [pagination, setPagination] = useState({
+    current: 1,
+    pageSize: 20,
+    total: 0
+  });
 
   useEffect(() => {
     fetchOverallLeaderboard();
@@ -41,7 +46,14 @@ const OverallLeaderboard = () => {
       setLoading(true);
       const response = await axios.get('/api/stats/overall-leaderboard');
       if (response.data.success) {
-        setLeaderboard(response.data.data.leaderboard || []);
+        const leaderboardData = response.data.data.leaderboard || [];
+        setLeaderboard(leaderboardData);
+        
+        // Update pagination total
+        setPagination(prev => ({
+          ...prev,
+          total: leaderboardData.length
+        }));
       }
     } catch (error) {
       console.error('獲取總排名榜失敗:', error);
@@ -49,6 +61,15 @@ const OverallLeaderboard = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleTableChange = (paginationConfig, filters, sorter) => {
+    const { current, pageSize } = paginationConfig;
+    setPagination(prev => ({
+      ...prev,
+      current,
+      pageSize
+    }));
   };
 
   const getRankIcon = (rank) => {
@@ -277,14 +298,18 @@ const OverallLeaderboard = () => {
             dataSource={leaderboard}
             rowKey="team_id"
             pagination={{ 
-              pageSize: 20,
+              current: pagination.current,
+              pageSize: pagination.pageSize,
+              total: pagination.total,
               showSizeChanger: true,
               showQuickJumper: true,
-              showTotal: (total, range) => `第 ${range[0]}-${range[1]} 名，共 ${total} 支隊伍`
+              showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} teams`,
+              pageSizeOptions: ['10', '20', '50', '100']
             }}
+            onChange={handleTableChange}
             scroll={{ x: 1000 }}
             size="small"
-            locale={{ emptyText: '暫無排名數據' }}
+            locale={{ emptyText: 'No ranking data available' }}
             rowClassName={(record) => {
               if (record.rank === 1) return 'rank-first';
               if (record.rank === 2) return 'rank-second';
