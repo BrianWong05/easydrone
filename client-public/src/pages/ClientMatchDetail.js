@@ -529,7 +529,7 @@ const ClientMatchDetail = () => {
               <div
                 className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center ${
                   winnerInfo && winnerInfo.name === getTeamDisplayNameWithReference(match, "team1")
-                    ? "border-4 border-yellow-400"
+                    ? "border-4 border-yellow-500 shadow-lg shadow-yellow-400/50 ring-2 ring-yellow-300"
                     : ""
                 }`}
                 style={{
@@ -591,7 +591,7 @@ const ClientMatchDetail = () => {
               <div
                 className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center ${
                   winnerInfo && winnerInfo.name === getTeamDisplayNameWithReference(match, "team2")
-                    ? "border-4 border-yellow-400"
+                    ? "border-4 border-yellow-500 shadow-lg shadow-yellow-400/50 ring-4 ring-yellow-300"
                     : ""
                 }`}
                 style={{
