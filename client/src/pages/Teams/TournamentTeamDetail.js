@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Typography, Button, Space, Table, Tag, Descriptions, Row, Col, Statistic, message, Modal, Spin } from 'antd';
+import { Card, Button, Space, Table, Tag, Descriptions, Row, Col, Statistic, message, Modal, Spin } from 'antd';
 import { ArrowLeftOutlined, EditOutlined, UserAddOutlined, TrophyOutlined, TeamOutlined, DeleteOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import moment from 'moment';
 import axios from 'axios';
 
-const { Title, Text } = Typography;
 
 const TournamentTeamDetail = () => {
   // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
@@ -490,7 +489,7 @@ const TournamentTeamDetail = () => {
   if (!teamData) {
     return (
       <div className="text-center p-12">
-        <Title level={4}>{t('team:detail.teamNotFound')}</Title>
+        <h4 className="text-lg font-semibold m-0">{t('team:detail.teamNotFound')}</h4>
         <Button type="primary" onClick={handleBack}>
           {t('team:detail.backToTeamList')}
         </Button>
@@ -509,9 +508,9 @@ const TournamentTeamDetail = () => {
                 <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
                   {t('team:detail.backToList')}
                 </Button>
-                <Title level={3} className="m-0">
+                <h3 className="text-xl font-bold m-0">
                   {t('team:detail.title')}
-                </Title>
+                </h3>
               </Space>
             </Col>
             <Col>
@@ -610,7 +609,7 @@ const TournamentTeamDetail = () => {
               {teamData.group_name ? (
                 <Tag color="blue">{t('team:detail.info.group')} {getDisplayGroupName(teamData.group_name)}</Tag>
               ) : (
-                <Text type="secondary">{t('team:detail.info.unassigned')}</Text>
+                <span className="text-gray-500">{t('team:detail.info.unassigned')}</span>
               )}
             </Descriptions.Item>
             <Descriptions.Item label={t('team:detail.info.athleteCount')}>

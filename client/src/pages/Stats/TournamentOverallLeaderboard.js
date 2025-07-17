@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
-  Typography, 
   Button, 
   Table, 
   Space, 
@@ -27,7 +26,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
-const { Title, Text } = Typography;
 
 const TournamentOverallLeaderboard = () => {
   const { t } = useTranslation(['stats', 'common', 'tournament']);
@@ -160,7 +158,7 @@ const TournamentOverallLeaderboard = () => {
             >
               {getDisplayTeamName(record.team_name)}
             </div>
-            <Text type="secondary" className="text-xs">
+            <span className="text-xs text-gray-500">
               {record.group_name ? (
                 <>
                   {t('group.group', { ns: 'group' })} {record.group_name?.includes("_") ? record.group_name.split("_")[0] : record.group_name}
@@ -179,7 +177,7 @@ const TournamentOverallLeaderboard = () => {
                   )}
                 </>
               ) : t('messages.noGroup', { ns: 'stats' })}
-            </Text>
+            </span>
           </div>
         </div>
       ),
@@ -305,9 +303,9 @@ const TournamentOverallLeaderboard = () => {
           >
             {t('navigation.backToTournamentList', { ns: 'common' })}
           </Button>
-          <Title level={2} className="m-0">
+          <h2 className="text-2xl font-bold m-0">
             <TrophyOutlined /> {tournament?.tournament_name} - {t('rankings.overallRanking', { ns: 'stats' })}
-          </Title>
+          </h2>
           <Button 
             icon={<ReloadOutlined />} 
             onClick={fetchTournamentLeaderboard}

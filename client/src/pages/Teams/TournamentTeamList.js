@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Typography, Button, Space, Table, Tag, Avatar, message, Input, Select, Tooltip, Popconfirm } from "antd";
+import { Card, Button, Space, Table, Tag, Avatar, message, Input, Select, Tooltip, Popconfirm } from "antd";
 import {
   PlusOutlined,
   SearchOutlined,
@@ -13,7 +13,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import axios from "axios";
 
-const { Title, Text } = Typography;
 const { Option } = Select;
 
 const TournamentTeamList = () => {
@@ -179,17 +178,16 @@ const TournamentTeamList = () => {
               {displayName.charAt(0)}
             </Avatar>
             <div>
-              <Text 
-                strong 
+              <strong 
                 className="cursor-pointer text-blue-500 hover:text-blue-700"
                 onClick={() => navigate(`/tournaments/${tournamentId}/teams/${record.team_id}`)}
               >
                 {displayName}
-              </Text>
+              </strong>
               <br />
-              <Text type="secondary" className="text-xs">
+              <span className="text-xs text-gray-500">
                 {record.team_color}
-              </Text>
+              </span>
             </div>
           </Space>
         );
@@ -260,11 +258,11 @@ const TournamentTeamList = () => {
         {/* 頁面標題 */}
         <div className="flex justify-between items-center">
           <div>
-            <Title level={2} className="m-0">
+            <h2 className="text-2xl font-bold m-0">
               <TrophyOutlined className="mr-2 text-yellow-500" />
               {t('team:list.title')}
-            </Title>
-            <Text type="secondary">{tournament?.tournament_name || `錦標賽 ${tournamentId}`} - {t('team:list.subtitle')}</Text>
+            </h2>
+            <p className="text-gray-500 m-0">{tournament?.tournament_name || `錦標賽 ${tournamentId}`} - {t('team:list.subtitle')}</p>
           </div>
           <Button
             type="primary"
@@ -332,9 +330,9 @@ const TournamentTeamList = () => {
                   })
                 : []}
             </Select>
-            <Text type="secondary">
+            <p className="text-gray-500 m-0">
               {t('team:list.showingTeams', { count: filteredTeams.length, total: teamStats.total_teams || 0 })}
-            </Text>
+            </p>
           </Space>
         </Card>
 

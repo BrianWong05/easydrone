@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
-  Typography, 
   Form, 
   Input, 
   Select, 
@@ -17,7 +16,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
-const { Title, Text } = Typography;
 const { Option } = Select;
 
 const TournamentTeamCreate = () => {
@@ -152,15 +150,15 @@ const TournamentTeamCreate = () => {
             {t('common:buttons.back')}
           </Button>
           <div>
-            <Title level={2} className="m-0">
+            <h2 className="text-2xl font-bold m-0">
               <TrophyOutlined className="mr-2 text-yellow-500" />
               {t('team:create.title')}
-            </Title>
-            <Text type="secondary">
+            </h2>
+            <p className="text-gray-500 m-0">
               {t('team:create.subtitle', { 
                 tournamentName: tournament?.tournament_name || `${t('tournament:tournament')} ${tournamentId}` 
               })}
-            </Text>
+            </p>
           </div>
         </div>
 

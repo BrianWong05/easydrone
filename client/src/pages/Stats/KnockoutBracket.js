@@ -3,7 +3,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from 'react-i18next';
 import {
   Card,
-  Typography,
   Button,
   Form,
   InputNumber,
@@ -24,7 +23,6 @@ import { ArrowLeftOutlined, ThunderboltOutlined, TrophyOutlined, DeleteOutlined 
 import axios from "axios";
 import moment from "moment";
 
-const { Title, Text } = Typography;
 
 const KnockoutBracket = () => {
   const { t } = useTranslation(['tournament', 'common', 'match']);
@@ -220,10 +218,10 @@ const KnockoutBracket = () => {
         <Card>
           <div className="text-center py-10">
             <TrophyOutlined className="text-5xl text-gray-300 mb-4" />
-            <Title level={4} className="text-gray-400">
+            <h4 className="text-lg font-semibold text-gray-400 m-0">
               {t('knockout.noBracketGenerated', { ns: 'tournament' })}
-            </Title>
-            <Text type="secondary">{t('knockout.useGenerationFunction', { ns: 'tournament' })}</Text>
+            </h4>
+            <p className="text-gray-500 m-0">{t('knockout.useGenerationFunction', { ns: 'tournament' })}</p>
           </div>
         </Card>
       );
@@ -486,7 +484,7 @@ const KnockoutBracket = () => {
         >
           {t('navigation.backToTournamentDetail', { ns: 'tournament' })}
         </Button>
-        <Title level={2}>{tournament?.tournament_name} - {t('knockout.bracketTitle', { ns: 'tournament' })}</Title>
+        <h2 className="text-2xl font-bold m-0">{tournament?.tournament_name} - {t('knockout.bracketTitle', { ns: 'tournament' })}</h2>
       </div>
 
       {typeInfo && (
@@ -566,9 +564,9 @@ const KnockoutBracket = () => {
               </Col>
               <Col span={12}>
                 <div className="py-2 text-gray-600">
-                  <Text type="secondary">
+                  <p className="text-gray-500 m-0">
                     {t('knockout.intervalDescription', { ns: 'tournament' })}
-                  </Text>
+                  </p>
                 </div>
               </Col>
             </Row>
@@ -584,9 +582,9 @@ const KnockoutBracket = () => {
                   </Checkbox>
                 </Form.Item>
                 <div className="mt-2 text-gray-600 text-xs">
-                  <Text type="secondary">
+                  <p className="text-gray-500 m-0">
                     {t('knockout.thirdPlaceDescription', { ns: 'tournament' })}
-                  </Text>
+                  </p>
                 </div>
               </Col>
             </Row>
