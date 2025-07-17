@@ -40,7 +40,7 @@ i18n
     },
     
     // Namespaces
-    ns: ['common', 'tournament', 'team', 'match', 'group', 'athlete', 'stats'],
+    ns: ['common', 'auth', 'tournament', 'team', 'match', 'group', 'athlete', 'stats'],
     defaultNS: 'common',
     
     // Interpolation options

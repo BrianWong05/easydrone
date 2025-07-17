@@ -3,10 +3,12 @@ import { Form, Input, Button, Card, Typography, Space, Alert } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useAuthStore } from '../../stores/authStore';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const { Title, Text } = Typography;
 
 const LoginPage = () => {
+  const { t } = useTranslation(['auth', 'common']);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const { login } = useAuthStore();
@@ -21,10 +23,10 @@ const LoginPage = () => {
       if (result.success) {
         navigate('/');
       } else {
-        setError(result.message || '登入失敗');
+        setError(result.message || t('auth:login.loginFailed'));
       }
     } catch (err) {
-      setError('登入過程中發生錯誤');
+      setError(t('auth:login.loginError'));
     } finally {
       setLoading(false);
     }
@@ -36,9 +38,9 @@ const LoginPage = () => {
         <Space direction="vertical" size="large" className="w-full">
           <div className="text-center">
             <Title level={2} className="mb-2">
-              無人機足球系統
+              {t('auth:login.title')}
             </Title>
-            <Text type="secondary">請登入您的帳號</Text>
+            <Text type="secondary">{t('auth:login.subtitle')}</Text>
           </div>
 
           {error && (
@@ -62,13 +64,13 @@ const LoginPage = () => {
               rules={[
                 {
                   required: true,
-                  message: '請輸入用戶名！',
+                  message: t('auth:login.usernameRequired'),
                 },
               ]}
             >
               <Input
                 prefix={<UserOutlined />}
-                placeholder="用戶名"
+                placeholder={t('auth:login.usernamePlaceholder')}
               />
             </Form.Item>
 
@@ -77,13 +79,13 @@ const LoginPage = () => {
               rules={[
                 {
                   required: true,
-                  message: '請輸入密碼！',
+                  message: t('auth:login.passwordRequired'),
                 },
               ]}
             >
               <Input.Password
                 prefix={<LockOutlined />}
-                placeholder="密碼"
+                placeholder={t('auth:login.passwordPlaceholder')}
               />
             </Form.Item>
 
@@ -94,14 +96,14 @@ const LoginPage = () => {
                 loading={loading}
                 className="w-full"
               >
-                登入
+                {t('auth:login.loginButton')}
               </Button>
             </Form.Item>
           </Form>
 
           <div className="text-center">
             <Text type="secondary" className="text-xs">
-              無人機足球比賽管理系統 v1.0
+              {t('auth:login.systemVersion')}
             </Text>
           </div>
         </Space>
