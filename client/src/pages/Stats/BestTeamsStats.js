@@ -27,9 +27,13 @@ import {
   FireOutlined,
   BarChartOutlined,
   FilterOutlined,
-  SearchOutlined
+  SearchOutlined,
+  EyeOutlined,
+  EyeInvisibleOutlined,
+  SaveOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import moment from 'moment';
 
@@ -38,6 +42,7 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 const BestTeamsStats = () => {
+  const { t } = useTranslation(['stats', 'common']);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [matchesLoading, setMatchesLoading] = useState(false);
@@ -45,6 +50,9 @@ const BestTeamsStats = () => {
   const [availableMatches, setAvailableMatches] = useState([]);
   const [tournaments, setTournaments] = useState([]);
   const [groups, setGroups] = useState([]);
+  const [isPublic, setIsPublic] = useState(false);
+  const [savingToCache, setSavingToCache] = useState(false);
+  const [visibilityLoading, setVisibilityLoading] = useState(false);
   
   // Filter states
   const [selectedTournament, setSelectedTournament] = useState(null);
@@ -128,7 +136,7 @@ const BestTeamsStats = () => {
       const response = await axios.get('/api/stats/best-teams', { params });
       if (response.data.success) {
         setBestTeamsData(response.data.data);
-        message.success('統計數據已更新');
+        message.success(t('actions.calculatedNotSaved'));
       }
     } catch (error) {
       console.error('獲取最佳球隊統計失敗:', error);
@@ -162,6 +170,89 @@ const BestTeamsStats = () => {
     setBestTeamsData(null);
   };
 
+  // Save stats to cache for public display
+  const saveToPublicCache = async () => {
+    if (!bestTeamsData) {
+      message.warning(t('actions.calculateFirst'));
+      return;
+    }
+
+    setSavingToCache(true);
+    try {
+      const response = await axios.post('/api/stats/best-teams-cache', {
+        stats_data: bestTeamsData,
+        tournament_id: selectedTournament,
+        is_public: true // Always save as public when explicitly saving
+      });
+
+      if (response.data.success) {
+        message.success(`${t('actions.savedToCache')} ${t('visibility.public')}`);
+        // Update visibility status since we saved as public
+        setIsPublic(true);
+      }
+    } catch (error) {
+      console.error('保存到緩存失敗:', error);
+      message.error(t('actions.saveFailed') + ': ' + (error.response?.data?.message || error.message));
+    } finally {
+      setSavingToCache(false);
+    }
+  };
+
+  // Toggle visibility of cached stats
+  const toggleVisibility = async () => {
+    if (!selectedTournament) {
+      message.warning(t('actions.selectTournamentFirst'));
+      return;
+    }
+
+    setVisibilityLoading(true);
+    try {
+      const newVisibility = !isPublic;
+      const response = await axios.patch('/api/stats/best-teams-visibility', {
+        tournament_id: selectedTournament,
+        is_public: newVisibility
+      });
+
+      if (response.data.success) {
+        setIsPublic(newVisibility);
+        // Use translated message instead of server message
+        const statusText = newVisibility ? t('visibility.public') : t('visibility.hidden');
+        const successMessage = selectedTournament ? 
+          t('actions.tournamentVisibilityChanged', { tournament: selectedTournament, status: statusText }) :
+          t('actions.visibilityChangedGeneric', { status: statusText });
+        message.success(successMessage);
+        // Stats remain visible on admin page regardless of public visibility
+      }
+    } catch (error) {
+      console.error('切換可見性失敗:', error);
+      message.error(t('actions.toggleFailed') + ': ' + (error.response?.data?.message || error.message));
+    } finally {
+      setVisibilityLoading(false);
+    }
+  };
+
+  // Fetch current visibility status
+  const fetchVisibilityStatus = async () => {
+    if (!selectedTournament) return;
+
+    try {
+      const response = await axios.get('/api/stats/best-teams-status', {
+        params: { tournament_id: selectedTournament }
+      });
+
+      if (response.data.success && response.data.data.length > 0) {
+        setIsPublic(response.data.data[0].is_public === 1);
+      }
+    } catch (error) {
+      console.error('獲取可見性狀態失敗:', error);
+    }
+  };
+
+  // Fetch visibility status when tournament changes
+  useEffect(() => {
+    fetchVisibilityStatus();
+  }, [selectedTournament]);
+
   // Helper function to clean team names
   const getDisplayTeamName = (teamName) => {
     if (!teamName) return '';
@@ -174,7 +265,7 @@ const BestTeamsStats = () => {
 
   const attackTeamsColumns = [
     {
-      title: '排名',
+      title: t('rankings.position'),
       key: 'rank',
       render: (_, record, index) => (
         <div style={{ textAlign: 'center' }}>
@@ -232,7 +323,7 @@ const BestTeamsStats = () => {
       align: 'center',
     },
     {
-      title: '總進球',
+      title: t('rankings.goalsFor'),
       dataIndex: 'goals_for',
       key: 'goals_for',
       width: 100,
@@ -240,7 +331,7 @@ const BestTeamsStats = () => {
       render: (goals) => <span style={{ fontWeight: 'bold', color: '#52c41a' }}>{goals}</span>
     },
     {
-      title: '平均進球',
+      title: t('metrics.averageGoals'),
       dataIndex: 'avg_goals_for',
       key: 'avg_goals_for',
       width: 100,
@@ -258,7 +349,7 @@ const BestTeamsStats = () => {
 
   const defenseTeamsColumns = [
     {
-      title: '排名',
+      title: t('rankings.position'),
       key: 'rank',
       render: (_, record, index) => (
         <div style={{ textAlign: 'center' }}>
@@ -316,7 +407,7 @@ const BestTeamsStats = () => {
       align: 'center',
     },
     {
-      title: '總失球',
+      title: t('rankings.goalsAgainst'),
       dataIndex: 'goals_against',
       key: 'goals_against',
       width: 100,
@@ -324,7 +415,7 @@ const BestTeamsStats = () => {
       render: (goals) => <span style={{ fontWeight: 'bold', color: '#ff4d4f' }}>{goals}</span>
     },
     {
-      title: '平均失球',
+      title: t('metrics.averageGoalsAgainst'),
       dataIndex: 'avg_goals_against',
       key: 'avg_goals_against',
       width: 100,
@@ -390,20 +481,46 @@ const BestTeamsStats = () => {
     <div style={{ padding: '24px' }}>
       <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Title level={2}>
-          <BarChartOutlined /> 最佳球隊統計
+          <BarChartOutlined /> {t('stats.bestTeams')}
         </Title>
         <Space>
           <Button onClick={resetFilters}>
-            重置篩選
+            {t('buttons.reset')}
           </Button>
-          <Button 
-            type="primary"
-            icon={<SearchOutlined />} 
-            onClick={fetchBestTeamsStats}
-            loading={loading}
-          >
-            計算統計
-          </Button>
+          <Space>
+            <Button 
+              type="primary"
+              icon={<SearchOutlined />} 
+              onClick={fetchBestTeamsStats}
+              loading={loading}
+            >
+              {t('buttons.calculate')}
+            </Button>
+            
+            {bestTeamsData && (
+              <>
+                <Button 
+                  type="default" 
+                  icon={<SaveOutlined />}
+                  onClick={saveToPublicCache}
+                  loading={savingToCache}
+                >
+                  {t('buttons.saveToPublic')}
+                </Button>
+                
+                <Button 
+                  type={isPublic ? "default" : "primary"} 
+                  icon={isPublic ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+                  onClick={toggleVisibility}
+                  loading={visibilityLoading}
+                  disabled={!selectedTournament}
+                >
+                  {isPublic ? t('buttons.changeToHidden') : t('buttons.changeToPublic')}
+                </Button>
+                
+              </>
+            )}
+          </Space>
         </Space>
       </div>
 
@@ -516,6 +633,7 @@ const BestTeamsStats = () => {
         </div>
       </Card>
 
+
       {/* Results */}
       {bestTeamsData && (
         <>
@@ -544,7 +662,7 @@ const BestTeamsStats = () => {
                 <Statistic
                   title="最佳進攻球隊"
                   value={getDisplayTeamName(bestTeamsData.best_attack_team?.team_name)}
-                  suffix={`${bestTeamsData.best_attack_team?.goals_for || 0} 球`}
+                  suffix={`${bestTeamsData.best_attack_team?.goals_for || 0} ${t('metrics.goals')}`}
                   prefix={<FireOutlined style={{ color: '#52c41a' }} />}
                   valueStyle={{ color: '#52c41a', fontSize: '16px' }}
                 />
@@ -555,7 +673,7 @@ const BestTeamsStats = () => {
                 <Statistic
                   title="最佳防守球隊"
                   value={getDisplayTeamName(bestTeamsData.best_defense_team?.team_name)}
-                  suffix={`失 ${bestTeamsData.best_defense_team?.goals_against || 0} 球`}
+                  suffix={`${t('metrics.conceded')} ${bestTeamsData.best_defense_team?.goals_against || 0} ${t('metrics.goals')}`}
                   prefix={<SafetyOutlined style={{ color: '#1890ff' }} />}
                   valueStyle={{ color: '#1890ff', fontSize: '16px' }}
                 />
@@ -594,7 +712,7 @@ const BestTeamsStats = () => {
           </Card>
 
           {/* Applied Filters Summary */}
-          <Card title="篩選條件摘要" size="small">
+          <Card title={t('filterSummary.title')} size="small">
             <div style={{ fontSize: '12px', color: '#666' }}>
               {bestTeamsData.summary.filters_applied.tournament_id && (
                 <p><strong>錦標賽：</strong> {Array.isArray(tournaments) ? tournaments.find(t => t.tournament_id == bestTeamsData.summary.filters_applied.tournament_id)?.tournament_name || '未知' : '未知'}</p>

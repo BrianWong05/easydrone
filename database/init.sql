@@ -266,9 +266,11 @@ CREATE TABLE IF NOT EXISTS best_teams_cache (
   cache_id INT AUTO_INCREMENT PRIMARY KEY,
   tournament_id INT,
   stats_data JSON NOT NULL,
+  is_public TINYINT(1) DEFAULT 1 COMMENT 'Whether the stats are visible to public clients (1=visible, 0=hidden)',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   INDEX idx_created_at (created_at),
   INDEX idx_tournament_id (tournament_id),
+  INDEX idx_is_public (is_public),
   FOREIGN KEY (tournament_id) REFERENCES tournaments(tournament_id) ON DELETE CASCADE
 );
 

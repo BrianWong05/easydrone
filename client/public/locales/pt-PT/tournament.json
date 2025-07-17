@@ -1,6 +1,7 @@
 {
-  "tournament": "Tournament",
-  "tournament": {
+  "tournament": "Torneio",
+  "thisTournament": "Este Torneio",
+  "tournamentData": {
     "name": "Tournament Name",
     "overview": "Tournament Overview",
     "management": "Tournament Management",

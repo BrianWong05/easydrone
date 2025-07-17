@@ -1,6 +1,7 @@
 {
   "tournament": "Tournament",
-  "tournament": {
+  "thisTournament": "This Tournament",
+  "tournamentData": {
     "name": "Tournament Name",
     "overview": "Tournament Overview",
     "management": "Tournament Management",

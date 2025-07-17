@@ -1,6 +1,7 @@
 {
   "tournament": "锦标赛",
-  "tournament": {
+  "thisTournament": "此锦标赛",
+  "tournamentData": {
     "name": "锦标赛名稱",
     "overview": "锦标赛概覽",
     "management": "锦标赛管理",

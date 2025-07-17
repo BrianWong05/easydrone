@@ -115,6 +115,54 @@
     "includeSubsequent": "含後續輪次"
   },
   "buttons": {
-    "calculate": "計算統計"
+    "calculate": "計算統計",
+    "reset": "重置篩選",
+    "saveToCache": "保存到公開緩存",
+    "saveToPublic": "保存到公開",
+    "toggleVisibility": "切換可見性",
+    "changeToHidden": "改為隱藏",
+    "changeToPublic": "改為公開"
+  },
+  "visibility": {
+    "title": "公開設定",
+    "showToPublic": "公開顯示給客戶端",
+    "publicStatus": "✅ 統計結果將在客戶端公開顯示",
+    "hiddenStatus": "❌ 統計結果將對客戶端隱藏",
+    "public": "公開",
+    "hidden": "隱藏"
+  },
+  "actions": {
+    "calculateFirst": "請先計算統計數據",
+    "selectTournamentFirst": "請先選擇錦標賽",
+    "savedToCache": "統計數據已保存到公開緩存並設為",
+    "saveFailed": "保存到緩存失敗",
+    "toggleFailed": "切換可見性失敗",
+    "hiddenNotSaved": "統計數據設為隱藏時不會保存到資料庫。請勾選「公開顯示給客戶端」後再保存。",
+    "calculatedNotSaved": "統計數據已計算完成但未保存到資料庫。如需公開，請點擊「保存到公開」。",
+    "showingSavedStats": "顯示已保存的統計數據",
+    "showingCalculatedStats": "顯示計算的統計數據（未保存）",
+    "savedToCache": "統計數據已保存到公開緩存並設為",
+    "visibilityChanged": "錦標賽「{{tournament}}」的統計數據已{{status}}",
+    "tournamentVisibilityChanged": "錦標賽 {{tournament}} 的統計數據已{{status}}",
+    "visibilityChangedGeneric": "統計數據已{{status}}",
+    "dataUploadedAndMadePublic": "{{tournament}} 數據已上傳到資料庫並設為公開"
+  },
+  "filterSummary": {
+    "title": "篩選條件摘要",
+    "tournament": "錦標賽",
+    "group": "小組",
+    "matchType": "比賽類型",
+    "dateRange": "日期範圍",
+    "specificMatches": "特定比賽",
+    "groupStage": "小組賽",
+    "knockout": "淘汰賽",
+    "matches": "場比賽",
+    "unknown": "未知",
+    "explanation": "統計說明",
+    "explanationText": "最佳進攻球隊以總進球數排名，最佳防守球隊以總失球數排名（越少越好）"
+  },
+  "alerts": {
+    "setupFilters": "請設定篩選條件並點擊「計算統計」",
+    "setupDescription": "您可以選擇錦標賽、小組、比賽類型、日期範圍或特定比賽來計算最佳進攻和防守球隊統計"
   }
 }

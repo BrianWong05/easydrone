@@ -115,6 +115,54 @@
     "includeSubsequent": "含后续轮次"
   },
   "buttons": {
-    "calculate": "计算统计"
+    "calculate": "计算统计",
+    "reset": "重置筛选",
+    "saveToCache": "保存到公开缓存",
+    "saveToPublic": "保存到公开",
+    "toggleVisibility": "切换可见性",
+    "changeToHidden": "改为隐藏",
+    "changeToPublic": "改为公开"
+  },
+  "visibility": {
+    "title": "公开设定",
+    "showToPublic": "公开显示给客户端",
+    "publicStatus": "✅ 统计结果将在客户端公开显示",
+    "hiddenStatus": "❌ 统计结果将对客户端隐藏",
+    "public": "公开",
+    "hidden": "隐藏"
+  },
+  "actions": {
+    "calculateFirst": "请先计算统计数据",
+    "selectTournamentFirst": "请先选择锦标赛",
+    "savedToCache": "统计数据已保存到公开缓存并设为",
+    "saveFailed": "保存到缓存失败",
+    "toggleFailed": "切换可见性失败",
+    "hiddenNotSaved": "统计数据设为隐藏时不会保存到数据库。请勾选「公开显示给客户端」后再保存。",
+    "calculatedNotSaved": "统计数据已计算完成但未保存到数据库。如需公开，请点击「保存到公开」。",
+    "showingSavedStats": "显示已保存的统计数据",
+    "showingCalculatedStats": "显示计算的统计数据（未保存）",
+    "savedToCache": "统计数据已保存到公开缓存并设为",
+    "visibilityChanged": "锦标赛「{{tournament}}」的统计数据已{{status}}",
+    "tournamentVisibilityChanged": "锦标赛 {{tournament}} 的统计数据已{{status}}",
+    "visibilityChangedGeneric": "统计数据已{{status}}",
+    "dataUploadedAndMadePublic": "{{tournament}} 数据已上传到数据库并设为公开"
+  },
+  "filterSummary": {
+    "title": "筛选条件摘要",
+    "tournament": "锦标赛",
+    "group": "小组",
+    "matchType": "比赛类型",
+    "dateRange": "日期范围",
+    "specificMatches": "特定比赛",
+    "groupStage": "小组赛",
+    "knockout": "淘汰赛",
+    "matches": "场比赛",
+    "unknown": "未知",
+    "explanation": "统计说明",
+    "explanationText": "最佳进攻球队以总进球数排名，最佳防守球队以总失球数排名（越少越好）"
+  },
+  "alerts": {
+    "setupFilters": "请设定筛选条件并点击「计算统计」",
+    "setupDescription": "您可以选择锦标赛、小组、比赛类型、日期范围或特定比赛来计算最佳进攻和防守球队统计"
   }
 }

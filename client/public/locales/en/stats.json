@@ -115,6 +115,54 @@
     "includeSubsequent": "includes subsequent rounds"
   },
   "buttons": {
-    "calculate": "Calculate Statistics"
+    "calculate": "Calculate Statistics",
+    "reset": "Reset Filters",
+    "saveToCache": "Save to Public Cache",
+    "saveToPublic": "Save to Public",
+    "toggleVisibility": "Toggle Visibility",
+    "changeToHidden": "Change to Hidden",
+    "changeToPublic": "Change to Public"
+  },
+  "visibility": {
+    "title": "Public Settings",
+    "showToPublic": "Show to Public Clients",
+    "publicStatus": "✅ Statistics will be publicly displayed to clients",
+    "hiddenStatus": "❌ Statistics will be hidden from clients",
+    "public": "Public",
+    "hidden": "Hidden"
+  },
+  "actions": {
+    "calculateFirst": "Please calculate statistics first",
+    "selectTournamentFirst": "Please select tournament first",
+    "savedToCache": "Statistics saved to public cache and set to",
+    "saveFailed": "Failed to save to cache",
+    "toggleFailed": "Failed to toggle visibility",
+    "hiddenNotSaved": "Statistics set to hidden will not be saved to database. Please check 'Show to Public Clients' before saving.",
+    "calculatedNotSaved": "Statistics calculated but not saved to database. To make public, click 'Save to Public'.",
+    "showingSavedStats": "Showing Saved Statistics",
+    "showingCalculatedStats": "Showing Calculated Statistics (Not Saved)",
+    "savedToCache": "Statistics saved to public cache and set to",
+    "visibilityChanged": "Tournament {{tournament}} statistics are now {{status}}",
+    "tournamentVisibilityChanged": "Tournament {{tournament}} statistics are now {{status}}",
+    "visibilityChangedGeneric": "Statistics are now {{status}}",
+    "dataUploadedAndMadePublic": "{{tournament}} data uploaded to database and made public"
+  },
+  "filterSummary": {
+    "title": "Filter Summary",
+    "tournament": "Tournament",
+    "group": "Group",
+    "matchType": "Match Type",
+    "dateRange": "Date Range",
+    "specificMatches": "Specific Matches",
+    "groupStage": "Group Stage",
+    "knockout": "Knockout",
+    "matches": "matches",
+    "unknown": "Unknown",
+    "explanation": "Statistics Explanation",
+    "explanationText": "Best attack teams ranked by total goals scored, best defense teams ranked by total goals conceded (lower is better)"
+  },
+  "alerts": {
+    "setupFilters": "Please set filter criteria and click 'Calculate Statistics'",
+    "setupDescription": "You can select tournament, group, match type, date range or specific matches to calculate best attack and defense team statistics"
   }
 }

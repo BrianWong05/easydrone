@@ -19,7 +19,11 @@
     "analysisDescription": "Descrição da Análise",
     "rankingMethodDescription": "Melhores equipas de ataque classificadas por total de golos marcados, melhores equipas de defesa classificadas por total de golos sofridos (menor é melhor)",
     "dataUpdate": "Atualização de Dados",
-    "dataUpdateDescription": "Os dados estatísticos são automaticamente atualizados após cálculo pelos administradores"
+    "dataUpdateDescription": "Os dados estatísticos são automaticamente atualizados após cálculo pelos administradores",
+    "publiclyVisible": "Publicamente Visível",
+    "lastUpdated": "Última Atualização",
+    "visibilityStatus": "Estado de Visibilidade",
+    "currentlyPublic": "Atualmente Público"
   },
   "metrics": {
     "totalTeams": "Total de Equipas",
@@ -68,7 +72,9 @@
     "refreshData": "Atualizar Dados",
     "exportData": "Exportar Dados",
     "lastUpdated": "Última Atualização",
-    "completedMatches": "Jogos Concluídos"
+    "completedMatches": "Jogos Concluídos",
+    "notPublicOrCalculated": "As estatísticas das melhores equipas não são públicas ou ainda não foram calculadas",
+    "tournamentNotPublicOrCalculated": "As estatísticas das melhores equipas do torneio \"{{tournamentName}}\" não são públicas ou ainda não foram calculadas"
   },
   "rules": {
     "rankingRules": "Regras de Classificação",

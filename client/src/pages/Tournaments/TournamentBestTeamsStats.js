@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
-  Typography, 
   Button, 
   Table, 
   Space, 
@@ -28,14 +27,16 @@ import {
   FireOutlined,
   BarChartOutlined,
   FilterOutlined,
-  SearchOutlined
+  SearchOutlined,
+  EyeOutlined,
+  EyeInvisibleOutlined,
+  SaveOutlined
 } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import moment from 'moment';
 
-const { Title, Text } = Typography;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
@@ -48,7 +49,11 @@ const TournamentBestTeamsStats = () => {
   const [bestTeamsData, setBestTeamsData] = useState(null);
   const [availableMatches, setAvailableMatches] = useState([]);
   const [tournament, setTournament] = useState(null);
+  const [isPublic, setIsPublic] = useState(false);
+  const [savingToCache, setSavingToCache] = useState(false);
+  const [visibilityLoading, setVisibilityLoading] = useState(false);
   const [groups, setGroups] = useState([]);
+  const [isShowingSavedStats, setIsShowingSavedStats] = useState(false);
   const [availableKnockoutRounds, setAvailableKnockoutRounds] = useState([]);
   
   // Filter states
@@ -289,24 +294,12 @@ const TournamentBestTeamsStats = () => {
       const response = await axios.get('/api/stats/best-teams', { params });
       if (response.data.success) {
         setBestTeamsData(response.data.data);
+        setIsShowingSavedStats(false); // Mark as newly calculated, not saved
         
-        // Save to public cache for client-public display
-        try {
-          await axios.post('/api/stats/best-teams-cache', {
-            stats_data: response.data.data,
-            tournament_id: tournamentId
-          });
-          console.log('✅ Stats saved to public cache for tournament:', tournamentId);
-        } catch (cacheError) {
-          console.error('Failed to save to public cache:', cacheError);
-        }
+        // Calculate statistics only - do not save to database automatically
+        console.log('📊 Stats calculated but not saved to database');
         
-        message.success(t('messages.statsUpdated', { 
-          ns: 'stats',
-          basis: selectedMatches.length > 0 ? 
-            t('messages.selectedMatches', { ns: 'stats', count: selectedMatches.length }) : 
-            t('messages.filterCriteria', { ns: 'stats' })
-        }));
+        message.success(t('actions.calculatedNotSaved', { ns: 'stats' }));
       }
     } catch (error) {
       console.error('獲取最佳球隊統計失敗:', error);
@@ -339,6 +332,157 @@ const TournamentBestTeamsStats = () => {
     setSelectAllMatches(false);
     setBestTeamsData(null);
   };
+
+  // Save stats to cache for public display
+  const saveToPublicCache = async () => {
+    if (!bestTeamsData) {
+      message.warning(t('messages.calculateFirst', { ns: 'stats' }));
+      return;
+    }
+
+    setSavingToCache(true);
+    try {
+      const response = await axios.post('/api/stats/best-teams-cache', {
+        stats_data: bestTeamsData,
+        tournament_id: tournamentId,
+        is_public: true // Always save as public when explicitly saving
+      });
+
+      if (response.data.success) {
+        message.success(`${t('actions.savedToCache', { ns: 'stats' })} ${t('visibility.public', { ns: 'stats' })}`);
+        // Refresh the current saved stats display
+        fetchCurrentSavedStats();
+        setIsShowingSavedStats(true);
+        // Update visibility status since we saved as public
+        setIsPublic(true);
+      }
+    } catch (error) {
+      console.error('保存到緩存失敗:', error);
+      message.error(t('messages.saveFailed', { ns: 'stats' }) + ': ' + (error.response?.data?.message || error.message));
+    } finally {
+      setSavingToCache(false);
+    }
+  };
+
+  // Toggle visibility of cached stats
+  const toggleVisibility = async () => {
+    if (!bestTeamsData) {
+      message.warning(t('messages.calculateFirst', { ns: 'stats' }));
+      return;
+    }
+
+    setVisibilityLoading(true);
+    try {
+      const newVisibility = !isPublic;
+      
+      // If changing to public, first save/update the current data to the database
+      if (newVisibility) {
+        console.log('📤 Uploading current data to database before making public...');
+        
+        // Save the current bestTeamsData to the cache
+        const saveResponse = await axios.post('/api/stats/best-teams-cache', {
+          stats_data: bestTeamsData,
+          tournament_id: tournamentId,
+          is_public: true // Set as public when saving
+        });
+
+        if (!saveResponse.data.success) {
+          throw new Error(saveResponse.data.message || 'Failed to save data to database');
+        }
+        
+        console.log('✅ Data successfully uploaded to database');
+      }
+      
+      // Then toggle the visibility
+      const response = await axios.patch('/api/stats/best-teams-visibility', {
+        tournament_id: tournamentId,
+        is_public: newVisibility
+      });
+
+      if (response.data.success) {
+        setIsPublic(newVisibility);
+        setIsShowingSavedStats(true); // Mark as saved since we just saved it
+        
+        // Use translated message instead of server message
+        const tournamentName = tournament?.tournament_name || t('tournament.tournament', { ns: 'tournament' });
+        const statusText = newVisibility ? t('visibility.public', { ns: 'stats' }) : t('visibility.hidden', { ns: 'stats' });
+        
+        let successMessage;
+        if (newVisibility) {
+          successMessage = t('actions.dataUploadedAndMadePublic', { 
+            ns: 'stats', 
+            tournament: tournamentName 
+          }) || `${tournamentName} data uploaded and made ${statusText}`;
+        } else {
+          successMessage = t('actions.visibilityChanged', { 
+            ns: 'stats', 
+            tournament: tournamentName, 
+            status: statusText 
+          });
+        }
+        
+        message.success(successMessage);
+        
+        // Refresh the current saved stats display to show the updated data
+        if (newVisibility) {
+          fetchCurrentSavedStats();
+        }
+      }
+    } catch (error) {
+      console.error('切換可見性失敗:', error);
+      message.error(t('messages.toggleFailed', { ns: 'stats' }) + ': ' + (error.response?.data?.message || error.message));
+    } finally {
+      setVisibilityLoading(false);
+    }
+  };
+
+  // Fetch current visibility status
+  const fetchVisibilityStatus = async () => {
+    try {
+      const response = await axios.get('/api/stats/best-teams-status', {
+        params: { tournament_id: tournamentId }
+      });
+
+      if (response.data.success && response.data.data.length > 0) {
+        setIsPublic(response.data.data[0].is_public === 1);
+      }
+    } catch (error) {
+      console.error('獲取可見性狀態失敗:', error);
+    }
+  };
+
+  // Fetch current saved stats from database
+  const fetchCurrentSavedStats = async () => {
+    try {
+      console.log('🔍 Fetching current saved stats for tournament:', tournamentId);
+      
+      const response = await axios.get('/api/stats/best-teams-public', {
+        params: { tournament_id: tournamentId }
+      });
+
+      if (response.data.success && response.data.data) {
+        console.log('✅ Found saved stats, displaying them');
+        setBestTeamsData(response.data.data);
+        setIsShowingSavedStats(true);
+      } else {
+        console.log('📊 No saved stats found for this tournament');
+        setBestTeamsData(null);
+        setIsShowingSavedStats(false);
+      }
+    } catch (error) {
+      console.error('獲取當前保存的統計失敗:', error);
+      // Don't show error message for this, as it's normal to not have saved stats
+      setBestTeamsData(null);
+    }
+  };
+
+  // Fetch visibility status and current stats when component mounts
+  useEffect(() => {
+    if (tournamentId) {
+      fetchVisibilityStatus();
+      fetchCurrentSavedStats();
+    }
+  }, [tournamentId]);
 
   // Helper function to clean team names
   const getDisplayTeamName = (teamName) => {
@@ -414,9 +558,9 @@ const TournamentBestTeamsStats = () => {
             >
               {getDisplayTeamName(record.team_name)}
             </div>
-            <Text type="secondary" className="text-xs">
+            <div className="text-xs text-gray-500">
               {record.group_name ? `${t('group.group', { ns: 'group' })} ${getDisplayGroupName(record.group_name)}` : t('messages.noGroup', { ns: 'stats' })}
-            </Text>
+            </div>
           </div>
         </div>
       ),
@@ -488,9 +632,9 @@ const TournamentBestTeamsStats = () => {
             >
               {getDisplayTeamName(record.team_name)}
             </div>
-            <Text type="secondary" className="text-xs">
+            <div className="text-xs text-gray-500">
               {record.group_name ? `${t('group.group', { ns: 'group' })} ${getDisplayGroupName(record.group_name)}` : t('messages.noGroup', { ns: 'stats' })}
-            </Text>
+            </div>
           </div>
         </div>
       ),
@@ -531,21 +675,61 @@ const TournamentBestTeamsStats = () => {
   return (
     <div className="p-6">
       <div className="mb-6 flex justify-between items-center">
-        <Title level={2}>
-          <BarChartOutlined /> {tournament?.tournament_name || t('tournament.tournament', { ns: 'tournament' })} - {t('stats.bestTeams', { ns: 'stats' })}
-        </Title>
+        <div>
+          <h2 className="text-2xl font-bold mb-2">
+            <BarChartOutlined /> {tournament?.tournament_name || t('tournament.tournament', { ns: 'tournament' })} - {t('stats.bestTeams', { ns: 'stats' })}
+          </h2>
+          {bestTeamsData && (
+            <div className="flex items-center space-x-2">
+              {isShowingSavedStats ? (
+                <span className="text-sm px-3 py-1 bg-green-100 text-green-700 rounded-full border border-green-200">
+                  📊 {t('stats.showingSavedStats', { ns: 'stats' })} {isPublic ? `(${t('visibility.public', { ns: 'stats' })})` : `(${t('visibility.hidden', { ns: 'stats' })})`}
+                </span>
+              ) : (
+                <span className="text-sm px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full border border-yellow-200">
+                  ⚡ {t('stats.showingCalculatedStats', { ns: 'stats' })}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
         <Space>
           <Button onClick={resetFilters}>
             {t('buttons.reset', { ns: 'common' })}
           </Button>
-          <Button 
-            type="primary"
-            icon={<SearchOutlined />} 
-            onClick={fetchBestTeamsStats}
-            loading={loading}
-          >
-            {t('buttons.calculate', { ns: 'stats' })}
-          </Button>
+          <Space>
+            <Button 
+              type="primary"
+              icon={<SearchOutlined />} 
+              onClick={fetchBestTeamsStats}
+              loading={loading}
+            >
+              {t('buttons.calculate', { ns: 'stats' })}
+            </Button>
+            
+            {bestTeamsData && (
+              <>
+                <Button 
+                  type="default" 
+                  icon={<SaveOutlined />}
+                  onClick={saveToPublicCache}
+                  loading={savingToCache}
+                >
+                  {t('buttons.saveToPublic', { ns: 'stats' })}
+                </Button>
+                
+                <Button 
+                  type={isPublic ? "default" : "primary"} 
+                  icon={isPublic ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+                  onClick={toggleVisibility}
+                  loading={visibilityLoading}
+                >
+                  {isPublic ? t('buttons.changeToHidden', { ns: 'stats' }) : t('buttons.changeToPublic', { ns: 'stats' })}
+                </Button>
+                
+              </>
+            )}
+          </Space>
         </Space>
       </div>
 
@@ -554,7 +738,7 @@ const TournamentBestTeamsStats = () => {
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={12} md={selectedMatchType === 'knockout' ? 12 : 8}>
             <div>
-              <Text strong>{t('filters.matchType', { ns: 'stats' })} <span className="text-red-500">*</span></Text>
+              <div className="font-semibold">{t('filters.matchType', { ns: 'stats' })} <span className="text-red-500">*</span></div>
               <Select
                 className="w-full mt-1"
                 placeholder={t('filters.selectMatchType', { ns: 'stats' })}
@@ -580,7 +764,7 @@ const TournamentBestTeamsStats = () => {
           {(selectedMatchType === 'group' || selectedMatchType === 'mixed') && (
             <Col xs={24} sm={12} md={8}>
               <div>
-                <Text strong>{t('group.group', { ns: 'group' })} ({selectedGroups.length} {t('filters.selected', { ns: 'stats' })})</Text>
+                <div className="font-semibold">{t('group.group', { ns: 'group' })} ({selectedGroups.length} {t('filters.selected', { ns: 'stats' })})</div>
                 <div className="mt-2 border border-gray-300 rounded-md p-2 max-h-30 overflow-y-auto bg-gray-50">
                   <div className="mb-2">
                     <Checkbox
@@ -594,7 +778,7 @@ const TournamentBestTeamsStats = () => {
                         }
                       }}
                     >
-                      <Text strong>{t('buttons.selectAll', { ns: 'common' })}</Text>
+                      <span className="font-semibold">{t('buttons.selectAll', { ns: 'common' })}</span>
                     </Checkbox>
                   </div>
                   {Array.isArray(groups) && groups.map(group => (
@@ -614,9 +798,9 @@ const TournamentBestTeamsStats = () => {
                     </div>
                   ))}
                   {groups.length === 0 && (
-                    <Text type="secondary" className="text-xs">
+                    <div className="text-xs text-gray-500">
                       {t('messages.noGroups', { ns: 'stats' })}
-                    </Text>
+                    </div>
                   )}
                 </div>
               </div>
@@ -625,7 +809,7 @@ const TournamentBestTeamsStats = () => {
           {(selectedMatchType === 'knockout' || selectedMatchType === 'mixed') && (
             <Col xs={24} sm={12} md={8}>
               <div>
-                <Text strong>{t('filters.knockoutRounds', { ns: 'stats' })} ({selectedKnockoutRounds.length} {t('filters.selected', { ns: 'stats' })})</Text>
+                <div className="font-semibold">{t('filters.knockoutRounds', { ns: 'stats' })} ({selectedKnockoutRounds.length} {t('filters.selected', { ns: 'stats' })})</div>
                 <div className="mt-2 border border-gray-300 rounded-md p-2 max-h-30 overflow-y-auto bg-gray-50">
                   <Radio.Group
                     value={selectedKnockoutRounds.length > 0 ? selectedKnockoutRounds[0] : undefined}
@@ -640,13 +824,13 @@ const TournamentBestTeamsStats = () => {
                   >
                     <div className="mb-2">
                       <Radio value={undefined}>
-                        <Text strong>{t('filters.allRounds', { ns: 'stats' })}</Text>
+                        <span className="font-semibold">{t('filters.allRounds', { ns: 'stats' })}</span>
                       </Radio>
                     </div>
                     {availableKnockoutRounds.length === 0 && (
-                      <Text type="secondary" className="text-xs">
+                      <div className="text-xs text-gray-500">
                         {t('messages.noKnockoutRounds', { ns: 'stats' })}
-                      </Text>
+                      </div>
                     )}
                     {availableKnockoutRounds.map(round => (
                       <div key={round.value} className="mb-1">
@@ -668,7 +852,7 @@ const TournamentBestTeamsStats = () => {
             selectedMatchType === 'mixed' ? 4 : 8
           }>
             <div>
-              <Text strong>{t('filters.dateRange', { ns: 'stats' })}</Text>
+              <div className="font-semibold">{t('filters.dateRange', { ns: 'stats' })}</div>
               <RangePicker
                 className="w-full mt-1"
                 value={selectedDateRange}
@@ -682,7 +866,7 @@ const TournamentBestTeamsStats = () => {
         
         <div>
           <div className="mb-3 flex justify-between items-center">
-            <Text strong>{t('filters.selectSpecificMatches', { ns: 'stats' })} ({selectedMatches.length}/{availableMatches.length})</Text>
+            <div className="font-semibold">{t('filters.selectSpecificMatches', { ns: 'stats' })} ({selectedMatches.length}/{availableMatches.length})</div>
             <Checkbox
               checked={selectAllMatches}
               onChange={(e) => handleSelectAllMatches(e.target.checked)}
@@ -696,9 +880,9 @@ const TournamentBestTeamsStats = () => {
           ) : (
             <div className="border border-gray-300 rounded-md p-2 max-h-50 overflow-y-auto bg-gray-50">
               {availableMatches.length === 0 && (
-                <Text type="secondary" className="text-xs">
+                <div className="text-xs text-gray-500">
                   {t('messages.noMatchesFound', { ns: 'stats' })}
-                </Text>
+                </div>
               )}
               {Array.isArray(availableMatches) && availableMatches.map(match => (
                 <div key={match.match_id} className="mb-1">
@@ -749,13 +933,14 @@ const TournamentBestTeamsStats = () => {
           
           {availableMatches.length > 0 && (
             <div className="mt-2">
-              <Text type="secondary" className="text-xs">
+              <div className="text-xs text-gray-500">
                 {t('messages.totalCompletedMatches', { ns: 'stats', count: availableMatches.length })}
-              </Text>
+              </div>
             </div>
           )}
         </div>
       </Card>
+
 
       {/* Results */}
       {bestTeamsData && (
@@ -837,7 +1022,7 @@ const TournamentBestTeamsStats = () => {
           {/* Applied Filters Summary */}
           <Card title={t('filters.summary', { ns: 'stats' })} size="small">
             <div className="text-xs text-gray-600">
-              <p><strong>{t('tournament.tournament', { ns: 'tournament' })}：</strong> {tournament?.tournament_name || t('common.unknown', { ns: 'common' })}</p>
+              <p><strong>{t('tournament', { ns: 'tournament' })}：</strong> {tournament?.tournament_name || t('common.unknown', { ns: 'common' })}</p>
               {bestTeamsData.summary.filters_applied.group_id && (
                 <p><strong>{t('group.group', { ns: 'group' })}：</strong> {
                   (() => {

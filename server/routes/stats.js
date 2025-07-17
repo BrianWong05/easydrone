@@ -1185,32 +1185,46 @@ router.get('/best-teams-public', async (req, res) => {
     const { tournament_id } = req.query;
     console.log('🌐 Getting public best teams stats for tournament:', tournament_id);
     
-    // First, ensure the cache table exists
+    // First, ensure the cache table exists with visibility control
     try {
       await query(`
         CREATE TABLE IF NOT EXISTS best_teams_cache (
           cache_id INT AUTO_INCREMENT PRIMARY KEY,
           tournament_id INT,
           stats_data JSON NOT NULL,
+          is_public TINYINT(1) DEFAULT 1 COMMENT 'Whether the stats are visible to public clients',
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           INDEX idx_created_at (created_at),
           INDEX idx_tournament_id (tournament_id),
+          INDEX idx_is_public (is_public),
           FOREIGN KEY (tournament_id) REFERENCES tournaments(tournament_id) ON DELETE CASCADE
         )
       `);
+      
+      // Add is_public column if it doesn't exist (for existing installations)
+      await query(`
+        ALTER TABLE best_teams_cache 
+        ADD COLUMN IF NOT EXISTS is_public TINYINT(1) DEFAULT 1 COMMENT 'Whether the stats are visible to public clients'
+      `);
+      
+      await query(`
+        ALTER TABLE best_teams_cache 
+        ADD INDEX IF NOT EXISTS idx_is_public (is_public)
+      `);
     } catch (createError) {
-      console.log('Cache table already exists or creation failed:', createError.message);
+      console.log('Cache table setup completed or failed:', createError.message);
     }
     
-    // Build query based on tournament filter
+    // Build query based on tournament filter - only show public stats
     let sql = `
-      SELECT stats_data, created_at, tournament_id
+      SELECT stats_data, created_at, tournament_id, is_public
       FROM best_teams_cache 
+      WHERE is_public = 1
     `;
     let params = [];
     
     if (tournament_id) {
-      sql += ' WHERE tournament_id = ?';
+      sql += ' AND tournament_id = ?';
       params.push(tournament_id);
     }
     
@@ -1220,11 +1234,29 @@ router.get('/best-teams-public', async (req, res) => {
     const latestStats = await query(sql, params);
     
     if (latestStats.length === 0) {
+      // Get tournament name for better error message
+      let tournamentName = null;
+      if (tournament_id) {
+        try {
+          const tournamentResult = await query(`
+            SELECT tournament_name FROM tournaments WHERE tournament_id = ?
+          `, [tournament_id]);
+          
+          if (tournamentResult.length > 0) {
+            tournamentName = tournamentResult[0].tournament_name;
+          }
+        } catch (tournamentError) {
+          console.error('Failed to get tournament name for error message:', tournamentError);
+        }
+      }
+      
       return res.json({
         success: false,
-        message: tournament_id ? 
-          `暫無錦標賽 ${tournament_id} 的最佳球隊統計數據，請等待管理員計算統計` :
-          '暫無最佳球隊統計數據，請等待管理員計算統計'
+        message: tournamentName ? 
+          `Tournament "${tournamentName}" best teams statistics are not public or not yet calculated` :
+          tournament_id ? 
+            `Tournament ${tournament_id} best teams statistics are not public or not yet calculated` :
+            'Best teams statistics are not public or not yet calculated'
       });
     }
     
@@ -1255,25 +1287,33 @@ router.get('/best-teams-public', async (req, res) => {
 // 保存最佳球隊統計到緩存（管理員計算時調用）
 router.post('/best-teams-cache', async (req, res) => {
   try {
-    const { stats_data, tournament_id } = req.body;
+    const { stats_data, tournament_id, is_public = true } = req.body;
     
     console.log('💾 Saving best teams stats to cache for tournament:', tournament_id);
     
-    // Ensure the cache table exists
+    // Ensure the cache table exists with visibility control
     try {
       await query(`
         CREATE TABLE IF NOT EXISTS best_teams_cache (
           cache_id INT AUTO_INCREMENT PRIMARY KEY,
           tournament_id INT,
           stats_data JSON NOT NULL,
+          is_public TINYINT(1) DEFAULT 1 COMMENT 'Whether the stats are visible to public clients',
           created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
           INDEX idx_created_at (created_at),
           INDEX idx_tournament_id (tournament_id),
+          INDEX idx_is_public (is_public),
           FOREIGN KEY (tournament_id) REFERENCES tournaments(tournament_id) ON DELETE CASCADE
         )
       `);
+      
+      // Add is_public column if it doesn't exist (for existing installations)
+      await query(`
+        ALTER TABLE best_teams_cache 
+        ADD COLUMN IF NOT EXISTS is_public TINYINT(1) DEFAULT 1 COMMENT 'Whether the stats are visible to public clients'
+      `);
     } catch (createError) {
-      console.log('Cache table already exists or creation failed:', createError.message);
+      console.log('Cache table setup completed or failed:', createError.message);
     }
     
     // Check if cache entry already exists for this tournament
@@ -1286,17 +1326,17 @@ router.post('/best-teams-cache', async (req, res) => {
       // Update existing cache entry
       await query(`
         UPDATE best_teams_cache 
-        SET stats_data = ?, created_at = NOW()
+        SET stats_data = ?, is_public = ?, created_at = NOW()
         WHERE tournament_id = ?
-      `, [JSON.stringify(stats_data), tournament_id]);
-      console.log(`📝 Updated existing cache entry for tournament ${tournament_id}`);
+      `, [JSON.stringify(stats_data), is_public ? 1 : 0, tournament_id]);
+      console.log(`📝 Updated existing cache entry for tournament ${tournament_id}, is_public: ${is_public}`);
     } else {
       // Insert new cache entry
       await query(`
-        INSERT INTO best_teams_cache (tournament_id, stats_data, created_at) 
-        VALUES (?, ?, NOW())
-      `, [tournament_id, JSON.stringify(stats_data)]);
-      console.log(`➕ Created new cache entry for tournament ${tournament_id}`);
+        INSERT INTO best_teams_cache (tournament_id, stats_data, is_public, created_at) 
+        VALUES (?, ?, ?, NOW())
+      `, [tournament_id, JSON.stringify(stats_data), is_public ? 1 : 0]);
+      console.log(`➕ Created new cache entry for tournament ${tournament_id}, is_public: ${is_public}`);
     }
     
     res.json({
@@ -1311,6 +1351,104 @@ router.post('/best-teams-cache', async (req, res) => {
     res.status(500).json({
       success: false,
       message: '保存統計緩存失敗: ' + error.message
+    });
+  }
+});
+
+// 切換最佳球隊統計的公開狀態
+router.patch('/best-teams-visibility', async (req, res) => {
+  try {
+    const { tournament_id, is_public } = req.body;
+    
+    console.log('👁️ Toggling best teams visibility for tournament:', tournament_id, 'is_public:', is_public);
+    
+    // Get tournament name first
+    let tournamentName = null;
+    if (tournament_id) {
+      try {
+        const tournamentResult = await query(`
+          SELECT tournament_name FROM tournaments WHERE tournament_id = ?
+        `, [tournament_id]);
+        
+        if (tournamentResult.length > 0) {
+          tournamentName = tournamentResult[0].tournament_name;
+        }
+      } catch (tournamentError) {
+        console.error('Failed to get tournament name:', tournamentError);
+      }
+    }
+    
+    // Update visibility status
+    const result = await query(`
+      UPDATE best_teams_cache 
+      SET is_public = ?
+      WHERE tournament_id = ?
+    `, [is_public ? 1 : 0, tournament_id]);
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        message: tournamentName ? 
+          `找不到錦標賽「${tournamentName}」的統計數據` :
+          tournament_id ? 
+            `找不到錦標賽 ${tournament_id} 的統計數據` :
+            '找不到統計數據'
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: tournamentName ? 
+        `錦標賽「${tournamentName}」的統計數據已${is_public ? '公開' : '隱藏'}` :
+        tournament_id ? 
+          `錦標賽 ${tournament_id} 的統計數據已${is_public ? '公開' : '隱藏'}` :
+          `統計數據已${is_public ? '公開' : '隱藏'}`,
+      data: {
+        tournament_id,
+        tournament_name: tournamentName,
+        is_public
+      }
+    });
+    
+  } catch (error) {
+    console.error('切換統計數據可見性錯誤:', error);
+    res.status(500).json({
+      success: false,
+      message: '切換可見性失敗: ' + error.message
+    });
+  }
+});
+
+// 獲取最佳球隊統計的狀態（包括可見性）
+router.get('/best-teams-status', async (req, res) => {
+  try {
+    const { tournament_id } = req.query;
+    
+    let sql = `
+      SELECT tournament_id, is_public, created_at
+      FROM best_teams_cache 
+    `;
+    let params = [];
+    
+    if (tournament_id) {
+      sql += ' WHERE tournament_id = ?';
+      params.push(tournament_id);
+    }
+    
+    sql += ' ORDER BY created_at DESC';
+    
+    const statuses = await query(sql, params);
+    
+    res.json({
+      success: true,
+      data: statuses
+    });
+    
+  } catch (error) {
+    console.error('獲取統計數據狀態錯誤:', error);
+    res.status(500).json({
+      success: false,
+      message: '獲取狀態失敗: ' + error.message
     });
   }
 });

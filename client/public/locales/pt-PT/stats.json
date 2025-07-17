@@ -56,5 +56,56 @@
     "rankingDescription": "Classificação do grupo depois comparação de equipas com a mesma classificação (Pontos → Diferença de golos → Golos marcados)",
     "pointsRules": "Regras de Pontos",
     "pointsDescription": "Vitória 3 pontos, Empate 1 ponto, Derrota 0 pontos"
+  },
+  "buttons": {
+    "calculate": "Calcular Estatísticas",
+    "reset": "Redefinir Filtros",
+    "saveToCache": "Salvar no Cache Público",
+    "saveToPublic": "Salvar Publicamente",
+    "toggleVisibility": "Alternar Visibilidade",
+    "changeToHidden": "Mudar para Oculto",
+    "changeToPublic": "Mudar para Público"
+  },
+  "visibility": {
+    "title": "Configurações Públicas",
+    "showToPublic": "Mostrar aos Clientes Públicos",
+    "publicStatus": "✅ As estatísticas serão exibidas publicamente aos clientes",
+    "hiddenStatus": "❌ As estatísticas serão ocultadas dos clientes",
+    "public": "Público",
+    "hidden": "Oculto"
+  },
+  "actions": {
+    "calculateFirst": "Por favor, calcule as estatísticas primeiro",
+    "selectTournamentFirst": "Por favor, selecione o torneio primeiro",
+    "savedToCache": "Estatísticas salvas no cache público e definidas como",
+    "saveFailed": "Falha ao salvar no cache",
+    "toggleFailed": "Falha ao alternar visibilidade",
+    "hiddenNotSaved": "Estatísticas definidas como ocultas não serão salvas no banco de dados. Por favor, marque 'Mostrar aos Clientes Públicos' antes de salvar.",
+    "calculatedNotSaved": "Estatísticas calculadas mas não salvas no banco de dados. Para tornar público, clique em 'Salvar Publicamente'.",
+    "showingSavedStats": "Mostrando Estatísticas Salvas",
+    "showingCalculatedStats": "Mostrando Estatísticas Calculadas (Não Salvas)",
+    "savedToCache": "Estatísticas salvas no cache público e definidas como",
+    "visibilityChanged": "Estatísticas do torneio \"{{tournament}}\" agora estão {{status}}",
+    "tournamentVisibilityChanged": "Estatísticas do torneio {{tournament}} agora estão {{status}}",
+    "visibilityChangedGeneric": "Estatísticas agora estão {{status}}",
+    "dataUploadedAndMadePublic": "Dados do {{tournament}} carregados para a base de dados e tornados públicos"
+  },
+  "filterSummary": {
+    "title": "Resumo dos Filtros",
+    "tournament": "Torneio",
+    "group": "Grupo",
+    "matchType": "Tipo de Partida",
+    "dateRange": "Intervalo de Datas",
+    "specificMatches": "Partidas Específicas",
+    "groupStage": "Fase de Grupos",
+    "knockout": "Eliminatórias",
+    "matches": "partidas",
+    "unknown": "Desconhecido",
+    "explanation": "Explicação das Estatísticas",
+    "explanationText": "Melhores equipes de ataque classificadas por total de gols marcados, melhores equipes de defesa classificadas por total de gols sofridos (menor é melhor)"
+  },
+  "alerts": {
+    "setupFilters": "Por favor, defina os critérios de filtro e clique em 'Calcular Estatísticas'",
+    "setupDescription": "Você pode selecionar torneio, grupo, tipo de partida, intervalo de datas ou partidas específicas para calcular as estatísticas das melhores equipes de ataque e defesa"
   }
 }

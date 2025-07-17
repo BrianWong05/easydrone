@@ -19,7 +19,11 @@
     "analysisDescription": "統計說明",
     "rankingMethodDescription": "最佳進攻球隊以總進球數排名，最佳防守球隊以總失球數排名（越少越好）",
     "dataUpdate": "數據更新",
-    "dataUpdateDescription": "統計數據由管理員計算後自動更新"
+    "dataUpdateDescription": "統計數據由管理員計算後自動更新",
+    "publiclyVisible": "公開可見",
+    "lastUpdated": "最後更新",
+    "visibilityStatus": "可見性狀態",
+    "currentlyPublic": "目前公開"
   },
   "metrics": {
     "totalTeams": "隊伍總數",
@@ -68,7 +72,9 @@
     "refreshData": "刷新數據",
     "exportData": "導出數據",
     "lastUpdated": "最後更新",
-    "completedMatches": "已完成比賽"
+    "completedMatches": "已完成比賽",
+    "notPublicOrCalculated": "最佳球隊統計數據暫不公開或尚未計算",
+    "tournamentNotPublicOrCalculated": "錦標賽「{{tournamentName}}」的最佳球隊統計數據暫不公開或尚未計算"
   },
   "rules": {
     "rankingRules": "排名規則",

@@ -100,9 +100,27 @@ const ClientBestTeamsStats = () => {
       const response = await axios.get('/api/stats/best-teams-public', { params });
       
       if (response.data.success) {
-        setBestTeamsData(response.data.data);
+        setBestTeamsData({
+          ...response.data.data,
+          last_updated: response.data.last_updated
+        });
       } else {
-        setError(response.data.message || t('messages.noData'));
+        // Extract tournament name from server message or use translated message
+        let tournamentName = null;
+        if (response.data.message && selectedTournament) {
+          // Try to extract tournament name from server message like: Tournament "Name" best teams...
+          const match = response.data.message.match(/Tournament "([^"]+)" best teams/);
+          if (match) {
+            tournamentName = match[1];
+          }
+        }
+        
+        const errorMessage = tournamentName ? 
+          t('messages.tournamentNotPublicOrCalculated', { tournamentName }) :
+          selectedTournament ? 
+            t('messages.tournamentNotPublicOrCalculated', { tournamentName: 'Unknown Tournament' }) :
+            t('messages.notPublicOrCalculated');
+        setError(errorMessage);
         setBestTeamsData(null);
       }
     } catch (error) {
@@ -407,9 +425,21 @@ const ClientBestTeamsStats = () => {
           {/* Analysis Info */}
           <Card 
             title={
-              <div className="flex items-center space-x-2">
-                <BarChartOutlined className="text-gray-600" />
-                <span className="font-semibold text-gray-800">{t('stats.analysisInfo')}</span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <BarChartOutlined className="text-gray-600" />
+                  <span className="font-semibold text-gray-800">{t('stats.analysisInfo')}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full border border-green-200">
+                    ✅ {t('stats.publiclyVisible')}
+                  </span>
+                  {bestTeamsData.last_updated && (
+                    <span className="text-xs text-gray-500">
+                      {t('stats.lastUpdated')}: {new Date(bestTeamsData.last_updated).toLocaleString()}
+                    </span>
+                  )}
+                </div>
               </div>
             }
             size="small" 
@@ -423,6 +453,10 @@ const ClientBestTeamsStats = () => {
               <p className="flex flex-col sm:flex-row">
                 <strong className="text-gray-700 mb-1 sm:mb-0 sm:mr-2">{t('stats.dataUpdate')}:</strong> 
                 <span>{t('stats.dataUpdateDescription')}</span>
+              </p>
+              <p className="flex flex-col sm:flex-row">
+                <strong className="text-gray-700 mb-1 sm:mb-0 sm:mr-2">{t('stats.visibilityStatus')}:</strong> 
+                <span className="text-green-600 font-medium">{t('stats.currentlyPublic')}</span>
               </p>
             </div>
           </Card>
