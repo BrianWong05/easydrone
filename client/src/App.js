@@ -30,12 +30,6 @@ import KnockoutBracket from "./pages/Tournaments/KnockoutBracket";
 // Groups components (only used ones)
 import GroupLeaderboard from "./pages/Groups/GroupLeaderboard";
 
-// Stats components
-import StatsOverview from "./pages/Stats/StatsOverview";
-import AllGroupStandings from "./pages/Stats/AllGroupStandings";
-import OverallLeaderboard from "./pages/Stats/OverallLeaderboard";
-import BestTeamsStats from "./pages/Stats/BestTeamsStats";
-
 // Other components
 import NotFound from "./pages/NotFound";
 
@@ -100,13 +94,6 @@ function App() {
                   <Routes>
                     {/* 儀表板 */}
                     <Route path="/" element={<TournamentList />} />
-
-                    {/* 統計頁面 */}
-                    {/* <Route path="/stats" element={<StatsOverview />} />
-                    <Route path="/stats/overview" element={<StatsOverview />} />
-                    <Route path="/stats/group-standings" element={<AllGroupStandings />} />
-                    <Route path="/stats/overall-leaderboard" element={<OverallLeaderboard />} />
-                    <Route path="/stats/best-teams" element={<BestTeamsStats />} /> */}
 
                     {/* 404 頁面 */}
                     <Route path="*" element={<NotFound />} />
