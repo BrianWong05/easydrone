@@ -1027,17 +1027,30 @@ router.get('/best-teams', async (req, res) => {
       HAVING matches_played > 0
     `, params);
 
-    // Find best attack team (most goals)
-    const bestAttackTeam = teamStats.reduce((best, team) => 
-      team.goals_for > best.goals_for ? team : best, 
-      teamStats[0] || {}
-    );
+    // Find best attack team (most total goals scored)
+    const bestAttackTeam = teamStats.length > 0 ? 
+      teamStats.reduce((best, team) => {
+        // Ensure goals_for is treated as a number
+        const teamGoals = parseInt(team.goals_for) || 0;
+        const bestGoals = best ? (parseInt(best.goals_for) || 0) : 0;
+        
+        console.log(`🔍 Comparing: ${team.team_name} (${teamGoals} goals) vs current best: ${best?.team_name || 'none'} (${bestGoals} goals)`);
+        
+        if (!best || teamGoals > bestGoals) {
+          console.log(`✅ New best attack team: ${team.team_name} with ${teamGoals} goals`);
+          return team;
+        }
+        return best;
+      }, null) : null;
 
-    // Find best defense team (least goals conceded)
-    const bestDefenseTeam = teamStats.reduce((best, team) => 
-      team.goals_against < best.goals_against ? team : best, 
-      teamStats[0] || {}
-    );
+    // Find best defense team (least total goals conceded)
+    const bestDefenseTeam = teamStats.length > 0 ? 
+      teamStats.reduce((best, team) => {
+        if (!best || team.goals_against < best.goals_against) {
+          return team;
+        }
+        return best;
+      }, null) : null;
 
     // Get top 5 attack teams
     const topAttackTeams = [...teamStats]
@@ -1058,9 +1071,17 @@ router.get('/best-teams', async (req, res) => {
 
     const totalMatches = matchCountResult[0]?.total_matches || 0;
 
+    // Debug: Log all team stats to see the data
+    console.log('🏆 All team stats for debugging:');
+    teamStats.forEach(team => {
+      console.log(`  ${team.team_name}: ${team.goals_for} goals_for, ${team.goals_against} goals_against`);
+    });
+
     console.log('🏆 Best teams calculated:', {
       bestAttack: bestAttackTeam?.team_name,
+      bestAttackGoals: bestAttackTeam?.goals_for,
       bestDefense: bestDefenseTeam?.team_name,
+      bestDefenseGoalsAgainst: bestDefenseTeam?.goals_against,
       totalMatches,
       teamsAnalyzed: teamStats.length
     });
