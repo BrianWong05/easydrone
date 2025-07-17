@@ -25,6 +25,7 @@ import {
   EditOutlined
 } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 const { Option } = Select;
@@ -33,6 +34,7 @@ const TournamentGroupEdit = () => {
   const navigate = useNavigate();
   const { id: tournamentId, groupId } = useParams();
   const [form] = Form.useForm();
+  const { t } = useTranslation('group');
   
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -46,10 +48,10 @@ const TournamentGroupEdit = () => {
   const [addTeamModalVisible, setAddTeamModalVisible] = useState(false);
   const [canEdit, setCanEdit] = useState(true);
 
-  // 清理隊伍名稱顯示（移除 _{tournament_id} 後綴）
+  // Clean team name display (remove _{tournament_id} suffix)
   const getDisplayTeamName = (teamName) => {
     if (!teamName) return '';
-    // 檢查是否以 _{tournamentId} 結尾，如果是則移除
+    // Check if it ends with _{tournamentId}, if so remove it
     const suffix = `_${tournamentId}`;
     if (teamName.endsWith(suffix)) {
       return teamName.slice(0, -suffix.length);
@@ -57,7 +59,7 @@ const TournamentGroupEdit = () => {
     return teamName;
   };
 
-  // 獲取錦標賽信息
+  // Get tournament information
   const fetchTournament = async () => {
     try {
       const response = await axios.get(`/api/tournaments/${tournamentId}`);
@@ -69,7 +71,7 @@ const TournamentGroupEdit = () => {
     }
   };
 
-  // 獲取小組詳細信息
+  // Get group detailed information
   const fetchGroupData = async () => {
     try {
       setLoading(true);
@@ -80,12 +82,12 @@ const TournamentGroupEdit = () => {
         setTeams(data.teams || []);
         setMatches(data.matches || []);
         
-        // 檢查是否可以編輯
+        // Check if editing is allowed
         const nonPendingMatches = (data.matches || []).filter(match => match.match_status !== 'pending');
         const canEditGroup = nonPendingMatches.length === 0;
         setCanEdit(canEditGroup);
         
-        // 設置表單初始值
+        // Set form initial values
         const displayGroupName = data.group.group_name?.includes('_') 
           ? data.group.group_name.split('_')[0] 
           : data.group.group_name;
@@ -96,19 +98,19 @@ const TournamentGroupEdit = () => {
           description: data.group.description || ''
         });
       } else {
-        message.error('獲取小組信息失敗');
+        message.error(t('edit.messages.fetchGroupFailed'));
         navigate(`/tournaments/${tournamentId}/groups`);
       }
     } catch (error) {
       console.error('Error fetching group:', error);
-      message.error('獲取小組信息失敗');
+      message.error(t('edit.messages.fetchGroupFailed'));
       navigate(`/tournaments/${tournamentId}/groups`);
     } finally {
       setLoading(false);
     }
   };
 
-  // 獲取錦標賽中的所有隊伍
+  // Get all teams in the tournament
   const fetchAllTeams = async () => {
     try {
       const response = await axios.get(`/api/tournaments/${tournamentId}/teams`);
@@ -116,7 +118,7 @@ const TournamentGroupEdit = () => {
         setAllTeams(response.data.data || []);
       }
     } catch (error) {
-      console.error('獲取錦標賽隊伍列表錯誤:', error);
+      console.error('Error fetching tournament teams list:', error);
     }
   };
 
@@ -133,18 +135,18 @@ const TournamentGroupEdit = () => {
     try {
       console.log('Updating group with values:', values);
       
-      // 使用錦標賽專屬的更新端點
+      // Use tournament-specific update endpoint
       const response = await axios.put(`/api/tournaments/${tournamentId}/groups/${groupId}`, {
         group_name: `${values.group_name}_${tournamentId}`, // Internal: A_1, B_1, etc.
         max_teams: values.max_teams,
-        description: values.description || `錦標賽 ${tournamentId} - 小組 ${values.group_name}`
+        description: values.description || `${t('tournament.tournament')} ${tournamentId} - ${t('group.group')} ${values.group_name}`
       });
       
       if (response && response.data.success) {
-        message.success(`小組 ${values.group_name} 更新成功！`);
+        message.success(t('edit.messages.updateSuccess', { groupName: values.group_name }));
         navigate(`/tournaments/${tournamentId}/groups/${groupId}`);
       } else {
-        message.error(response?.data?.message || '更新失敗');
+        message.error(response?.data?.message || t('edit.messages.updateFailed'));
       }
     } catch (error) {
       console.error('Error updating group:', error);
@@ -154,31 +156,31 @@ const TournamentGroupEdit = () => {
       const errorMessage = error.response?.data?.message || '';
       
       if (status === 500) {
-        message.error(`服務器錯誤：${errorMessage}`);
+        message.error(t('edit.messages.serverError', { message: errorMessage }));
       } else if (status === 400) {
-        message.error(`更新失敗：${errorMessage}`);
+        message.error(t('edit.messages.updateFailed') + (errorMessage ? `: ${errorMessage}` : ''));
       } else if (status === 409) {
-        message.error(`小組名稱衝突：${errorMessage}`);
+        message.error(t('edit.messages.nameConflict', { message: errorMessage }));
       } else {
-        message.error(errorMessage || '更新失敗，請重試');
+        message.error(errorMessage || t('edit.messages.updateFailedRetry'));
       }
     } finally {
       setSaving(false);
     }
   };
 
-  // 隊伍管理函數
+  // Team management functions
   const handleRemoveTeam = async (teamId) => {
     try {
       await axios.delete(`/api/groups/${groupId}/teams/${teamId}`);
-      message.success('隊伍已從小組中移除');
+      message.success(t('edit.messages.teamRemovedSuccess'));
       await fetchGroupData();
       await fetchAllTeams();
       setRemoveTeamModalVisible(false);
       setTeamToRemove(null);
     } catch (error) {
-      console.error('移除隊伍錯誤:', error);
-      const errorMessage = error.response?.data?.message || '移除隊伍失敗';
+      console.error('Remove team error:', error);
+      const errorMessage = error.response?.data?.message || t('edit.messages.removeTeamFailed');
       message.error(errorMessage);
     }
   };
@@ -188,13 +190,13 @@ const TournamentGroupEdit = () => {
       await axios.post(`/api/groups/${groupId}/teams`, {
         team_id: teamId
       });
-      message.success('隊伍已添加到小組');
+      message.success(t('edit.messages.teamAddedSuccess'));
       await fetchGroupData();
       await fetchAllTeams();
       setAddTeamModalVisible(false);
     } catch (error) {
-      console.error('添加隊伍錯誤:', error);
-      const errorMessage = error.response?.data?.message || '添加隊伍失敗';
+      console.error('Add team error:', error);
+      const errorMessage = error.response?.data?.message || t('edit.messages.addTeamFailed');
       message.error(errorMessage);
     }
   };
@@ -203,18 +205,18 @@ const TournamentGroupEdit = () => {
     navigate(`/tournaments/${tournamentId}/groups/${groupId}`);
   };
 
-  // 獲取可添加的隊伍（錦標賽中未分配小組的隊伍）
+  // Get teams available for adding (teams not assigned to any group in tournament)
   const getAvailableTeams = () => {
     if (!Array.isArray(allTeams) || !Array.isArray(teams)) {
       return [];
     }
-    // 只顯示未分配到任何小組的隊伍（group_id 為 null 或 undefined）
+    // Only show teams not assigned to any group (group_id is null or undefined)
     return allTeams.filter(team => 
       !team.group_id || team.group_id === null || team.group_id === undefined
     );
   };
 
-  // 獲取比賽狀態統計
+  // Get match status statistics
   const getMatchStatusStats = () => {
     if (!Array.isArray(matches)) {
       return { pending: 0, active: 0, completed: 0, total: 0 };
@@ -229,7 +231,7 @@ const TournamentGroupEdit = () => {
     return (
       <div className="text-center py-12 px-6">
         <Spin size="large" />
-        <p>載入中...</p>
+        <p>{t('edit.loading')}</p>
       </div>
     );
   }
@@ -237,8 +239,8 @@ const TournamentGroupEdit = () => {
   if (!group) {
     return (
       <Alert
-        message="小組不存在"
-        description="找不到指定的小組，請檢查URL是否正確"
+        message={t('edit.groupNotFound')}
+        description={t('edit.groupNotFoundDescription')}
         type="error"
         showIcon
       />
@@ -255,43 +257,43 @@ const TournamentGroupEdit = () => {
   return (
     <div className="p-6">
       <Space direction="vertical" size="large" className="w-full">
-        {/* 頁面標題 */}
+        {/* Page Title */}
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-4">
             <Button 
               icon={<ArrowLeftOutlined />} 
               onClick={handleCancel}
             >
-              返回
+              {t('edit.backButton')}
             </Button>
             <div>
               <h2 className="text-2xl font-bold m-0">
                 <TrophyOutlined className="mr-2 text-yellow-500" />
-                編輯小組 {displayGroupName}
+                {t('edit.title', { groupName: displayGroupName })}
               </h2>
               <span className="text-gray-500">
-                {tournament?.tournament_name || `錦標賽 ${tournamentId}`} - 編輯小組信息
+                {tournament?.tournament_name || `${t('tournament.tournament')} ${tournamentId}`} - {t('edit.subtitle')}
               </span>
             </div>
           </div>
         </div>
 
-        {/* 編輯限制提示 */}
+        {/* Edit Restriction Alert */}
         {!canEdit && (
           <Alert
-            message="無法編輯小組"
+            message={t('edit.cannotEdit')}
             description={
               <div>
-                <p>此小組存在已開始或已完成的比賽，無法進行編輯。</p>
-                <p>比賽狀態統計：</p>
+                <p>{t('edit.cannotEditDescription')}</p>
+                <p>{t('edit.matchStatusStats')}</p>
                 <ul className="mb-0 pl-5">
-                  <li>待開始：{matchStats.pending} 場</li>
-                  <li>進行中：{matchStats.active} 場</li>
-                  <li>已完成：{matchStats.completed} 場</li>
-                  <li>總計：{matchStats.total} 場</li>
+                  <li>{t('edit.pending')}：{matchStats.pending} {t('edit.matches')}</li>
+                  <li>{t('edit.active')}：{matchStats.active} {t('edit.matches')}</li>
+                  <li>{t('edit.completed')}：{matchStats.completed} {t('edit.matches')}</li>
+                  <li>{t('edit.total')}：{matchStats.total} {t('edit.matches')}</li>
                 </ul>
                 <p className="mt-2 mb-0">
-                  <strong>只有當所有比賽都是待開始狀態或沒有比賽時才能編輯小組。</strong>
+                  <strong>{t('edit.editRestriction')}</strong>
                 </p>
               </div>
             }
@@ -301,8 +303,8 @@ const TournamentGroupEdit = () => {
           />
         )}
 
-        {/* 基本信息編輯 */}
-        <Card title="基本信息" className="mb-6">
+        {/* Basic Information Edit */}
+        <Card title={t('edit.basicInfo')} className="mb-6">
           <Form
             form={form}
             layout="vertical"
@@ -311,15 +313,15 @@ const TournamentGroupEdit = () => {
             disabled={!canEdit}
           >
             <Form.Item
-              label="小組名稱"
+              label={t('group.name')}
               name="group_name"
               rules={[
-                { required: true, message: '請輸入小組名稱' },
-                { pattern: /^[A-Z]$/, message: '小組名稱必須是單個大寫字母（A-Z）' }
+                { required: true, message: t('placeholders.enterGroupName') },
+                { pattern: /^[A-Z]$/, message: t('create.validation.namePattern') }
               ]}
             >
               <Input 
-                placeholder="請輸入小組名稱（例如：A）"
+                placeholder={t('create.namePlaceholder')}
                 size="large"
                 maxLength={1}
                 className="uppercase w-48"
@@ -327,29 +329,29 @@ const TournamentGroupEdit = () => {
             </Form.Item>
 
             <Form.Item
-              label="最大隊伍數量"
+              label={t('group.maxTeams')}
               name="max_teams"
               rules={[
-                { required: true, message: '請輸入最大隊伍數量' },
-                { type: 'number', min: 2, max: 8, message: '隊伍數量必須在2-8之間' }
+                { required: true, message: t('create.validation.maxTeamsRequired') },
+                { type: 'number', min: 2, max: 8, message: t('create.validation.maxTeamsRange') }
               ]}
             >
               <InputNumber 
-                placeholder="請輸入最大隊伍數量"
+                placeholder={t('create.maxTeamsPlaceholder')}
                 size="large"
                 min={2}
                 max={8}
                 className="w-48"
-                addonAfter="支隊伍"
+                addonAfter={t('create.teamsUnit')}
               />
             </Form.Item>
 
             <Form.Item
-              label="小組描述"
+              label={t('group.description')}
               name="description"
             >
               <Input.TextArea 
-                placeholder="請輸入小組描述（可選）"
+                placeholder={t('placeholders.enterDescription')}
                 rows={4}
                 maxLength={200}
                 showCount
@@ -365,22 +367,22 @@ const TournamentGroupEdit = () => {
                   icon={<SaveOutlined />}
                   disabled={!canEdit}
                 >
-                  保存更改
+                  {t('edit.saveChanges')}
                 </Button>
                 <Button onClick={handleCancel}>
-                  {canEdit ? '取消' : '返回'}
+                  {canEdit ? t('edit.cancel') : t('edit.return')}
                 </Button>
               </Space>
             </Form.Item>
           </Form>
         </Card>
 
-        {/* 隊伍管理 */}
+        {/* Team Management */}
         <Card 
           title={
             <Space>
               <TeamOutlined />
-              <span>隊伍管理</span>
+              <span>{t('edit.teamManagement')}</span>
               <Tag color="blue">{teams.length}/{group.max_teams}</Tag>
             </Space>
           }
@@ -391,7 +393,7 @@ const TournamentGroupEdit = () => {
               onClick={() => setAddTeamModalVisible(true)}
               disabled={!canEdit || teams.length >= group.max_teams}
             >
-              添加隊伍
+              {t('edit.addTeam')}
             </Button>
           }
         >
@@ -406,14 +408,14 @@ const TournamentGroupEdit = () => {
                       size="small"
                       onClick={() => navigate(`/teams/${team.team_id}`)}
                     >
-                      查看詳情
+                      {t('edit.viewDetails')}
                     </Button>,
                     <Button 
                       type="link" 
                       size="small"
                       onClick={() => navigate(`/teams/${team.team_id}/edit`)}
                     >
-                      編輯隊伍
+                      {t('edit.editTeam')}
                     </Button>,
                     <Button 
                       type="link" 
@@ -425,7 +427,7 @@ const TournamentGroupEdit = () => {
                         setRemoveTeamModalVisible(true);
                       }}
                     >
-                      移除
+                      {t('edit.remove')}
                     </Button>
                   ]}
                 >
@@ -441,10 +443,10 @@ const TournamentGroupEdit = () => {
                     title={
                       <Space>
                         <span className="font-bold">{getDisplayTeamName(team.team_name)}</span>
-                        {team.is_virtual && <Tag color="orange">虛擬</Tag>}
+                        {team.is_virtual && <Tag color="orange">{t('edit.virtual')}</Tag>}
                       </Space>
                     }
-                    description={`隊伍顏色: ${team.team_color} | 創建時間: ${new Date(team.created_at).toLocaleDateString('zh-TW')}`}
+                    description={`${t('edit.teamColor')}: ${team.team_color} | ${t('edit.createdAt')}: ${new Date(team.created_at).toLocaleDateString()}`}
                   />
                 </List.Item>
               )}
@@ -453,7 +455,7 @@ const TournamentGroupEdit = () => {
             <div className="text-center py-10">
               <TeamOutlined className="text-5xl text-gray-300 mb-4" />
               <div>
-                <span className="text-gray-500">此小組暫無隊伍</span>
+                <span className="text-gray-500">{t('edit.noTeamsInGroup')}</span>
                 <br />
                 <Button 
                   type="primary" 
@@ -461,7 +463,7 @@ const TournamentGroupEdit = () => {
                   onClick={() => setAddTeamModalVisible(true)}
                   disabled={!canEdit}
                 >
-                  添加第一支隊伍
+                  {t('edit.addFirstTeam')}
                 </Button>
               </div>
             </div>
@@ -469,8 +471,8 @@ const TournamentGroupEdit = () => {
 
           {teams.length >= group.max_teams && canEdit && (
             <Alert
-              message="小組已滿"
-              description={`當前小組已達到最大隊伍數限制（${group.max_teams}支隊伍）`}
+              message={t('edit.groupFull')}
+              description={t('edit.groupFullDescription', { maxTeams: group.max_teams })}
               type="warning"
               showIcon
               className="mt-4"
@@ -479,18 +481,18 @@ const TournamentGroupEdit = () => {
 
           {matchStats.total > 0 && (
             <Alert
-              message="比賽狀態"
+              message={t('edit.matchStatus')}
               description={
                 <div>
-                  <p>此小組共有 {matchStats.total} 場比賽：</p>
+                  <p>{t('edit.matchStatusDescription', { total: matchStats.total })}</p>
                   <Space>
-                    <Tag color="orange">待開始：{matchStats.pending}</Tag>
-                    <Tag color="green">進行中：{matchStats.active}</Tag>
-                    <Tag color="blue">已完成：{matchStats.completed}</Tag>
+                    <Tag color="orange">{t('edit.pending')}：{matchStats.pending}</Tag>
+                    <Tag color="green">{t('edit.active')}：{matchStats.active}</Tag>
+                    <Tag color="blue">{t('edit.completed')}：{matchStats.completed}</Tag>
                   </Space>
                   {!canEdit && (
                     <p className="mt-2 mb-0 text-yellow-500">
-                      <strong>⚠️ 存在非待開始狀態的比賽，無法編輯隊伍</strong>
+                      <strong>⚠️ {t('edit.cannotEditTeams')}</strong>
                     </p>
                   )}
                 </div>
@@ -502,26 +504,29 @@ const TournamentGroupEdit = () => {
           )}
         </Card>
 
-        {/* 移除隊伍確認模態框 */}
+        {/* Remove Team Confirmation Modal */}
         <Modal
-          title="確認移除隊伍"
+          title={t('edit.confirmRemoveTeam')}
           open={removeTeamModalVisible}
           onOk={() => handleRemoveTeam(teamToRemove?.team_id)}
           onCancel={() => {
             setRemoveTeamModalVisible(false);
             setTeamToRemove(null);
           }}
-          okText="確認移除"
-          cancelText="取消"
+          okText={t('edit.confirmRemove')}
+          cancelText={t('edit.cancel')}
           okType="danger"
         >
-          <p>確定要將 <strong>{getDisplayTeamName(teamToRemove?.team_name)}</strong> 從小組 {displayGroupName} 中移除嗎？</p>
-          <p>移除後，該隊伍將不再屬於任何小組。</p>
+          <p>{t('edit.removeTeamDescription', { 
+            teamName: getDisplayTeamName(teamToRemove?.team_name), 
+            groupName: displayGroupName 
+          })}</p>
+          <p>{t('edit.removeTeamWarning')}</p>
         </Modal>
 
-        {/* 添加隊伍模態框 */}
+        {/* Add Team Modal */}
         <Modal
-          title="添加隊伍到小組"
+          title={t('edit.addTeamToGroup')}
           open={addTeamModalVisible}
           onCancel={() => setAddTeamModalVisible(false)}
           footer={
@@ -534,10 +539,10 @@ const TournamentGroupEdit = () => {
                   navigate(`/tournaments/${tournamentId}/teams/create`);
                 }}
               >
-                創建新隊伍
+                {t('edit.createNewTeam')}
               </Button>
               <Button onClick={() => setAddTeamModalVisible(false)}>
-                關閉
+                {t('edit.close')}
               </Button>
             </div>
           }
@@ -545,7 +550,7 @@ const TournamentGroupEdit = () => {
         >
           <div className="mb-4">
             <div className="flex justify-between items-center mb-2">
-              <span>選擇要添加到小組 {displayGroupName} 的隊伍：</span>
+              <span>{t('edit.selectTeamDescription', { groupName: displayGroupName })}</span>
               <Button 
                 type="dashed"
                 size="small"
@@ -555,11 +560,11 @@ const TournamentGroupEdit = () => {
                   navigate(`/tournaments/${tournamentId}/teams/create`);
                 }}
               >
-                創建隊伍
+                {t('edit.createTeam')}
               </Button>
             </div>
             <span className="text-gray-500 text-xs">
-              顯示錦標賽中尚未分配到任何小組的隊伍 ({availableTeams.length} 支可用)
+              {t('edit.availableTeamsDescription', { count: availableTeams.length })}
             </span>
           </div>
           
@@ -574,7 +579,7 @@ const TournamentGroupEdit = () => {
                       size="small"
                       onClick={() => handleAddTeam(team.team_id)}
                     >
-                      添加到小組
+                      {t('edit.addToGroup')}
                     </Button>
                   ]}
                 >
@@ -590,11 +595,11 @@ const TournamentGroupEdit = () => {
                     title={
                       <Space>
                         <span className="font-bold">{getDisplayTeamName(team.team_name)}</span>
-                        {team.is_virtual && <Tag color="orange" size="small">虛擬</Tag>}
-                        <Tag color="green" size="small">可添加</Tag>
+                        {team.is_virtual && <Tag color="orange" size="small">{t('edit.virtual')}</Tag>}
+                        <Tag color="green" size="small">{t('edit.available')}</Tag>
                       </Space>
                     }
-                    description={`隊伍顏色: ${team.team_color}`}
+                    description={`${t('edit.teamColor')}: ${team.team_color}`}
                   />
                 </List.Item>
               )}
@@ -603,10 +608,10 @@ const TournamentGroupEdit = () => {
             <div className="text-center py-10">
               <TeamOutlined className="text-5xl text-gray-300 mb-4" />
               <div>
-                <span className="text-gray-500">沒有可添加的隊伍</span>
+                <span className="text-gray-500">{t('detail.noAvailableTeams')}</span>
                 <br />
                 <span className="text-gray-500 text-xs">
-                  所有隊伍都已分配到小組或已在當前小組中
+                  {t('edit.noAvailableTeamsDescription')}
                 </span>
                 <br />
                 <Button 
@@ -618,7 +623,7 @@ const TournamentGroupEdit = () => {
                     navigate(`/tournaments/${tournamentId}/teams/create`);
                   }}
                 >
-                  創建新隊伍
+                  {t('edit.createNewTeam')}
                 </Button>
               </div>
             </div>
