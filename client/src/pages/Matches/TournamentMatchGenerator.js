@@ -5,7 +5,6 @@ import {
   Card,
   Button,
   message,
-  Typography,
   Space,
   Row,
   Col,
@@ -21,7 +20,6 @@ import { ArrowLeftOutlined, ThunderboltOutlined, CalendarOutlined } from "@ant-d
 import axios from "axios";
 import moment from "moment";
 
-const { Title, Text } = Typography;
 
 // Optimized match generation algorithm to minimize back-to-back matches
 function generateOptimizedMatches(teams) {
@@ -303,7 +301,7 @@ const TournamentMatchGenerator = () => {
         >
           {t('actions.backToMatchList', { defaultValue: '返回比賽列表' })}
         </Button>
-        <Title level={2}>{tournament?.tournament_name} - {t('match.generate')}</Title>
+        <h2 className="text-2xl font-bold mb-4">{tournament?.tournament_name} - {t('match.generate')}</h2>
         <p className="text-gray-600 mb-0">{t('generator.description', { defaultValue: '自動為選中的小組生成循環賽比賽' })}</p>
       </div>
 
@@ -323,12 +321,12 @@ const TournamentMatchGenerator = () => {
                   <Col span={6} key={group.group_id} className="mb-2">
                     <Checkbox value={group.group_id}>
                       <Space direction="vertical" size={0}>
-                        <Text strong>
+                        <strong>
                           {t('match.group')} {group.group_name?.includes("_") ? group.group_name.split("_")[0] : group.group_name}
-                        </Text>
-                        <Text type="secondary" className="text-xs">
+                        </strong>
+                        <span className="text-xs text-gray-500">
                           {group.team_count || 0} {t('generator.teams', { defaultValue: '支隊伍' })}
-                        </Text>
+                        </span>
                       </Space>
                     </Checkbox>
                   </Col>
@@ -341,7 +339,7 @@ const TournamentMatchGenerator = () => {
             <Row gutter={16}>
               <Col span={12}>
                 <div className="mb-4">
-                  <Text strong>{t('generator.startDate', { defaultValue: '開始日期' })}</Text>
+                  <strong>{t('generator.startDate', { defaultValue: '開始日期' })}</strong>
                   <DatePicker
                     value={startDate}
                     onChange={setStartDate}
@@ -352,7 +350,7 @@ const TournamentMatchGenerator = () => {
               </Col>
               <Col span={12}>
                 <div className="mb-4">
-                  <Text strong>{t('generator.startTime', { defaultValue: '開始時間' })}</Text>
+                  <strong>{t('generator.startTime', { defaultValue: '開始時間' })}</strong>
                   <TimePicker
                     value={startTime}
                     onChange={setStartTime}
@@ -367,7 +365,7 @@ const TournamentMatchGenerator = () => {
             <Row gutter={16}>
               <Col span={12}>
                 <div className="mb-4">
-                  <Text strong>{t('match.duration')}</Text>
+                  <strong>{t('match.duration')}</strong>
                   <Row gutter={8} className="mt-2">
                     <Col span={12}>
                       <InputNumber
@@ -399,7 +397,7 @@ const TournamentMatchGenerator = () => {
               </Col>
               <Col span={12}>
                 <div className="mb-4">
-                  <Text strong>{t('generator.matchInterval', { defaultValue: '比賽間隔' })}</Text>
+                  <strong>{t('generator.matchInterval', { defaultValue: '比賽間隔' })}</strong>
                   <Row gutter={8} className="mt-2">
                     <Col span={12}>
                       <InputNumber
@@ -443,17 +441,17 @@ const TournamentMatchGenerator = () => {
               <Divider />
 
               <div>
-                <Text strong>{t('generator.startTime', { defaultValue: '開始時間' })}：</Text>
+                <strong>{t('generator.startTime', { defaultValue: '開始時間' })}：</strong>
                 <br />
-                <Text>
+                <span>
                   {startDate?.format("YYYY-MM-DD")} {startTime?.format("HH:mm")}
-                </Text>
+                </span>
               </div>
 
               <div>
-                <Text strong>{t('generator.estimatedEnd', { defaultValue: '預計結束' })}：</Text>
+                <strong>{t('generator.estimatedEnd', { defaultValue: '預計結束' })}：</strong>
                 <br />
-                <Text>
+                <span>
                   {(() => {
                     const dateStr = startDate?.format('YYYY-MM-DD') || moment().format('YYYY-MM-DD');
                     const timeStr = startTime?.format('HH:mm') || '09:00';
@@ -461,7 +459,7 @@ const TournamentMatchGenerator = () => {
                       .add(stats.estimatedDuration, "minutes")
                       .format("YYYY-MM-DD HH:mm");
                   })()}
-                </Text>
+                </span>
               </div>
 
               <Divider />

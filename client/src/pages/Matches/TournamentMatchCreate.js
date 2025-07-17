@@ -11,7 +11,6 @@ import {
   message,
   Row,
   Col,
-  Typography,
   Space,
   Divider,
   InputNumber,
@@ -22,7 +21,6 @@ import axios from "axios";
 import moment from "moment";
 import { convertToSeconds } from "../../utils/timeUtils";
 
-const { Title } = Typography;
 const { Option } = Select;
 
 const TournamentMatchCreate = () => {
@@ -185,7 +183,7 @@ const TournamentMatchCreate = () => {
         >
           {t('common:navigation.backToMatchList')}
         </Button>
-        <Title level={2}>{tournament?.tournament_name} - {t('match:match.create')}</Title>
+        <h2 className="text-2xl font-bold mb-4">{tournament?.tournament_name} - {t('match:match.create')}</h2>
         <p className="text-gray-600 mb-0">{t('match:messages.createDescription')}</p>
       </div>
 

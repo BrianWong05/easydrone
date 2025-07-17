@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Typography, Form, Input, Select, Button, Space, DatePicker, TimePicker, InputNumber, message, Spin, Row, Col, Divider } from 'antd';
+import { Card, Form, Input, Select, Button, Space, DatePicker, TimePicker, InputNumber, message, Spin, Row, Col, Divider } from 'antd';
 import { ArrowLeftOutlined, SaveOutlined, CalendarOutlined, SwapOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -7,7 +7,6 @@ import moment from 'moment';
 import axios from 'axios';
 import { convertToSeconds, convertFromSeconds } from '../../utils/timeUtils';
 
-const { Title } = Typography;
 const { Option } = Select;
 
 const TournamentMatchEdit = () => {
@@ -239,7 +238,7 @@ const TournamentMatchEdit = () => {
   if (!matchData) {
     return (
       <div className="p-6 text-center">
-        <Title level={3}>{t('messages.matchNotFound', { defaultValue: '比賽不存在' })}</Title>
+        <h3 className="text-xl font-bold mb-4">{t('messages.matchNotFound', { defaultValue: '比賽不存在' })}</h3>
         <Button onClick={handleCancel}>{t('common:actions.back', { defaultValue: '返回' })}</Button>
       </div>
     );
@@ -249,7 +248,7 @@ const TournamentMatchEdit = () => {
   if (!['pending', 'postponed'].includes(matchData.match_status)) {
     return (
       <div className="p-6 text-center">
-        <Title level={3}>{t('messages.cannotEdit', { defaultValue: '無法編輯' })}</Title>
+        <h3 className="text-xl font-bold mb-4">{t('messages.cannotEdit', { defaultValue: '無法編輯' })}</h3>
         <p>{t('messages.canOnlyEditPendingMatches', { defaultValue: '只能編輯未開始或延期的比賽' })}</p>
         <Button onClick={handleCancel}>{t('common:actions.back', { defaultValue: '返回' })}</Button>
       </div>
@@ -266,7 +265,7 @@ const TournamentMatchEdit = () => {
         >
           {t('actions.backToMatchDetail', { defaultValue: '返回比賽詳情' })}
         </Button>
-        <Title level={2}>{tournament?.tournament_name} - {t('match.edit')}</Title>
+        <h2 className="text-2xl font-bold mb-4">{tournament?.tournament_name} - {t('match.edit')}</h2>
         <p className="text-gray-600 mb-0">{t('messages.editDescription', { defaultValue: '修改比賽的詳細信息和設置' })}</p>
       </div>
 

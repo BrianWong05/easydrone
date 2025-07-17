@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Card,
-  Typography,
   Button,
   Space,
   Tag,
@@ -31,7 +30,6 @@ import axios from "axios";
 import { formatMatchDuration } from "../../utils/timeUtils";
 import { getMatchTypeText } from "../../utils/matchUtils";
 
-const { Title, Text } = Typography;
 
 const MatchDetail = () => {
   const { t } = useTranslation(['match', 'common']);
@@ -293,7 +291,7 @@ const MatchDetail = () => {
   if (!matchData) {
     return (
       <div className="p-6 text-center">
-        <Title level={3}>{t('messages.matchNotFound', { defaultValue: '比賽不存在' })}</Title>
+        <h3 className="text-xl font-bold mb-4">{t('messages.matchNotFound', { defaultValue: '比賽不存在' })}</h3>
         <Button onClick={handleBack}>{t('actions.backToMatchList', { defaultValue: '返回比賽列表' })}</Button>
       </div>
     );
@@ -305,7 +303,7 @@ const MatchDetail = () => {
       dataIndex: "event_time",
       key: "event_time",
       width: 80,
-      render: (time) => <Text code>{time}</Text>,
+      render: (time) => <code className="bg-gray-100 px-1 py-0.5 rounded text-sm">{time}</code>,
     },
     {
       title: t('events.event', { defaultValue: '事件' }),
@@ -315,7 +313,7 @@ const MatchDetail = () => {
       render: (type) => (
         <Space>
           <span>{getEventIcon(type)}</span>
-          <Text>{getEventText(type)}</Text>
+          <span>{getEventText(type)}</span>
         </Space>
       ),
     },
@@ -350,9 +348,9 @@ const MatchDetail = () => {
             <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
               {t('actions.backToMatchList', { defaultValue: '返回比賽列表' })}
             </Button>
-            <Title level={2} className="m-0">
+            <h2 className="text-2xl font-bold m-0">
               {t('match.detail')}
-            </Title>
+            </h2>
           </div>
 
           <Space>
@@ -434,9 +432,9 @@ const MatchDetail = () => {
           <Row gutter={[24, 24]}>
             <Col xs={24} lg={12}>
               <div className="text-center p-5">
-                <Title level={3} className="mb-2">
+                <h3 className="text-xl font-bold mb-2">
                   {matchData.match_number}
-                </Title>
+                </h3>
                 <div className="text-2xl font-bold mb-4">
                   <span className="text-blue-500">{getTeamDisplayName("team1")}</span>
                   <span className="mx-4 text-gray-600">VS</span>
@@ -472,9 +470,9 @@ const MatchDetail = () => {
               {matchData.winner_name && (
                 <div className="mt-4 text-center">
                   <TrophyOutlined className="text-yellow-500 text-xl mr-2" />
-                  <Text strong className="text-base">
+                  <strong className="text-base">
                     {t('match.winner')}：{getDisplayTeamName(matchData.winner_name)}
-                  </Text>
+                  </strong>
                 </div>
               )}
             </Col>

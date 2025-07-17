@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Typography, Form, InputNumber, Button, Space, Select, message, Spin, Row, Col, Statistic, Tag, Checkbox } from 'antd';
+import { Card, Form, InputNumber, Button, Space, Select, message, Spin, Row, Col, Statistic, Tag, Checkbox } from 'antd';
 import { ArrowLeftOutlined, SaveOutlined, TrophyOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { determineWinner, getWinReasonText } from '../../utils/winConditionUtils';
 
-const { Title, Text } = Typography;
 const { Option } = Select;
 
 const TournamentMatchResultEdit = () => {
@@ -155,7 +154,7 @@ const TournamentMatchResultEdit = () => {
   if (matchData.match_status !== 'completed') {
     return (
       <div className="text-center p-12">
-        <Title level={3}>只能編輯已完成的比賽結果</Title>
+        <h3 className="text-xl font-bold mb-4">只能編輯已完成的比賽結果</h3>
         <Button onClick={handleCancel}>返回</Button>
       </div>
     );
@@ -185,10 +184,10 @@ const TournamentMatchResultEdit = () => {
             >
               返回
             </Button>
-            <Title level={2} className="m-0">
+            <h2 className="text-2xl font-bold m-0">
               <TrophyOutlined className="mr-2" />
               編輯比賽結果
-            </Title>
+            </h2>
             {tournament && (
               <span className="text-gray-600">
                 {tournament.tournament_name}
@@ -196,9 +195,9 @@ const TournamentMatchResultEdit = () => {
             )}
           </Space>
           <div className="mt-4">
-            <Text strong className="text-base">
+            <strong className="text-base">
               {matchData.match_number}: {team1DisplayName} vs {team2DisplayName}
-            </Text>
+            </strong>
             {matchData.group_name && (
               <Tag color="blue" className="ml-2">
                 小組 {matchData.group_name?.includes("_") ? matchData.group_name.split("_")[0] : matchData.group_name}
@@ -226,7 +225,7 @@ const TournamentMatchResultEdit = () => {
             </Col>
             <Col span={8}>
               <div>
-                <Text strong>獲勝者：</Text>
+                <strong>獲勝者：</strong>
                 <div className="mt-1">
                   {predictedWinner ? (
                     <Tag color="gold">{getDisplayTeamName(predictedWinner)}</Tag>
@@ -252,7 +251,7 @@ const TournamentMatchResultEdit = () => {
           >
             <Row gutter={24}>
               <Col span={12}>
-                <Title level={4}>{team1DisplayName}</Title>
+                <h4 className="text-lg font-semibold mb-2">{team1DisplayName}</h4>
                 <Form.Item label="得分" name="team1_score">
                   <InputNumber
                     min={0}
@@ -274,7 +273,7 @@ const TournamentMatchResultEdit = () => {
               </Col>
               
               <Col span={12}>
-                <Title level={4}>{team2DisplayName}</Title>
+                <h4 className="text-lg font-semibold mb-2">{team2DisplayName}</h4>
                 <Form.Item label="得分" name="team2_score">
                   <InputNumber
                     min={0}

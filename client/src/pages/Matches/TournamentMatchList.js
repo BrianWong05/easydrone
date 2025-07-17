@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Card,
-  Typography,
   Button,
   Space,
   Table,
@@ -33,7 +32,6 @@ import { useTranslation } from 'react-i18next';
 import axios from "axios";
 import moment from "moment";
 
-const { Title } = Typography;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
@@ -773,7 +771,7 @@ const TournamentMatchList = () => {
   return (
     <div className="p-6">
       <div className="mb-6">
-        <Title level={2}>{tournament?.tournament_name} - {t('match:match.management')}</Title>
+        <h2 className="text-2xl font-bold mb-4">{tournament?.tournament_name} - {t('match:match.management')}</h2>
         <p className="text-gray-600 mb-0">{t('match:messages.managementDescription')}</p>
       </div>
 
