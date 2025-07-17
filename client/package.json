@@ -4,28 +4,28 @@
   "description": "無人機足球比賽管理系統前端",
   "private": true,
   "dependencies": {
+    "@ant-design/icons": "^5.2.6",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.5.2",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
-    "react-router-dom": "^6.8.1",
-    "axios": "^1.6.2",
-    "socket.io-client": "^4.7.4",
     "antd": "^5.12.8",
-    "@ant-design/icons": "^5.2.6",
-    "moment": "^2.29.4",
-    "recharts": "^2.8.0",
-    "styled-components": "^6.1.6",
-    "react-query": "^3.39.3",
-    "zustand": "^4.4.7",
-    "react-hot-toast": "^2.4.1",
+    "axios": "^1.6.2",
     "framer-motion": "^10.16.16",
     "i18next": "^23.7.6",
-    "react-i18next": "^13.5.0",
     "i18next-browser-languagedetector": "^7.2.0",
-    "i18next-http-backend": "^2.4.2"
+    "i18next-http-backend": "^2.4.2",
+    "moment": "^2.29.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.4.1",
+    "react-i18next": "^13.5.0",
+    "react-query": "^3.39.3",
+    "react-router-dom": "^6.8.1",
+    "react-scripts": "5.0.1",
+    "recharts": "^2.8.0",
+    "socket.io-client": "^4.7.4",
+    "styled-components": "^6.1.6",
+    "zustand": "^4.4.7"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -51,5 +51,10 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:8001"
+  "proxy": "http://localhost:8001",
+  "devDependencies": {
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.4.0"
+  }
 }

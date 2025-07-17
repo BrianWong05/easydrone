@@ -176,17 +176,17 @@ const TournamentMatchCreate = () => {
   };
 
   return (
-    <div style={{ padding: "24px" }}>
-      <div style={{ marginBottom: 24 }}>
+    <div className="p-6">
+      <div className="mb-6">
         <Button
           icon={<ArrowLeftOutlined />}
           onClick={() => navigate(`/tournaments/${tournamentId}/matches`)}
-          style={{ marginBottom: 16 }}
+          className="mb-4"
         >
           {t('common:navigation.backToMatchList')}
         </Button>
         <Title level={2}>{tournament?.tournament_name} - {t('match:match.create')}</Title>
-        <p style={{ color: "#666", marginBottom: 0 }}>{t('match:messages.createDescription')}</p>
+        <p className="text-gray-600 mb-0">{t('match:messages.createDescription')}</p>
       </div>
 
       <Card>
@@ -249,14 +249,11 @@ const TournamentMatchCreate = () => {
                 <Select placeholder={t('match:placeholders.selectTeam1')} showSearch optionFilterProp="children">
                   {getFilteredTeams().map((team) => (
                     <Option key={team.team_id} value={team.team_id}>
-                      <div style={{ display: "flex", alignItems: "center" }}>
+                      <div className="flex items-center">
                         <div
+                          className="w-3 h-3 mr-2 rounded-sm"
                           style={{
-                            width: 12,
-                            height: 12,
                             backgroundColor: team.team_color || "#ccc",
-                            marginRight: 8,
-                            borderRadius: 2,
                           }}
                         />
                         {team.team_name?.includes("_") ? team.team_name.split("_")[0] : team.team_name}
@@ -271,14 +268,11 @@ const TournamentMatchCreate = () => {
                 <Select placeholder={t('match:placeholders.selectTeam2')} showSearch optionFilterProp="children">
                   {getFilteredTeams().map((team) => (
                     <Option key={team.team_id} value={team.team_id}>
-                      <div style={{ display: "flex", alignItems: "center" }}>
+                      <div className="flex items-center">
                         <div
+                          className="w-3 h-3 mr-2 rounded-sm"
                           style={{
-                            width: 12,
-                            height: 12,
                             backgroundColor: team.team_color || "#ccc",
-                            marginRight: 8,
-                            borderRadius: 2,
                           }}
                         />
                         {team.team_name?.includes("_") ? team.team_name.split("_")[0] : team.team_name}
@@ -295,22 +289,22 @@ const TournamentMatchCreate = () => {
           <Row gutter={24}>
             <Col span={12}>
               <Form.Item label={t('match:match.date')} name="match_date" rules={[{ required: true, message: t('match:form.dateRequired') }]}>
-                <DatePicker style={{ width: "100%" }} placeholder={t('match:form.datePlaceholder')} />
+                <DatePicker className="w-full" placeholder={t('match:form.datePlaceholder')} />
               </Form.Item>
             </Col>
             <Col span={12}>
               <Form.Item label={t('match:match.time')} name="match_time" rules={[{ required: true, message: t('match:form.timeRequired') }]}>
-                <TimePicker style={{ width: "100%" }} format="HH:mm" placeholder={t('match:form.timePlaceholder')} />
+                <TimePicker className="w-full" format="HH:mm" placeholder={t('match:form.timePlaceholder')} />
               </Form.Item>
             </Col>
           </Row>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>{t('match:match.duration')}</label>
+            <label className="block mb-2 font-bold">{t('match:match.duration')}</label>
             <Input.Group compact>
               <Form.Item
                 name="match_minutes"
-                style={{ display: 'inline-block', width: '50%', marginBottom: 0 }}
+                className="inline-block w-1/2 mb-0"
                 dependencies={['match_seconds']}
                 rules={[
                   { 
@@ -329,7 +323,7 @@ const TournamentMatchCreate = () => {
                   placeholder={t('match:form.minutesPlaceholder')}
                   min={0}
                   max={60}
-                  style={{ width: '100%' }}
+                  className="w-full"
                   addonAfter={t('common:time.minutes')}
                   onChange={() => {
                     // Trigger seconds field validation
@@ -339,7 +333,7 @@ const TournamentMatchCreate = () => {
               </Form.Item>
               <Form.Item
                 name="match_seconds"
-                style={{ display: 'inline-block', width: '50%', marginBottom: 0 }}
+                className="inline-block w-1/2 mb-0"
                 dependencies={['match_minutes']}
                 rules={[
                   { 
@@ -358,7 +352,7 @@ const TournamentMatchCreate = () => {
                   placeholder={t('match:form.secondsPlaceholder')}
                   min={0}
                   max={59}
-                  style={{ width: '100%' }}
+                  className="w-full"
                   addonAfter={t('common:time.seconds')}
                   onChange={() => {
                     // Trigger minutes field validation
@@ -369,7 +363,7 @@ const TournamentMatchCreate = () => {
             </Input.Group>
           </div>
 
-          <Form.Item style={{ marginTop: 32 }}>
+          <Form.Item className="mt-8">
             <Space>
               <Button type="primary" htmlType="submit" loading={loading} icon={<SaveOutlined />}>
                 {t('match:match.create')}

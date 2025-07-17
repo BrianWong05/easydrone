@@ -8,7 +8,7 @@ const NotFound = () => {
   const { t } = useTranslation();
 
   return (
-    <div style={{ padding: '50px 0', textAlign: 'center' }}>
+    <div className="py-12 text-center">
       <Result
         status="404"
         title={t('notFound.title')}

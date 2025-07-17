@@ -380,7 +380,7 @@ const ClientMatchDetail = () => {
 
     const statusInfo = statusMap[status] || { color: "default", text: status, icon: <ClockCircleOutlined /> };
     return (
-      <Tag color={statusInfo.color} icon={statusInfo.icon} style={{ fontSize: "14px", padding: "4px 12px" }}>
+      <Tag color={statusInfo.color} icon={statusInfo.icon} className="text-sm px-3 py-1">
         {statusInfo.text}
       </Tag>
     );
@@ -395,7 +395,7 @@ const ClientMatchDetail = () => {
 
     const typeInfo = typeMap[type] || { color: "default", text: type };
     return (
-      <Tag color={typeInfo.color} style={{ fontSize: "14px", padding: "4px 12px" }}>
+      <Tag color={typeInfo.color} className="text-sm px-3 py-1">
         {typeInfo.text}
       </Tag>
     );
@@ -428,14 +428,14 @@ const ClientMatchDetail = () => {
 
   const getEventIcon = (eventType) => {
     const eventIcons = {
-      goal: <TrophyOutlined style={{ color: "#52c41a" }} />,
-      foul: <FlagOutlined style={{ color: "#f5222d" }} />,
-      start: <PlayCircleOutlined style={{ color: "#1890ff" }} />,
-      end: <CheckCircleOutlined style={{ color: "#722ed1" }} />,
-      timeout: <ClockCircleOutlined style={{ color: "#faad14" }} />,
+      goal: <TrophyOutlined className="text-green-500" />,
+      foul: <FlagOutlined className="text-red-500" />,
+      start: <PlayCircleOutlined className="text-blue-500" />,
+      end: <CheckCircleOutlined className="text-purple-600" />,
+      timeout: <ClockCircleOutlined className="text-yellow-500" />,
     };
 
-    return eventIcons[eventType] || <StarOutlined style={{ color: "#d9d9d9" }} />;
+    return eventIcons[eventType] || <StarOutlined className="text-gray-300" />;
   };
 
   const formatEventTime = (eventTime) => {
@@ -449,9 +449,9 @@ const ClientMatchDetail = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: 24, textAlign: "center" }}>
+      <div className="p-6 text-center">
         <Spin size="large" />
-        <div style={{ marginTop: 16 }}>
+        <div className="mt-4">
           <Text>{t("match:messages.loadingMatchDetail")}</Text>
         </div>
       </div>
@@ -460,7 +460,7 @@ const ClientMatchDetail = () => {
 
   if (error) {
     return (
-      <div className="p-6 max-w-7xl mx-auto animate-fade-in">
+      <div className="p-6">
         <Alert
           message={t("common:messages.loadFailed")}
           description={error}
@@ -478,7 +478,7 @@ const ClientMatchDetail = () => {
 
   if (!match) {
     return (
-      <div className="p-6 max-w-7xl mx-auto animate-fade-in">
+      <div className="p-6">
         <Alert
           message={t("match:messages.matchNotFound")}
           description={t("match:messages.matchNotFoundDesc")}
@@ -495,311 +495,265 @@ const ClientMatchDetail = () => {
     : `10 ${t("match:time.minutes")}`;
 
   return (
-    <div className="p-6 max-w-7xl mx-auto animate-fade-in">
+    <div className="p-6">
       {/* Back Button */}
-      <button
-        className="mb-6 flex items-center space-x-2 px-4 px-4 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-primary-300 transition-colors duration-200 text-gray-700 font-medium"
-        onClick={() => navigate("/matches")}
-      >
-        <ArrowLeftOutlined className="text-gray-500" />
-        <span>{t("common:actions.backToMatchList")}</span>
-      </button>
+      <Button icon={<ArrowLeftOutlined />} onClick={() => navigate("/matches")} className="mb-4">
+        {t("common:actions.backToMatchList")}
+      </Button>
 
       {/* Match Header */}
-      <div className="mb-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border-l-4 border-primary-500">
-        <div className="p-6">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-            <div className="border border-gray-200 rounded-lg overflow-hidden">
-              <h2 className="text-xl font-bold text-gray-800 flex items-center m-0">
-                <PlayCircleOutlined className="mr-3 text-primary-600" />
-                <span className="bg-gradient-to-r from-primary-600 to-primary-700 bg-clip-text text-transparent">
-                  {match.match_number}
-                </span>
-              </h2>
-              <div className="flex flex-wrap gap-2">
+      <Card className="mb-6">
+        <Row align="middle" justify="space-between">
+          <Col>
+            <Space direction="vertical" size="small">
+              <Title level={2} className="m-0">
+                <PlayCircleOutlined className="mr-2 text-blue-500" />
+                {match.match_number}
+              </Title>
+              <Space>
                 {getMatchTypeTag(match.match_type)}
-                {match.group_name && (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800">
-                    {getDisplayGroupName(match.group_name)}
-                  </span>
-                )}
-              </div>
-            </div>
-            <div className="flex-shrink-0">{getMatchStatusTag(match.match_status)}</div>
-          </div>
-        </div>
-      </div>
+                {match.group_name && <Tag color="cyan">{getDisplayGroupName(match.group_name)}</Tag>}
+              </Space>
+            </Space>
+          </Col>
+          <Col>{getMatchStatusTag(match.match_status)}</Col>
+        </Row>
+      </Card>
 
       {/* Match Score and Teams */}
-      <div className="mb-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-        <div className="p-6">
-          <div className="flex items-center justify-center space-x-2">
-            {/* Team 1 */}
-            <div className="flex flex-col items-center space-y-3">
+      <Card className="mb-6">
+        <Row gutter={[24, 24]} align="middle">
+          {/* Team 1 */}
+          <Col xs={24} md={8} className="text-center">
+            <Space direction="vertical" size="large" className="w-full">
               <div
-                className="w-20 h-20 rounded-full flex-shrink-0 flex items-center justify-center"
+                className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center ${
+                  winnerInfo && winnerInfo.name === getTeamDisplayNameWithReference(match, "team1")
+                    ? "border-4 border-yellow-400"
+                    : ""
+                }`}
                 style={{
                   backgroundColor: match.team1_color || "#1890ff",
-                  border:
-                    winnerInfo && winnerInfo.name === getTeamDisplayNameWithReference(match, "team1")
-                      ? "4px solid #faad14"
-                      : "none",
                 }}
               >
                 <TeamOutlined className="text-3xl text-white" />
               </div>
-              <div className="text-center">
-                <button
-                  className="text-xl font-bold text-gray-800 hover:text-primary-600 transition-colors duration-200 bg-transparent border-none cursor-pointer"
+              <div>
+                <Button
+                  type="link"
+                  className="p-0 h-auto text-2xl font-bold text-inherit"
                   onClick={() => handleTeamNavigation(match, "team1")}
                 >
                   {getTeamDisplayNameWithReference(match, "team1")}
-                </button>
+                </Button>
                 {winnerInfo && winnerInfo.name === getTeamDisplayNameWithReference(match, "team1") && (
-                  <div className="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                    <TrophyOutlined className="mr-1" />
+                  <Tag color="gold" icon={<TrophyOutlined />} className="mt-2">
                     {t("match:result.winner")}
-                  </div>
+                  </Tag>
                 )}
               </div>
-            </div>
+            </Space>
+          </Col>
 
-            {/* Score */}
-            <div className="text-center space-y-4 w-full">
+          {/* Score */}
+          <Col xs={24} md={8} className="text-center">
+            <Space direction="vertical" size="large" className="w-full">
               {match.match_status === "completed" ? (
                 <div>
-                  <h1 className="text-4xl font-bold text-primary-600 m-0 whitespace-nowrap">
-                    {match.team1_score || 0} : {match.team2_score || 0}
-                  </h1>
-                  {winnerInfo && winnerInfo.reason && <p className="text-gray-500 mt-2">({winnerInfo.reason})</p>}
+                  <Title level={1} className="m-0 text-5xl" style={{ color: "#1890ff" }}>
+                    {match.team1_score || 0} - {match.team2_score || 0}
+                  </Title>
+                  {winnerInfo && winnerInfo.reason && <Text type="secondary">({winnerInfo.reason})</Text>}
                 </div>
               ) : match.match_status === "active" ? (
                 <div>
-                  <h1 className="text-5xl font-bold text-red-500 m-0">
+                  <Title level={1} className="m-0 text-5xl" style={{ color: "#f5222d" }}>
                     {match.team1_score || 0} - {match.team2_score || 0}
-                  </h1>
-                  <div className="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    <PlayCircleOutlined className="mr-1" />
+                  </Title>
+                  <Tag color="processing" icon={<PlayCircleOutlined />}>
                     {t("match:status.inProgress")}
-                  </div>
+                  </Tag>
                 </div>
               ) : (
                 <div>
-                  <h1 className="text-5xl font-bold text-gray-300 m-0">- : -</h1>
-                  <p className="text-gray-500 mt-2">{t("match:status.notStarted")}</p>
+                  <Title level={1} className="m-0 text-5xl" style={{ color: "#d9d9d9" }}>
+                    - : -
+                  </Title>
+                  <Text type="secondary">{t("match:status.notStarted")}</Text>
                 </div>
               )}
-            </div>
+            </Space>
+          </Col>
 
-            {/* Team 2 */}
-            <div className="flex flex-col items-center space-y-3">
-              <div className="text-center">
-                <div
-                  className="w-20 h-20 rounded-full flex-shrink-0 flex items-center justify-center"
-                  style={{
-                    backgroundColor: match.team2_color || "#52c41a",
-                    border:
-                      winnerInfo && winnerInfo.name === getTeamDisplayNameWithReference(match, "team2")
-                        ? "4px solid #faad14"
-                        : "none",
-                  }}
+          {/* Team 2 */}
+          <Col xs={24} md={8} className="text-center">
+            <Space direction="vertical" size="large" className="w-full">
+              <div
+                className={`w-20 h-20 rounded-full mx-auto flex items-center justify-center ${
+                  winnerInfo && winnerInfo.name === getTeamDisplayNameWithReference(match, "team2")
+                    ? "border-4 border-yellow-400"
+                    : ""
+                }`}
+                style={{
+                  backgroundColor: match.team2_color || "#52c41a",
+                }}
+              >
+                <TeamOutlined className="text-3xl text-white" />
+              </div>
+              <div>
+                <Button
+                  type="link"
+                  className="p-0 h-auto text-2xl font-bold text-inherit"
+                  onClick={() => handleTeamNavigation(match, "team2")}
                 >
-                  <TeamOutlined className="text-3xl text-white" />
-                </div>
-                <div>
-                  <button
-                    className="text-xl font-bold text-gray-800 hover:text-primary-600 transition-colors duration-200 bg-transparent border-none cursor-pointer"
-                    onClick={() => handleTeamNavigation(match, "team2")}
-                  >
-                    {getTeamDisplayNameWithReference(match, "team2")}
-                  </button>
-                  {winnerInfo && winnerInfo.name === getTeamDisplayNameWithReference(match, "team2") && (
-                    <div className="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                      <TrophyOutlined className="mr-1" />
-                      {t("match:result.winner")}
-                    </div>
-                  )}
-                </div>
+                  {getTeamDisplayNameWithReference(match, "team2")}
+                </Button>
+                {winnerInfo && winnerInfo.name === getTeamDisplayNameWithReference(match, "team2") && (
+                  <Tag color="gold" icon={<TrophyOutlined />} className="mt-2">
+                    {t("match:result.winner")}
+                  </Tag>
+                )}
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
+            </Space>
+          </Col>
+        </Row>
+      </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <Row gutter={[24, 24]}>
         {/* Match Information */}
-        <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border-t-4 border-primary-500">
-          <div className="p-6">
-            <h3 className="text-lg font-semibold text-gray-800 flex items-center mb-4">
-              <CalendarOutlined className="mr-2 text-primary-600" />
+        <Col xs={24} lg={12}>
+          <Card>
+            <Title level={3}>
+              <CalendarOutlined className="mr-2" />
               {t("match:match.information")}
-            </h3>
-            <div className="border border-gray-200 rounded-lg overflow-hidden">
-              <div className="flex justify-between items-center px-4 py-3 border-b border-gray-200">
-                <span className="text-sm font-medium text-gray-600">{t("match:match.time")}</span>
-                <span className="text-sm text-gray-800">
-                  {match.match_date ? moment(match.match_date).format("YYYY/MM/DD HH:mm") : t("match:status.pending")}
-                </span>
-              </div>
-              <div className="flex justify-between items-center px-4 py-3 border-b border-gray-200">
-                <span className="text-sm font-medium text-gray-600">{t("match:match.duration")}</span>
-                <span className="text-sm text-gray-800">{matchDuration}</span>
-              </div>
-              <div className="flex justify-between items-center px-4 py-3 border-b border-gray-200">
-                <span className="text-sm font-medium text-gray-600">{t("match:match.type")}</span>
-                <div>{getMatchTypeTag(match.match_type)}</div>
-              </div>
+            </Title>
+            <Descriptions column={1} bordered size="small">
+              <Descriptions.Item label={t("match:match.time")}>
+                {match.match_date ? moment(match.match_date).format("YYYY/MM/DD HH:mm") : t("match:status.pending")}
+              </Descriptions.Item>
+              <Descriptions.Item label={t("match:match.duration")}>{matchDuration}</Descriptions.Item>
+              <Descriptions.Item label={t("match:match.type")}>{getMatchTypeTag(match.match_type)}</Descriptions.Item>
               {match.group_name && (
-                <div className="flex justify-between items-center px-4 py-3 border-b border-gray-200">
-                  <span className="text-sm font-medium text-gray-600">{t("group:group.name")}</span>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800">
-                    {getDisplayGroupName(match.group_name)}
-                  </span>
-                </div>
+                <Descriptions.Item label={t("group:group.name")}>
+                  <Tag color="cyan">{getDisplayGroupName(match.group_name)}</Tag>
+                </Descriptions.Item>
               )}
-              <div className="flex justify-between items-center px-4 py-3 border-b border-gray-200">
-                <span className="text-sm font-medium text-gray-600">{t("match:match.status")}</span>
-                <div>{getMatchStatusTag(match.match_status)}</div>
-              </div>
+              <Descriptions.Item label={t("match:match.status")}>
+                {getMatchStatusTag(match.match_status)}
+              </Descriptions.Item>
               {match.match_status === "completed" && (
                 <>
-                  <div className="flex justify-between items-center px-4 py-3 border-b border-gray-200">
-                    <span className="text-sm font-medium text-gray-600">{t("match:match.startTime")}</span>
-                    <span className="text-sm text-gray-800">
-                      {match.start_time ? moment(match.start_time).format("HH:mm:ss") : "-"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center px-4 py-3 border-b border-gray-200">
-                    <span className="text-sm font-medium text-gray-600">{t("match:match.endTime")}</span>
-                    <span className="text-sm text-gray-800">
-                      {match.end_time ? moment(match.end_time).format("HH:mm:ss") : "-"}
-                    </span>
-                  </div>
+                  <Descriptions.Item label={t("match:match.startTime")}>
+                    {match.start_time ? moment(match.start_time).format("HH:mm:ss") : "-"}
+                  </Descriptions.Item>
+                  <Descriptions.Item label={t("match:match.endTime")}>
+                    {match.end_time ? moment(match.end_time).format("HH:mm:ss") : "-"}
+                  </Descriptions.Item>
                 </>
               )}
-            </div>
-          </div>
-        </div>
+            </Descriptions>
+          </Card>
+        </Col>
 
         {/* Match Statistics */}
-        <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border-t-4 border-warning-500">
-          <div className="p-6">
-            <h3 className="text-lg font-semibold text-gray-800 flex items-center mb-4">
-              <ThunderboltOutlined className="mr-2 text-warning-600" />
+        <Col xs={24} lg={12}>
+          <Card>
+            <Title level={3}>
+              <ThunderboltOutlined className="mr-2" />
               {t("match:match.statistics")}
-            </h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gray-50 rounded-lg p-4 text-center">
-                <div className="flex items-center justify-center mb-2">
-                  <TrophyOutlined className="text-xl mr-2" style={{ color: match.team1_color || "#1890ff" }} />
-                  <span className="text-sm font-medium text-gray-600">
-                    {getTeamDisplayNameWithReference(match, "team1")}
-                  </span>
-                </div>
-                <div className="text-2xl font-bold" style={{ color: match.team1_color || "#1890ff" }}>
-                  {match.team1_score || 0} {t("match:statistics.goals")}
-                </div>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-4 text-center">
-                <div className="flex items-center justify-center mb-2">
-                  <TrophyOutlined className="text-xl mr-2" style={{ color: match.team2_color || "#52c41a" }} />
-                  <span className="text-sm font-medium text-gray-600">
-                    {getTeamDisplayNameWithReference(match, "team2")}
-                  </span>
-                </div>
-                <div className="text-2xl font-bold" style={{ color: match.team2_color || "#52c41a" }}>
-                  {match.team2_score || 0} {t("match:statistics.goals")}
-                </div>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-4 text-center">
-                <div className="flex items-center justify-center mb-2">
-                  <FlagOutlined className="text-xl mr-2 text-red-500" />
-                  <span className="text-sm font-medium text-gray-600">
-                    {getTeamDisplayNameWithReference(match, "team1")} {t("match:statistics.fouls")}
-                  </span>
-                </div>
-                <div className="text-2xl font-bold text-red-500">{match.team1_fouls || 0}</div>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-4 text-center">
-                <div className="flex items-center justify-center mb-2">
-                  <FlagOutlined className="text-xl mr-2 text-red-500" />
-                  <span className="text-sm font-medium text-gray-600">
-                    {getTeamDisplayNameWithReference(match, "team2")} {t("match:statistics.fouls")}
-                  </span>
-                </div>
-                <div className="text-2xl font-bold text-red-500">{match.team2_fouls || 0}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+            </Title>
+            <Row gutter={[16, 16]}>
+              <Col span={12}>
+                <Card size="small">
+                  <Statistic
+                    title={getTeamDisplayNameWithReference(match, "team1")}
+                    value={match.team1_score || 0}
+                    prefix={<TrophyOutlined style={{ color: match.team1_color || "#1890ff" }} />}
+                    valueStyle={{ color: match.team1_color || "#1890ff" }}
+                    suffix={t("match:statistics.goals")}
+                  />
+                </Card>
+              </Col>
+              <Col span={12}>
+                <Card size="small">
+                  <Statistic
+                    title={getTeamDisplayNameWithReference(match, "team2")}
+                    value={match.team2_score || 0}
+                    prefix={<TrophyOutlined style={{ color: match.team2_color || "#52c41a" }} />}
+                    valueStyle={{ color: match.team2_color || "#52c41a" }}
+                    suffix={t("match:statistics.goals")}
+                  />
+                </Card>
+              </Col>
+              <Col span={12}>
+                <Card size="small">
+                  <Statistic
+                    title={`${getTeamDisplayNameWithReference(match, "team1")} ${t("match:statistics.fouls")}`}
+                    value={match.team1_fouls || 0}
+                    prefix={<FlagOutlined className="text-red-500" />}
+                    valueStyle={{ color: "#f5222d" }}
+                  />
+                </Card>
+              </Col>
+              <Col span={12}>
+                <Card size="small">
+                  <Statistic
+                    title={`${getTeamDisplayNameWithReference(match, "team2")} ${t("match:statistics.fouls")}`}
+                    value={match.team2_fouls || 0}
+                    prefix={<FlagOutlined className="text-red-500" />}
+                    valueStyle={{ color: "#f5222d" }}
+                  />
+                </Card>
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+      </Row>
 
       {/* Match Events */}
       {events.length > 0 && (
-        <div className="mt-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border-t-4 border-success-500">
-          <div className="p-6">
-            <h3 className="text-lg font-semibold text-gray-800 flex items-center mb-6">
-              <FieldTimeOutlined className="mr-2 text-success-600" />
-              {t("match:match.events")}
-            </h3>
-            <div className="space-y-4">
-              {events.map((event, index) => (
-                <div key={index} className="flex items-start space-x-2 p-4 bg-gray-50 rounded-lg">
-                  <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-white shadow-sm">
-                    {getEventIcon(event.event_type)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-semibold text-gray-800">
-                        {getDisplayTeamName(event.team_name)} - {event.event_type}
-                      </p>
-                      <span className="text-xs text-gray-500 font-mono">{formatEventTime(event.event_time)}</span>
-                    </div>
-                    {event.athlete_name && (
-                      <p className="text-xs text-gray-600 mt-1">
-                        {t("team:athlete.name")}: {event.athlete_name}
-                      </p>
-                    )}
-                    {event.description && <p className="text-sm text-gray-700 mt-1">{event.description}</p>}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        <Card className="mt-6">
+          <Title level={3}>
+            <FieldTimeOutlined className="mr-2" />
+            {t("match:match.events")}
+          </Title>
+          <Timeline mode="left">
+            {events.map((event, index) => (
+              <Timeline.Item key={index} dot={getEventIcon(event.event_type)} label={formatEventTime(event.event_time)}>
+                <Space direction="vertical" size="small">
+                  <Text strong>
+                    {getDisplayTeamName(event.team_name)} - {event.event_type}
+                  </Text>
+                  {event.athlete_name && (
+                    <Text type="secondary">
+                      {t("team:athlete.name")}: {event.athlete_name}
+                    </Text>
+                  )}
+                  {event.description && <Text>{event.description}</Text>}
+                </Space>
+              </Timeline.Item>
+            ))}
+          </Timeline>
+        </Card>
       )}
 
       {/* Quick Navigation */}
-      <div className="mt-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 border-t-4 border-gray-400">
-        <div className="p-6">
-          <h4 className="text-base font-semibold text-gray-800 mb-4">{t("common:navigation.relatedPages")}</h4>
-          <div className="flex flex-wrap gap-3">
-            <button
-              className="inline-flex items-center px-4 px-4 py-3 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors duration-200"
-              onClick={() => handleTeamNavigation(match, "team1")}
-            >
-              <TeamOutlined className="mr-2" />
-              {t("common:actions.view")} {getTeamDisplayNameWithReference(match, "team1")}
-            </button>
-            <button
-              className="inline-flex items-center px-4 px-4 py-3 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-lg transition-colors duration-200"
-              onClick={() => handleTeamNavigation(match, "team2")}
-            >
-              <TeamOutlined className="mr-2" />
-              {t("common:actions.view")} {getTeamDisplayNameWithReference(match, "team2")}
-            </button>
-            {match.group_id && (
-              <button
-                className="inline-flex items-center px-4 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition-colors duration-200"
-                onClick={() => navigate(`/groups/${match.group_id}`)}
-              >
-                <TrophyOutlined className="mr-2" />
-                {t("common:actions.viewGroupDetails")}
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
+      <Card className="mt-6">
+        <Title level={4}>{t("common:navigation.relatedPages")}</Title>
+        <Space wrap>
+          <Button type="primary" icon={<TeamOutlined />} onClick={() => handleTeamNavigation(match, "team1")}>
+            {t("common:actions.view")} {getTeamDisplayNameWithReference(match, "team1")}
+          </Button>
+          <Button type="primary" icon={<TeamOutlined />} onClick={() => handleTeamNavigation(match, "team2")}>
+            {t("common:actions.view")} {getTeamDisplayNameWithReference(match, "team2")}
+          </Button>
+          {match.group_id && (
+            <Button icon={<TrophyOutlined />} onClick={() => navigate(`/groups/${match.group_id}`)}>
+              {t("common:actions.viewGroupDetails")}
+            </Button>
+          )}
+        </Space>
+      </Card>
     </div>
   );
 };

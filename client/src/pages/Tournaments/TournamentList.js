@@ -172,7 +172,7 @@ const TournamentList = () => {
     return (
       <Tag color={config.color}>
         {config.text}
-        {status === 'active' && <span style={{ marginLeft: 4 }}>🌐</span>}
+        {status === 'active' && <span className="ml-1">🌐</span>}
       </Tag>
     );
   };
@@ -202,20 +202,18 @@ const TournamentList = () => {
       key: 'tournament_name',
       render: (text, record) => (
         <Space>
-          <TrophyOutlined style={{ color: record.status === 'active' ? '#52c41a' : '#faad14' }} />
+          <TrophyOutlined 
+            className={record.status === 'active' ? 'text-green-500' : 'text-yellow-500'} 
+          />
           <Button
             type="link"
-            style={{ 
-              padding: 0,
-              height: 'auto',
-              fontWeight: 'bold',
-              color: record.status === 'active' ? '#52c41a' : '#1890ff',
-              fontSize: '14px'
-            }}
+            className={`p-0 h-auto font-bold text-base ${
+              record.status === 'active' ? 'text-green-500' : 'text-blue-500'
+            }`}
             onClick={() => navigate(`/tournaments/${record.tournament_id}`)}
           >
             {text}
-            {record.status === 'active' && <span style={{ marginLeft: 8, fontSize: '12px' }}>{t('tournament:list.status.publicDisplay')}</span>}
+            {record.status === 'active' && <span className="ml-2 text-sm">{t('tournament:list.status.publicDisplay')}</span>}
           </Button>
         </Space>
       )
@@ -240,7 +238,7 @@ const TournamentList = () => {
       render: (_, record) => {
         const progress = getProgress(record.completed_matches, record.total_matches);
         return (
-          <div style={{ width: 120 }}>
+          <div className="w-30">
             <Progress 
               percent={progress} 
               size="small" 
@@ -257,11 +255,11 @@ const TournamentList = () => {
       render: (_, record) => (
         <Space direction="vertical" size="small">
           <div>
-            <CalendarOutlined style={{ marginRight: 4, color: '#52c41a' }} />
+            <CalendarOutlined className="mr-1 text-green-500" />
             {t('tournament:list.dates.start')}: {moment(record.start_date).format('YYYY-MM-DD')}
           </div>
           <div>
-            <CalendarOutlined style={{ marginRight: 4, color: '#f5222d' }} />
+            <CalendarOutlined className="mr-1 text-red-500" />
             {t('tournament:list.dates.end')}: {moment(record.end_date).format('YYYY-MM-DD')}
           </div>
         </Space>
@@ -310,7 +308,7 @@ const TournamentList = () => {
             <Tooltip title={t('tournament:list.tooltips.activateTournament')}>
               <Button 
                 type="text" 
-                style={{ color: '#52c41a' }}
+                className="text-green-500 hover:text-green-600"
                 onClick={() => handleStatusUpdate(record.tournament_id, 'active')}
               >
                 {t('tournament:list.actions.activate')}
@@ -322,7 +320,7 @@ const TournamentList = () => {
             <Tooltip title={t('tournament:list.tooltips.deactivateTournament')}>
               <Button 
                 type="text" 
-                style={{ color: '#faad14' }}
+                className="text-yellow-500 hover:text-yellow-600"
                 onClick={() => handleStatusUpdate(record.tournament_id, 'pending')}
               >
                 {t('tournament:list.actions.deactivate')}
@@ -334,7 +332,7 @@ const TournamentList = () => {
             <Tooltip title={t('tournament:list.tooltips.reactivateTournament')}>
               <Button 
                 type="text" 
-                style={{ color: '#1890ff' }}
+                className="text-blue-500 hover:text-blue-600"
                 onClick={() => handleStatusUpdate(record.tournament_id, 'active')}
               >
                 {t('tournament:list.actions.reactivate')}
@@ -365,12 +363,12 @@ const TournamentList = () => {
   ];
 
   return (
-    <div style={{ padding: '24px' }}>
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+    <div className="p-6">
+      <Space direction="vertical" size="large" className="w-full">
         {/* 頁面標題和新增按鈕 */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="flex justify-between items-center">
           <Title level={2}>
-            <TrophyOutlined style={{ marginRight: 8, color: '#faad14' }} />
+            <TrophyOutlined className="mr-2 text-yellow-500" />
             {t('tournament:list.title')}
           </Title>
           <Button 
@@ -388,7 +386,7 @@ const TournamentList = () => {
           <Space wrap>
             <Search
               placeholder={t('tournament:list.searchPlaceholder')}
-              style={{ width: 200 }}
+              className="w-50"
               value={filters.search}
               onChange={(e) => setFilters({ ...filters, search: e.target.value })}
               allowClear
@@ -396,7 +394,7 @@ const TournamentList = () => {
             
             <Select
               placeholder={t('tournament:list.selectStatus')}
-              style={{ width: 120 }}
+              className="w-30"
               value={filters.status}
               onChange={(value) => setFilters({ ...filters, status: value })}
               allowClear
@@ -408,7 +406,7 @@ const TournamentList = () => {
             
             <Select
               placeholder={t('tournament:list.selectType')}
-              style={{ width: 120 }}
+              className="w-30"
               value={filters.type}
               onChange={(value) => setFilters({ ...filters, type: value })}
               allowClear
@@ -429,15 +427,15 @@ const TournamentList = () => {
             loading={loading}
             locale={{
               emptyText: (
-                <div style={{ textAlign: 'center', padding: '40px 0' }}>
-                  <TrophyOutlined style={{ fontSize: 48, color: '#d9d9d9', marginBottom: 16 }} />
-                  <div style={{ marginBottom: 16 }}>
-                    <Text type="secondary" style={{ fontSize: 16 }}>{t('tournament:list.noData')}</Text>
+                <div className="text-center py-10">
+                  <TrophyOutlined className="text-5xl text-gray-300 mb-4" />
+                  <div className="mb-4">
+                    <Text type="secondary" className="text-lg">{t('tournament:list.noData')}</Text>
                   </div>
                   <div>
-                    <Text type="secondary">{t('tournament:list.noDataDescription')}</Text>
+                    <Text type="secondary" className="text-base">{t('tournament:list.noDataDescription')}</Text>
                   </div>
-                  <div style={{ marginTop: 16 }}>
+                  <div className="mt-4">
                     <Button 
                       type="primary" 
                       icon={<PlusOutlined />}

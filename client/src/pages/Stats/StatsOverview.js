@@ -9,7 +9,7 @@ const StatsOverview = () => {
   const navigate = useNavigate();
 
   return (
-    <div style={{ padding: '24px' }}>
+    <div className="p-6">
       <Title level={2}>統計概覽</Title>
       
       <Row gutter={[16, 16]}>

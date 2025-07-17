@@ -141,7 +141,7 @@ const TournamentLayout = ({ children }) => {
         },
         {
           key: `/tournaments/${id}/leaderboard/stats`,
-          label: <span style={{ color: '#999', cursor: 'not-allowed' }}>{t('tournament:navigation.statisticsData')}</span>,
+          label: <span className="text-gray-400 cursor-not-allowed">{t('tournament:navigation.statisticsData')}</span>,
           disabled: true,
         },
         {
@@ -178,52 +178,31 @@ const TournamentLayout = ({ children }) => {
   };
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout className="min-h-screen">
       <Sider
         trigger={null}
         collapsible
         collapsed={collapsed}
         width={250}
-        style={{
-          overflow: "auto",
-          height: "100vh",
-          position: "fixed",
-          left: 0,
-          top: 0,
-          bottom: 0,
-          zIndex: 1001,
-        }}
+        className="overflow-auto h-screen fixed left-0 top-0 bottom-0 z-[1001]"
       >
         <div
-          className="logo"
-          style={{
-            height: 64,
-            margin: 16,
-            background: "rgba(255, 255, 255, 0.3)",
-            borderRadius: 8,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "white",
-            fontWeight: "bold",
-            fontSize: collapsed ? 14 : 16,
-          }}
+          className={`h-16 m-4 bg-white bg-opacity-30 rounded-lg flex items-center justify-center text-white font-bold ${
+            collapsed ? "text-sm" : "text-base"
+          }`}
         >
           {collapsed ? "DS" : t('common:system.title')}
         </div>
 
         {/* Back to tournaments button */}
-        <div style={{ padding: "0 16px", marginBottom: 16 }}>
+        <div className="px-4 mb-4">
           <Button
             type="ghost"
             icon={<ArrowLeftOutlined />}
             onClick={() => navigate("/")}
-            style={{
-              width: "100%",
-              color: "white",
-              borderColor: "rgba(255, 255, 255, 0.3)",
-              fontSize: collapsed ? 12 : 14,
-            }}
+            className={`w-full text-white border-white border-opacity-30 ${
+              collapsed ? "text-xs" : "text-sm"
+            }`}
           >
             {!collapsed && t('common:navigation.backToTournamentList')}
           </Button>
@@ -238,34 +217,21 @@ const TournamentLayout = ({ children }) => {
         />
       </Sider>
 
-      <Layout style={{ marginLeft: collapsed ? 80 : 250, minHeight: "100vh" }}>
-        <Header
-          style={{
-            padding: "0 24px",
-            background: "#fff",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            boxShadow: "0 1px 4px rgba(0,21,41,.08)",
-            position: "sticky",
-            top: 0,
-            zIndex: 1000,
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center" }}>
+      <Layout 
+        className="min-h-screen"
+        style={{ marginLeft: collapsed ? 80 : 250 }}
+      >
+        <Header className="px-6 bg-white flex items-center justify-between shadow-sm sticky top-0 z-[1000]">
+          <div className="flex items-center">
             <Button
               type="text"
               icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
               onClick={() => setCollapsed(!collapsed)}
-              style={{
-                fontSize: "16px",
-                width: 64,
-                height: 64,
-              }}
+              className="text-base w-16 h-16"
             />
 
             {/* Breadcrumb */}
-            <Breadcrumb style={{ marginLeft: 16 }}>
+            <Breadcrumb className="ml-4">
               <Breadcrumb.Item>
                 <Link to="/">
                   <HomeOutlined /> {t('common:navigation.dashboard')}
@@ -281,7 +247,7 @@ const TournamentLayout = ({ children }) => {
           </div>
 
           <Space>
-            <span style={{ color: "#666" }}>{tournament ? `${tournament.tournament_name} ${t('tournament:navigation.management')}` : t('common:navigation.tournaments')}</span>
+            <span className="text-gray-600">{tournament ? `${tournament.tournament_name} ${t('tournament:navigation.management')}` : t('common:navigation.tournaments')}</span>
             <LanguageSwitcher size="small" />
             <Dropdown
               menu={{
@@ -315,7 +281,7 @@ const TournamentLayout = ({ children }) => {
               }}
               placement="bottomRight"
             >
-              <Button type="text" style={{ height: 'auto', padding: '8px 12px' }}>
+              <Button type="text" className="h-auto py-2 px-3">
                 <Space>
                   <Avatar size="small" icon={<UserOutlined />} />
                   <span>{user?.username || t('common:user.admin')}</span>

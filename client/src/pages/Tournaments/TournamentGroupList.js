@@ -92,10 +92,7 @@ const TournamentGroupList = () => {
       width: 60,
       render: (_, __, index) => (
         <span
-          style={{
-            fontWeight: "bold",
-            color: index < 2 ? "#52c41a" : "#666",
-          }}
+          className={`font-bold ${index < 2 ? 'text-green-500' : 'text-gray-600'}`}
         >
           {index + 1}
         </span>
@@ -107,14 +104,9 @@ const TournamentGroupList = () => {
       key: "name",
       render: (name, record, index) => (
         <Space>
-          {index < 2 && <TrophyOutlined style={{ color: "#faad14" }} />}
+          {index < 2 && <TrophyOutlined className="text-yellow-500" />}
           <span
-            style={{
-              fontWeight: index < 2 ? "bold" : "normal",
-              color: "#1890ff",
-              cursor: "pointer",
-              textDecoration: "underline",
-            }}
+            className={`${index < 2 ? 'font-bold' : 'font-normal'} text-blue-500 cursor-pointer underline`}
             onClick={() => {
               if (record.team_id) {
                 navigate(`/tournaments/${tournamentId}/teams/${record.team_id}`);
@@ -133,7 +125,7 @@ const TournamentGroupList = () => {
       dataIndex: "points",
       key: "points",
       width: 60,
-      render: (points) => <span style={{ fontWeight: "bold", color: "#1890ff" }}>{points}</span>,
+      render: (points) => <span className="font-bold text-blue-500">{points}</span>,
     },
     {
       title: t('group:standings.played'),
@@ -146,21 +138,21 @@ const TournamentGroupList = () => {
       dataIndex: "won",
       key: "won",
       width: 50,
-      render: (won) => <span style={{ color: "#52c41a" }}>{won}</span>,
+      render: (won) => <span className="text-green-500">{won}</span>,
     },
     {
       title: t('group:standings.drawn'),
       dataIndex: "drawn",
       key: "drawn",
       width: 50,
-      render: (drawn) => <span style={{ color: "#faad14" }}>{drawn}</span>,
+      render: (drawn) => <span className="text-yellow-500">{drawn}</span>,
     },
     {
       title: t('group:standings.lost'),
       dataIndex: "lost",
       key: "lost",
       width: 50,
-      render: (lost) => <span style={{ color: "#ff4d4f" }}>{lost}</span>,
+      render: (lost) => <span className="text-red-500">{lost}</span>,
     },
     {
       title: t('group:standings.goalsFor'),
@@ -182,10 +174,9 @@ const TournamentGroupList = () => {
         const gd = record.gf - record.ga;
         return (
           <span
-            style={{
-              color: gd > 0 ? "#52c41a" : gd < 0 ? "#ff4d4f" : "#666",
-              fontWeight: "bold",
-            }}
+            className={`font-bold ${
+              gd > 0 ? "text-green-500" : gd < 0 ? "text-red-500" : "text-gray-600"
+            }`}
           >
             {gd > 0 ? "+" : ""}
             {gd}
@@ -196,9 +187,9 @@ const TournamentGroupList = () => {
   ];
 
   return (
-    <div style={{ padding: "24px" }}>
-      <Space direction="vertical" size="large" style={{ width: "100%" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    <div className="p-6">
+      <Space direction="vertical" size="large" className="w-full">
+        <div className="flex justify-between items-center">
           <Title level={2}>{t('group:group.list')}</Title>
           <Button
             type="primary"
@@ -215,7 +206,7 @@ const TournamentGroupList = () => {
               <Card
                 title={
                   <Space>
-                    <span style={{ fontSize: "18px", fontWeight: "bold" }}>{t('group:group.name')} {group.group_name}</span>
+                    <span className="text-lg font-bold">{t('group:group.name')} {group.group_name}</span>
                     <Tag color="blue">
                       {group.current_teams}/{group.max_teams} {t('group:group.teams')}
                     </Tag>
@@ -241,7 +232,7 @@ const TournamentGroupList = () => {
                 }
                 size="small"
               >
-                <Space direction="vertical" style={{ width: "100%" }} size="middle">
+                <Space direction="vertical" className="w-full" size="middle">
                   <div>
                     <Text type="secondary">{t('group:list.teamCompletion')}</Text>
                     <Progress
@@ -253,7 +244,7 @@ const TournamentGroupList = () => {
                   </div>
 
                   <div>
-                    <Text strong style={{ marginBottom: 8, display: "block" }}>
+                    <Text strong className="mb-2 block">
                       {t('group:group.standings')}
                     </Text>
                     <Table
@@ -273,14 +264,14 @@ const TournamentGroupList = () => {
 
         {groups.length === 0 && !loading && (
           <Card>
-            <div style={{ textAlign: "center", padding: "40px 0" }}>
+            <div className="text-center py-10">
               <Text type="secondary">{t('group:messages.noGroups')}</Text>
               <br />
               <Button
                 type="primary"
                 icon={<PlusOutlined />}
                 onClick={() => navigate(`/tournaments/${tournamentId}/groups/create`)}
-                style={{ marginTop: 16 }}
+                className="mt-4"
               >
                 {t('group:list.createFirstGroup')}
               </Button>

@@ -117,11 +117,11 @@ const AllGroupStandings = () => {
       title: '排名',
       key: 'rank',
       render: (_, record, index) => (
-        <span style={{ 
-          fontWeight: 'bold', 
-          fontSize: '14px',
-          color: index === 0 ? '#faad14' : index === 1 ? '#52c41a' : '#1890ff'
-        }}>
+        <span className={`font-bold text-sm ${
+          index === 0 ? 'text-yellow-500' : 
+          index === 1 ? 'text-green-500' : 
+          'text-blue-500'
+        }`}>
           {index + 1}
         </span>
       ),
@@ -131,25 +131,13 @@ const AllGroupStandings = () => {
       title: '隊伍',
       key: 'team',
       render: (_, record) => (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div className="flex items-center">
           <div 
-            style={{ 
-              width: 12, 
-              height: 12, 
-              backgroundColor: record.team_color, 
-              marginRight: 6,
-              border: '1px solid #d9d9d9',
-              borderRadius: '2px'
-            }} 
+            className="w-3 h-3 mr-1.5 border border-gray-300 rounded-sm"
+            style={{ backgroundColor: record.team_color }}
           />
           <span 
-            style={{ 
-              fontWeight: 'bold', 
-              fontSize: '13px',
-              color: '#1890ff',
-              cursor: 'pointer',
-              textDecoration: 'underline'
-            }}
+            className="font-bold text-xs text-blue-500 cursor-pointer underline hover:text-blue-600"
             onClick={() => navigate(`/teams/${record.team_id}`)}
           >
             {getDisplayTeamName(record.team_name)}
@@ -170,7 +158,7 @@ const AllGroupStandings = () => {
       key: 'won',
       width: 40,
       align: 'center',
-      render: (won) => <span style={{ color: '#52c41a', fontWeight: 'bold' }}>{won}</span>
+      render: (won) => <span className="text-green-500 font-bold">{won}</span>
     },
     {
       title: '平',
@@ -178,7 +166,7 @@ const AllGroupStandings = () => {
       key: 'drawn',
       width: 40,
       align: 'center',
-      render: (drawn) => <span style={{ color: '#faad14', fontWeight: 'bold' }}>{drawn}</span>
+      render: (drawn) => <span className="text-yellow-500 font-bold">{drawn}</span>
     },
     {
       title: '負',
@@ -186,7 +174,7 @@ const AllGroupStandings = () => {
       key: 'lost',
       width: 40,
       align: 'center',
-      render: (lost) => <span style={{ color: '#ff4d4f', fontWeight: 'bold' }}>{lost}</span>
+      render: (lost) => <span className="text-red-500 font-bold">{lost}</span>
     },
     {
       title: '進',
@@ -210,10 +198,9 @@ const AllGroupStandings = () => {
       render: (_, record) => {
         const diff = record.goals_for - record.goals_against;
         return (
-          <span style={{ 
-            color: diff > 0 ? '#52c41a' : diff < 0 ? '#ff4d4f' : '#666',
-            fontWeight: 'bold'
-          }}>
+          <span className={`font-bold ${
+            diff > 0 ? 'text-green-500' : diff < 0 ? 'text-red-500' : 'text-gray-600'
+          }`}>
             {diff > 0 ? '+' : ''}{diff}
           </span>
         );
@@ -226,11 +213,7 @@ const AllGroupStandings = () => {
       width: 50,
       align: 'center',
       render: (points) => (
-        <span style={{ 
-          fontSize: '14px', 
-          fontWeight: 'bold', 
-          color: '#1890ff' 
-        }}>
+        <span className="text-sm font-bold text-blue-500">
           {points}
         </span>
       )
@@ -239,7 +222,7 @@ const AllGroupStandings = () => {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px' }}>
+      <div className="text-center py-12">
         <Spin size="large" />
         <p>載入中...</p>
       </div>
@@ -247,8 +230,8 @@ const AllGroupStandings = () => {
   }
 
   return (
-    <div style={{ padding: '24px' }}>
-      <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="p-6">
+      <div className="mb-6 flex justify-between items-center">
         <Title level={2}>
           <BarChartOutlined /> 所有小組積分榜
         </Title>
@@ -272,7 +255,7 @@ const AllGroupStandings = () => {
       </div>
 
       {/* 統計概覽 */}
-      <Card style={{ marginBottom: '24px' }}>
+      <Card className="mb-6">
         <Row gutter={16}>
           <Col span={4}>
             <Statistic title="小組數" value={stats.totalGroups} />
@@ -312,13 +295,13 @@ const AllGroupStandings = () => {
             <Col xs={24} sm={12} lg={8} xl={6} key={group.group_id}>
               <Card 
                 title={
-                  <div style={{ textAlign: 'center' }}>
-                    <TrophyOutlined style={{ marginRight: '8px' }} />
+                  <div className="text-center">
+                    <TrophyOutlined className="mr-2" />
                     小組 {group.group_name}
                   </div>
                 }
                 size="small"
-                style={{ height: '100%' }}
+                className="h-full">
               >
                 <Table
                   columns={standingsColumns}
@@ -335,8 +318,8 @@ const AllGroupStandings = () => {
       )}
 
       {standings.length > 0 && (
-        <Card style={{ marginTop: '24px' }}>
-          <div style={{ fontSize: '12px', color: '#666' }}>
+        <Card className="mt-6">
+          <div className="text-xs text-gray-600">
             <p><strong>積分規則：</strong> 勝利 3分，平局 1分，失敗 0分</p>
             <p><strong>排名規則：</strong> 積分 → 淨勝球 → 進球數</p>
             <p><strong>說明：</strong> 場=已踢場次，勝平負=勝平負場次，進失=進球失球，淨=淨勝球，分=積分</p>

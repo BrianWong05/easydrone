@@ -101,10 +101,9 @@ const GroupLeaderboard = () => {
       width: 60,
       render: (_, __, index) => (
         <span
-          style={{
-            fontWeight: "bold",
-            color: index < 2 ? "#52c41a" : "#666",
-          }}
+          className={`font-bold ${
+            index < 2 ? "text-green-500" : "text-gray-600"
+          }`}
         >
           {index + 1}
         </span>
@@ -116,14 +115,11 @@ const GroupLeaderboard = () => {
       key: "name",
       render: (name, record, index) => (
         <Space>
-          {index < 2 && <TrophyOutlined style={{ color: "#faad14" }} />}
+          {index < 2 && <TrophyOutlined className="text-yellow-500" />}
           <span
-            style={{
-              fontWeight: index < 2 ? "bold" : "normal",
-              color: "#1890ff",
-              cursor: "pointer",
-              textDecoration: "underline"
-            }}
+            className={`${
+              index < 2 ? "font-bold" : "font-normal"
+            } text-blue-500 cursor-pointer underline hover:text-blue-600`}
             onClick={() => navigate(`/tournaments/${tournamentId}/teams/${record.team_id}`)}
           >
             {name}
@@ -136,7 +132,7 @@ const GroupLeaderboard = () => {
       dataIndex: "points",
       key: "points",
       width: 60,
-      render: (points) => <span style={{ fontWeight: "bold", color: "#1890ff" }}>{points}</span>,
+      render: (points) => <span className="font-bold text-blue-500">{points}</span>,
     },
     {
       title: t('standings.played', { ns: 'group' }),
@@ -149,21 +145,21 @@ const GroupLeaderboard = () => {
       dataIndex: "won",
       key: "won",
       width: 50,
-      render: (won) => <span style={{ color: "#52c41a" }}>{won}</span>,
+      render: (won) => <span className="text-green-500">{won}</span>,
     },
     {
       title: t('standings.drawn', { ns: 'group' }),
       dataIndex: "drawn",
       key: "drawn",
       width: 50,
-      render: (drawn) => <span style={{ color: "#faad14" }}>{drawn}</span>,
+      render: (drawn) => <span className="text-yellow-500">{drawn}</span>,
     },
     {
       title: t('standings.lost', { ns: 'group' }),
       dataIndex: "lost",
       key: "lost",
       width: 50,
-      render: (lost) => <span style={{ color: "#ff4d4f" }}>{lost}</span>,
+      render: (lost) => <span className="text-red-500">{lost}</span>,
     },
     {
       title: t('standings.goalsFor', { ns: 'group' }),
@@ -185,10 +181,9 @@ const GroupLeaderboard = () => {
         const gd = record.gf - record.ga;
         return (
           <span
-            style={{
-              color: gd > 0 ? "#52c41a" : gd < 0 ? "#ff4d4f" : "#666",
-              fontWeight: "bold",
-            }}
+            className={`font-bold ${
+              gd > 0 ? "text-green-500" : gd < 0 ? "text-red-500" : "text-gray-600"
+            }`}
           >
             {gd > 0 ? "+" : ""}
             {gd}
@@ -199,9 +194,9 @@ const GroupLeaderboard = () => {
   ];
 
   return (
-    <div style={{ padding: "24px" }}>
-      <Space direction="vertical" size="large" style={{ width: "100%" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    <div className="p-6">
+      <Space direction="vertical" size="large" className="w-full">
+        <div className="flex justify-between items-center">
           <Title level={2}>{t('group.leaderboard', { ns: 'group' })}</Title>
           <Button 
             icon={<ReloadOutlined />} 
@@ -219,7 +214,7 @@ const GroupLeaderboard = () => {
               <Card
                 title={
                   <Space>
-                    <span style={{ fontSize: "18px", fontWeight: "bold" }}>{t('group.group', { ns: 'group' })} {group.group_name}</span>
+                    <span className="text-lg font-bold">{t('group.group', { ns: 'group' })} {group.group_name}</span>
                     <Tag color="blue">
                       {group.current_teams || group.team_count || 0}/{group.max_teams} {t('match:match.teams')}
                     </Tag>
@@ -227,7 +222,7 @@ const GroupLeaderboard = () => {
                 }
                 size="small"
               >
-                <Space direction="vertical" style={{ width: "100%" }} size="middle">
+                <Space direction="vertical" className="w-full" size="middle">
                   <div>
                     <Text type="secondary">{t('list.teamCompletion', { ns: 'group' })}</Text>
                     <Progress
@@ -239,20 +234,20 @@ const GroupLeaderboard = () => {
 
                   <div>
                     <Text type="secondary">{t('group.progress', { ns: 'group' })}</Text>
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                    <div className="flex items-center gap-2">
                       <Progress
                         percent={group.total_matches > 0 ? Math.round((group.completed_matches / group.total_matches) * 100) : 0}
                         size="small"
                         status={group.completed_matches === group.total_matches && group.total_matches > 0 ? "success" : "active"}
                       />
-                      <Text style={{ fontSize: "12px", color: "#666", whiteSpace: "nowrap" }}>
+                      <Text className="text-xs text-gray-600 whitespace-nowrap">
                         ({group.completed_matches}/{group.total_matches}{t('group.matches', { ns: 'group' })})
                       </Text>
                     </div>
                   </div>
 
                   <div>
-                    <Text strong style={{ marginBottom: 8, display: "block" }}>
+                    <Text strong className="mb-2 block">
                       {t('group.standings', { ns: 'group' })}
                     </Text>
                     <Table
@@ -272,7 +267,7 @@ const GroupLeaderboard = () => {
 
         {groups.length === 0 && !loading && (
           <Card>
-            <div style={{ textAlign: "center", padding: "40px 0" }}>
+            <div className="text-center py-10">
               <Text type="secondary">{t('messages.noGroupData', { ns: 'group' })}</Text>
             </div>
           </Card>

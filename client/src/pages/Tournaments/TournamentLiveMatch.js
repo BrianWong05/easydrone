@@ -686,16 +686,16 @@ const TournamentLiveMatch = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: "24px", textAlign: "center" }}>
+      <div className="p-6 text-center">
         <Spin size="large" />
-        <div style={{ marginTop: 16 }}>{t('messages.loadingMatches')}</div>
+        <div className="mt-4">{t('messages.loadingMatches')}</div>
       </div>
     );
   }
 
   if (!matchData) {
     return (
-      <div style={{ padding: "24px", textAlign: "center" }}>
+      <div className="p-6 text-center">
         <Title level={3}>{t('messages.matchNotFound', { defaultValue: '比賽不存在' })}</Title>
         <Button onClick={handleBack}>{t('match:actions.backToMatchList')}</Button>
       </div>
@@ -703,15 +703,15 @@ const TournamentLiveMatch = () => {
   }
 
   return (
-    <div style={{ padding: "24px", backgroundColor: "#f0f2f5", minHeight: "100vh" }}>
-      <Space direction="vertical" size="large" style={{ width: "100%" }}>
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <Space direction="vertical" size="large" className="w-full">
         {/* 頁面標題和控制按鈕 */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-4">
             <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
               {t('common:buttons.back')}
             </Button>
-            <Title level={2} style={{ margin: 0, color: "#fff" }}>
+            <Title level={2} className="m-0 text-white">
               <span
                 style={{
                   background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
@@ -732,7 +732,7 @@ const TournamentLiveMatch = () => {
               </Button>
             )}
             {matchStarted && matchData.match_status === "active" && !isHalfTime && !isOvertime && (
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", width: "400px" }}>
+              <div className="grid grid-cols-2 gap-2 w-96">
                 {/* Top Row */}
                 <Button danger size="large" icon={<StopOutlined />} onClick={() => setEndSessionModalVisible(true)}>
                   {currentHalf === 1 ? t('match:actions.endFirstHalf') : currentHalf === 2 ? t('match:actions.endSecondHalf') : t('match:actions.endOvertime')}
@@ -771,7 +771,7 @@ const TournamentLiveMatch = () => {
                   size="large" 
                   icon={<PauseCircleOutlined />} 
                   onClick={() => setHalfTimeModalVisible(true)}
-                  style={{ marginLeft: "8px" }}
+                  className="ml-2"
                 >
                   {t('match:actions.halfTimeTimer')}
                 </Button>
@@ -783,7 +783,7 @@ const TournamentLiveMatch = () => {
                 size="large"
                 icon={<PlayCircleOutlined />}
                 onClick={handleStartOvertime}
-                style={{ backgroundColor: "#ff4d4f" }}
+                className="bg-red-500"
               >
                 開始延長賽
               </Button>
@@ -792,19 +792,19 @@ const TournamentLiveMatch = () => {
         </div>
 
         {/* 比賽信息卡片 */}
-        <Card style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)", border: "none" }}>
+        <Card className="border-none" style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}>
           <Row gutter={[24, 24]} align="middle">
             <Col xs={24} lg={8}>
-              <div style={{ textAlign: "center", color: "#fff" }}>
-                <Title level={3} style={{ color: "#fff", marginBottom: 8 }}>
+              <div className="text-center text-white">
+                <Title level={3} className="text-white mb-2">
                   {matchData.match_number}
                 </Title>
-                <Text style={{ color: "#fff", fontSize: "16px" }}>{getMatchTypeText(matchData)}</Text>
+                <Text className="text-white text-base">{getMatchTypeText(matchData)}</Text>
               </div>
             </Col>
 
             <Col xs={24} lg={8}>
-              <div style={{ textAlign: "center" }}>
+              <div className="text-center">
                 <Title
                   level={1}
                   style={{
@@ -817,11 +817,11 @@ const TournamentLiveMatch = () => {
                 >
                   {formatTime(remainingTime)}
                 </Title>
-                <Text style={{ color: "#fff", fontSize: "14px" }}>/ {formatMatchDuration(matchData.match_time)}</Text>
-                <div style={{ marginTop: 8 }}>
+                <Text className="text-white text-sm">/ {formatMatchDuration(matchData.match_time)}</Text>
+                <div className="mt-2">
                   <Tag
                     color={currentHalf === 1 ? "blue" : currentHalf === 2 ? "green" : "red"}
-                    style={{ fontSize: "12px" }}
+                    className="text-xs"
                   >
                     {isHalfTime
                       ? t('match:actions.halfTime')
@@ -838,7 +838,7 @@ const TournamentLiveMatch = () => {
             </Col>
 
             <Col xs={24} lg={8}>
-              <div style={{ textAlign: "center", color: "#fff" }}>
+              <div className="text-center text-white">
                 <Tag
                   color={
                     matchData.match_status === "active"
@@ -847,7 +847,7 @@ const TournamentLiveMatch = () => {
                       ? "blue"
                       : "orange"
                   }
-                  style={{ fontSize: "14px", padding: "4px 12px" }}
+                  className="text-sm px-3 py-1"
                 >
                   {matchData.match_status === "pending"
                     ? t('status.pending')
@@ -867,25 +867,25 @@ const TournamentLiveMatch = () => {
           <Col xs={24} lg={12}>
             <Card
               title={
-                <div style={{ textAlign: "center", fontSize: "64px", fontWeight: "bold", color: "#1890ff" }}>
+                <div className="text-center text-6xl font-bold text-blue-500">
                   {getDisplayTeamName(matchData.team1_name)}
                 </div>
               }
-              style={{ height: "450px" }}
+              className="h-96"
             >
-              <div style={{ textAlign: "center" }}>
-                <div style={{ marginBottom: 24 }}>
-                  <Title level={1} style={{ fontSize: "120px", margin: 0, color: "#1890ff", fontWeight: "bold" }}>
+              <div className="text-center">
+                <div className="mb-6">
+                  <Title level={1} className="text-9xl m-0 text-blue-500 font-bold">
                     {team1Score}
                   </Title>
-                  <div style={{ marginTop: 16 }}>
+                  <div className="mt-4">
                     <Button
                       type="primary"
                       icon={<PlusOutlined />}
                       size="large"
                       onClick={() => handleScoreChange(1, "score", 1)}
                       disabled={!matchStarted || matchData.match_status !== "active"}
-                      style={{ marginRight: 8 }}
+                      className="mr-2"
                     >
                       +1
                     </Button>
@@ -902,13 +902,13 @@ const TournamentLiveMatch = () => {
 
                 <div>
                   <Text strong>{t('statistics.fouls')}: </Text>
-                  <span style={{ fontSize: "24px", color: "#faad14" }}>{team1Fouls}</span>
-                  <div style={{ marginTop: 8 }}>
+                  <span className="text-2xl text-yellow-500">{team1Fouls}</span>
+                  <div className="mt-2">
                     <Button
                       size="small"
                       onClick={() => handleScoreChange(1, "foul", 1)}
                       disabled={!matchStarted || matchData.match_status !== "active"}
-                      style={{ marginRight: 4 }}
+                      className="mr-1"
                     >
                       +{t('statistics.fouls')}
                     </Button>
@@ -928,25 +928,25 @@ const TournamentLiveMatch = () => {
           <Col xs={24} lg={12}>
             <Card
               title={
-                <div style={{ textAlign: "center", fontSize: "64px", fontWeight: "bold", color: "#f5222d" }}>
+                <div className="text-center text-6xl font-bold text-red-500">
                   {getDisplayTeamName(matchData.team2_name)}
                 </div>
               }
-              style={{ height: "450px" }}
+              className="h-96"
             >
-              <div style={{ textAlign: "center" }}>
-                <div style={{ marginBottom: 24 }}>
-                  <Title level={1} style={{ fontSize: "120px", margin: 0, color: "#f5222d", fontWeight: "bold" }}>
+              <div className="text-center">
+                <div className="mb-6">
+                  <Title level={1} className="text-9xl m-0 text-red-500 font-bold">
                     {team2Score}
                   </Title>
-                  <div style={{ marginTop: 16 }}>
+                  <div className="mt-4">
                     <Button
                       type="primary"
                       icon={<PlusOutlined />}
                       size="large"
                       onClick={() => handleScoreChange(2, "score", 1)}
                       disabled={!matchStarted || matchData.match_status !== "active"}
-                      style={{ marginRight: 8 }}
+                      className="mr-2"
                     >
                       +1
                     </Button>
@@ -963,13 +963,13 @@ const TournamentLiveMatch = () => {
 
                 <div>
                   <Text strong>{t('statistics.fouls')}: </Text>
-                  <span style={{ fontSize: "24px", color: "#faad14" }}>{team2Fouls}</span>
-                  <div style={{ marginTop: 8 }}>
+                  <span className="text-2xl text-yellow-500">{team2Fouls}</span>
+                  <div className="mt-2">
                     <Button
                       size="small"
                       onClick={() => handleScoreChange(2, "foul", 1)}
                       disabled={!matchStarted || matchData.match_status !== "active"}
-                      style={{ marginRight: 4 }}
+                      className="mr-1"
                     >
                       +{t('statistics.fouls')}
                     </Button>
@@ -998,8 +998,8 @@ const TournamentLiveMatch = () => {
               color: "#fff",
             }}
           >
-            <div style={{ textAlign: "center", padding: "8px 0" }}>
-              <Text style={{ color: "#fff", fontSize: "16px" }}>
+            <div className="text-center py-2">
+              <Text className="text-white text-base">
                 <kbd
                   style={{
                     fontSize: "16px",
@@ -1027,8 +1027,8 @@ const TournamentLiveMatch = () => {
               color: "#fff",
             }}
           >
-            <div style={{ textAlign: "center", padding: "8px 0" }}>
-              <Text style={{ color: "#fff", fontSize: "16px" }}>
+            <div className="text-center py-2">
+              <Text className="text-white text-base">
                 <kbd
                   style={{
                     fontSize: "16px",
@@ -1055,30 +1055,30 @@ const TournamentLiveMatch = () => {
               color: "#fff",
             }}
           >
-            <Row gutter={[16, 8]} style={{ color: "#fff" }}>
+            <Row gutter={[16, 8]} className="text-white">
               <Col xs={12} sm={6}>
-                <Text style={{ color: "#fff" }}>
+                <Text className="text-white">
                   <kbd>Q</kbd>/<kbd>W</kbd>: {getDisplayTeamName(matchData.team1_name)} {t('live.score', { defaultValue: '得分' })} +/-
                 </Text>
               </Col>
               <Col xs={12} sm={6}>
-                <Text style={{ color: "#fff" }}>
+                <Text className="text-white">
                   <kbd>O</kbd>/<kbd>P</kbd>: {getDisplayTeamName(matchData.team2_name)} {t('live.score', { defaultValue: '得分' })} +/-
                 </Text>
               </Col>
               <Col xs={12} sm={6}>
-                <Text style={{ color: "#fff" }}>
+                <Text className="text-white">
                   <kbd>A</kbd>/<kbd>S</kbd>: {getDisplayTeamName(matchData.team1_name)} {t('statistics.fouls')} +/-
                 </Text>
               </Col>
               <Col xs={12} sm={6}>
-                <Text style={{ color: "#fff" }}>
+                <Text className="text-white">
                   <kbd>K</kbd>/<kbd>L</kbd>: {getDisplayTeamName(matchData.team2_name)} {t('statistics.fouls')} +/-
                 </Text>
               </Col>
-              <Col xs={24} sm={24} style={{ textAlign: "center", marginTop: 8 }}>
-                <Text style={{ color: "#fff", fontSize: "16px" }}>
-                  <kbd style={{ fontSize: "14px", padding: "4px 8px" }}>{t('live.spacebar', { defaultValue: '空格' })}</kbd>: {t('live.pauseResumeTimer', { defaultValue: '開始/暫停計時器' })}
+              <Col xs={24} sm={24} className="text-center mt-2">
+                <Text className="text-white text-base">
+                  <kbd className="text-sm px-2 py-1">{t('live.spacebar', { defaultValue: '空格' })}</kbd>: {t('live.pauseResumeTimer', { defaultValue: '開始/暫停計時器' })}
                 </Text>
               </Col>
             </Row>
@@ -1095,12 +1095,12 @@ const TournamentLiveMatch = () => {
                   color={event.event_type === "goal" ? "green" : event.event_type === "foul" ? "red" : "blue"}
                 >
                   <div>
-                    <Text strong>{event.event_time}</Text> -<Text style={{ marginLeft: 8 }}>{event.team_name}</Text>
-                    <Tag color="blue" style={{ marginLeft: 8 }}>
+                    <Text strong>{event.event_time}</Text> -<Text className="ml-2">{event.team_name}</Text>
+                    <Tag color="blue" className="ml-2">
                       {event.event_type === "goal" ? "進球" : event.event_type === "foul" ? "犯規" : event.event_type}
                     </Tag>
-                    {event.athlete_name && <Text style={{ marginLeft: 8 }}>({event.athlete_name})</Text>}
-                    {event.description && <div style={{ marginTop: 4, color: "#666" }}>{event.description}</div>}
+                    {event.athlete_name && <Text className="ml-2">({event.athlete_name})</Text>}
+                    {event.description && <div className="mt-1 text-gray-600">{event.description}</div>}
                   </div>
                 </Timeline.Item>
               ))}
@@ -1120,20 +1120,20 @@ const TournamentLiveMatch = () => {
           maskClosable={false}
           width={600}
         >
-          <div style={{ textAlign: "center", padding: "20px 0" }}>
+          <div className="text-center py-5">
             <Title level={3}>⏰ {t('match:actions.halfTime')}</Title>
             <p>{t('match:live.firstHalfEndedMessage')}</p>
-            <p style={{ fontSize: "24px", fontWeight: "bold", color: "#1890ff" }}>
+            <p className="text-2xl font-bold text-blue-500">
               {getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score}{" "}
               {getDisplayTeamName(matchData.team2_name)}
             </p>
 
             {/* 中場休息計時器 */}
-            <div style={{ margin: "30px 0", padding: "20px", backgroundColor: "#f5f5f5", borderRadius: "8px" }}>
-              <Title level={4} style={{ marginBottom: "16px" }}>{t('match:actions.halfTimeTimer')}</Title>
+            <div className="my-8 p-5 bg-gray-100 rounded-lg">
+              <Title level={4} className="mb-4">{t('match:actions.halfTimeTimer')}</Title>
               
               {/* 計時器顯示 */}
-              <div style={{ marginBottom: "20px" }}>
+              <div className="mb-5">
                 <Title 
                   level={1} 
                   style={{ 
@@ -1146,21 +1146,21 @@ const TournamentLiveMatch = () => {
                 >
                   {formatTime(halfTimeRemaining)}
                 </Title>
-                <Text style={{ fontSize: "14px", color: "#666" }}>
+                <Text className="text-sm text-gray-600">
                   / {halfTimeMinutes}分{halfTimeSeconds}秒
                 </Text>
               </div>
 
               {/* 時間設置 - 始終顯示，就像延長賽設置一樣 */}
-              <div style={{ marginBottom: "16px" }}>
+              <div className="mb-4">
                 <Text strong>{t('match:live.duration')}：</Text>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", marginTop: "8px" }}>
+                <div className="flex items-center justify-center gap-2 mt-2">
                   <InputNumber
                     min={0}
                     max={30}
                     value={halfTimeMinutes}
                     onChange={setHalfTimeMinutes}
-                    style={{ width: "80px" }}
+                    className="w-20"
                     disabled={halfTimeRunning}
                   />
                   <Text>分</Text>
@@ -1169,12 +1169,12 @@ const TournamentLiveMatch = () => {
                     max={59}
                     value={halfTimeSeconds}
                     onChange={setHalfTimeSeconds}
-                    style={{ width: "80px" }}
+                    className="w-20"
                     disabled={halfTimeRunning}
                   />
                   <Text>秒</Text>
                 </div>
-                <div style={{ marginTop: "8px", color: "#666", fontSize: "12px" }}>
+                <div className="mt-2 text-gray-600 text-xs">
                   {t('match:live.totalDurationSeconds', { minutes: halfTimeMinutes, seconds: halfTimeSeconds, totalSeconds: halfTimeMinutes * 60 + halfTimeSeconds })}
                 </div>
               </div>
@@ -1202,7 +1202,7 @@ const TournamentLiveMatch = () => {
               </Space>
             </div>
 
-            <p style={{ color: "#666" }}>
+            <p className="text-gray-600">
               {halfTimeRemaining > 0 
                 ? t('match:live.halfTimeInProgress')
                 : t('match:live.readyForSecondHalf')
@@ -1222,22 +1222,22 @@ const TournamentLiveMatch = () => {
           closable={false}
           maskClosable={false}
         >
-          <div style={{ textAlign: "center", padding: "20px 0" }}>
+          <div className="text-center py-5">
             <Title level={3}>🏆 {t('match:live.overtimeTitle')}</Title>
             <p>{t('match:live.matchTiedNeedsOvertimeDesc')}</p>
             <p>{t('match:live.currentScoreLabel')}：</p>
-            <p style={{ fontSize: "24px", fontWeight: "bold", color: "#1890ff" }}>
+            <p className="text-2xl font-bold text-blue-500">
               {getDisplayTeamName(matchData.team1_name)} {team1Score} : {team2Score}{" "}
               {getDisplayTeamName(matchData.team2_name)}
             </p>
             <p>
               {t('match:live.foulsLabel')}：{team1Fouls} : {team2Fouls}
             </p>
-            <p style={{ color: "#666", fontSize: "14px" }}>
+            <p className="text-gray-600 text-sm">
               ⚽ {t('match:live.winCondition')}
             </p>
 
-            <div style={{ margin: "20px 0" }}>
+            <div className="my-5">
               <Text strong>{t('match:live.overtimeDuration')}：</Text>
               <div
                 style={{
@@ -1253,7 +1253,7 @@ const TournamentLiveMatch = () => {
                   max={30}
                   value={overtimeMinutes}
                   onChange={setOvertimeMinutes}
-                  style={{ width: "80px" }}
+                  className="w-20"
                 />
                 <Text>{t('match:live.minutes')}</Text>
                 <InputNumber
@@ -1261,11 +1261,11 @@ const TournamentLiveMatch = () => {
                   max={59}
                   value={overtimeSeconds}
                   onChange={setOvertimeSeconds}
-                  style={{ width: "80px" }}
+                  className="w-20"
                 />
                 <Text>{t('match:live.seconds')}</Text>
               </div>
-              <div style={{ marginTop: "8px", color: "#666", fontSize: "12px" }}>
+              <div className="mt-2 text-gray-600 text-xs">
                 {t('match:live.totalDurationSeconds', { minutes: overtimeMinutes, seconds: overtimeSeconds, totalSeconds: overtimeMinutes * 60 + overtimeSeconds })}
               </div>
             </div>
@@ -1321,15 +1321,15 @@ const TournamentLiveMatch = () => {
                   : getDisplayTeamName(matchData.team2_name);
               const reasonText = getWinReasonText(reason);
               return (
-                <p style={{ color: "#52c41a", fontWeight: "bold" }}>
+                <p className="text-green-500 font-bold">
                   獲勝者：{winnerName} ({reasonText})
                 </p>
               );
             } else {
-              return <p style={{ color: "#faad14", fontWeight: "bold" }}>{t('match:live.result')}：{t('match:live.tie')}</p>;
+              return <p className="text-yellow-500 font-bold">{t('match:live.result')}：{t('match:live.tie')}</p>;
             }
           })()}
-          <p style={{ color: "#999" }}>{t('match:live.irreversibleAction')}</p>
+          <p className="text-gray-400">{t('match:live.irreversibleAction')}</p>
         </Modal>
 
         {/* 結束當前階段確認模態框 */}
@@ -1354,7 +1354,7 @@ const TournamentLiveMatch = () => {
             {t('match:live.remainingTime')}：{Math.floor(remainingTime / 60)}:{(remainingTime % 60).toString().padStart(2, "0")}
           </p>
           {currentHalf === 2 && team1Score === team2Score && (
-            <p style={{ color: "#ff6b35", fontWeight: "bold" }}>⚠️ {t('match:live.tieGameWarning')}</p>
+            <p className="text-orange-500 font-bold">⚠️ {t('match:live.tieGameWarning')}</p>
           )}
         </Modal>
 
@@ -1368,20 +1368,20 @@ const TournamentLiveMatch = () => {
           cancelText={t('common:buttons.cancel')}
           okType="primary"
         >
-          <div style={{ textAlign: "center", padding: "20px 0" }}>
+          <div className="text-center py-5">
             <Title level={4}>⏰ {t('match:live.setRemainingTime')}</Title>
-            <p style={{ color: "#666", marginBottom: "20px" }}>
+            <p className="text-gray-600 mb-5">
               {t('match:live.canOnlyEditWhenPaused')}
             </p>
             
-            <div style={{ marginBottom: "20px" }}>
+            <div className="mb-5">
               <Text strong>{t('match:live.currentRemainingTime')}：</Text>
-              <span style={{ fontSize: "24px", color: "#1890ff", marginLeft: "8px" }}>
+              <span className="text-2xl text-blue-500 ml-2">
                 {formatTime(remainingTime)}
               </span>
             </div>
 
-            <div style={{ margin: "20px 0" }}>
+            <div className="my-5">
               <Text strong>{t('match:live.setNewTime')}：</Text>
               <div
                 style={{
@@ -1397,7 +1397,7 @@ const TournamentLiveMatch = () => {
                   max={60}
                   value={editMinutes}
                   onChange={setEditMinutes}
-                  style={{ width: "80px" }}
+                  className="w-20"
                 />
                 <Text>{t('common:time.minutes')}</Text>
                 <InputNumber
@@ -1405,22 +1405,22 @@ const TournamentLiveMatch = () => {
                   max={59}
                   value={editSeconds}
                   onChange={setEditSeconds}
-                  style={{ width: "80px" }}
+                  className="w-20"
                 />
                 <Text>{t('common:time.seconds')}</Text>
               </div>
-              <div style={{ marginTop: "8px", color: "#666", fontSize: "12px" }}>
+              <div className="mt-2 text-gray-600 text-xs">
                 {t('match:live.totalDuration')}：{editMinutes}{t('common:time.minutes')}{editSeconds}{t('common:time.seconds')} ({editMinutes * 60 + editSeconds}{t('common:time.seconds')})
               </div>
             </div>
 
-            <div style={{ marginTop: "16px", padding: "12px", backgroundColor: "#f0f2f5", borderRadius: "6px" }}>
-              <Text style={{ fontSize: "16px", color: "#1890ff" }}>
+            <div className="mt-4 p-3 bg-gray-100 rounded-md">
+              <Text className="text-base text-blue-500">
                 {t('match:live.preview')}：{formatTime(editMinutes * 60 + editSeconds)}
               </Text>
             </div>
             
-            <p style={{ color: "#999", fontSize: "12px", marginTop: "16px" }}>
+            <p className="text-gray-400 text-xs mt-4">
               {t('match:live.editTimerNote')}
             </p>
           </div>

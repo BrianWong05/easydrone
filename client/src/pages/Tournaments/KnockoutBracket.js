@@ -218,9 +218,9 @@ const KnockoutBracket = () => {
     if (Object.keys(brackets).length === 0) {
       return (
         <Card>
-          <div style={{ textAlign: "center", padding: "40px" }}>
-            <TrophyOutlined style={{ fontSize: "48px", color: "#ccc", marginBottom: "16px" }} />
-            <Title level={4} style={{ color: "#999" }}>
+          <div className="text-center py-10">
+            <TrophyOutlined className="text-5xl text-gray-300 mb-4" />
+            <Title level={4} className="text-gray-400">
               {t('knockout.noBracketGenerated', { ns: 'tournament' })}
             </Title>
             <Text type="secondary">{t('knockout.useGenerationFunction', { ns: 'tournament' })}</Text>
@@ -264,53 +264,41 @@ const KnockoutBracket = () => {
 
             return (
               <Col key={roundNum} span={24 / regularRounds.length}>
-                <Card size="small" title={roundName} style={{ marginBottom: "16px" }}>
+                <Card size="small" title={roundName} className="mb-4">
                   {matches.map((match) => (
                     <div
                       key={match.match_id}
-                      style={{
-                        border: "1px solid #d9d9d9",
-                        borderRadius: "4px",
-                        padding: "8px",
-                        marginBottom: "8px",
-                        backgroundColor: match.match_status === "completed" ? "#f6ffed" : "#fafafa",
-                        cursor: "pointer",
-                        transition: "all 0.3s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.backgroundColor = match.match_status === "completed" ? "#f0f9ff" : "#e6f7ff";
-                        e.target.style.borderColor = "#1890ff";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.backgroundColor = match.match_status === "completed" ? "#f6ffed" : "#fafafa";
-                        e.target.style.borderColor = "#d9d9d9";
-                      }}
+                      className={`border border-gray-300 rounded p-2 mb-2 cursor-pointer transition-all duration-300 hover:border-blue-500 ${
+                        match.match_status === "completed" 
+                          ? "bg-green-50 hover:bg-blue-50" 
+                          : "bg-gray-50 hover:bg-blue-50"
+                      }`}
                       onClick={() => navigate(`/tournaments/${tournamentId}/matches/${match.match_id}`)}
                       title={t('knockout.clickToViewDetails', { ns: 'tournament' })}
                     >
-                      <div style={{ fontWeight: "bold", marginBottom: "4px" }}>{getMatchDisplayName(match)}</div>
-                      <div style={{ fontSize: "12px" }}>
+                      <div className="font-bold mb-1">{getMatchDisplayName(match)}</div>
+                      <div className="text-xs">
                         {getTeamDisplayName(match, "team1", brackets)} vs {getTeamDisplayName(match, "team2", brackets)}
                       </div>
                       {/* Match Date and Time */}
-                      <div style={{ fontSize: "11px", color: "#666", marginTop: "4px" }}>
+                      <div className="text-xs text-gray-600 mt-1">
                         {match.match_date ? (
                           <>📅 {moment(match.match_date).format('MM/DD HH:mm')}</>
                         ) : (
-                          <span style={{ color: '#ccc' }}>📅 {t('knockout.timeTBD', { ns: 'tournament' })}</span>
+                          <span className="text-gray-300">📅 {t('knockout.timeTBD', { ns: 'tournament' })}</span>
                         )}
                       </div>
                       {match.match_status === "completed" && (
                         <>
-                          <div style={{ fontSize: "14px", fontWeight: "bold", color: "#1890ff", marginTop: "4px" }}>
+                          <div className="text-sm font-bold text-blue-500 mt-1">
                             {match.team1_score || 0} : {match.team2_score || 0}
                           </div>
-                          <div style={{ fontSize: "12px", color: "#52c41a", marginTop: "2px" }}>
+                          <div className="text-xs text-green-500 mt-0.5">
                             {t('knockout.winner', { ns: 'tournament' })}: {getDisplayTeamName(match.winner_name)}
                           </div>
                         </>
                       )}
-                      <Tag color={getStatusColor(match.match_status)} size="small" style={{ marginTop: "4px" }}>
+                      <Tag color={getStatusColor(match.match_status)} size="small" className="mt-1">
                         {getStatusText(match.match_status)}
                       </Tag>
                     </div>
@@ -323,55 +311,43 @@ const KnockoutBracket = () => {
         
         {/* 季軍賽 */}
         {thirdPlaceMatches.length > 0 && (
-          <Row gutter={16} style={{ marginTop: "16px" }}>
+          <Row gutter={16} className="mt-4">
             <Col span={24}>
-              <Card size="small" title={t('knockout.third', { ns: 'tournament' })} style={{ backgroundColor: "#fff7e6", borderColor: "#ffa940" }}>
+              <Card size="small" title={t('knockout.third', { ns: 'tournament' })} className="bg-orange-50 border-orange-400">
                 {thirdPlaceMatches.map((match) => (
                   <div
                     key={match.match_id}
-                    style={{
-                      border: "1px solid #ffa940",
-                      borderRadius: "4px",
-                      padding: "8px",
-                      marginBottom: "8px",
-                      backgroundColor: match.match_status === "completed" ? "#fff2e8" : "#fffbf0",
-                      cursor: "pointer",
-                      transition: "all 0.3s ease",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.target.style.backgroundColor = match.match_status === "completed" ? "#ffe7ba" : "#fff1b8";
-                      e.target.style.borderColor = "#fa8c16";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.target.style.backgroundColor = match.match_status === "completed" ? "#fff2e8" : "#fffbf0";
-                      e.target.style.borderColor = "#ffa940";
-                    }}
+                    className={`border border-orange-400 rounded p-2 mb-2 cursor-pointer transition-all duration-300 hover:border-orange-500 ${
+                      match.match_status === "completed" 
+                        ? "bg-orange-100 hover:bg-orange-200" 
+                        : "bg-orange-25 hover:bg-orange-100"
+                    }`}
                     onClick={() => navigate(`/tournaments/${tournamentId}/matches/${match.match_id}`)}
                     title={t('knockout.clickToViewDetails', { ns: 'tournament' })}
                   >
-                    <div style={{ fontWeight: "bold", marginBottom: "4px", color: "#fa8c16" }}>🥉 {getMatchDisplayName(match)}</div>
-                    <div style={{ fontSize: "12px" }}>
+                    <div className="font-bold mb-1 text-orange-500">🥉 {getMatchDisplayName(match)}</div>
+                    <div className="text-xs">
                       {getTeamDisplayName(match, "team1", brackets)} vs {getTeamDisplayName(match, "team2", brackets)}
                     </div>
                     {/* Match Date and Time for Third Place */}
-                    <div style={{ fontSize: "11px", color: "#fa8c16", marginTop: "4px" }}>
+                    <div className="text-xs text-orange-500 mt-1">
                       {match.match_date ? (
                         <>📅 {moment(match.match_date).format('MM/DD HH:mm')}</>
                       ) : (
-                        <span style={{ color: '#ffb84d' }}>📅 {t('knockout.timeTBD', { ns: 'tournament' })}</span>
+                        <span className="text-orange-300">📅 {t('knockout.timeTBD', { ns: 'tournament' })}</span>
                       )}
                     </div>
                     {match.match_status === "completed" && (
                       <>
-                        <div style={{ fontSize: "14px", fontWeight: "bold", color: "#fa8c16", marginTop: "4px" }}>
+                        <div className="text-sm font-bold text-orange-500 mt-1">
                           {match.team1_score || 0} : {match.team2_score || 0}
                         </div>
-                        <div style={{ fontSize: "12px", color: "#fa8c16", marginTop: "2px" }}>
+                        <div className="text-xs text-orange-500 mt-0.5">
                           {t('knockout.thirdPlace', { ns: 'tournament' })}: {getDisplayTeamName(match.winner_name)}
                         </div>
                       </>
                     )}
-                    <Tag color="orange" size="small" style={{ marginTop: "4px" }}>
+                    <Tag color="orange" size="small" className="mt-1">
                       {getStatusText(match.match_status)}
                     </Tag>
                   </div>
@@ -501,12 +477,12 @@ const KnockoutBracket = () => {
   const typeInfo = getTournamentTypeInfo();
 
   return (
-    <div style={{ padding: "24px" }}>
-      <div style={{ marginBottom: 24 }}>
+    <div className="p-6">
+      <div className="mb-6">
         <Button
           icon={<ArrowLeftOutlined />}
           onClick={() => navigate(`/tournaments/${tournamentId}`)}
-          style={{ marginBottom: 16 }}
+          className="mb-4"
         >
           {t('navigation.backToTournamentDetail', { ns: 'tournament' })}
         </Button>
@@ -518,13 +494,13 @@ const KnockoutBracket = () => {
           message={`${t('tournament.type', { ns: 'tournament' })}：${typeInfo.type}`}
           description={typeInfo.description}
           type={tournament?.tournament_type === "group" ? "warning" : "info"}
-          style={{ marginBottom: 24 }}
+          className="mb-6"
           showIcon
         />
       )}
 
       {tournament?.tournament_type !== "group" && (
-        <Card title={t('knockout.generateTitle', { ns: 'tournament' })} style={{ marginBottom: 24 }}>
+        <Card title={t('knockout.generateTitle', { ns: 'tournament' })} className="mb-6">
           <Form form={form} layout="vertical" onFinish={generateKnockout}>
             <Row gutter={16}>
               <Col span={6}>
@@ -533,20 +509,20 @@ const KnockoutBracket = () => {
                   name="team_count"
                   rules={[{ required: true, message: t('knockout.selectTeamCount', { ns: 'tournament' }) }]}
                 >
-                  <InputNumber min={2} max={32} style={{ width: "100%" }} placeholder={t('knockout.powerOfTwo', { ns: 'tournament' })} />
+                  <InputNumber min={2} max={32} className="w-full" placeholder={t('knockout.powerOfTwo', { ns: 'tournament' })} />
                 </Form.Item>
-                <div style={{ fontSize: "12px", color: "#666", marginTop: "-16px", marginBottom: "16px" }}>
+                <div className="text-xs text-gray-600 -mt-4 mb-4">
                   {t('knockout.available', { ns: 'tournament' })}: {getTeamCountOptions().join(", ")}
                 </div>
               </Col>
               <Col span={6}>
                 <Form.Item label={t('knockout.matchDate', { ns: 'tournament' })} name="match_date" rules={[{ required: true, message: t('knockout.selectMatchDate', { ns: 'tournament' }) }]}>
-                  <DatePicker style={{ width: "100%" }} />
+                  <DatePicker className="w-full" />
                 </Form.Item>
               </Col>
               <Col span={6}>
                 <Form.Item label={t('knockout.startTime', { ns: 'tournament' })} name="match_time" rules={[{ required: true, message: t('knockout.selectStartTime', { ns: 'tournament' }) }]}>
-                  <TimePicker style={{ width: "100%" }} format="HH:mm" />
+                  <TimePicker className="w-full" format="HH:mm" />
                 </Form.Item>
               </Col>
               <Col span={3}>
@@ -555,7 +531,7 @@ const KnockoutBracket = () => {
                   name="match_minutes"
                   rules={[{ required: true, message: t('knockout.enterMinutes', { ns: 'tournament' }) }]}
                 >
-                  <InputNumber min={1} max={60} style={{ width: "100%" }} placeholder={t('knockout.minutes', { ns: 'tournament' })} />
+                  <InputNumber min={1} max={60} className="w-full" placeholder={t('knockout.minutes', { ns: 'tournament' })} />
                 </Form.Item>
               </Col>
               <Col span={3}>
@@ -564,19 +540,19 @@ const KnockoutBracket = () => {
                   name="match_seconds"
                   rules={[{ required: true, message: t('knockout.enterSeconds', { ns: 'tournament' }) }]}
                 >
-                  <InputNumber min={0} max={59} style={{ width: "100%" }} placeholder={t('knockout.seconds', { ns: 'tournament' })} />
+                  <InputNumber min={0} max={59} className="w-full" placeholder={t('knockout.seconds', { ns: 'tournament' })} />
                 </Form.Item>
               </Col>
             </Row>
 
-            <Row gutter={16} style={{ marginTop: "16px" }}>
+            <Row gutter={16} className="mt-4">
               <Col span={6}>
                 <Form.Item
                   label={t('knockout.intervalMinutes', { ns: 'tournament' })}
                   name="interval_minutes"
                   rules={[{ required: true, message: t('knockout.enterIntervalMinutes', { ns: 'tournament' }) }]}
                 >
-                  <InputNumber min={0} max={120} style={{ width: "100%" }} placeholder={t('knockout.minutes', { ns: 'tournament' })} />
+                  <InputNumber min={0} max={120} className="w-full" placeholder={t('knockout.minutes', { ns: 'tournament' })} />
                 </Form.Item>
               </Col>
               <Col span={6}>
@@ -585,11 +561,11 @@ const KnockoutBracket = () => {
                   name="interval_seconds"
                   rules={[{ required: true, message: t('knockout.enterIntervalSeconds', { ns: 'tournament' }) }]}
                 >
-                  <InputNumber min={0} max={59} style={{ width: "100%" }} placeholder={t('knockout.seconds', { ns: 'tournament' })} />
+                  <InputNumber min={0} max={59} className="w-full" placeholder={t('knockout.seconds', { ns: 'tournament' })} />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <div style={{ padding: "8px 0", color: "#666" }}>
+                <div className="py-2 text-gray-600">
                   <Text type="secondary">
                     {t('knockout.intervalDescription', { ns: 'tournament' })}
                   </Text>
@@ -597,7 +573,7 @@ const KnockoutBracket = () => {
               </Col>
             </Row>
 
-            <Row gutter={16} style={{ marginTop: "16px" }}>
+            <Row gutter={16} className="mt-4">
               <Col span={24}>
                 <Form.Item
                   name="include_third_place"
@@ -607,7 +583,7 @@ const KnockoutBracket = () => {
                     {t('knockout.includeThirdPlace', { ns: 'tournament' })}
                   </Checkbox>
                 </Form.Item>
-                <div style={{ marginTop: "8px", color: "#666", fontSize: "12px" }}>
+                <div className="mt-2 text-gray-600 text-xs">
                   <Text type="secondary">
                     {t('knockout.thirdPlaceDescription', { ns: 'tournament' })}
                   </Text>

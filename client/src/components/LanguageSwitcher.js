@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 
 const { Option } = Select;
 
-const LanguageSwitcher = ({ size = 'default', style = {} }) => {
+const LanguageSwitcher = ({ size = 'default', className = '' }) => {
   const { i18n } = useTranslation();
 
   const languages = [
@@ -31,15 +31,14 @@ const LanguageSwitcher = ({ size = 'default', style = {} }) => {
     i18n.changeLanguage(languageCode);
   };
 
-
   return (
-    <Space style={style}>
-      <GlobalOutlined />
+    <Space className={`flex items-center ${className}`}>
+      <GlobalOutlined className="text-gray-600" />
       <Select
         value={i18n.language}
         onChange={handleLanguageChange}
         size={size}
-        style={{ minWidth: 120 }}
+        className="min-w-[120px]"
         dropdownMatchSelectWidth={false}
       >
         {languages.map(language => (

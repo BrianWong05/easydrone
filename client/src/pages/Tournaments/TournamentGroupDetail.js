@@ -230,7 +230,7 @@ const TournamentGroupDetail = () => {
       render: (match_number, record) => (
         <Button
           type="link"
-          style={{ padding: 0, height: "auto", fontWeight: "bold" }}
+          className="p-0 h-auto font-bold"
           onClick={() => navigate(`/tournaments/${tournamentId}/matches/${record.match_id}`)}
         >
           {match_number}
@@ -243,17 +243,12 @@ const TournamentGroupDetail = () => {
       render: (_, record) => (
         <Space>
           <div
-            style={{
-              width: 12,
-              height: 12,
-              backgroundColor: record.team1_color,
-              borderRadius: "50%",
-              border: "1px solid #d9d9d9",
-            }}
+            className="w-3 h-3 rounded-full border border-gray-300"
+            style={{ backgroundColor: record.team1_color }}
           />
           <Button
             type="link"
-            style={{ padding: 0, height: "auto" }}
+            className="p-0 h-auto"
             onClick={() => navigate(`/tournaments/${tournamentId}/teams/${record.team1_id}`)}
           >
             {getDisplayTeamName(record.team1_name)}
@@ -277,17 +272,12 @@ const TournamentGroupDetail = () => {
       render: (_, record) => (
         <Space>
           <div
-            style={{
-              width: 12,
-              height: 12,
-              backgroundColor: record.team2_color,
-              borderRadius: "50%",
-              border: "1px solid #d9d9d9",
-            }}
+            className="w-3 h-3 rounded-full border border-gray-300"
+            style={{ backgroundColor: record.team2_color }}
           />
           <Button
             type="link"
-            style={{ padding: 0, height: "auto" }}
+            className="p-0 h-auto"
             onClick={() => navigate(`/tournaments/${tournamentId}/teams/${record.team2_id}`)}
           >
             {getDisplayTeamName(record.team2_name)}
@@ -349,7 +339,7 @@ const TournamentGroupDetail = () => {
       key: "rank",
       width: 60,
       render: (_, __, index) => (
-        <Text strong style={{ fontSize: "16px" }}>
+        <Text strong className="text-base">
           {index + 1}
         </Text>
       ),
@@ -360,17 +350,12 @@ const TournamentGroupDetail = () => {
       render: (_, record) => (
         <Space>
           <div
-            style={{
-              width: 12,
-              height: 12,
-              backgroundColor: record.team_color,
-              borderRadius: "50%",
-              border: "1px solid #d9d9d9",
-            }}
+            className="w-3 h-3 rounded-full border border-gray-300"
+            style={{ backgroundColor: record.team_color }}
           />
           <Button
             type="link"
-            style={{ padding: 0, height: "auto", fontWeight: "bold" }}
+            className="p-0 h-auto font-bold"
             onClick={() => navigate(`/tournaments/${tournamentId}/teams/${record.team_id}`)}
           >
             {getDisplayTeamName(record.team_name)}
@@ -391,7 +376,7 @@ const TournamentGroupDetail = () => {
       key: "won",
       align: "center",
       width: 50,
-      render: (won) => <Text style={{ color: "#52c41a", fontWeight: "bold" }}>{won}</Text>,
+      render: (won) => <Text className="text-green-500 font-bold">{won}</Text>,
     },
     {
       title: t('group:standings.drawn'),
@@ -399,7 +384,7 @@ const TournamentGroupDetail = () => {
       key: "drawn",
       align: "center",
       width: 50,
-      render: (drawn) => <Text style={{ color: "#faad14", fontWeight: "bold" }}>{drawn}</Text>,
+      render: (drawn) => <Text className="text-yellow-500 font-bold">{drawn}</Text>,
     },
     {
       title: t('group:standings.lost'),
@@ -407,7 +392,7 @@ const TournamentGroupDetail = () => {
       key: "lost",
       align: "center",
       width: 50,
-      render: (lost) => <Text style={{ color: "#ff4d4f", fontWeight: "bold" }}>{lost}</Text>,
+      render: (lost) => <Text className="text-red-500 font-bold">{lost}</Text>,
     },
     {
       title: t('group:standings.goalsFor'),
@@ -431,7 +416,7 @@ const TournamentGroupDetail = () => {
       render: (_, record) => {
         const diff = record.goals_for - record.goals_against;
         return (
-          <Text style={{ color: diff > 0 ? "#52c41a" : diff < 0 ? "#ff4d4f" : "#666" }}>
+          <Text className={`${diff > 0 ? "text-green-500" : diff < 0 ? "text-red-500" : "text-gray-600"}`}>
             {diff > 0 ? "+" : ""}
             {diff}
           </Text>
@@ -445,7 +430,7 @@ const TournamentGroupDetail = () => {
       align: "center",
       width: 60,
       render: (points) => (
-        <Text strong style={{ fontSize: "16px", color: "#1890ff" }}>
+        <Text strong className="text-base text-blue-500">
           {points}
         </Text>
       ),
@@ -454,7 +439,7 @@ const TournamentGroupDetail = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: "24px", textAlign: "center" }}>
+      <div className="p-6 text-center">
         <Text>{t('common:messages.loading')}</Text>
       </div>
     );
@@ -462,7 +447,7 @@ const TournamentGroupDetail = () => {
 
   if (!group) {
     return (
-      <div style={{ padding: "24px" }}>
+      <div className="p-6">
         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('group:detail.groupNotFound')} />
       </div>
     );
@@ -471,17 +456,17 @@ const TournamentGroupDetail = () => {
   const displayGroupName = group.group_name?.includes("_") ? group.group_name.split("_")[0] : group.group_name;
 
   return (
-    <div style={{ padding: "24px" }}>
-      <Space direction="vertical" size="large" style={{ width: "100%" }}>
+    <div className="p-6">
+      <Space direction="vertical" size="large" className="w-full">
         {/* 頁面標題和操作 */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-4">
             <Button icon={<ArrowLeftOutlined />} onClick={() => navigate(`/tournaments/${tournamentId}/groups`)}>
               {t('group:detail.backToGroupList')}
             </Button>
             <div>
-              <Title level={2} style={{ margin: 0 }}>
-                <TrophyOutlined style={{ marginRight: 8, color: "#faad14" }} />
+              <Title level={2} className="m-0">
+                <TrophyOutlined className="mr-2 text-yellow-500" />
                 {t('group:group.name')} {displayGroupName}
               </Title>
               <Text type="secondary">{tournament?.tournament_name || `${t('tournament:tournament')} ${tournamentId}`} - {t('group:group.detail')}</Text>
@@ -681,13 +666,8 @@ const TournamentGroupDetail = () => {
                   <Option key={team.team_id} value={team.team_id}>
                     <Space>
                       <div
-                        style={{
-                          width: 12,
-                          height: 12,
-                          backgroundColor: team.team_color,
-                          borderRadius: "50%",
-                          border: "1px solid #d9d9d9",
-                        }}
+                        className="w-3 h-3 rounded-full border border-gray-300"
+                        style={{ backgroundColor: team.team_color }}
                       />
                       {getDisplayTeamName(team.team_name)}
                     </Space>
@@ -706,19 +686,19 @@ const TournamentGroupDetail = () => {
             </Form.Item>
           </Form>
         ) : (
-          <div style={{ textAlign: "center", padding: "40px 0" }}>
-            <TeamOutlined style={{ fontSize: "48px", color: "#ccc", marginBottom: "16px" }} />
+          <div className="text-center py-10">
+            <TeamOutlined className="text-5xl text-gray-300 mb-4" />
             <div>
               <Text type="secondary">{t('group:detail.noAvailableTeams')}</Text>
               <br />
-              <Text type="secondary" style={{ fontSize: "12px" }}>
+              <Text type="secondary" className="text-xs">
                 {t('group:detail.allTeamsAssigned')}
               </Text>
               <br />
               <Button
                 type="primary"
                 icon={<PlusOutlined />}
-                style={{ marginTop: "16px" }}
+                className="mt-4"
                 onClick={() => {
                   setAddTeamModalVisible(false);
                   navigate(`/tournaments/${tournamentId}/teams/create`);

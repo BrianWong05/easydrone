@@ -229,7 +229,7 @@ const TournamentGroupEdit = () => {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px' }}>
+      <div className="text-center py-12 px-6">
         <Spin size="large" />
         <p>載入中...</p>
       </div>
@@ -255,11 +255,11 @@ const TournamentGroupEdit = () => {
   const matchStats = getMatchStatusStats();
 
   return (
-    <div style={{ padding: '24px' }}>
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+    <div className="p-6">
+      <Space direction="vertical" size="large" className="w-full">
         {/* 頁面標題 */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-4">
             <Button 
               icon={<ArrowLeftOutlined />} 
               onClick={handleCancel}
@@ -267,8 +267,8 @@ const TournamentGroupEdit = () => {
               返回
             </Button>
             <div>
-              <Title level={2} style={{ margin: 0 }}>
-                <TrophyOutlined style={{ marginRight: 8, color: '#faad14' }} />
+              <Title level={2} className="m-0">
+                <TrophyOutlined className="mr-2 text-yellow-500" />
                 編輯小組 {displayGroupName}
               </Title>
               <Text type="secondary">
@@ -286,30 +286,30 @@ const TournamentGroupEdit = () => {
               <div>
                 <p>此小組存在已開始或已完成的比賽，無法進行編輯。</p>
                 <p>比賽狀態統計：</p>
-                <ul style={{ marginBottom: 0, paddingLeft: '20px' }}>
+                <ul className="mb-0 pl-5">
                   <li>待開始：{matchStats.pending} 場</li>
                   <li>進行中：{matchStats.active} 場</li>
                   <li>已完成：{matchStats.completed} 場</li>
                   <li>總計：{matchStats.total} 場</li>
                 </ul>
-                <p style={{ marginTop: '8px', marginBottom: 0 }}>
+                <p className="mt-2 mb-0">
                   <strong>只有當所有比賽都是待開始狀態或沒有比賽時才能編輯小組。</strong>
                 </p>
               </div>
             }
             type="warning"
             showIcon
-            style={{ marginBottom: '24px' }}
+            className="mb-6"
           />
         )}
 
         {/* 基本信息編輯 */}
-        <Card title="基本信息" style={{ marginBottom: '24px' }}>
+        <Card title="基本信息" className="mb-6">
           <Form
             form={form}
             layout="vertical"
             onFinish={handleSubmit}
-            style={{ maxWidth: '600px' }}
+            className="max-w-xl"
             disabled={!canEdit}
           >
             <Form.Item
@@ -324,7 +324,7 @@ const TournamentGroupEdit = () => {
                 placeholder="請輸入小組名稱（例如：A）"
                 size="large"
                 maxLength={1}
-                style={{ textTransform: 'uppercase', width: '200px' }}
+                className="uppercase w-48"
               />
             </Form.Item>
 
@@ -341,7 +341,7 @@ const TournamentGroupEdit = () => {
                 size="large"
                 min={2}
                 max={8}
-                style={{ width: '200px' }}
+                className="w-48"
                 addonAfter="支隊伍"
               />
             </Form.Item>
@@ -434,18 +434,8 @@ const TournamentGroupEdit = () => {
                   <List.Item.Meta
                     avatar={
                       <div 
-                        style={{
-                          width: 40,
-                          height: 40,
-                          backgroundColor: team.team_color,
-                          borderRadius: '50%',
-                          border: '2px solid #d9d9d9',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: '#fff',
-                          fontWeight: 'bold'
-                        }}
+                        className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center text-white font-bold"
+                        style={{ backgroundColor: team.team_color }}
                       >
                         {getDisplayTeamName(team.team_name).charAt(0)}
                       </div>
@@ -462,14 +452,14 @@ const TournamentGroupEdit = () => {
               )}
             />
           ) : (
-            <div style={{ textAlign: 'center', padding: '40px 0' }}>
-              <TeamOutlined style={{ fontSize: '48px', color: '#ccc', marginBottom: '16px' }} />
+            <div className="text-center py-10">
+              <TeamOutlined className="text-5xl text-gray-300 mb-4" />
               <div>
                 <Text type="secondary">此小組暫無隊伍</Text>
                 <br />
                 <Button 
                   type="primary" 
-                  style={{ marginTop: '16px' }}
+                  className="mt-4"
                   onClick={() => setAddTeamModalVisible(true)}
                   disabled={!canEdit}
                 >
@@ -485,7 +475,7 @@ const TournamentGroupEdit = () => {
               description={`當前小組已達到最大隊伍數限制（${group.max_teams}支隊伍）`}
               type="warning"
               showIcon
-              style={{ marginTop: '16px' }}
+              className="mt-4"
             />
           )}
 
@@ -501,7 +491,7 @@ const TournamentGroupEdit = () => {
                     <Tag color="blue">已完成：{matchStats.completed}</Tag>
                   </Space>
                   {!canEdit && (
-                    <p style={{ marginTop: '8px', marginBottom: 0, color: '#faad14' }}>
+                    <p className="mt-2 mb-0 text-yellow-500">
                       <strong>⚠️ 存在非待開始狀態的比賽，無法編輯隊伍</strong>
                     </p>
                   )}
@@ -509,7 +499,7 @@ const TournamentGroupEdit = () => {
               }
               type="info"
               showIcon
-              style={{ marginTop: '16px' }}
+              className="mt-4"
             />
           )}
         </Card>
@@ -537,7 +527,7 @@ const TournamentGroupEdit = () => {
           open={addTeamModalVisible}
           onCancel={() => setAddTeamModalVisible(false)}
           footer={
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="flex justify-between items-center">
               <Button 
                 type="primary"
                 icon={<PlusOutlined />}
@@ -555,8 +545,8 @@ const TournamentGroupEdit = () => {
           }
           width={600}
         >
-          <div style={{ marginBottom: '16px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+          <div className="mb-4">
+            <div className="flex justify-between items-center mb-2">
               <Text>選擇要添加到小組 {displayGroupName} 的隊伍：</Text>
               <Button 
                 type="dashed"
@@ -570,7 +560,7 @@ const TournamentGroupEdit = () => {
                 創建隊伍
               </Button>
             </div>
-            <Text type="secondary" style={{ fontSize: '12px' }}>
+            <Text type="secondary" className="text-xs">
               顯示錦標賽中尚未分配到任何小組的隊伍 ({availableTeams.length} 支可用)
             </Text>
           </div>
@@ -593,19 +583,8 @@ const TournamentGroupEdit = () => {
                   <List.Item.Meta
                     avatar={
                       <div 
-                        style={{
-                          width: 32,
-                          height: 32,
-                          backgroundColor: team.team_color,
-                          borderRadius: '50%',
-                          border: '1px solid #d9d9d9',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: '#fff',
-                          fontWeight: 'bold',
-                          fontSize: '12px'
-                        }}
+                        className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center text-white font-bold text-xs"
+                        style={{ backgroundColor: team.team_color }}
                       >
                         {getDisplayTeamName(team.team_name).charAt(0)}
                       </div>
@@ -623,19 +602,19 @@ const TournamentGroupEdit = () => {
               )}
             />
           ) : (
-            <div style={{ textAlign: 'center', padding: '40px 0' }}>
-              <TeamOutlined style={{ fontSize: '48px', color: '#ccc', marginBottom: '16px' }} />
+            <div className="text-center py-10">
+              <TeamOutlined className="text-5xl text-gray-300 mb-4" />
               <div>
                 <Text type="secondary">沒有可添加的隊伍</Text>
                 <br />
-                <Text type="secondary" style={{ fontSize: '12px' }}>
+                <Text type="secondary" className="text-xs">
                   所有隊伍都已分配到小組或已在當前小組中
                 </Text>
                 <br />
                 <Button 
                   type="primary" 
                   icon={<PlusOutlined />}
-                  style={{ marginTop: '16px' }}
+                  className="mt-4"
                   onClick={() => {
                     setAddTeamModalVisible(false);
                     navigate(`/tournaments/${tournamentId}/teams/create`);

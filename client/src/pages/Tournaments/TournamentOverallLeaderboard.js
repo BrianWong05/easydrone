@@ -108,7 +108,7 @@ const TournamentOverallLeaderboard = () => {
       title: t('rankings.position', { ns: 'stats' }),
       key: 'rank',
       render: (_, record) => (
-        <div style={{ textAlign: 'center' }}>
+        <div className="text-center">
           <span style={{ 
             fontSize: record.rank <= 3 ? '18px' : '16px',
             fontWeight: 'bold',
@@ -125,30 +125,21 @@ const TournamentOverallLeaderboard = () => {
       title: t('rankings.team', { ns: 'stats' }),
       key: 'team',
       render: (_, record) => (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div className="flex items-center">
           <div 
+            className="w-4 h-4 mr-2 border border-gray-300 rounded-sm"
             style={{ 
-              width: 16, 
-              height: 16, 
-              backgroundColor: record.team_color, 
-              marginRight: 8,
-              border: '1px solid #d9d9d9',
-              borderRadius: '2px'
+              backgroundColor: record.team_color
             }} 
           />
           <div>
             <div 
-              style={{ 
-                fontWeight: 'bold',
-                color: '#1890ff',
-                cursor: 'pointer',
-                textDecoration: 'underline'
-              }}
+              className="font-bold text-blue-500 cursor-pointer underline"
               onClick={() => navigate(`/tournaments/${tournamentId}/teams/${record.team_id}`)}
             >
               {getDisplayTeamName(record.team_name)}
             </div>
-            <Text type="secondary" style={{ fontSize: '12px' }}>
+            <Text type="secondary" className="text-xs">
               {record.group_name ? (
                 <>
                   {t('group.group', { ns: 'group' })} {record.group_name?.includes("_") ? record.group_name.split("_")[0] : record.group_name}
@@ -160,7 +151,7 @@ const TournamentOverallLeaderboard = () => {
                         record.group_position === 2 ? 'green' : 
                         record.group_position === 3 ? 'blue' : 'default'
                       }
-                      style={{ marginLeft: '4px' }}
+                      className="ml-1"
                     >
                       {t('rankings.position', { ns: 'stats' })}{record.group_position}
                     </Tag>
@@ -187,7 +178,7 @@ const TournamentOverallLeaderboard = () => {
       key: 'won',
       width: 60,
       align: 'center',
-      render: (won) => <span style={{ color: '#52c41a', fontWeight: 'bold' }}>{won}</span>
+      render: (won) => <span className="text-green-500 font-bold">{won}</span>
     },
     {
       title: t('rankings.draws', { ns: 'stats' }),
@@ -195,7 +186,7 @@ const TournamentOverallLeaderboard = () => {
       key: 'drawn',
       width: 60,
       align: 'center',
-      render: (drawn) => <span style={{ color: '#faad14', fontWeight: 'bold' }}>{drawn}</span>
+      render: (drawn) => <span className="text-yellow-500 font-bold">{drawn}</span>
     },
     {
       title: t('rankings.losses', { ns: 'stats' }),
@@ -203,7 +194,7 @@ const TournamentOverallLeaderboard = () => {
       key: 'lost',
       width: 60,
       align: 'center',
-      render: (lost) => <span style={{ color: '#ff4d4f', fontWeight: 'bold' }}>{lost}</span>
+      render: (lost) => <span className="text-red-500 font-bold">{lost}</span>
     },
     {
       title: t('rankings.goalsFor', { ns: 'stats' }),
@@ -211,7 +202,7 @@ const TournamentOverallLeaderboard = () => {
       key: 'goals_for',
       width: 70,
       align: 'center',
-      render: (goals) => <span style={{ fontWeight: 'bold' }}>{goals}</span>
+      render: (goals) => <span className="font-bold">{goals}</span>
     },
     {
       title: t('rankings.goalsAgainst', { ns: 'stats' }),
@@ -276,7 +267,7 @@ const TournamentOverallLeaderboard = () => {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px' }}>
+      <div className="text-center p-12">
         <Spin size="large" />
         <p>{t('messages.loadingStats', { ns: 'stats' })}</p>
       </div>
@@ -284,8 +275,8 @@ const TournamentOverallLeaderboard = () => {
   }
 
   return (
-    <div style={{ padding: '24px' }}>
-      <div style={{ marginBottom: '24px' }}>
+    <div className="p-6">
+      <div className="mb-6">
         <Space>
           <Button 
             icon={<ArrowLeftOutlined />} 
@@ -293,7 +284,7 @@ const TournamentOverallLeaderboard = () => {
           >
             {t('navigation.backToTournamentList', { ns: 'common' })}
           </Button>
-          <Title level={2} style={{ margin: 0 }}>
+          <Title level={2} className="m-0">
             <TrophyOutlined /> {tournament?.tournament_name} - {t('rankings.overallRanking', { ns: 'stats' })}
           </Title>
           <Button 
@@ -345,15 +336,15 @@ const TournamentOverallLeaderboard = () => {
       </Card>
 
       {leaderboard.length > 0 && (
-        <Card style={{ marginTop: '24px' }}>
-          <div style={{ fontSize: '12px', color: '#666' }}>
+        <Card className="mt-6">
+          <div className="text-xs text-gray-600">
             <p><strong>{t('rules.rankingRules', { ns: 'stats' })}：</strong> {t('rules.rankingDescription', { ns: 'stats' })}</p>
             <p><strong>{t('rules.pointsRules', { ns: 'stats' })}：</strong> {t('rules.pointsDescription', { ns: 'stats' })}</p>
             <p><strong>{t('rules.sortingRules', { ns: 'stats' })}：</strong> {t('rules.sortingDescription', { ns: 'stats' })}</p>
             <p><strong>{t('rules.tagDescription', { ns: 'stats' })}：</strong> 
-              <Tag size="small" color="gold" style={{ margin: '0 4px' }}>{t('rankings.position', { ns: 'stats' })}1</Tag>
-              <Tag size="small" color="green" style={{ margin: '0 4px' }}>{t('rankings.position', { ns: 'stats' })}2</Tag>
-              <Tag size="small" color="blue" style={{ margin: '0 4px' }}>{t('rankings.position', { ns: 'stats' })}3</Tag>
+              <Tag size="small" color="gold" className="mx-1">{t('rankings.position', { ns: 'stats' })}1</Tag>
+              <Tag size="small" color="green" className="mx-1">{t('rankings.position', { ns: 'stats' })}2</Tag>
+              <Tag size="small" color="blue" className="mx-1">{t('rankings.position', { ns: 'stats' })}3</Tag>
               {t('rules.tagExplanation', { ns: 'stats' })}
             </p>
           </div>

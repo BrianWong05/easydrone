@@ -561,7 +561,7 @@ const TournamentMatchList = () => {
       sorter: (a, b) => (a.totalOrder || 0) - (b.totalOrder || 0),
       sortDirections: ["ascend", "descend"],
       render: (totalOrder) => (
-        <span style={{ fontWeight: "bold", color: "#1890ff" }}>
+        <span className="font-bold text-blue-500">
           {totalOrder}
         </span>
       ),
@@ -579,7 +579,7 @@ const TournamentMatchList = () => {
       render: (matchNumber, record) => (
         <Button
           type="link"
-          style={{ padding: 0, height: "auto", fontWeight: "normal" }}
+          className="p-0 h-auto font-normal"
           onClick={() => navigate(`/tournaments/${tournamentId}/matches/${record.match_id}`)}
         >
           {matchNumber}
@@ -592,29 +592,23 @@ const TournamentMatchList = () => {
       width: 300,
       render: (_, record) => (
         <div>
-          <div style={{ display: "flex", alignItems: "center", marginBottom: 4 }}>
+          <div className="flex items-center mb-1">
             <div
+              className="w-3 h-3 mr-2 rounded-sm"
               style={{
-                width: 12,
-                height: 12,
                 backgroundColor: record.team1_color || "#ccc",
-                marginRight: 8,
-                borderRadius: 2,
               }}
             />
             <span>{getTeamDisplayName(record, 'team1')}</span>
-            <span style={{ margin: "0 8px", fontWeight: "bold" }}>
+            <span className="mx-2 font-bold">
               {record.team1_score || 0} : {record.team2_score || 0}
             </span>
           </div>
-          <div style={{ display: "flex", alignItems: "center" }}>
+          <div className="flex items-center">
             <div
+              className="w-3 h-3 mr-2 rounded-sm"
               style={{
-                width: 12,
-                height: 12,
                 backgroundColor: record.team2_color || "#ccc",
-                marginRight: 8,
-                borderRadius: 2,
               }}
             />
             <span>{getTeamDisplayName(record, 'team2')}</span>
@@ -710,7 +704,7 @@ const TournamentMatchList = () => {
             <Button
               type="link"
               icon={<PlayCircleOutlined />}
-              style={{ color: "#52c41a" }}
+              className="text-green-500"
               onClick={() => navigate(`/tournaments/${tournamentId}/matches/${record.match_id}/live`)}
             >
               {t('match:actions.continue')}
@@ -720,7 +714,7 @@ const TournamentMatchList = () => {
             <Button
               type="link"
               icon={<PlayCircleOutlined />}
-              style={{ color: "#fa8c16" }}
+              className="text-orange-500"
               onClick={() => navigate(`/tournaments/${tournamentId}/matches/${record.match_id}/live`)}
               disabled={!record.team1_name || !record.team2_name}
               title={!record.team1_name || !record.team2_name ? t('match:messages.teamsNotDetermined') : t('match:actions.startPostponed')}
@@ -746,7 +740,7 @@ const TournamentMatchList = () => {
               onClick={() => navigate(`/tournaments/${tournamentId}/matches/${record.match_id}/edit`)}
               disabled={!record.team1_name || !record.team2_name}
               title={!record.team1_name || !record.team2_name ? t('match:messages.teamsNotDetermined') : t('match:actions.editPostponed')}
-              style={{ color: "#fa8c16" }}
+              className="text-orange-500"
             >
               {t('match:actions.edit')}
             </Button>
@@ -777,14 +771,14 @@ const TournamentMatchList = () => {
   };
 
   return (
-    <div style={{ padding: "24px" }}>
-      <div style={{ marginBottom: 24 }}>
+    <div className="p-6">
+      <div className="mb-6">
         <Title level={2}>{tournament?.tournament_name} - {t('match:match.management')}</Title>
-        <p style={{ color: "#666", marginBottom: 0 }}>{t('match:messages.managementDescription')}</p>
+        <p className="text-gray-600 mb-0">{t('match:messages.managementDescription')}</p>
       </div>
 
       {/* 統計卡片 */}
-      <Row gutter={16} style={{ marginBottom: 24 }}>
+      <Row gutter={16} className="mb-6">
         <Col span={4}>
           <Card>
             <Statistic title={t('match:statistics.totalMatches')} value={pagination.total} />
@@ -818,7 +812,7 @@ const TournamentMatchList = () => {
       </Row>
 
       {/* 操作區域 */}
-      <Card style={{ marginBottom: 24 }}>
+      <Card className="mb-6">
         <Row gutter={16} align="middle">
           <Col flex="auto">
             <Space wrap>
@@ -827,7 +821,7 @@ const TournamentMatchList = () => {
                 prefix={<SearchOutlined />}
                 value={searchText}
                 onChange={(e) => setSearchText(e.target.value)}
-                style={{ width: 200 }}
+                className="w-48"
               />
               <Select
                 placeholder={t('match:list.filterStatus')}
@@ -836,7 +830,7 @@ const TournamentMatchList = () => {
                   setFilterStatus(value);
                   handleFilterChange();
                 }}
-                style={{ width: 120 }}
+                className="w-28"
               >
                 <Option value="all">{t('common:filters.allStatus')}</Option>
                 <Option value="pending">{t('match:status.pending')}</Option>
@@ -851,7 +845,7 @@ const TournamentMatchList = () => {
                   setFilterType(value);
                   handleFilterChange();
                 }}
-                style={{ width: 120 }}
+                className="w-28"
               >
                 <Option value="all">{t('common:filters.allMatchTypes')}</Option>
                 <Option value="group">{t('match:types.groupStage')}</Option>
@@ -865,7 +859,7 @@ const TournamentMatchList = () => {
                   setFilterGroup(value);
                   handleFilterChange();
                 }}
-                style={{ width: 120 }}
+                className="w-28"
               >
                 <Option value="all">{t('common:filters.allGroups')}</Option>
                 {groups.map((group) => (
@@ -881,7 +875,7 @@ const TournamentMatchList = () => {
                   setFilterTeam(value);
                   handleFilterChange();
                 }}
-                style={{ width: 150 }}
+                className="w-36"
                 showSearch
                 optionFilterProp="children"
               >
@@ -995,7 +989,7 @@ const TournamentMatchList = () => {
             extra={t('match:list.delayTimeNote')}
           >
             <InputNumber
-              style={{ width: '100%' }}
+              className="w-full"
               placeholder={t('match:list.delayTimePlaceholder')}
               min={0}
               max={1440}
@@ -1004,7 +998,7 @@ const TournamentMatchList = () => {
             />
           </Form.Item>
 
-          <div style={{ textAlign: 'right', marginTop: 24 }}>
+          <div className="text-right mt-6">
             <Space>
               <Button onClick={handlePostponeCancel}>
                 {t('common:actions.cancel')}

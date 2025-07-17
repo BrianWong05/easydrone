@@ -148,7 +148,7 @@ const TournamentDetail = () => {
   const managementCards = [
     {
       title: t('tournament:detail.management.teams.title'),
-      icon: <TeamOutlined style={{ fontSize: 24, color: "#1890ff" }} />,
+      icon: <TeamOutlined className="text-2xl text-blue-500" />,
       description: t('tournament:detail.management.teams.description'),
       count: stats.totalTeams,
       actions: [
@@ -158,7 +158,7 @@ const TournamentDetail = () => {
     },
     {
       title: t('tournament:detail.management.groups.title'),
-      icon: <GroupOutlined style={{ fontSize: 24, color: "#52c41a" }} />,
+      icon: <GroupOutlined className="text-2xl text-green-500" />,
       description: t('tournament:detail.management.groups.description'),
       count: stats.totalGroups,
       actions: [
@@ -168,7 +168,7 @@ const TournamentDetail = () => {
     },
     {
       title: t('tournament:detail.management.matches.title'),
-      icon: <CalendarOutlined style={{ fontSize: 24, color: "#fa8c16" }} />,
+      icon: <CalendarOutlined className="text-2xl text-orange-500" />,
       description: t('tournament:detail.management.matches.description'),
       count: stats.totalMatches,
       actions: [
@@ -178,7 +178,7 @@ const TournamentDetail = () => {
     },
     {
       title: t('tournament:detail.management.athletes.title'),
-      icon: <UserOutlined style={{ fontSize: 24, color: "#eb2f96" }} />,
+      icon: <UserOutlined className="text-2xl text-pink-500" />,
       description: t('tournament:detail.management.athletes.description'),
       count: stats.totalAthletes,
       actions: [
@@ -188,7 +188,7 @@ const TournamentDetail = () => {
     },
     {
       title: t('tournament:detail.management.leaderboard.title'),
-      icon: <BarChartOutlined style={{ fontSize: 24, color: "#722ed1" }} />,
+      icon: <BarChartOutlined className="text-2xl text-purple-500" />,
       description: t('tournament:detail.management.leaderboard.description'),
       count: stats.completedMatches,
       actions: [
@@ -200,7 +200,7 @@ const TournamentDetail = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: 24, textAlign: "center" }}>
+      <div className="p-6 text-center">
         <Title level={4}>{t('tournament:detail.loading')}</Title>
       </div>
     );
@@ -208,23 +208,23 @@ const TournamentDetail = () => {
 
   if (!tournament) {
     return (
-      <div style={{ padding: 24, textAlign: "center" }}>
+      <div className="p-6 text-center">
         <Empty description={t('tournament:detail.notFound')} />
       </div>
     );
   }
 
   return (
-    <div style={{ padding: 24 }}>
-      <Space direction="vertical" size="large" style={{ width: "100%" }}>
+    <div className="p-6">
+      <Space direction="vertical" size="large" className="w-full">
         {/* 錦標賽基本信息 */}
         <Card>
           <Row align="middle" justify="space-between">
             <Col>
               <Space align="center">
-                <TrophyOutlined style={{ fontSize: 32, color: "#faad14" }} />
+                <TrophyOutlined className="text-3xl text-yellow-500" />
                 <div>
-                  <Title level={2} style={{ margin: 0 }}>
+                  <Title level={2} className="m-0">
                     {tournament.tournament_name}
                   </Title>
                   <Space>
@@ -280,7 +280,7 @@ const TournamentDetail = () => {
                 title={t('tournament:detail.totalTeams')}
                 value={stats.totalTeams}
                 prefix={<TeamOutlined />}
-                valueStyle={{ color: "#1890ff" }}
+                valueStyle={{ color: "#3b82f6" }}
               />
             </Col>
             <Col span={4}>
@@ -288,7 +288,7 @@ const TournamentDetail = () => {
                 title={t('tournament:detail.totalGroups')}
                 value={stats.totalGroups}
                 prefix={<GroupOutlined />}
-                valueStyle={{ color: "#52c41a" }}
+                valueStyle={{ color: "#10b981" }}
               />
             </Col>
             <Col span={4}>
@@ -296,7 +296,7 @@ const TournamentDetail = () => {
                 title={t('tournament:detail.totalMatches')}
                 value={stats.totalMatches}
                 prefix={<CalendarOutlined />}
-                valueStyle={{ color: "#fa8c16" }}
+                valueStyle={{ color: "#f97316" }}
               />
             </Col>
             <Col span={4}>
@@ -304,7 +304,7 @@ const TournamentDetail = () => {
                 title={t('tournament:detail.totalAthletes')}
                 value={stats.totalAthletes}
                 prefix={<UserOutlined />}
-                valueStyle={{ color: "#eb2f96" }}
+                valueStyle={{ color: "#ec4899" }}
               />
             </Col>
             <Col span={4}>
@@ -312,7 +312,7 @@ const TournamentDetail = () => {
                 title={t('tournament:detail.completedMatches')}
                 value={stats.completedMatches}
                 prefix={<PlayCircleOutlined />}
-                valueStyle={{ color: "#722ed1" }}
+                valueStyle={{ color: "#8b5cf6" }}
               />
             </Col>
             <Col span={4}>
@@ -320,7 +320,7 @@ const TournamentDetail = () => {
                 title={t('tournament:detail.pendingMatches')}
                 value={stats.pendingMatches}
                 prefix={<StopOutlined />}
-                valueStyle={{ color: "#fa541c" }}
+                valueStyle={{ color: "#f97316" }}
               />
             </Col>
           </Row>
@@ -331,12 +331,12 @@ const TournamentDetail = () => {
           <Row gutter={[16, 16]}>
             {managementCards.map((card, index) => (
               <Col span={8} key={index}>
-                <Card hoverable style={{ height: "100%" }} bodyStyle={{ padding: 20 }}>
-                  <Space direction="vertical" style={{ width: "100%" }}>
-                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <Card hoverable className="h-full" bodyStyle={{ padding: 20 }}>
+                  <Space direction="vertical" className="w-full">
+                    <div className="flex items-center justify-between">
                       <Space>
                         {card.icon}
-                        <Title level={4} style={{ margin: 0 }}>
+                        <Title level={4} className="m-0">
                           {card.title}
                         </Title>
                       </Space>

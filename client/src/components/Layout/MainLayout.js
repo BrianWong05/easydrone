@@ -184,36 +184,18 @@ const MainLayout = ({ children }) => {
   };
 
   return (
-    <Layout style={{ minHeight: "100vh" }}>
+    <Layout className="min-h-screen">
       {!shouldHideSidebar && (
         <Sider
           trigger={null}
           collapsible
           collapsed={collapsed}
-          style={{
-            overflow: "auto",
-            height: "100vh",
-            position: "fixed",
-            left: 0,
-            top: 0,
-            bottom: 0,
-            zIndex: 2,
-          }}
+          className="overflow-auto h-screen fixed left-0 top-0 bottom-0 z-[2]"
         >
           <div
-            className="logo"
-            style={{
-              height: 64,
-              margin: 16,
-              background: "rgba(255, 255, 255, 0.3)",
-              borderRadius: 8,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "white",
-              fontWeight: "bold",
-              fontSize: collapsed ? 14 : 16,
-            }}
+            className={`h-16 m-4 bg-white bg-opacity-30 rounded-lg flex items-center justify-center text-white font-bold ${
+              collapsed ? "text-sm" : "text-base"
+            }`}
           >
             {collapsed ? "DS" : t('system.title').split('管理系統')[0]}
           </div>
@@ -226,35 +208,22 @@ const MainLayout = ({ children }) => {
           />
         </Sider>
       )}
-      <Layout style={{ marginLeft: shouldHideSidebar ? 0 : collapsed ? 80 : 200, minHeight: "100vh" }}>
-        <Header
-          style={{
-            padding: "0 24px",
-            background: "#fff",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            boxShadow: "0 1px 4px rgba(0,21,41,.08)",
-            position: "sticky",
-            top: 0,
-            zIndex: 1000,
-          }}
-        >
+      <Layout 
+        className="min-h-screen"
+        style={{ marginLeft: shouldHideSidebar ? 0 : collapsed ? 80 : 200 }}
+      >
+        <Header className="px-6 bg-white flex items-center justify-between shadow-sm sticky top-0 z-[1000]">
           {!shouldHideSidebar && (
             <Button
               type="text"
               icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
               onClick={() => setCollapsed(!collapsed)}
-              style={{
-                fontSize: "16px",
-                width: 64,
-                height: 64,
-              }}
+              className="text-base w-16 h-16"
             />
           )}
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
-            <span style={{ color: "#666" }}>{t('system.title')}</span>
+          <div className="flex items-center justify-between w-full">
+            <span className="text-gray-600">{t('system.title')}</span>
             <Space>
               <LanguageSwitcher size="small" />
               <Dropdown
@@ -289,7 +258,7 @@ const MainLayout = ({ children }) => {
                 }}
                 placement="bottomRight"
               >
-                <Button type="text" style={{ height: 'auto', padding: '8px 12px' }}>
+                <Button type="text" className="h-auto py-2 px-3">
                   <Space>
                     <Avatar size="small" icon={<UserOutlined />} />
                     <span>{user?.username || t('user.admin')}</span>

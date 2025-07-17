@@ -1,7 +1,7 @@
 import React, { useEffect, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Layout, Spin } from "antd";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 import MainLayout from "./components/Layout/MainLayout";
 import TournamentLayout from "./components/Layout/TournamentLayout";
@@ -60,12 +60,14 @@ function App() {
   // Show loading spinner while translations are loading
   if (!ready) {
     return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '100vh' 
-      }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
         <Spin size="large" />
       </div>
     );
@@ -75,21 +77,18 @@ function App() {
     <div className="App">
       <Routes>
         {/* 登入頁面 - 如果已登入則重定向到首頁 */}
-        <Route 
-          path="/login" 
-          element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />} 
-        />
-        
+        <Route path="/login" element={isAuthenticated ? <Navigate to="/" replace /> : <LoginPage />} />
+
         {/* 修改密碼頁面 - 需要登入保護 */}
-        <Route 
-          path="/change-password" 
+        <Route
+          path="/change-password"
           element={
             <ProtectedRoute>
               <ChangePasswordPage />
             </ProtectedRoute>
-          } 
+          }
         />
-        
+
         {/* 所有管理功能都需要登入保護 */}
         {/* 主要管理路由 - 需要登入保護 */}
         <Route
@@ -103,11 +102,11 @@ function App() {
                     <Route path="/" element={<TournamentList />} />
 
                     {/* 統計頁面 */}
-                    <Route path="/stats" element={<StatsOverview />} />
+                    {/* <Route path="/stats" element={<StatsOverview />} />
                     <Route path="/stats/overview" element={<StatsOverview />} />
                     <Route path="/stats/group-standings" element={<AllGroupStandings />} />
                     <Route path="/stats/overall-leaderboard" element={<OverallLeaderboard />} />
-                    <Route path="/stats/best-teams" element={<BestTeamsStats />} />
+                    <Route path="/stats/best-teams" element={<BestTeamsStats />} /> */}
 
                     {/* 404 頁面 */}
                     <Route path="*" element={<NotFound />} />
@@ -138,49 +137,49 @@ function App() {
           element={
             <ProtectedRoute>
               <TournamentLayout>
-              <Routes>
-                {/* Tournament Overview */}
-                <Route path="/" element={<TournamentDetail />} />
+                <Routes>
+                  {/* Tournament Overview */}
+                  <Route path="/" element={<TournamentDetail />} />
 
-                {/* Team Management */}
-                <Route path="/teams" element={<TournamentTeamList />} />
-                <Route path="/teams/create" element={<TournamentTeamCreate />} />
-                <Route path="/teams/:teamId" element={<TournamentTeamDetail />} />
-                <Route path="/teams/:teamId/edit" element={<TournamentTeamEdit />} />
+                  {/* Team Management */}
+                  <Route path="/teams" element={<TournamentTeamList />} />
+                  <Route path="/teams/create" element={<TournamentTeamCreate />} />
+                  <Route path="/teams/:teamId" element={<TournamentTeamDetail />} />
+                  <Route path="/teams/:teamId/edit" element={<TournamentTeamEdit />} />
 
-                {/* Group Management */}
-                <Route path="/groups" element={<TournamentGroupList />} />
-                <Route path="/groups/create" element={<TournamentGroupCreate />} />
-                <Route path="/groups/:groupId" element={<TournamentGroupDetail />} />
-                <Route path="/groups/:groupId/edit" element={<TournamentGroupEdit />} />
+                  {/* Group Management */}
+                  <Route path="/groups" element={<TournamentGroupList />} />
+                  <Route path="/groups/create" element={<TournamentGroupCreate />} />
+                  <Route path="/groups/:groupId" element={<TournamentGroupDetail />} />
+                  <Route path="/groups/:groupId/edit" element={<TournamentGroupEdit />} />
 
-                {/* Match Management */}
-                <Route path="/matches" element={<TournamentMatchList />} />
-                <Route path="/matches/create" element={<TournamentMatchCreate />} />
-                <Route path="/matches/generate" element={<TournamentMatchGenerator />} />
-                <Route path="/matches/:matchId" element={<TournamentMatchDetail />} />
-                <Route path="/matches/:matchId/live" element={<TournamentLiveMatch />} />
-                <Route path="/matches/:matchId/edit" element={<TournamentMatchEdit />} />
-                <Route path="/matches/:matchId/result-edit" element={<TournamentMatchResultEdit />} />
+                  {/* Match Management */}
+                  <Route path="/matches" element={<TournamentMatchList />} />
+                  <Route path="/matches/create" element={<TournamentMatchCreate />} />
+                  <Route path="/matches/generate" element={<TournamentMatchGenerator />} />
+                  <Route path="/matches/:matchId" element={<TournamentMatchDetail />} />
+                  <Route path="/matches/:matchId/live" element={<TournamentLiveMatch />} />
+                  <Route path="/matches/:matchId/edit" element={<TournamentMatchEdit />} />
+                  <Route path="/matches/:matchId/result-edit" element={<TournamentMatchResultEdit />} />
 
-                {/* Athlete Management */}
-                <Route path="/athletes" element={<div>Tournament Athletes List</div>} />
-                <Route path="/athletes/create" element={<div>Create Tournament Athlete</div>} />
-                <Route path="/athletes/:athleteId" element={<div>Tournament Athlete Detail</div>} />
-                <Route path="/athletes/:athleteId/edit" element={<div>Edit Tournament Athlete</div>} />
+                  {/* Athlete Management */}
+                  <Route path="/athletes" element={<div>Tournament Athletes List</div>} />
+                  <Route path="/athletes/create" element={<div>Create Tournament Athlete</div>} />
+                  <Route path="/athletes/:athleteId" element={<div>Tournament Athlete Detail</div>} />
+                  <Route path="/athletes/:athleteId/edit" element={<div>Edit Tournament Athlete</div>} />
 
-                {/* Leaderboard */}
-                <Route path="/leaderboard/groups" element={<GroupLeaderboard />} />
-                <Route path="/leaderboard/overall" element={<TournamentOverallLeaderboard />} />
-                <Route path="/leaderboard/stats" element={<div>Tournament Statistics</div>} />
-                <Route path="/leaderboard/best-teams" element={<TournamentBestTeamsStats />} />
+                  {/* Leaderboard */}
+                  <Route path="/leaderboard/groups" element={<GroupLeaderboard />} />
+                  <Route path="/leaderboard/overall" element={<TournamentOverallLeaderboard />} />
+                  <Route path="/leaderboard/stats" element={<div>Tournament Statistics</div>} />
+                  <Route path="/leaderboard/best-teams" element={<TournamentBestTeamsStats />} />
 
-                {/* Settings */}
-                <Route path="/settings" element={<div>Tournament Settings</div>} />
-                <Route path="/edit" element={<TournamentEdit />} />
-                <Route path="/bracket" element={<KnockoutBracket />} />
-              </Routes>
-            </TournamentLayout>
+                  {/* Settings */}
+                  <Route path="/settings" element={<div>Tournament Settings</div>} />
+                  <Route path="/edit" element={<TournamentEdit />} />
+                  <Route path="/bracket" element={<KnockoutBracket />} />
+                </Routes>
+              </TournamentLayout>
             </ProtectedRoute>
           }
         />

@@ -81,12 +81,13 @@ const OverallLeaderboard = () => {
       title: '排名',
       key: 'rank',
       render: (_, record) => (
-        <div style={{ textAlign: 'center' }}>
-          <span style={{ 
-            fontSize: record.rank <= 3 ? '18px' : '16px',
-            fontWeight: 'bold',
-            color: getRankColor(record.rank)
-          }}>
+        <div className="text-center">
+          <span 
+            className={`font-bold ${
+              record.rank <= 3 ? 'text-lg' : 'text-base'
+            }`}
+            style={{ color: getRankColor(record.rank) }}
+          >
             {getRankIcon(record.rank)}
           </span>
         </div>
@@ -98,30 +99,19 @@ const OverallLeaderboard = () => {
       title: '隊伍',
       key: 'team',
       render: (_, record) => (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div className="flex items-center">
           <div 
-            style={{ 
-              width: 16, 
-              height: 16, 
-              backgroundColor: record.team_color, 
-              marginRight: 8,
-              border: '1px solid #d9d9d9',
-              borderRadius: '2px'
-            }} 
+            className="w-4 h-4 mr-2 border border-gray-300 rounded-sm"
+            style={{ backgroundColor: record.team_color }}
           />
           <div>
             <div 
-              style={{ 
-                fontWeight: 'bold',
-                color: '#1890ff',
-                cursor: 'pointer',
-                textDecoration: 'underline'
-              }}
+              className="font-bold text-blue-500 cursor-pointer underline hover:text-blue-600"
               onClick={() => navigate(`/teams/${record.team_id}`)}
             >
               {getDisplayTeamName(record.team_name)}
             </div>
-            <Text type="secondary" style={{ fontSize: '12px' }}>
+            <Text type="secondary" className="text-xs">
               {record.group_name ? (
                 <>
                   小組 {record.group_name}
@@ -133,7 +123,7 @@ const OverallLeaderboard = () => {
                         record.group_position === 2 ? 'green' : 
                         record.group_position === 3 ? 'blue' : 'default'
                       }
-                      style={{ marginLeft: '4px' }}
+                      className="ml-1"
                     >
                       第{record.group_position}名
                     </Tag>
@@ -160,7 +150,7 @@ const OverallLeaderboard = () => {
       key: 'won',
       width: 60,
       align: 'center',
-      render: (won) => <span style={{ color: '#52c41a', fontWeight: 'bold' }}>{won}</span>
+      render: (won) => <span className="text-green-500 font-bold">{won}</span>
     },
     {
       title: '平',
@@ -168,7 +158,7 @@ const OverallLeaderboard = () => {
       key: 'drawn',
       width: 60,
       align: 'center',
-      render: (drawn) => <span style={{ color: '#faad14', fontWeight: 'bold' }}>{drawn}</span>
+      render: (drawn) => <span className="text-yellow-500 font-bold">{drawn}</span>
     },
     {
       title: '負',
@@ -176,7 +166,7 @@ const OverallLeaderboard = () => {
       key: 'lost',
       width: 60,
       align: 'center',
-      render: (lost) => <span style={{ color: '#ff4d4f', fontWeight: 'bold' }}>{lost}</span>
+      render: (lost) => <span className="text-red-500 font-bold">{lost}</span>
     },
     {
       title: '進球',
@@ -184,7 +174,7 @@ const OverallLeaderboard = () => {
       key: 'goals_for',
       width: 70,
       align: 'center',
-      render: (goals) => <span style={{ fontWeight: 'bold' }}>{goals}</span>
+      render: (goals) => <span className="font-bold">{goals}</span>
     },
     {
       title: '失球',
@@ -199,10 +189,11 @@ const OverallLeaderboard = () => {
       width: 90,
       align: 'center',
       render: (_, record) => (
-        <span style={{ 
-          color: record.goal_difference > 0 ? '#52c41a' : record.goal_difference < 0 ? '#ff4d4f' : '#666',
-          fontWeight: 'bold'
-        }}>
+        <span className={`font-bold ${
+          record.goal_difference > 0 ? 'text-green-500' : 
+          record.goal_difference < 0 ? 'text-red-500' : 
+          'text-gray-600'
+        }`}>
           {record.goal_difference > 0 ? '+' : ''}{record.goal_difference}
         </span>
       )
@@ -249,7 +240,7 @@ const OverallLeaderboard = () => {
 
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px' }}>
+      <div className="text-center py-12">
         <Spin size="large" />
         <p>載入中...</p>
       </div>
@@ -257,8 +248,8 @@ const OverallLeaderboard = () => {
   }
 
   return (
-    <div style={{ padding: '24px' }}>
-      <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="p-6">
+      <div className="mb-6 flex justify-between items-center">
         <Title level={2}>
           <TrophyOutlined /> 總排名榜
         </Title>
@@ -305,32 +296,21 @@ const OverallLeaderboard = () => {
       </Card>
 
       {leaderboard.length > 0 && (
-        <Card style={{ marginTop: '24px' }}>
-          <div style={{ fontSize: '12px', color: '#666' }}>
+        <Card className="mt-6">
+          <div className="text-xs text-gray-600">
             <p><strong>排名規則：</strong> 小組內排名 → 同排名隊伍間比較（積分 → 淨勝球 → 進球數）</p>
             <p><strong>積分規則：</strong> 勝利 3分，平局 1分，失敗 0分</p>
             <p><strong>排序說明：</strong> 先顯示各小組第1名，再顯示各小組第2名，以此類推</p>
             <p><strong>標籤說明：</strong> 
-              <Tag size="small" color="gold" style={{ margin: '0 4px' }}>第1名</Tag>
-              <Tag size="small" color="green" style={{ margin: '0 4px' }}>第2名</Tag>
-              <Tag size="small" color="blue" style={{ margin: '0 4px' }}>第3名</Tag>
+              <Tag size="small" color="gold" className="mx-1">第1名</Tag>
+              <Tag size="small" color="green" className="mx-1">第2名</Tag>
+              <Tag size="small" color="blue" className="mx-1">第3名</Tag>
               表示該隊伍在其小組內的排名
             </p>
           </div>
         </Card>
       )}
 
-      <style jsx>{`
-        .rank-first {
-          background-color: #fff7e6 !important;
-        }
-        .rank-second {
-          background-color: #f6ffed !important;
-        }
-        .rank-third {
-          background-color: #e6f7ff !important;
-        }
-      `}</style>
     </div>
   );
 };

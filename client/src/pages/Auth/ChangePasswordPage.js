@@ -48,24 +48,11 @@ const ChangePasswordPage = () => {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      padding: '20px',
-    }}>
-      <Card
-        style={{
-          width: '100%',
-          maxWidth: 500,
-          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
-        }}
-      >
-        <Space direction="vertical" size="large" style={{ width: '100%' }}>
-          <div style={{ textAlign: 'center' }}>
-            <Title level={2} style={{ marginBottom: 8 }}>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 p-5">
+      <Card className="w-full max-w-lg shadow-2xl">
+        <Space direction="vertical" size="large" className="w-full">
+          <div className="text-center">
+            <Title level={2} className="mb-2">
               修改密碼
             </Title>
             <Text type="secondary">
@@ -148,19 +135,19 @@ const ChangePasswordPage = () => {
             </Form.Item>
 
             <Form.Item>
-              <Space style={{ width: '100%' }} direction="vertical">
+              <Space className="w-full" direction="vertical">
                 <Button
                   type="primary"
                   htmlType="submit"
                   loading={loading}
-                  style={{ width: '100%' }}
+                  className="w-full"
                 >
                   修改密碼
                 </Button>
                 <Button
                   type="default"
                   onClick={() => navigate(-1)}
-                  style={{ width: '100%' }}
+                  className="w-full"
                 >
                   取消
                 </Button>
@@ -168,8 +155,8 @@ const ChangePasswordPage = () => {
             </Form.Item>
           </Form>
 
-          <div style={{ textAlign: 'center' }}>
-            <Text type="secondary" style={{ fontSize: 12 }}>
+          <div className="text-center">
+            <Text type="secondary" className="text-xs">
               修改密碼後需要重新登入
             </Text>
           </div>

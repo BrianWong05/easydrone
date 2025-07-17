@@ -385,12 +385,13 @@ const TournamentBestTeamsStats = () => {
       title: t('rankings.position', { ns: 'stats' }),
       key: 'rank',
       render: (_, record, index) => (
-        <div style={{ textAlign: 'center' }}>
-          <span style={{ 
-            fontSize: index === 0 ? '18px' : '16px',
-            fontWeight: 'bold',
-            color: index === 0 ? '#faad14' : index === 1 ? '#52c41a' : index === 2 ? '#1890ff' : '#666'
-          }}>
+        <div className="text-center">
+          <span className={`font-bold ${
+            index === 0 ? 'text-lg text-yellow-500' : 
+            index === 1 ? 'text-base text-green-500' : 
+            index === 2 ? 'text-base text-blue-500' : 
+            'text-base text-gray-600'
+          }`}>
             {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1}
           </span>
         </div>
@@ -401,30 +402,19 @@ const TournamentBestTeamsStats = () => {
       title: t('rankings.team', { ns: 'stats' }),
       key: 'team',
       render: (_, record) => (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div className="flex items-center">
           <div 
-            style={{ 
-              width: 16, 
-              height: 16, 
-              backgroundColor: record.team_color, 
-              marginRight: 8,
-              border: '1px solid #d9d9d9',
-              borderRadius: '2px'
-            }} 
+            className="w-4 h-4 mr-2 border border-gray-300 rounded-sm"
+            style={{ backgroundColor: record.team_color }}
           />
           <div>
             <div 
-              style={{ 
-                fontWeight: 'bold',
-                color: '#1890ff',
-                cursor: 'pointer',
-                textDecoration: 'underline'
-              }}
+              className="font-bold text-blue-500 cursor-pointer underline hover:text-blue-700"
               onClick={() => navigate(`/tournaments/${tournamentId}/teams/${record.team_id}`)}
             >
               {getDisplayTeamName(record.team_name)}
             </div>
-            <Text type="secondary" style={{ fontSize: '12px' }}>
+            <Text type="secondary" className="text-xs">
               {record.group_name ? `${t('group.group', { ns: 'group' })} ${getDisplayGroupName(record.group_name)}` : t('messages.noGroup', { ns: 'stats' })}
             </Text>
           </div>
@@ -445,7 +435,7 @@ const TournamentBestTeamsStats = () => {
       key: 'goals_for',
       width: 100,
       align: 'center',
-      render: (goals) => <span style={{ fontWeight: 'bold', color: '#52c41a' }}>{goals}</span>
+      render: (goals) => <span className="font-bold text-green-500">{goals}</span>
     },
     {
       title: t('metrics.averageGoalsFor', { ns: 'stats' }),
@@ -453,7 +443,7 @@ const TournamentBestTeamsStats = () => {
       key: 'avg_goals_for',
       width: 100,
       align: 'center',
-      render: (avg) => <span style={{ fontWeight: 'bold' }}>{avg}</span>
+      render: (avg) => <span className="font-bold">{avg}</span>
     },
     {
       title: t('rankings.goalsAgainst', { ns: 'stats' }),
@@ -469,12 +459,13 @@ const TournamentBestTeamsStats = () => {
       title: t('rankings.position', { ns: 'stats' }),
       key: 'rank',
       render: (_, record, index) => (
-        <div style={{ textAlign: 'center' }}>
-          <span style={{ 
-            fontSize: index === 0 ? '18px' : '16px',
-            fontWeight: 'bold',
-            color: index === 0 ? '#faad14' : index === 1 ? '#52c41a' : index === 2 ? '#1890ff' : '#666'
-          }}>
+        <div className="text-center">
+          <span className={`font-bold ${
+            index === 0 ? 'text-lg text-yellow-500' : 
+            index === 1 ? 'text-base text-green-500' : 
+            index === 2 ? 'text-base text-blue-500' : 
+            'text-base text-gray-600'
+          }`}>
             {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1}
           </span>
         </div>
@@ -485,30 +476,19 @@ const TournamentBestTeamsStats = () => {
       title: t('rankings.team', { ns: 'stats' }),
       key: 'team',
       render: (_, record) => (
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div className="flex items-center">
           <div 
-            style={{ 
-              width: 16, 
-              height: 16, 
-              backgroundColor: record.team_color, 
-              marginRight: 8,
-              border: '1px solid #d9d9d9',
-              borderRadius: '2px'
-            }} 
+            className="w-4 h-4 mr-2 border border-gray-300 rounded-sm"
+            style={{ backgroundColor: record.team_color }}
           />
           <div>
             <div 
-              style={{ 
-                fontWeight: 'bold',
-                color: '#1890ff',
-                cursor: 'pointer',
-                textDecoration: 'underline'
-              }}
+              className="font-bold text-blue-500 cursor-pointer underline hover:text-blue-700"
               onClick={() => navigate(`/tournaments/${tournamentId}/teams/${record.team_id}`)}
             >
               {getDisplayTeamName(record.team_name)}
             </div>
-            <Text type="secondary" style={{ fontSize: '12px' }}>
+            <Text type="secondary" className="text-xs">
               {record.group_name ? `${t('group.group', { ns: 'group' })} ${getDisplayGroupName(record.group_name)}` : t('messages.noGroup', { ns: 'stats' })}
             </Text>
           </div>
@@ -529,7 +509,7 @@ const TournamentBestTeamsStats = () => {
       key: 'goals_against',
       width: 100,
       align: 'center',
-      render: (goals) => <span style={{ fontWeight: 'bold', color: '#ff4d4f' }}>{goals}</span>
+      render: (goals) => <span className="font-bold text-red-500">{goals}</span>
     },
     {
       title: t('metrics.averageGoalsAgainst', { ns: 'stats' }),
@@ -537,7 +517,7 @@ const TournamentBestTeamsStats = () => {
       key: 'avg_goals_against',
       width: 100,
       align: 'center',
-      render: (avg) => <span style={{ fontWeight: 'bold' }}>{avg}</span>
+      render: (avg) => <span className="font-bold">{avg}</span>
     },
     {
       title: t('rankings.goalsFor', { ns: 'stats' }),
@@ -549,8 +529,8 @@ const TournamentBestTeamsStats = () => {
   ];
 
   return (
-    <div style={{ padding: '24px' }}>
-      <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="p-6">
+      <div className="mb-6 flex justify-between items-center">
         <Title level={2}>
           <BarChartOutlined /> {tournament?.tournament_name || t('tournament.tournament', { ns: 'tournament' })} - {t('stats.bestTeams', { ns: 'stats' })}
         </Title>
@@ -570,13 +550,13 @@ const TournamentBestTeamsStats = () => {
       </div>
 
       {/* Filters */}
-      <Card title={<><FilterOutlined /> {t('filters.title', { ns: 'stats' })}</>} style={{ marginBottom: '24px' }}>
+      <Card title={<><FilterOutlined /> {t('filters.title', { ns: 'stats' })}</>} className="mb-6">
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={12} md={selectedMatchType === 'knockout' ? 12 : 8}>
             <div>
-              <Text strong>{t('filters.matchType', { ns: 'stats' })} <span style={{ color: '#ff4d4f' }}>*</span></Text>
+              <Text strong>{t('filters.matchType', { ns: 'stats' })} <span className="text-red-500">*</span></Text>
               <Select
-                style={{ width: '100%', marginTop: '4px' }}
+                className="w-full mt-1"
                 placeholder={t('filters.selectMatchType', { ns: 'stats' })}
                 allowClear
                 value={selectedMatchType}
@@ -601,16 +581,8 @@ const TournamentBestTeamsStats = () => {
             <Col xs={24} sm={12} md={8}>
               <div>
                 <Text strong>{t('group.group', { ns: 'group' })} ({selectedGroups.length} {t('filters.selected', { ns: 'stats' })})</Text>
-                <div style={{ 
-                  marginTop: '8px', 
-                  border: '1px solid #d9d9d9', 
-                  borderRadius: '6px', 
-                  padding: '8px',
-                  maxHeight: '120px',
-                  overflowY: 'auto',
-                  backgroundColor: '#fafafa'
-                }}>
-                  <div style={{ marginBottom: '8px' }}>
+                <div className="mt-2 border border-gray-300 rounded-md p-2 max-h-30 overflow-y-auto bg-gray-50">
+                  <div className="mb-2">
                     <Checkbox
                       indeterminate={selectedGroups.length > 0 && selectedGroups.length < groups.length}
                       checked={selectedGroups.length === groups.length && groups.length > 0}
@@ -626,7 +598,7 @@ const TournamentBestTeamsStats = () => {
                     </Checkbox>
                   </div>
                   {Array.isArray(groups) && groups.map(group => (
-                    <div key={group.group_id} style={{ marginBottom: '4px' }}>
+                    <div key={group.group_id} className="mb-1">
                       <Checkbox
                         checked={selectedGroups.includes(group.group_id)}
                         onChange={(e) => {
@@ -642,7 +614,7 @@ const TournamentBestTeamsStats = () => {
                     </div>
                   ))}
                   {groups.length === 0 && (
-                    <Text type="secondary" style={{ fontSize: '12px' }}>
+                    <Text type="secondary" className="text-xs">
                       {t('messages.noGroups', { ns: 'stats' })}
                     </Text>
                   )}
@@ -654,15 +626,7 @@ const TournamentBestTeamsStats = () => {
             <Col xs={24} sm={12} md={8}>
               <div>
                 <Text strong>{t('filters.knockoutRounds', { ns: 'stats' })} ({selectedKnockoutRounds.length} {t('filters.selected', { ns: 'stats' })})</Text>
-                <div style={{ 
-                  marginTop: '8px', 
-                  border: '1px solid #d9d9d9', 
-                  borderRadius: '6px', 
-                  padding: '8px',
-                  maxHeight: '120px',
-                  overflowY: 'auto',
-                  backgroundColor: '#fafafa'
-                }}>
+                <div className="mt-2 border border-gray-300 rounded-md p-2 max-h-30 overflow-y-auto bg-gray-50">
                   <Radio.Group
                     value={selectedKnockoutRounds.length > 0 ? selectedKnockoutRounds[0] : undefined}
                     onChange={(e) => {
@@ -672,23 +636,23 @@ const TournamentBestTeamsStats = () => {
                         setSelectedKnockoutRounds([]);
                       }
                     }}
-                    style={{ width: '100%' }}
+                    className="w-full"
                   >
-                    <div style={{ marginBottom: '8px' }}>
+                    <div className="mb-2">
                       <Radio value={undefined}>
                         <Text strong>{t('filters.allRounds', { ns: 'stats' })}</Text>
                       </Radio>
                     </div>
                     {availableKnockoutRounds.length === 0 && (
-                      <Text type="secondary" style={{ fontSize: '12px' }}>
+                      <Text type="secondary" className="text-xs">
                         {t('messages.noKnockoutRounds', { ns: 'stats' })}
                       </Text>
                     )}
                     {availableKnockoutRounds.map(round => (
-                      <div key={round.value} style={{ marginBottom: '4px' }}>
+                      <div key={round.value} className="mb-1">
                         <Radio value={round.value}>
                           <span>{round.label}</span>
-                          <span style={{ fontSize: '10px', color: '#999', marginLeft: '4px' }}>
+                          <span className="text-xs text-gray-400 ml-1">
                             ({t('filters.includeSubsequent', { ns: 'stats' })})
                           </span>
                         </Radio>
@@ -706,7 +670,7 @@ const TournamentBestTeamsStats = () => {
             <div>
               <Text strong>{t('filters.dateRange', { ns: 'stats' })}</Text>
               <RangePicker
-                style={{ width: '100%', marginTop: '4px' }}
+                className="w-full mt-1"
                 value={selectedDateRange}
                 onChange={setSelectedDateRange}
               />
@@ -717,7 +681,7 @@ const TournamentBestTeamsStats = () => {
         <Divider />
         
         <div>
-          <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="mb-3 flex justify-between items-center">
             <Text strong>{t('filters.selectSpecificMatches', { ns: 'stats' })} ({selectedMatches.length}/{availableMatches.length})</Text>
             <Checkbox
               checked={selectAllMatches}
@@ -730,21 +694,14 @@ const TournamentBestTeamsStats = () => {
           {matchesLoading ? (
             <Spin />
           ) : (
-            <div style={{ 
-              border: '1px solid #d9d9d9', 
-              borderRadius: '6px', 
-              padding: '8px',
-              maxHeight: '200px',
-              overflowY: 'auto',
-              backgroundColor: '#fafafa'
-            }}>
+            <div className="border border-gray-300 rounded-md p-2 max-h-50 overflow-y-auto bg-gray-50">
               {availableMatches.length === 0 && (
-                <Text type="secondary" style={{ fontSize: '12px' }}>
+                <Text type="secondary" className="text-xs">
                   {t('messages.noMatchesFound', { ns: 'stats' })}
                 </Text>
               )}
               {Array.isArray(availableMatches) && availableMatches.map(match => (
-                <div key={match.match_id} style={{ marginBottom: '4px' }}>
+                <div key={match.match_id} className="mb-1">
                   <Checkbox
                     checked={selectedMatches.includes(match.match_id)}
                     onChange={(e) => {
@@ -760,22 +717,22 @@ const TournamentBestTeamsStats = () => {
                       setSelectAllMatches(newSelected.length === availableMatches.length);
                     }}
                   >
-                    <div style={{ fontSize: '12px' }}>
-                      <div style={{ fontWeight: 'bold' }}>
+                    <div className="text-xs">
+                      <div className="font-bold">
                         {moment(match.match_date).format('MM/DD HH:mm')} - {match.match_type === 'group' ? t('match.groupStage', { ns: 'tournament' }) : t('match.knockout', { ns: 'tournament' })}
                         {match.match_number && (
-                          <span style={{ marginLeft: '8px', color: '#1890ff' }}>
+                          <span className="ml-2 text-blue-500">
                             🏟️ {match.match_number}
                           </span>
                         )}
                       </div>
-                      <div style={{ color: '#666' }}>
+                      <div className="text-gray-600">
                         {getDisplayTeamName(match.team1_name)} vs {getDisplayTeamName(match.team2_name)} 
-                        <span style={{ marginLeft: '8px', fontWeight: 'bold' }}>
+                        <span className="ml-2 font-bold">
                           ({match.team1_score || 0}-{match.team2_score || 0})
                         </span>
                       </div>
-                      <div style={{ color: '#999', fontSize: '11px', display: 'flex', gap: '12px' }}>
+                      <div className="text-gray-400 text-xs flex gap-3">
                         {match.group_name && (
                           <span>{getDisplayGroupName(match.group_name)}</span>
                         )}
@@ -791,8 +748,8 @@ const TournamentBestTeamsStats = () => {
           )}
           
           {availableMatches.length > 0 && (
-            <div style={{ marginTop: '8px' }}>
-              <Text type="secondary" style={{ fontSize: '12px' }}>
+            <div className="mt-2">
+              <Text type="secondary" className="text-xs">
                 {t('messages.totalCompletedMatches', { ns: 'stats', count: availableMatches.length })}
               </Text>
             </div>
@@ -804,7 +761,7 @@ const TournamentBestTeamsStats = () => {
       {bestTeamsData && (
         <>
           {/* Summary */}
-          <Row gutter={[16, 16]} style={{ marginBottom: '24px' }}>
+          <Row gutter={[16, 16]} className="mb-6">
             <Col xs={24} sm={12} md={6}>
               <Card>
                 <Statistic
@@ -824,23 +781,23 @@ const TournamentBestTeamsStats = () => {
               </Card>
             </Col>
             <Col xs={24} sm={12} md={6}>
-              <Card style={{ backgroundColor: '#f6ffed' }}>
+              <Card className="bg-green-50">
                 <Statistic
                   title={t('stats.bestAttackTeam', { ns: 'stats' })}
                   value={getDisplayTeamName(bestTeamsData.best_attack_team?.team_name)}
                   suffix={`${bestTeamsData.best_attack_team?.goals_for || 0} ${t('metrics.goals', { ns: 'stats' })}`}
-                  prefix={<FireOutlined style={{ color: '#52c41a' }} />}
+                  prefix={<FireOutlined className="text-green-500" />}
                   valueStyle={{ color: '#52c41a', fontSize: '16px' }}
                 />
               </Card>
             </Col>
             <Col xs={24} sm={12} md={6}>
-              <Card style={{ backgroundColor: '#e6f7ff' }}>
+              <Card className="bg-blue-50">
                 <Statistic
                   title={t('stats.bestDefenseTeam', { ns: 'stats' })}
                   value={getDisplayTeamName(bestTeamsData.best_defense_team?.team_name)}
                   suffix={`${t('metrics.conceded', { ns: 'stats' })} ${bestTeamsData.best_defense_team?.goals_against || 0} ${t('metrics.goals', { ns: 'stats' })}`}
-                  prefix={<SafetyOutlined style={{ color: '#1890ff' }} />}
+                  prefix={<SafetyOutlined className="text-blue-500" />}
                   valueStyle={{ color: '#1890ff', fontSize: '16px' }}
                 />
               </Card>
@@ -849,8 +806,8 @@ const TournamentBestTeamsStats = () => {
 
           {/* Top Attack Teams */}
           <Card 
-            title={<><FireOutlined style={{ color: '#52c41a' }} /> {t('stats.bestAttackTeamsRanking', { ns: 'stats' })}</>} 
-            style={{ marginBottom: '24px' }}
+            title={<><FireOutlined className="text-green-500" /> {t('stats.bestAttackTeamsRanking', { ns: 'stats' })}</>} 
+            className="mb-6"
           >
             <Table
               columns={attackTeamsColumns}
@@ -864,8 +821,8 @@ const TournamentBestTeamsStats = () => {
 
           {/* Top Defense Teams */}
           <Card 
-            title={<><SafetyOutlined style={{ color: '#1890ff' }} /> {t('stats.bestDefenseTeamsRanking', { ns: 'stats' })}</>}
-            style={{ marginBottom: '24px' }}
+            title={<><SafetyOutlined className="text-blue-500" /> {t('stats.bestDefenseTeamsRanking', { ns: 'stats' })}</>}
+            className="mb-6"
           >
             <Table
               columns={defenseTeamsColumns}
@@ -879,7 +836,7 @@ const TournamentBestTeamsStats = () => {
 
           {/* Applied Filters Summary */}
           <Card title={t('filters.summary', { ns: 'stats' })} size="small">
-            <div style={{ fontSize: '12px', color: '#666' }}>
+            <div className="text-xs text-gray-600">
               <p><strong>{t('tournament.tournament', { ns: 'tournament' })}：</strong> {tournament?.tournament_name || t('common.unknown', { ns: 'common' })}</p>
               {bestTeamsData.summary.filters_applied.group_id && (
                 <p><strong>{t('group.group', { ns: 'group' })}：</strong> {

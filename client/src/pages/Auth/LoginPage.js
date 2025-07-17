@@ -31,24 +31,11 @@ const LoginPage = () => {
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      padding: '20px',
-    }}>
-      <Card
-        style={{
-          width: '100%',
-          maxWidth: 400,
-          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
-        }}
-      >
-        <Space direction="vertical" size="large" style={{ width: '100%' }}>
-          <div style={{ textAlign: 'center' }}>
-            <Title level={2} style={{ marginBottom: 8 }}>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600 p-5">
+      <Card className="w-full max-w-md shadow-2xl">
+        <Space direction="vertical" size="large" className="w-full">
+          <div className="text-center">
+            <Title level={2} className="mb-2">
               無人機足球系統
             </Title>
             <Text type="secondary">請登入您的帳號</Text>
@@ -105,15 +92,15 @@ const LoginPage = () => {
                 type="primary"
                 htmlType="submit"
                 loading={loading}
-                style={{ width: '100%' }}
+                className="w-full"
               >
                 登入
               </Button>
             </Form.Item>
           </Form>
 
-          <div style={{ textAlign: 'center' }}>
-            <Text type="secondary" style={{ fontSize: 12 }}>
+          <div className="text-center">
+            <Text type="secondary" className="text-xs">
               無人機足球比賽管理系統 v1.0
             </Text>
           </div>

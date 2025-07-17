@@ -172,11 +172,8 @@ const TournamentTeamList = () => {
         return (
           <Space>
             <Avatar
-              style={{
-                backgroundColor: record.team_color,
-                color: "#fff",
-                fontWeight: "bold",
-              }}
+              className="text-white font-bold"
+              style={{ backgroundColor: record.team_color }}
               icon={<TeamOutlined />}
             >
               {displayName.charAt(0)}
@@ -184,13 +181,13 @@ const TournamentTeamList = () => {
             <div>
               <Text 
                 strong 
-                style={{ cursor: "pointer", color: "#1890ff" }}
+                className="cursor-pointer text-blue-500 hover:text-blue-700"
                 onClick={() => navigate(`/tournaments/${tournamentId}/teams/${record.team_id}`)}
               >
                 {displayName}
               </Text>
               <br />
-              <Text type="secondary" style={{ fontSize: "12px" }}>
+              <Text type="secondary" className="text-xs">
                 {record.team_color}
               </Text>
             </div>
@@ -258,13 +255,13 @@ const TournamentTeamList = () => {
   ];
 
   return (
-    <div style={{ padding: "24px" }}>
-      <Space direction="vertical" size="large" style={{ width: "100%" }}>
+    <div className="p-6">
+      <Space direction="vertical" size="large" className="w-full">
         {/* 頁面標題 */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div className="flex justify-between items-center">
           <div>
-            <Title level={2} style={{ margin: 0 }}>
-              <TrophyOutlined style={{ marginRight: 8, color: "#faad14" }} />
+            <Title level={2} className="m-0">
+              <TrophyOutlined className="mr-2 text-yellow-500" />
               {t('team:list.title')}
             </Title>
             <Text type="secondary">{tournament?.tournament_name || `錦標賽 ${tournamentId}`} - {t('team:list.subtitle')}</Text>
@@ -281,30 +278,30 @@ const TournamentTeamList = () => {
 
         {/* 統計信息 */}
         <Card>
-          <div style={{ display: "flex", gap: "32px" }}>
-            <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "24px", fontWeight: "bold", color: "#1890ff" }}>
+          <div className="flex gap-8">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-500">
                 {teamStats.total_teams || 0}
               </div>
-              <div style={{ color: "#666" }}>{t('team:list.stats.totalTeams')}</div>
+              <div className="text-gray-600">{t('team:list.stats.totalTeams')}</div>
             </div>
-            <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "24px", fontWeight: "bold", color: "#52c41a" }}>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-500">
                 {teamStats.grouped_teams || 0}
               </div>
-              <div style={{ color: "#666" }}>{t('team:list.stats.grouped')}</div>
+              <div className="text-gray-600">{t('team:list.stats.grouped')}</div>
             </div>
-            <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "24px", fontWeight: "bold", color: "#faad14" }}>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-yellow-500">
                 {teamStats.ungrouped_teams || 0}
               </div>
-              <div style={{ color: "#666" }}>{t('team:list.stats.ungrouped')}</div>
+              <div className="text-gray-600">{t('team:list.stats.ungrouped')}</div>
             </div>
-            <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "24px", fontWeight: "bold", color: "#722ed1" }}>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-purple-600">
                 {teamStats.virtual_teams || 0}
               </div>
-              <div style={{ color: "#666" }}>{t('team:list.stats.virtual')}</div>
+              <div className="text-gray-600">{t('team:list.stats.virtual')}</div>
             </div>
           </div>
         </Card>
@@ -317,9 +314,9 @@ const TournamentTeamList = () => {
               prefix={<SearchOutlined />}
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              style={{ width: 250 }}
+              className="w-64"
             />
-            <Select value={filterGroup} onChange={setFilterGroup} style={{ width: 150 }}>
+            <Select value={filterGroup} onChange={setFilterGroup} className="w-40">
               <Option value="all">{t('team:list.allGroups')}</Option>
               <Option value="unassigned">{t('team:list.unassigned')}</Option>
               {Array.isArray(groups)
@@ -360,13 +357,13 @@ const TournamentTeamList = () => {
             onChange={handleTableChange}
             locale={{
               emptyText: (
-                <div style={{ textAlign: "center", padding: "40px 0" }}>
-                  <TeamOutlined style={{ fontSize: 48, color: "#d9d9d9", marginBottom: 16 }} />
-                  <div style={{ marginBottom: 16 }}>
-                    <span style={{ color: "#999", fontSize: 16 }}>{t('team:list.noTeams')}</span>
+                <div className="text-center py-10">
+                  <TeamOutlined className="text-5xl text-gray-300 mb-4" />
+                  <div className="mb-4">
+                    <span className="text-gray-400 text-base">{t('team:list.noTeams')}</span>
                   </div>
                   <div>
-                    <span style={{ color: "#999" }}>{t('team:list.noTeamsDescription')}</span>
+                    <span className="text-gray-400">{t('team:list.noTeamsDescription')}</span>
                   </div>
                 </div>
               ),

@@ -141,9 +141,9 @@ const TournamentMatchResultEdit = () => {
 
   if (dataLoading) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px' }}>
+      <div className="text-center p-12">
         <Spin size="large" />
-        <div style={{ marginTop: 16 }}>載入比賽數據中...</div>
+        <div className="mt-4">載入比賽數據中...</div>
       </div>
     );
   }
@@ -154,7 +154,7 @@ const TournamentMatchResultEdit = () => {
 
   if (matchData.match_status !== 'completed') {
     return (
-      <div style={{ textAlign: 'center', padding: '50px' }}>
+      <div className="text-center p-12">
         <Title level={3}>只能編輯已完成的比賽結果</Title>
         <Button onClick={handleCancel}>返回</Button>
       </div>
@@ -174,8 +174,8 @@ const TournamentMatchResultEdit = () => {
   const team2DisplayName = getDisplayTeamName(matchData.team2_name);
 
   return (
-    <div style={{ padding: '24px', maxWidth: '800px', margin: '0 auto' }}>
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+    <div className="p-6 max-w-3xl mx-auto">
+      <Space direction="vertical" size="large" className="w-full">
         {/* 頁面標題 */}
         <Card>
           <Space>
@@ -185,22 +185,22 @@ const TournamentMatchResultEdit = () => {
             >
               返回
             </Button>
-            <Title level={2} style={{ margin: 0 }}>
-              <TrophyOutlined style={{ marginRight: 8 }} />
+            <Title level={2} className="m-0">
+              <TrophyOutlined className="mr-2" />
               編輯比賽結果
             </Title>
             {tournament && (
-              <span style={{ color: '#666' }}>
+              <span className="text-gray-600">
                 {tournament.tournament_name}
               </span>
             )}
           </Space>
-          <div style={{ marginTop: 16 }}>
-            <Text strong style={{ fontSize: '16px' }}>
+          <div className="mt-4">
+            <Text strong className="text-base">
               {matchData.match_number}: {team1DisplayName} vs {team2DisplayName}
             </Text>
             {matchData.group_name && (
-              <Tag color="blue" style={{ marginLeft: 8 }}>
+              <Tag color="blue" className="ml-2">
                 小組 {matchData.group_name?.includes("_") ? matchData.group_name.split("_")[0] : matchData.group_name}
               </Tag>
             )}
@@ -227,14 +227,14 @@ const TournamentMatchResultEdit = () => {
             <Col span={8}>
               <div>
                 <Text strong>獲勝者：</Text>
-                <div style={{ marginTop: 4 }}>
+                <div className="mt-1">
                   {predictedWinner ? (
                     <Tag color="gold">{getDisplayTeamName(predictedWinner)}</Tag>
                   ) : (
                     <Tag color="default">平局</Tag>
                   )}
                 </div>
-                <div style={{ marginTop: 4, fontSize: '12px', color: '#666' }}>
+                <div className="mt-1 text-xs text-gray-600">
                   {getWinReasonText(winReason)}
                 </div>
               </div>
@@ -259,7 +259,7 @@ const TournamentMatchResultEdit = () => {
                     max={99}
                     value={team1Score}
                     onChange={setTeam1Score}
-                    style={{ width: '100%' }}
+                    className="w-full"
                   />
                 </Form.Item>
                 <Form.Item label="犯規" name="team1_fouls">
@@ -268,7 +268,7 @@ const TournamentMatchResultEdit = () => {
                     max={99}
                     value={team1Fouls}
                     onChange={setTeam1Fouls}
-                    style={{ width: '100%' }}
+                    className="w-full"
                   />
                 </Form.Item>
               </Col>
@@ -281,7 +281,7 @@ const TournamentMatchResultEdit = () => {
                     max={99}
                     value={team2Score}
                     onChange={setTeam2Score}
-                    style={{ width: '100%' }}
+                    className="w-full"
                   />
                 </Form.Item>
                 <Form.Item label="犯規" name="team2_fouls">
@@ -290,7 +290,7 @@ const TournamentMatchResultEdit = () => {
                     max={99}
                     value={team2Fouls}
                     onChange={setTeam2Fouls}
-                    style={{ width: '100%' }}
+                    className="w-full"
                   />
                 </Form.Item>
               </Col>
@@ -351,7 +351,7 @@ const TournamentMatchResultEdit = () => {
               </>
             )}
 
-            <Form.Item style={{ marginTop: 32 }}>
+            <Form.Item className="mt-8">
               <Space>
                 <Button 
                   type="primary" 

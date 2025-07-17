@@ -142,9 +142,9 @@ const TournamentTeamCreate = () => {
   const availableGroups = getAllTournamentGroups();
 
   return (
-    <div style={{ padding: '24px' }}>
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+    <div className="p-6">
+      <Space direction="vertical" size="large" className="w-full">
+        <div className="flex items-center gap-4">
           <Button 
             icon={<ArrowLeftOutlined />} 
             onClick={handleCancel}
@@ -152,8 +152,8 @@ const TournamentTeamCreate = () => {
             {t('common:buttons.back')}
           </Button>
           <div>
-            <Title level={2} style={{ margin: 0 }}>
-              <TrophyOutlined style={{ marginRight: 8, color: '#faad14' }} />
+            <Title level={2} className="m-0">
+              <TrophyOutlined className="mr-2 text-yellow-500" />
               {t('team:create.title')}
             </Title>
             <Text type="secondary">
@@ -170,7 +170,7 @@ const TournamentTeamCreate = () => {
             description={t('team:create.createNoticeDescription')}
             type="info"
             showIcon
-            style={{ marginBottom: 24 }}
+            className="mb-6"
           />
 
           <Form
@@ -210,7 +210,7 @@ const TournamentTeamCreate = () => {
                 notFoundContent={groupsLoading ? t('team:edit.loadingGroups') : t('team:edit.noGroupsAvailable')}
               >
                 <Option value={null}>
-                  <span style={{ color: '#999', fontStyle: 'italic' }}>
+                  <span className="text-gray-400 italic">
                     {t('team:edit.noGroupAssignment')}
                   </span>
                 </Option>
@@ -225,12 +225,9 @@ const TournamentTeamCreate = () => {
                       value={group.group_id}
                       disabled={isFull}
                     >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div className="flex justify-between items-center">
                         <span>{t('team:team.group')} {displayName}</span>
-                        <span style={{ 
-                          color: isFull ? '#ff4d4f' : '#52c41a',
-                          fontSize: '12px'
-                        }}>
+                        <span className={`text-xs ${isFull ? 'text-red-500' : 'text-green-500'}`}>
                           {teamCount}/{maxTeams} {isFull ? `(${t('team:edit.full')})` : ''}
                         </span>
                       </div>
@@ -292,7 +289,7 @@ const TournamentTeamCreate = () => {
               })}
               type="success"
               showIcon
-              style={{ marginBottom: 24 }}
+              className="mb-6"
             />
 
             <Form.Item>

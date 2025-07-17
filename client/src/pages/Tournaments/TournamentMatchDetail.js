@@ -283,16 +283,16 @@ const MatchDetail = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: "24px", textAlign: "center" }}>
+      <div className="p-6 text-center">
         <Spin size="large" />
-        <div style={{ marginTop: 16 }}>{t('messages.loadingMatches')}</div>
+        <div className="mt-4">{t('messages.loadingMatches')}</div>
       </div>
     );
   }
 
   if (!matchData) {
     return (
-      <div style={{ padding: "24px", textAlign: "center" }}>
+      <div className="p-6 text-center">
         <Title level={3}>{t('messages.matchNotFound', { defaultValue: '比賽不存在' })}</Title>
         <Button onClick={handleBack}>{t('actions.backToMatchList', { defaultValue: '返回比賽列表' })}</Button>
       </div>
@@ -342,15 +342,15 @@ const MatchDetail = () => {
   ];
 
   return (
-    <div style={{ padding: "24px" }}>
-      <Space direction="vertical" size="large" style={{ width: "100%" }}>
+    <div className="p-6">
+      <Space direction="vertical" size="large" className="w-full">
         {/* 頁面標題和操作按鈕 */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-4">
             <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
               {t('actions.backToMatchList', { defaultValue: '返回比賽列表' })}
             </Button>
-            <Title level={2} style={{ margin: 0 }}>
+            <Title level={2} className="m-0">
               {t('match.detail')}
             </Title>
           </div>
@@ -389,7 +389,7 @@ const MatchDetail = () => {
                   title={
                     !matchData.team1_name || !matchData.team2_name ? t('messages.teamsNotDetermined') : t('actions.editPostponed')
                   }
-                  style={{ color: "#fa8c16", borderColor: "#fa8c16" }}
+                  className="text-orange-500 border-orange-500"
                 >
                   {t('actions.edit')}
                 </Button>
@@ -433,26 +433,26 @@ const MatchDetail = () => {
         <Card>
           <Row gutter={[24, 24]}>
             <Col xs={24} lg={12}>
-              <div style={{ textAlign: "center", padding: "20px" }}>
-                <Title level={3} style={{ marginBottom: 8 }}>
+              <div className="text-center p-5">
+                <Title level={3} className="mb-2">
                   {matchData.match_number}
                 </Title>
-                <div style={{ fontSize: "24px", fontWeight: "bold", marginBottom: 16 }}>
-                  <span style={{ color: "#1890ff" }}>{getTeamDisplayName("team1")}</span>
-                  <span style={{ margin: "0 16px", color: "#666" }}>VS</span>
-                  <span style={{ color: "#1890ff" }}>{getTeamDisplayName("team2")}</span>
+                <div className="text-2xl font-bold mb-4">
+                  <span className="text-blue-500">{getTeamDisplayName("team1")}</span>
+                  <span className="mx-4 text-gray-600">VS</span>
+                  <span className="text-blue-500">{getTeamDisplayName("team2")}</span>
                 </div>
                 {matchData.match_status !== "pending" && (
-                  <div style={{ fontSize: "32px", fontWeight: "bold", color: "#f5222d" }}>
+                  <div className="text-3xl font-bold text-red-500">
                     {matchData.team1_score} : {matchData.team2_score}
                   </div>
                 )}
-                <div style={{ marginTop: 16 }}>
-                  <Tag color={getStatusColor(matchData.match_status)} style={{ fontSize: "14px", padding: "4px 12px" }}>
+                <div className="mt-4">
+                  <Tag color={getStatusColor(matchData.match_status)} className="text-sm px-3 py-1">
                     {getStatusText(matchData.match_status)}
                   </Tag>
                   {matchData.group_name && (
-                    <Tag color="blue" style={{ fontSize: "14px", padding: "4px 12px", marginLeft: 8 }}>
+                    <Tag color="blue" className="text-sm px-3 py-1 ml-2">
                       {t('match.group')} {getDisplayGroupName(matchData.group_name)}
                     </Tag>
                   )}
@@ -470,9 +470,9 @@ const MatchDetail = () => {
                 </Col>
               </Row>
               {matchData.winner_name && (
-                <div style={{ marginTop: 16, textAlign: "center" }}>
-                  <TrophyOutlined style={{ color: "#faad14", fontSize: "20px", marginRight: 8 }} />
-                  <Text strong style={{ fontSize: "16px" }}>
+                <div className="mt-4 text-center">
+                  <TrophyOutlined className="text-yellow-500 text-xl mr-2" />
+                  <Text strong className="text-base">
                     {t('match.winner')}：{getDisplayTeamName(matchData.winner_name)}
                   </Text>
                 </div>
@@ -534,8 +534,8 @@ const MatchDetail = () => {
         {/* 如果沒有事件，顯示提示 */}
         {events.length === 0 && matchData.match_status !== "pending" && (
           <Card title={t('events.matchEvents', { defaultValue: '比賽事件' })}>
-            <div style={{ textAlign: "center", padding: "40px", color: "#999" }}>
-              <TeamOutlined style={{ fontSize: "48px", marginBottom: 16 }} />
+            <div className="text-center p-10 text-gray-400">
+              <TeamOutlined className="text-5xl mb-4" />
               <div>{t('events.noEvents', { defaultValue: '暫無比賽事件記錄' })}</div>
             </div>
           </Card>

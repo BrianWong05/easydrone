@@ -87,12 +87,12 @@ const TournamentCreate = () => {
   };
 
   return (
-    <div style={{ padding: "24px" }}>
-      <Space direction="vertical" size="large" style={{ width: "100%" }}>
+    <div className="p-6">
+      <Space direction="vertical" size="large" className="w-full">
         {/* 頁面標題 */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <div className="flex items-center justify-between">
           <Title level={2}>
-            <TrophyOutlined style={{ marginRight: 8, color: "#faad14" }} />
+            <TrophyOutlined className="mr-2 text-yellow-500" />
             {t('tournament:create.title')}
           </Title>
           <Button icon={<ArrowLeftOutlined />} onClick={() => navigate("/")}>
@@ -103,7 +103,7 @@ const TournamentCreate = () => {
         <Row gutter={24}>
           <Col xs={24} lg={16}>
             {/* 基本信息表單 */}
-            <Card title={t('tournament:create.basicInfo')} style={{ marginBottom: 24 }}>
+            <Card title={t('tournament:create.basicInfo')} className="mb-6">
               <Form
                 form={form}
                 layout="vertical"
@@ -153,7 +153,7 @@ const TournamentCreate = () => {
 
                 <Form.Item name="dateRange" label={t('tournament:create.competitionDates')}>
                   <RangePicker
-                    style={{ width: "100%" }}
+                    className="w-full"
                     size="large"
                     placeholder={[t('tournament:create.startDate'), t('tournament:create.endDate')]}
                     disabledDate={(current) => current && current < moment().startOf("day")}
@@ -162,7 +162,7 @@ const TournamentCreate = () => {
 
                 <Divider />
 
-                <Form.Item style={{ marginBottom: 0 }}>
+                <Form.Item className="mb-0">
                   <Space>
                     <Button type="primary" htmlType="submit" loading={loading} icon={<SaveOutlined />} size="large">
                       {t('tournament:create.createTournament')}
@@ -178,20 +178,20 @@ const TournamentCreate = () => {
 
           <Col xs={24} lg={8}>
             {/* 賽制說明 */}
-            <Card title={t('tournament:create.formatDescription')} style={{ marginBottom: 24 }}>
+            <Card title={t('tournament:create.formatDescription')} className="mb-6">
               {selectedType ? (
                 <div>
-                  <Title level={4} style={{ color: "#1890ff", marginBottom: 8 }}>
+                  <Title level={4} className="text-blue-500 mb-2">
                     {getTypeDescription(selectedType).title}
                   </Title>
-                  <Text type="secondary" style={{ marginBottom: 16, display: "block" }}>
+                  <Text type="secondary" className="mb-4 block">
                     {getTypeDescription(selectedType).description}
                   </Text>
                   <div>
                     <Text strong>{t('tournament:create.features')}：</Text>
-                    <ul style={{ marginTop: 8, paddingLeft: 20 }}>
+                    <ul className="mt-2 pl-5">
                       {getTypeDescription(selectedType).features.map((feature, index) => (
-                        <li key={index} style={{ marginBottom: 4 }}>
+                        <li key={index} className="mb-1">
                           <Text>{feature}</Text>
                         </li>
                       ))}
@@ -199,8 +199,8 @@ const TournamentCreate = () => {
                   </div>
                 </div>
               ) : (
-                <div style={{ textAlign: "center", padding: "40px 0" }}>
-                  <InfoCircleOutlined style={{ fontSize: 48, color: "#d9d9d9", marginBottom: 16 }} />
+                <div className="text-center py-10">
+                  <InfoCircleOutlined className="text-5xl text-gray-300 mb-4" />
                   <Text type="secondary">{t('tournament:create.selectTypePrompt')}</Text>
                 </div>
               )}

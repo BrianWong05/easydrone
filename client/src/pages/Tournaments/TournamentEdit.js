@@ -190,9 +190,9 @@ const TournamentEdit = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: '24px', textAlign: 'center' }}>
+      <div className="p-6 text-center">
         <Spin size="large" />
-        <div style={{ marginTop: '16px' }}>
+        <div className="mt-4">
           <Text>{t('tournament:edit.loading')}</Text>
         </div>
       </div>
@@ -201,7 +201,7 @@ const TournamentEdit = () => {
 
   if (!tournament) {
     return (
-      <div style={{ padding: '24px', textAlign: 'center' }}>
+      <div className="p-6 text-center">
         <Text type="danger">{t('tournament:edit.notFound')}</Text>
       </div>
     );
@@ -211,12 +211,12 @@ const TournamentEdit = () => {
   const canEdit = tournament.status === 'pending';
 
   return (
-    <div style={{ padding: '24px' }}>
-      <div style={{ marginBottom: 24 }}>
+    <div className="p-6">
+      <div className="mb-6">
         <Button
           icon={<ArrowLeftOutlined />}
           onClick={() => navigate(`/tournaments/${id}`)}
-          style={{ marginBottom: 16 }}
+          className="mb-4"
         >
           {t('tournament:edit.backToDetail')}
         </Button>
@@ -231,7 +231,7 @@ const TournamentEdit = () => {
           message={t('tournament:edit.cannotEdit')}
           description={t('tournament:edit.cannotEditDescription')}
           type="warning"
-          style={{ marginBottom: 24 }}
+          className="mb-6"
           showIcon
         />
       )}
@@ -245,22 +245,22 @@ const TournamentEdit = () => {
             message={t('tournament:edit.typeChange')}
             description={
               <div>
-                <div style={{ marginBottom: '8px' }}>{changeInfo.message}</div>
-                <div style={{ fontSize: '12px', color: '#666' }}>{changeInfo.description}</div>
+                <div className="mb-2">{changeInfo.message}</div>
+                <div className="text-xs text-gray-600">{changeInfo.description}</div>
                 {groupMatches > 0 && (
-                  <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
+                  <div className="text-xs text-gray-600 mt-1">
                     📊 {t('tournament:edit.typeChangeMessages.groupMatches', { count: groupMatches })}
                   </div>
                 )}
                 {knockoutMatches > 0 && (
-                  <div style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>
+                  <div className="text-xs text-gray-600 mt-1">
                     🏆 {t('tournament:edit.typeChangeMessages.knockoutMatches', { count: knockoutMatches })}
                   </div>
                 )}
               </div>
             }
             type={changeInfo.type}
-            style={{ marginBottom: 24 }}
+            className="mb-6"
             showIcon
           />
         );
@@ -302,24 +302,24 @@ const TournamentEdit = () => {
                 >
                   <Option value="group">
                     <div>
-                      <div style={{ fontWeight: 'bold' }}>{t('tournament:edit.typeOptions.groupTitle')}</div>
-                      <div style={{ fontSize: '12px', color: '#666' }}>
+                      <div className="font-bold">{t('tournament:edit.typeOptions.groupTitle')}</div>
+                      <div className="text-xs text-gray-600">
                         {t('tournament:edit.typeOptions.groupDesc')}
                       </div>
                     </div>
                   </Option>
                   <Option value="knockout">
                     <div>
-                      <div style={{ fontWeight: 'bold' }}>{t('tournament:edit.typeOptions.knockoutTitle')}</div>
-                      <div style={{ fontSize: '12px', color: '#666' }}>
+                      <div className="font-bold">{t('tournament:edit.typeOptions.knockoutTitle')}</div>
+                      <div className="text-xs text-gray-600">
                         {t('tournament:edit.typeOptions.knockoutDesc')}
                       </div>
                     </div>
                   </Option>
                   <Option value="mixed">
                     <div>
-                      <div style={{ fontWeight: 'bold' }}>{t('tournament:edit.typeOptions.mixedTitle')}</div>
-                      <div style={{ fontSize: '12px', color: '#666' }}>
+                      <div className="font-bold">{t('tournament:edit.typeOptions.mixedTitle')}</div>
+                      <div className="text-xs text-gray-600">
                         {t('tournament:edit.typeOptions.mixedDesc')}
                       </div>
                     </div>
@@ -335,7 +335,7 @@ const TournamentEdit = () => {
                     rules={[{ required: true, message: t('tournament:edit.validation.startDateRequired') }]}
                   >
                     <DatePicker 
-                      style={{ width: '100%' }}
+                      className="w-full"
                       size="large"
                       placeholder={t('tournament:edit.validation.startDatePlaceholder')}
                     />
@@ -361,7 +361,7 @@ const TournamentEdit = () => {
                     ]}
                   >
                     <DatePicker 
-                      style={{ width: '100%' }}
+                      className="w-full"
                       size="large"
                       placeholder={t('tournament:edit.validation.endDatePlaceholder')}
                     />
@@ -396,7 +396,7 @@ const TournamentEdit = () => {
 
         <Col span={8}>
           <Card title={t('tournament:edit.tournamentStatus')}>
-            <Space direction="vertical" style={{ width: '100%' }}>
+            <Space direction="vertical" className="w-full">
               <div>
                 <Text strong>{t('tournament:edit.currentStatus')}：</Text>
                 <br />
@@ -424,13 +424,13 @@ const TournamentEdit = () => {
           </Card>
 
           {form.getFieldValue('tournament_type') && (
-            <Card title={t('tournament:edit.formatDescription')} style={{ marginTop: 16 }}>
+            <Card title={t('tournament:edit.formatDescription')} className="mt-4">
               {(() => {
                 const typeInfo = getTournamentTypeInfo(form.getFieldValue('tournament_type'));
                 if (!typeInfo) return null;
                 
                 return (
-                  <Space direction="vertical" style={{ width: '100%' }}>
+                  <Space direction="vertical" className="w-full">
                     <div>
                       <Text strong>{typeInfo.title}</Text>
                     </div>
@@ -439,7 +439,7 @@ const TournamentEdit = () => {
                     </div>
                     <div>
                       <Text strong>{t('tournament:edit.features')}：</Text>
-                      <ul style={{ margin: '8px 0', paddingLeft: '20px' }}>
+                      <ul className="my-2 pl-5">
                         {typeInfo.features.map((feature, index) => (
                           <li key={index}>
                             <Text type="secondary">{feature}</Text>

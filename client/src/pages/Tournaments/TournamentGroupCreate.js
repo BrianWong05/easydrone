@@ -100,9 +100,9 @@ const TournamentGroupCreate = () => {
   };
 
   return (
-    <div style={{ padding: '24px' }}>
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+    <div className="p-6">
+      <Space direction="vertical" size="large" className="w-full">
+        <div className="flex items-center gap-4">
           <Button 
             icon={<ArrowLeftOutlined />} 
             onClick={handleCancel}
@@ -110,8 +110,8 @@ const TournamentGroupCreate = () => {
             {t('common:buttons.back')}
           </Button>
           <div>
-            <Title level={2} style={{ margin: 0 }}>
-              <TrophyOutlined style={{ marginRight: 8, color: '#faad14' }} />
+            <Title level={2} className="m-0">
+              <TrophyOutlined className="mr-2 text-yellow-500" />
               {t('group:create.title')}
             </Title>
             <Text type="secondary">
@@ -128,7 +128,7 @@ const TournamentGroupCreate = () => {
             description={t('group:create.setupNoticeDescription')}
             type="info"
             showIcon
-            style={{ marginBottom: 24 }}
+            className="mb-6"
           />
 
           <Form
@@ -151,7 +151,7 @@ const TournamentGroupCreate = () => {
                 placeholder={t('group:create.namePlaceholder')}
                 size="large"
                 maxLength={1}
-                style={{ textTransform: 'uppercase' }}
+                className="uppercase"
                 onChange={(e) => {
                   const upperValue = e.target.value.toUpperCase();
                   form.setFieldsValue({ group_name: upperValue });
@@ -172,7 +172,7 @@ const TournamentGroupCreate = () => {
                 size="large"
                 min={2}
                 max={8}
-                style={{ width: '100%' }}
+                className="w-full"
                 addonAfter={t('group:create.teamsUnit')}
               />
             </Form.Item>
@@ -196,7 +196,7 @@ const TournamentGroupCreate = () => {
               })}
               type="success"
               showIcon
-              style={{ marginBottom: 24 }}
+              className="mb-6"
             />
 
             <Form.Item>

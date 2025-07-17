@@ -283,7 +283,7 @@ const TournamentTeamDetail = () => {
       sorter: (a, b) => (a.jersey_number || 0) - (b.jersey_number || 0),
       sortDirections: ['ascend', 'descend'],
       render: (number) => (
-        <span style={{ fontWeight: 'bold', fontSize: '16px' }}>#{number}</span>
+        <span className="font-bold text-base">#{number}</span>
       ),
     },
     {
@@ -295,11 +295,7 @@ const TournamentTeamDetail = () => {
       render: (name, record) => (
         <Space>
           <span 
-            style={{ 
-              color: '#1890ff',
-              cursor: 'pointer',
-              textDecoration: 'underline'
-            }}
+            className="text-blue-500 cursor-pointer underline hover:text-blue-700"
             onClick={() => navigate(`/tournaments/${tournamentId}/athletes/${record.athlete_id}`)}
           >
             {name}
@@ -373,11 +369,7 @@ const TournamentTeamDetail = () => {
       defaultSortOrder: 'ascend',
       render: (matchNumber, record) => (
         <span 
-          style={{ 
-            color: '#1890ff',
-            cursor: 'pointer',
-            textDecoration: 'underline'
-          }}
+          className="text-blue-500 cursor-pointer underline hover:text-blue-700"
           onClick={() => navigate(`/tournaments/${tournamentId}/matches/${record.match_id}`)}
         >
           {matchNumber}
@@ -401,11 +393,7 @@ const TournamentTeamDetail = () => {
         const opponentId = isTeam1 ? record.team2_id : record.team1_id;
         return (
           <span
-            style={{
-              color: '#1890ff',
-              cursor: 'pointer',
-              textDecoration: 'underline'
-            }}
+            className="text-blue-500 cursor-pointer underline hover:text-blue-700"
             onClick={() => navigate(`/tournaments/${tournamentId}/teams/${opponentId}`)}
           >
             {getDisplayTeamName(opponentName)}
@@ -493,7 +481,7 @@ const TournamentTeamDetail = () => {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px' }}>
+      <div className="flex justify-center items-center h-96">
         <Spin size="large" />
       </div>
     );
@@ -501,7 +489,7 @@ const TournamentTeamDetail = () => {
 
   if (!teamData) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px' }}>
+      <div className="text-center p-12">
         <Title level={4}>{t('team:detail.teamNotFound')}</Title>
         <Button type="primary" onClick={handleBack}>
           {t('team:detail.backToTeamList')}
@@ -511,8 +499,8 @@ const TournamentTeamDetail = () => {
   }
 
   return (
-    <div style={{ padding: '24px' }}>
-      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+    <div className="p-6">
+      <Space direction="vertical" size="large" className="w-full">
         {/* 頁面標題和操作按鈕 */}
         <Card>
           <Row justify="space-between" align="middle">
@@ -521,7 +509,7 @@ const TournamentTeamDetail = () => {
                 <Button icon={<ArrowLeftOutlined />} onClick={handleBack}>
                   {t('team:detail.backToList')}
                 </Button>
-                <Title level={3} style={{ margin: 0 }}>
+                <Title level={3} className="m-0">
                   {t('team:detail.title')}
                 </Title>
               </Space>
@@ -558,13 +546,8 @@ const TournamentTeamDetail = () => {
           title={
             <Space>
               <div 
-                style={{
-                  width: 24,
-                  height: 24,
-                  backgroundColor: teamData.team_color || '#1890ff',
-                  borderRadius: '4px',
-                  border: '1px solid #d9d9d9'
-                }}
+                className="w-6 h-6 rounded border border-gray-300"
+                style={{ backgroundColor: teamData.team_color || '#1890ff' }}
               />
               <TeamOutlined />
               <span>{getDisplayTeamName(teamData.team_name)}</span>
@@ -617,13 +600,8 @@ const TournamentTeamDetail = () => {
             <Descriptions.Item label={t('team:detail.info.teamColor')}>
               <Space>
                 <div 
-                  style={{
-                    width: 20,
-                    height: 20,
-                    backgroundColor: teamData.team_color || '#1890ff',
-                    borderRadius: '4px',
-                    border: '1px solid #d9d9d9'
-                  }}
+                  className="w-5 h-5 rounded border border-gray-300"
+                  style={{ backgroundColor: teamData.team_color || '#1890ff' }}
                 />
                 {teamData.team_color || '#1890ff'}
               </Space>
@@ -639,19 +617,20 @@ const TournamentTeamDetail = () => {
               {athletes.length} {t('team:detail.info.people')}
             </Descriptions.Item>
             <Descriptions.Item label={t('team:detail.stats.wins')}>
-              <span style={{ color: '#52c41a', fontWeight: 'bold' }}>{stats.wins}</span>
+              <span className="text-green-500 font-bold">{stats.wins}</span>
             </Descriptions.Item>
             <Descriptions.Item label={t('team:detail.stats.draws')}>
-              <span style={{ color: '#faad14', fontWeight: 'bold' }}>{stats.draws}</span>
+              <span className="text-yellow-500 font-bold">{stats.draws}</span>
             </Descriptions.Item>
             <Descriptions.Item label={t('team:detail.stats.losses')}>
-              <span style={{ color: '#ff4d4f', fontWeight: 'bold' }}>{stats.losses}</span>
+              <span className="text-red-500 font-bold">{stats.losses}</span>
             </Descriptions.Item>
             <Descriptions.Item label={t('team:detail.stats.goalDifference')}>
-              <span style={{ 
-                color: stats.goalDifference > 0 ? '#52c41a' : stats.goalDifference < 0 ? '#ff4d4f' : '#666',
-                fontWeight: 'bold'
-              }}>
+              <span className={`font-bold ${
+                stats.goalDifference > 0 ? 'text-green-500' : 
+                stats.goalDifference < 0 ? 'text-red-500' : 
+                'text-gray-600'
+              }`}>
                 {stats.goalDifference > 0 ? '+' : ''}{stats.goalDifference}
               </span>
             </Descriptions.Item>
@@ -695,14 +674,14 @@ const TournamentTeamDetail = () => {
             size="small"
           />
           {athletes.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
-              <UserOutlined style={{ fontSize: '48px', marginBottom: 16 }} />
+            <div className="text-center py-10 text-gray-400">
+              <UserOutlined className="text-5xl mb-4" />
               <div>{t('team:detail.noAthletes')}</div>
               <Button 
                 type="primary" 
                 icon={<UserAddOutlined />}
                 onClick={handleAddAthlete}
-                style={{ marginTop: 16 }}
+                className="mt-4"
               >
                 {t('team:detail.addFirstAthlete')}
               </Button>
@@ -733,8 +712,8 @@ const TournamentTeamDetail = () => {
             size="small"
           />
           {matches.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
-              <TrophyOutlined style={{ fontSize: '48px', marginBottom: 16 }} />
+            <div className="text-center py-10 text-gray-400">
+              <TrophyOutlined className="text-5xl mb-4" />
               <div>{t('team:detail.noMatches')}</div>
             </div>
           )}
