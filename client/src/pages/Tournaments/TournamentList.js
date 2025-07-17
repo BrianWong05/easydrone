@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Card, 
-  Typography, 
   Button, 
   Space, 
   Table, 
@@ -27,7 +26,6 @@ import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import moment from 'moment';
 
-const { Title, Text } = Typography;
 const { Search } = Input;
 const { Option } = Select;
 
@@ -367,10 +365,10 @@ const TournamentList = () => {
       <Space direction="vertical" size="large" className="w-full">
         {/* 頁面標題和新增按鈕 */}
         <div className="flex justify-between items-center">
-          <Title level={2}>
+          <h2 className="text-2xl font-bold m-0">
             <TrophyOutlined className="mr-2 text-yellow-500" />
             {t('tournament:list.title')}
-          </Title>
+          </h2>
           <Button 
             type="primary" 
             icon={<PlusOutlined />}
@@ -430,10 +428,10 @@ const TournamentList = () => {
                 <div className="text-center py-10">
                   <TrophyOutlined className="text-5xl text-gray-300 mb-4" />
                   <div className="mb-4">
-                    <Text type="secondary" className="text-lg">{t('tournament:list.noData')}</Text>
+                    <p className="text-lg text-gray-500 m-0">{t('tournament:list.noData')}</p>
                   </div>
                   <div>
-                    <Text type="secondary" className="text-base">{t('tournament:list.noDataDescription')}</Text>
+                    <p className="text-base text-gray-500 m-0">{t('tournament:list.noDataDescription')}</p>
                   </div>
                   <div className="mt-4">
                     <Button 

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   Card,
-  Typography,
   Form,
   Input,
   Select,
@@ -20,7 +19,6 @@ import { useTranslation } from 'react-i18next';
 import axios from "axios";
 import moment from "moment";
 
-const { Title, Text } = Typography;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
@@ -91,10 +89,10 @@ const TournamentCreate = () => {
       <Space direction="vertical" size="large" className="w-full">
         {/* 頁面標題 */}
         <div className="flex items-center justify-between">
-          <Title level={2}>
+          <h2 className="text-2xl font-bold m-0">
             <TrophyOutlined className="mr-2 text-yellow-500" />
             {t('tournament:create.title')}
-          </Title>
+          </h2>
           <Button icon={<ArrowLeftOutlined />} onClick={() => navigate("/")}>
             {t('tournament:create.backToList')}
           </Button>
@@ -181,18 +179,18 @@ const TournamentCreate = () => {
             <Card title={t('tournament:create.formatDescription')} className="mb-6">
               {selectedType ? (
                 <div>
-                  <Title level={4} className="text-blue-500 mb-2">
+                  <h4 className="text-lg font-semibold text-blue-500 mb-2 m-0">
                     {getTypeDescription(selectedType).title}
-                  </Title>
-                  <Text type="secondary" className="mb-4 block">
+                  </h4>
+                  <p className="text-gray-500 mb-4 m-0">
                     {getTypeDescription(selectedType).description}
-                  </Text>
+                  </p>
                   <div>
-                    <Text strong>{t('tournament:create.features')}：</Text>
+                    <strong className="font-semibold">{t('tournament:create.features')}：</strong>
                     <ul className="mt-2 pl-5">
                       {getTypeDescription(selectedType).features.map((feature, index) => (
                         <li key={index} className="mb-1">
-                          <Text>{feature}</Text>
+                          <span>{feature}</span>
                         </li>
                       ))}
                     </ul>
@@ -201,7 +199,7 @@ const TournamentCreate = () => {
               ) : (
                 <div className="text-center py-10">
                   <InfoCircleOutlined className="text-5xl text-gray-300 mb-4" />
-                  <Text type="secondary">{t('tournament:create.selectTypePrompt')}</Text>
+                  <p className="text-gray-500 m-0">{t('tournament:create.selectTypePrompt')}</p>
                 </div>
               )}
             </Card>

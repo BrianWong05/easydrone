@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Card,
-  Typography,
   Button,
   Space,
   Descriptions,
@@ -34,7 +33,6 @@ import { useTranslation } from 'react-i18next';
 import axios from "axios";
 import moment from "moment";
 
-const { Title, Text } = Typography;
 
 const TournamentDetail = () => {
   const navigate = useNavigate();
@@ -201,7 +199,7 @@ const TournamentDetail = () => {
   if (loading) {
     return (
       <div className="p-6 text-center">
-        <Title level={4}>{t('tournament:detail.loading')}</Title>
+        <h4 className="text-lg font-semibold m-0">{t('tournament:detail.loading')}</h4>
       </div>
     );
   }
@@ -224,16 +222,16 @@ const TournamentDetail = () => {
               <Space align="center">
                 <TrophyOutlined className="text-3xl text-yellow-500" />
                 <div>
-                  <Title level={2} className="m-0">
+                  <h2 className="text-2xl font-bold m-0">
                     {tournament.tournament_name}
-                  </Title>
+                  </h2>
                   <Space>
                     {getStatusTag(tournament.status)}
-                    <Text type="secondary">
+                    <span className="text-gray-500">
                       {tournament.tournament_type === "group" && t('tournament:types.groupStage')}
                       {tournament.tournament_type === "knockout" && t('tournament:types.knockout')}
                       {tournament.tournament_type === "mixed" && t('tournament:types.mixed')}
-                    </Text>
+                    </span>
                   </Space>
                 </div>
               </Space>
@@ -336,13 +334,13 @@ const TournamentDetail = () => {
                     <div className="flex items-center justify-between">
                       <Space>
                         {card.icon}
-                        <Title level={4} className="m-0">
+                        <h4 className="text-lg font-semibold m-0">
                           {card.title}
-                        </Title>
+                        </h4>
                       </Space>
                       <Statistic value={card.count} />
                     </div>
-                    <Text type="secondary">{card.description}</Text>
+                    <p className="text-gray-500 m-0">{card.description}</p>
                     <Space wrap>
                       {card.actions.map((action, actionIndex) => (
                         <Button
@@ -386,20 +384,20 @@ const TournamentDetail = () => {
                     avatar={<Avatar icon={<CalendarOutlined />} />}
                     title={
                       <Space>
-                        <Text strong>{match.match_number}</Text>
+                        <strong className="font-semibold">{match.match_number}</strong>
                         {getMatchStatusTag(match.match_status)}
                       </Space>
                     }
                     description={
                       <Space direction="vertical" size="small">
-                        <Text>
+                        <span>
                           {getDisplayTeamName(match.team1_name)} vs {getDisplayTeamName(match.team2_name)}
-                        </Text>
-                        <Text type="secondary">{moment(match.match_date).format("YYYY-MM-DD HH:mm")}</Text>
+                        </span>
+                        <span className="text-gray-500">{moment(match.match_date).format("YYYY-MM-DD HH:mm")}</span>
                         {match.match_status === "completed" && (
-                          <Text>
+                          <span>
                             {t('tournament:detail.score')}: {match.team1_score} - {match.team2_score}
-                          </Text>
+                          </span>
                         )}
                       </Space>
                     }

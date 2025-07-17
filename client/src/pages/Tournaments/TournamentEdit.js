@@ -9,7 +9,6 @@ import {
   Button,
   message,
   Space,
-  Typography,
   Alert,
   Row,
   Col,
@@ -20,7 +19,6 @@ import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import moment from 'moment';
 
-const { Title, Text } = Typography;
 const { Option } = Select;
 
 const TournamentEdit = () => {
@@ -193,7 +191,7 @@ const TournamentEdit = () => {
       <div className="p-6 text-center">
         <Spin size="large" />
         <div className="mt-4">
-          <Text>{t('tournament:edit.loading')}</Text>
+          <p className="m-0">{t('tournament:edit.loading')}</p>
         </div>
       </div>
     );
@@ -202,7 +200,7 @@ const TournamentEdit = () => {
   if (!tournament) {
     return (
       <div className="p-6 text-center">
-        <Text type="danger">{t('tournament:edit.notFound')}</Text>
+        <p className="text-red-500 m-0">{t('tournament:edit.notFound')}</p>
       </div>
     );
   }
@@ -220,10 +218,10 @@ const TournamentEdit = () => {
         >
           {t('tournament:edit.backToDetail')}
         </Button>
-        <Title level={2}>
+        <h2 className="text-2xl font-bold m-0">
           <EditOutlined /> {t('tournament:edit.title')}
-        </Title>
-        <Text type="secondary">{t('tournament:edit.subtitle')}</Text>
+        </h2>
+        <p className="text-gray-500 mt-2 mb-0">{t('tournament:edit.subtitle')}</p>
       </div>
 
       {!canEdit && (
@@ -398,26 +396,26 @@ const TournamentEdit = () => {
           <Card title={t('tournament:edit.tournamentStatus')}>
             <Space direction="vertical" className="w-full">
               <div>
-                <Text strong>{t('tournament:edit.currentStatus')}：</Text>
+                <strong className="font-semibold">{t('tournament:edit.currentStatus')}：</strong>
                 <br />
-                <Text>
+                <span>
                   {tournament.status === 'pending' && t('tournament:detail.status.pending')}
                   {tournament.status === 'active' && t('tournament:detail.status.active')}
                   {tournament.status === 'completed' && t('tournament:detail.status.completed')}
-                </Text>
+                </span>
               </div>
               
               <div>
-                <Text strong>{t('tournament:edit.createdAt')}：</Text>
+                <strong className="font-semibold">{t('tournament:edit.createdAt')}：</strong>
                 <br />
-                <Text>{moment(tournament.created_at).format('YYYY-MM-DD HH:mm')}</Text>
+                <span>{moment(tournament.created_at).format('YYYY-MM-DD HH:mm')}</span>
               </div>
               
               {tournament.updated_at && (
                 <div>
-                  <Text strong>{t('tournament:edit.lastUpdated')}：</Text>
+                  <strong className="font-semibold">{t('tournament:edit.lastUpdated')}：</strong>
                   <br />
-                  <Text>{moment(tournament.updated_at).format('YYYY-MM-DD HH:mm')}</Text>
+                  <span>{moment(tournament.updated_at).format('YYYY-MM-DD HH:mm')}</span>
                 </div>
               )}
             </Space>
@@ -432,17 +430,17 @@ const TournamentEdit = () => {
                 return (
                   <Space direction="vertical" className="w-full">
                     <div>
-                      <Text strong>{typeInfo.title}</Text>
+                      <strong className="font-semibold">{typeInfo.title}</strong>
                     </div>
                     <div>
-                      <Text type="secondary">{typeInfo.description}</Text>
+                      <p className="text-gray-500 m-0">{typeInfo.description}</p>
                     </div>
                     <div>
-                      <Text strong>{t('tournament:edit.features')}：</Text>
+                      <strong className="font-semibold">{t('tournament:edit.features')}：</strong>
                       <ul className="my-2 pl-5">
                         {typeInfo.features.map((feature, index) => (
                           <li key={index}>
-                            <Text type="secondary">{feature}</Text>
+                            <span className="text-gray-500">{feature}</span>
                           </li>
                         ))}
                       </ul>
