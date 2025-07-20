@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS teams (
 -- 運動員表 - 無人機足球隊伍結構：1名進攻手，3-5名防守人員 (錦標賽範圍)
 CREATE TABLE IF NOT EXISTS athletes (
     athlete_id INT AUTO_INCREMENT PRIMARY KEY,
-    team_id INT NOT NULL,
+    team_id INT NULL,
     tournament_id INT NOT NULL,
     name VARCHAR(100) NOT NULL,
     jersey_number INT NOT NULL,
@@ -70,10 +70,10 @@ CREATE TABLE IF NOT EXISTS athletes (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (team_id) REFERENCES teams(team_id) ON DELETE CASCADE,
     FOREIGN KEY (tournament_id) REFERENCES tournaments(tournament_id) ON DELETE CASCADE,
-    UNIQUE KEY unique_tournament_team_jersey (tournament_id, team_id, jersey_number),
+    UNIQUE KEY unique_tournament_jersey_when_no_team (tournament_id, jersey_number, team_id),
     INDEX idx_athletes_tournament_id (tournament_id),
     INDEX idx_athletes_team_id (team_id)
-) COMMENT = '運動員表 - 包含錦標賽範圍的運動員信息，球衣號碼在錦標賽+隊伍範圍內唯一';
+) COMMENT = '運動員表 - 包含錦標賽範圍的運動員信息，支持無隊伍運動員';
 
 -- 比賽表
 CREATE TABLE IF NOT EXISTS matches (

@@ -54,11 +54,13 @@
   "messages": {
     "noAthletes": "Sem atletas disponíveis",
     "noAthleteData": "Sem dados de atletas disponíveis",
-    "loadingAthletes": "A carregar dados dos atletas...",
+    "loadingAthletes": "Falha ao carregar atletas",
+    "loadTeamsFailed": "Falha ao carregar equipas",
     "athleteCreated": "Atleta criado com sucesso",
     "athleteUpdated": "Atleta atualizado com sucesso",
     "athleteDeleted": "Atleta eliminado com sucesso",
-    "deleteConfirmation": "Tem a certeza que quer eliminar este atleta?",
+    "createFailed": "Falha ao criar atleta",
+    "deleteConfirmation": "Eliminar Atleta",
     "deleteWarning": "Esta ação não pode ser desfeita",
     "noStatistics": "Sem estatísticas disponíveis"
   },
@@ -71,5 +73,31 @@
     "enterAge": "Inserir idade",
     "enterHeight": "Inserir altura",
     "enterWeight": "Inserir peso"
+  },
+  "form": {
+    "basicInfo": "Informações Básicas",
+    "basicInfoDescription": "Inserir as informações básicas do atleta e atribuição opcional de equipa",
+    "teamComposition": "Composição Atual da Equipa",
+    "selectTeamFirst": "Por favor selecione uma equipa para ver a composição",
+    "noTeamSelected": "Nenhuma Equipa Selecionada",
+    "noTeamDescription": "Este atleta será criado sem atribuição de equipa. Pode atribuí-lo a uma equipa mais tarde.",
+    "optional": "Opcional",
+    "teamRules": "Regras de Composição da Equipa",
+    "rulesTitle": "Estrutura da Equipa de Futebol de Drones",
+    "rule1": "Cada equipa deve ter exatamente 1 atacante",
+    "rule2": "Cada equipa pode ter 3-5 defesas",
+    "rule3": "Número ilimitado de jogadores suplentes permitido",
+    "rule4": "Números de camisola devem ser únicos dentro da equipa",
+    "totalAthletes": "Total de Atletas"
+  },
+  "validation": {
+    "nameRequired": "Por favor insira o nome do atleta",
+    "nameMinLength": "Nome deve ter pelo menos 2 caracteres",
+    "nameMaxLength": "Nome não pode exceder 100 caracteres",
+    "numberRequired": "Por favor insira o número da camisola",
+    "numberRange": "Número da camisola deve estar entre 1-99",
+    "ageRequired": "Por favor insira a idade",
+    "ageRange": "Idade deve estar entre 16-50",
+    "positionRequired": "Por favor selecione uma posição"
   }
 }

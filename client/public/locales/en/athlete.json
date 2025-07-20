@@ -54,11 +54,13 @@
   "messages": {
     "noAthletes": "No athletes available",
     "noAthleteData": "No athlete data available",
-    "loadingAthletes": "Loading athlete data...",
+    "loadingAthletes": "Failed to load athletes",
+    "loadTeamsFailed": "Failed to load teams",
     "athleteCreated": "Athlete created successfully",
     "athleteUpdated": "Athlete updated successfully",
     "athleteDeleted": "Athlete deleted successfully",
-    "deleteConfirmation": "Are you sure you want to delete this athlete?",
+    "createFailed": "Failed to create athlete",
+    "deleteConfirmation": "Delete Athlete",
     "deleteWarning": "This action cannot be undone",
     "noStatistics": "No statistics available"
   },
@@ -71,5 +73,31 @@
     "enterAge": "Enter age",
     "enterHeight": "Enter height",
     "enterWeight": "Enter weight"
+  },
+  "form": {
+    "basicInfo": "Basic Information",
+    "basicInfoDescription": "Enter the athlete's basic information and optional team assignment",
+    "teamComposition": "Current Team Composition",
+    "selectTeamFirst": "Please select a team to view composition",
+    "noTeamSelected": "No Team Selected",
+    "noTeamDescription": "This athlete will be created without team assignment. You can assign them to a team later.",
+    "optional": "Optional",
+    "teamRules": "Team Composition Rules",
+    "rulesTitle": "Drone Soccer Team Structure",
+    "rule1": "Each team must have exactly 1 attacker",
+    "rule2": "Each team can have 3-5 defenders",
+    "rule3": "Unlimited substitute players allowed",
+    "rule4": "Jersey numbers must be unique within the team",
+    "totalAthletes": "Total Athletes"
+  },
+  "validation": {
+    "nameRequired": "Please enter athlete name",
+    "nameMinLength": "Name must be at least 2 characters",
+    "nameMaxLength": "Name cannot exceed 100 characters",
+    "numberRequired": "Please enter jersey number",
+    "numberRange": "Jersey number must be between 1-99",
+    "ageRequired": "Please enter age",
+    "ageRange": "Age must be between 16-50",
+    "positionRequired": "Please select a position"
   }
 }

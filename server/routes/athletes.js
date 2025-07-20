@@ -10,8 +10,8 @@ const athleteSchema = Joi.object({
   tournament_id: Joi.number().integer().required().messages({
     'any.required': '錦標賽ID是必填項'
   }),
-  team_id: Joi.number().integer().required().messages({
-    'any.required': '隊伍ID是必填項'
+  team_id: Joi.number().integer().optional().allow(null).messages({
+    'number.base': '隊伍ID必須是數字'
   }),
   name: Joi.string().min(2).max(100).required().messages({
     'string.empty': '運動員姓名不能為空',
@@ -46,7 +46,7 @@ router.get('/', async (req, res) => {
     let sql = `
       SELECT a.*, t.team_name, t.team_color, g.group_name, tour.tournament_name
       FROM athletes a
-      JOIN teams t ON a.team_id = t.team_id
+      LEFT JOIN teams t ON a.team_id = t.team_id
       JOIN tournaments tour ON a.tournament_id = tour.tournament_id
       LEFT JOIN team_groups g ON t.group_id = g.group_id
       WHERE 1=1
@@ -88,7 +88,7 @@ router.get('/', async (req, res) => {
       params.push(`%${search}%`);
     }
 
-    sql += ' ORDER BY t.team_name, a.jersey_number';
+    sql += ' ORDER BY COALESCE(t.team_name, "無隊伍") ASC, a.jersey_number ASC';
 
     // 分頁
     const offset = (page - 1) * limit;
@@ -102,15 +102,16 @@ router.get('/', async (req, res) => {
     // 按隊伍分組顯示
     const teamGroups = {};
     athletes.forEach(athlete => {
-      if (!teamGroups[athlete.team_name]) {
-        teamGroups[athlete.team_name] = [];
+      const teamName = athlete.team_name || '無隊伍';
+      if (!teamGroups[teamName]) {
+        teamGroups[teamName] = [];
       }
-      teamGroups[athlete.team_name].push(athlete);
-      console.log(`👥 ${athlete.team_name} - ${athlete.name} (#${athlete.jersey_number}, ${athlete.position})`);
+      teamGroups[teamName].push(athlete);
+      console.log(`👥 ${teamName} - ${athlete.name} (#${athlete.jersey_number}, ${athlete.position})`);
     });
 
     // 獲取總數
-    let countSql = 'SELECT COUNT(*) as total FROM athletes a JOIN teams t ON a.team_id = t.team_id WHERE a.tournament_id = ?';
+    let countSql = 'SELECT COUNT(*) as total FROM athletes a LEFT JOIN teams t ON a.team_id = t.team_id WHERE a.tournament_id = ?';
     const countParams = [tournament_id];
     
     if (team_id) {
@@ -163,7 +164,7 @@ router.get('/:id', async (req, res) => {
     const athletes = await query(`
       SELECT a.*, t.team_name, t.team_color, g.group_name, tour.tournament_name
       FROM athletes a
-      JOIN teams t ON a.team_id = t.team_id
+      LEFT JOIN teams t ON a.team_id = t.team_id
       JOIN tournaments tour ON a.tournament_id = tour.tournament_id
       LEFT JOIN team_groups g ON t.group_id = g.group_id
       WHERE a.athlete_id = ?
@@ -242,63 +243,77 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // 檢查隊伍是否存在且屬於該錦標賽
-    const teams = await query(
-      'SELECT team_id, team_name FROM teams WHERE team_id = ? AND tournament_id = ?',
-      [team_id, tournament_id]
-    );
+    // 如果指定了隊伍，進行隊伍相關驗證
+    if (team_id) {
+      // 檢查隊伍是否存在且屬於該錦標賽
+      const teams = await query(
+        'SELECT team_id, team_name FROM teams WHERE team_id = ? AND tournament_id = ?',
+        [team_id, tournament_id]
+      );
 
-    if (teams.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: '指定的隊伍不存在或不屬於該錦標賽'
+      if (teams.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: '指定的隊伍不存在或不屬於該錦標賽'
+        });
+      }
+
+      // 檢查球衣號碼是否在該錦標賽的隊伍中已存在
+      const existingAthletes = await query(
+        'SELECT athlete_id FROM athletes WHERE tournament_id = ? AND team_id = ? AND jersey_number = ?',
+        [tournament_id, team_id, jersey_number]
+      );
+
+      if (existingAthletes.length > 0) {
+        return res.status(409).json({
+          success: false,
+          message: '該球衣號碼在隊伍中已存在'
+        });
+      }
+
+      // 檢查隊伍結構限制（1名進攻手，最多5名防守員）
+      const positionCounts = await query(`
+        SELECT position, COUNT(*) as count 
+        FROM athletes 
+        WHERE tournament_id = ? AND team_id = ? AND is_active = 1 
+        GROUP BY position
+      `, [tournament_id, team_id]);
+
+      const counts = {
+        attacker: 0,
+        defender: 0,
+        substitute: 0
+      };
+
+      positionCounts.forEach(pc => {
+        counts[pc.position] = pc.count;
       });
+
+      if (position === 'attacker' && counts.attacker >= 1) {
+        return res.status(400).json({
+          success: false,
+          message: '每支隊伍只能有1名進攻手'
+        });
+      }
+
+      if (position === 'defender' && counts.defender >= 5) {
+        return res.status(400).json({
+          success: false,
+          message: '每支隊伍最多只能有5名防守員'
+        });
+      }
+    } else {
+      // 沒有指定隊伍時，檢查球衣號碼在整個錦標賽中是否唯一（可選邏輯）
+      const existingAthletes = await query(
+        'SELECT athlete_id FROM athletes WHERE tournament_id = ? AND jersey_number = ? AND team_id IS NOT NULL',
+        [tournament_id, jersey_number]
+      );
+
+      if (existingAthletes.length > 0) {
+        console.log('⚠️ 警告：球衣號碼在錦標賽中已被其他隊伍使用，但允許創建無隊伍運動員');
+      }
     }
 
-    // 檢查球衣號碼是否在該錦標賽的隊伍中已存在
-    const existingAthletes = await query(
-      'SELECT athlete_id FROM athletes WHERE tournament_id = ? AND team_id = ? AND jersey_number = ?',
-      [tournament_id, team_id, jersey_number]
-    );
-
-    if (existingAthletes.length > 0) {
-      return res.status(409).json({
-        success: false,
-        message: '該球衣號碼在隊伍中已存在'
-      });
-    }
-
-    // 檢查隊伍結構限制（1名進攻手，最多5名防守員）
-    const positionCounts = await query(`
-      SELECT position, COUNT(*) as count 
-      FROM athletes 
-      WHERE tournament_id = ? AND team_id = ? AND is_active = 1 
-      GROUP BY position
-    `, [tournament_id, team_id]);
-
-    const counts = {
-      attacker: 0,
-      defender: 0,
-      substitute: 0
-    };
-
-    positionCounts.forEach(pc => {
-      counts[pc.position] = pc.count;
-    });
-
-    if (position === 'attacker' && counts.attacker >= 1) {
-      return res.status(400).json({
-        success: false,
-        message: '每支隊伍只能有1名進攻手'
-      });
-    }
-
-    if (position === 'defender' && counts.defender >= 5) {
-      return res.status(400).json({
-        success: false,
-        message: '每支隊伍最多只能有5名防守員'
-      });
-    }
 
     // 創建運動員
     console.log('📝 準備插入數據庫:', { team_id, name, jersey_number, position, age, is_active });
@@ -306,10 +321,17 @@ router.post('/', async (req, res) => {
     // 嘗試插入，如果age字段不存在則添加它
     let result;
     try {
-      result = await query(
-        'INSERT INTO athletes (tournament_id, team_id, name, jersey_number, position, age, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)',
-        [tournament_id, team_id, name, jersey_number, position, age, is_active]
-      );
+      if (team_id) {
+        result = await query(
+          'INSERT INTO athletes (tournament_id, team_id, name, jersey_number, position, age, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          [tournament_id, team_id, name, jersey_number, position, age, is_active]
+        );
+      } else {
+        result = await query(
+          'INSERT INTO athletes (tournament_id, name, jersey_number, position, age, is_active) VALUES (?, ?, ?, ?, ?, ?)',
+          [tournament_id, name, jersey_number, position, age, is_active]
+        );
+      }
     } catch (insertError) {
       if (insertError.code === 'ER_BAD_FIELD_ERROR' && insertError.message.includes('age')) {
         console.log('🔧 age字段不存在，正在添加...');
@@ -319,10 +341,17 @@ router.post('/', async (req, res) => {
         console.log('✅ age字段已添加，重新嘗試插入...');
         
         // 重新嘗試插入
-        result = await query(
-          'INSERT INTO athletes (tournament_id, team_id, name, jersey_number, position, age, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)',
-          [tournament_id, team_id, name, jersey_number, position, age, is_active]
-        );
+        if (team_id) {
+          result = await query(
+            'INSERT INTO athletes (tournament_id, team_id, name, jersey_number, position, age, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)',
+            [tournament_id, team_id, name, jersey_number, position, age, is_active]
+          );
+        } else {
+          result = await query(
+            'INSERT INTO athletes (tournament_id, name, jersey_number, position, age, is_active) VALUES (?, ?, ?, ?, ?, ?)',
+            [tournament_id, name, jersey_number, position, age, is_active]
+          );
+        }
       } else {
         throw insertError; // 重新拋出其他錯誤
       }
