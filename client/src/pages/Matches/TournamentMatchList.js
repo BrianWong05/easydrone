@@ -955,6 +955,11 @@ const TournamentMatchList = () => {
             showQuickJumper: true,
             showTotal: (total, range) => t('common:pagination.showTotal', { start: range[0], end: range[1], total }),
             pageSizeOptions: ["10", "20", "50", "100"],
+            locale: {
+              items_per_page: t('common:pagination.itemsPerPage'),
+              jump_to: t('common:pagination.jumpTo'),
+              page: t('common:pagination.page'),
+            },
           }}
           onChange={handleTableChange}
           scroll={{ x: 1200 }}

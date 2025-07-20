@@ -115,7 +115,9 @@
     "showTotal": "第 {{start}}-{{end}} 項，共 {{total}} 場比賽",
     "showSizeChanger": true,
     "showQuickJumper": true,
-    "itemsPerPage": "條/頁"
+    "itemsPerPage": "條/頁",
+    "jumpTo": "跳至",
+    "page": "頁"
   },
   "filters": {
     "all": "全部",

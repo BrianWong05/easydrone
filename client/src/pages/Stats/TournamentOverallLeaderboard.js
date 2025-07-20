@@ -342,7 +342,12 @@ const TournamentOverallLeaderboard = () => {
                 end: range[1], 
                 total: total 
               }),
-              pageSizeOptions: ['10', '20', '50', '100']
+              pageSizeOptions: ['10', '20', '50', '100'],
+              locale: {
+                items_per_page: t('common:pagination.itemsPerPage'),
+                jump_to: t('common:pagination.jumpTo'),
+                page: t('common:pagination.page'),
+              },
             }}
             onChange={handleTableChange}
             scroll={{ x: 1000 }}

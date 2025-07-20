@@ -351,6 +351,11 @@ const TournamentTeamList = () => {
               showQuickJumper: true,
               showTotal: (total, range) => t('common:pagination.total', { start: range[0], end: range[1], total }) + ` ${t('team:team.totalTeams')}`,
               pageSizeOptions: ["10", "20", "30", "50", "100"],
+              locale: {
+                items_per_page: t('common:pagination.itemsPerPage'),
+                jump_to: t('common:pagination.jumpTo'),
+                page: t('common:pagination.page'),
+              },
             }}
             onChange={handleTableChange}
             locale={{

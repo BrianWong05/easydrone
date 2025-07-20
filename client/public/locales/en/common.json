@@ -115,7 +115,9 @@
     "showTotal": "{{start}}-{{end}} of {{total}} matches",
     "showSizeChanger": true,
     "showQuickJumper": true,
-    "itemsPerPage": "/ page"
+    "itemsPerPage": "/ page",
+    "jumpTo": "Go to",
+    "page": ""
   },
   "filters": {
     "all": "All",

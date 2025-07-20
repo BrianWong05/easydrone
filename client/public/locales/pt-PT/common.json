@@ -115,7 +115,9 @@
     "showTotal": "{{start}}-{{end}} de {{total}} jogos",
     "showSizeChanger": true,
     "showQuickJumper": true,
-    "itemsPerPage": "/ página"
+    "itemsPerPage": "/ página",
+    "jumpTo": "Ir para",
+    "page": ""
   },
   "filters": {
     "all": "Todos",
