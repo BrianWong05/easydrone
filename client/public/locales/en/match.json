@@ -312,6 +312,7 @@
   },
   "statistics": {
     "totalMatches": "Total Matches",
+    "others": "Others",
     "goals": "Goals",
     "assists": "Assists",
     "saves": "Saves",

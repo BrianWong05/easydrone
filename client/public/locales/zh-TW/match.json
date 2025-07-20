@@ -312,6 +312,7 @@
   },
   "statistics": {
     "totalMatches": "總比賽數",
+    "others": "其他",
     "goals": "進球",
     "assists": "助攻",
     "saves": "撲救",
