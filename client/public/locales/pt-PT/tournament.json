@@ -1,6 +1,6 @@
 {
-  "tournament": "Tournament",
-  "thisTournament": "This Tournament",
+  "tournament": "Torneio",
+  "thisTournament": "Este Torneio",
   "tournamentData": {
     "name": "Tournament Name",
     "overview": "Tournament Overview",
@@ -27,9 +27,9 @@
     "overallProgress": "Overall Progress"
   },
   "types": {
-    "groupStage": "Group Stage",
-    "knockout": "Knockout",
-    "mixed": "Mixed Format",
+    "groupStage": "Fase de Grupos",
+    "knockout": "Eliminatoria",
+    "mixed": "Formato Misto",
     "roundRobin": "Round Robin",
     "singleElimination": "Single Elimination",
     "doubleElimination": "Double Elimination"
@@ -226,65 +226,65 @@
     }
   },
   "detail": {
-    "loading": "Loading...",
-    "notFound": "Tournament not found",
-    "editTournament": "Edit Tournament",
-    "tournamentSettings": "Tournament Settings",
-    "startDate": "Start Date",
-    "endDate": "End Date",
-    "createdAt": "Created At",
-    "lastUpdated": "Last Updated",
-    "notSet": "Not Set",
-    "statistics": "Tournament Statistics",
-    "totalTeams": "Total Teams",
-    "totalGroups": "Groups",
-    "totalMatches": "Total Matches",
-    "totalAthletes": "Athletes",
-    "completedMatches": "Completed Matches",
-    "pendingMatches": "Pending Matches",
-    "managementFunctions": "Management Functions",
-    "recentMatches": "Recent Matches",
-    "viewAllMatches": "View All Matches",
-    "viewDetails": "View Details",
-    "noMatchRecords": "No match records",
-    "score": "Score",
+    "loading": "A carregar...",
+    "notFound": "Torneio nao encontrado",
+    "editTournament": "Editar Torneio",
+    "tournamentSettings": "Definicoes do Torneio",
+    "startDate": "Data de Inicio",
+    "endDate": "Data de Fim",
+    "createdAt": "Criado em",
+    "lastUpdated": "Ultima Atualizacao",
+    "notSet": "Nao Definido",
+    "statistics": "Estatisticas do Torneio",
+    "totalTeams": "Total de Equipas",
+    "totalGroups": "Grupos",
+    "totalMatches": "Total de Jogos",
+    "totalAthletes": "Atletas",
+    "completedMatches": "Jogos Concluidos",
+    "pendingMatches": "Jogos Pendentes",
+    "managementFunctions": "Funcoes de Gestao",
+    "recentMatches": "Jogos Recentes",
+    "viewAllMatches": "Ver Todos os Jogos",
+    "viewDetails": "Ver Detalhes",
+    "noMatchRecords": "Sem registos de jogos",
+    "score": "Resultado",
     "management": {
       "teams": {
-        "title": "Team Management",
-        "description": "Manage tournament teams, add and edit team information",
-        "viewTeams": "View Teams",
-        "addTeam": "Add Team"
+        "title": "Gestao de Equipas",
+        "description": "Gerir equipas do torneio, adicionar e editar informacoes das equipas",
+        "viewTeams": "Ver Equipas",
+        "addTeam": "Adicionar Equipa"
       },
       "groups": {
-        "title": "Group Management", 
-        "description": "Manage tournament groups, grouping and group settings",
-        "viewGroups": "View Groups",
-        "addGroup": "Add Group"
+        "title": "Gestao de Grupos", 
+        "description": "Gerir grupos do torneio, agrupamento e definicoes de grupos",
+        "viewGroups": "Ver Grupos",
+        "addGroup": "Adicionar Grupo"
       },
       "matches": {
-        "title": "Match Management",
-        "description": "Manage match schedules, create and edit matches",
-        "viewMatches": "View Matches",
-        "addMatch": "Add Match"
+        "title": "Gestao de Jogos",
+        "description": "Gerir horarios de jogos, criar e editar jogos",
+        "viewMatches": "Ver Jogos",
+        "addMatch": "Adicionar Jogo"
       },
       "athletes": {
-        "title": "Athlete Management",
-        "description": "Manage athlete information and team members",
-        "viewAthletes": "View Athletes",
-        "addAthlete": "Add Athlete"
+        "title": "Gestao de Atletas",
+        "description": "Gerir informacoes de atletas e membros das equipas",
+        "viewAthletes": "Ver Atletas",
+        "addAthlete": "Adicionar Atleta"
       },
       "leaderboard": {
-        "title": "Leaderboard",
-        "description": "View match leaderboards and statistics",
-        "groupLeaderboard": "Group Leaderboard",
-        "overallLeaderboard": "Overall Leaderboard"
+        "title": "Classificacao",
+        "description": "Ver classificacoes dos jogos e estatisticas",
+        "groupLeaderboard": "Classificacao dos Grupos",
+        "overallLeaderboard": "Classificacao Geral"
       }
     },
     "status": {
-      "pending": "Pending",
-      "active": "Active", 
-      "completed": "Completed",
-      "overtime": "Overtime"
+      "pending": "Pendente",
+      "active": "Ativo", 
+      "completed": "Concluido",
+      "overtime": "Prolongamento"
     }
   },
   "edit": {
