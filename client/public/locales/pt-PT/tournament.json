@@ -1,6 +1,6 @@
 {
-  "tournament": "Torneio",
-  "thisTournament": "Este Torneio",
+  "tournament": "Tournament",
+  "thisTournament": "This Tournament",
   "tournamentData": {
     "name": "Tournament Name",
     "overview": "Tournament Overview",
@@ -117,19 +117,19 @@
     "selectLocation": "Select venue"
   },
   "navigation": {
-    "overview": "Tournament Overview",
-    "teamManagement": "Team Management",
-    "groupManagement": "Group Management",
-    "matchManagement": "Match Management",
-    "athleteManagement": "Athlete Management",
-    "leaderboard": "Leaderboard",
-    "groupLeaderboard": "Group Leaderboard",
-    "overallLeaderboard": "Overall Leaderboard",
-    "statisticsData": "Statistics Data (In Development)",
-    "bestTeamsStats": "Best Teams Statistics",
-    "knockoutBracket": "Knockout Bracket",
-    "management": "Management",
-    "backToTournamentDetail": "Back to Tournament Detail"
+    "overview": "Visao Geral do Torneio",
+    "teamManagement": "Gestao de Equipas",
+    "groupManagement": "Gestao de Grupos",
+    "matchManagement": "Gestao de Jogos",
+    "athleteManagement": "Gestao de Atletas",
+    "leaderboard": "Classificacao",
+    "groupLeaderboard": "Classificacao dos Grupos",
+    "overallLeaderboard": "Classificacao Geral",
+    "statisticsData": "Dados Estatisticos (Em Desenvolvimento)",
+    "bestTeamsStats": "Estatisticas das Melhores Equipas",
+    "knockoutBracket": "Chave Eliminatoria",
+    "management": "Gestao",
+    "backToTournamentDetail": "Voltar aos Detalhes do Torneio"
   },
   "list": {
     "title": "Tournament Management",
