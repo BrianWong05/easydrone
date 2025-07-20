@@ -40,6 +40,7 @@ import TournamentMatchResultEdit from "./pages/Matches/TournamentMatchResultEdit
 import TournamentOverallLeaderboard from "./pages/Stats/TournamentOverallLeaderboard";
 import TournamentLiveMatch from "./pages/Matches/TournamentLiveMatch";
 import TournamentBestTeamsStats from "./pages/Stats/TournamentBestTeamsStats";
+import TournamentAthleteList from "./pages/Athletes/TournamentAthleteList";
 
 const { Content } = Layout;
 
@@ -150,7 +151,7 @@ function App() {
                   <Route path="/matches/:matchId/result-edit" element={<TournamentMatchResultEdit />} />
 
                   {/* Athlete Management */}
-                  <Route path="/athletes" element={<div>Tournament Athletes List</div>} />
+                  <Route path="/athletes" element={<TournamentAthleteList />} />
                   <Route path="/athletes/create" element={<div>Create Tournament Athlete</div>} />
                   <Route path="/athletes/:athleteId" element={<div>Tournament Athlete Detail</div>} />
                   <Route path="/athletes/:athleteId/edit" element={<div>Edit Tournament Athlete</div>} />

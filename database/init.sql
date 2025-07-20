@@ -56,10 +56,11 @@ CREATE TABLE IF NOT EXISTS teams (
     INDEX idx_teams_tournament_id (tournament_id)
 ) COMMENT = '隊伍表 - 包含隊伍基本信息和描述';
 
--- 運動員表 - 無人機足球隊伍結構：1名進攻手，3-5名防守人員
+-- 運動員表 - 無人機足球隊伍結構：1名進攻手，3-5名防守人員 (錦標賽範圍)
 CREATE TABLE IF NOT EXISTS athletes (
     athlete_id INT AUTO_INCREMENT PRIMARY KEY,
     team_id INT NOT NULL,
+    tournament_id INT NOT NULL,
     name VARCHAR(100) NOT NULL,
     jersey_number INT NOT NULL,
     position ENUM('attacker', 'defender', 'substitute') NOT NULL,
@@ -68,8 +69,11 @@ CREATE TABLE IF NOT EXISTS athletes (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (team_id) REFERENCES teams(team_id) ON DELETE CASCADE,
-    UNIQUE KEY (team_id, jersey_number)
-);
+    FOREIGN KEY (tournament_id) REFERENCES tournaments(tournament_id) ON DELETE CASCADE,
+    UNIQUE KEY unique_tournament_team_jersey (tournament_id, team_id, jersey_number),
+    INDEX idx_athletes_tournament_id (tournament_id),
+    INDEX idx_athletes_team_id (team_id)
+) COMMENT = '運動員表 - 包含錦標賽範圍的運動員信息，球衣號碼在錦標賽+隊伍範圍內唯一';
 
 -- 比賽表
 CREATE TABLE IF NOT EXISTS matches (
@@ -168,6 +172,13 @@ SELECT g.group_id, t.team_id, t.tournament_id
 FROM team_groups g 
 JOIN teams t ON g.group_id = t.group_id 
 WHERE t.tournament_id IS NOT NULL;
+
+-- 確保現有運動員數據與其隊伍的錦標賽保持一致
+-- 這個更新語句主要用於數據遷移場景，新安裝時通常不需要
+UPDATE athletes a 
+JOIN teams t ON a.team_id = t.team_id 
+SET a.tournament_id = t.tournament_id 
+WHERE a.tournament_id IS NULL AND t.tournament_id IS NOT NULL;
 
 -- 創建觸發器來自動更新小組積分表
 DELIMITER $$

@@ -142,5 +142,13 @@
     "title": "404",
     "subtitle": "Desculpe, a página que visitou não existe.",
     "backHome": "Voltar ao Início"
+  },
+  "common": {
+    "confirm": "Confirmar",
+    "cancel": "Cancelar",
+    "error": "Ocorreu um erro",
+    "filter": "Filtrar",
+    "reset": "Repor",
+    "of": "de"
   }
 }

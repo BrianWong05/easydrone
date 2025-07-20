@@ -7,6 +7,9 @@ const router = express.Router();
 
 // 創建運動員驗證模式
 const athleteSchema = Joi.object({
+  tournament_id: Joi.number().integer().required().messages({
+    'any.required': '錦標賽ID是必填項'
+  }),
   team_id: Joi.number().integer().required().messages({
     'any.required': '隊伍ID是必填項'
   }),
@@ -37,17 +40,29 @@ const athleteSchema = Joi.object({
 router.get('/', async (req, res) => {
   try {
     console.log('👥 開始獲取運動員列表...');
-    const { team_id, position, is_active, search, page = 1, limit = 20 } = req.query;
-    console.log('👥 查詢參數:', { team_id, position, is_active, search, page, limit });
+    const { tournament_id, team_id, position, is_active, search, page = 1, limit = 20 } = req.query;
+    console.log('👥 查詢參數:', { tournament_id, team_id, position, is_active, search, page, limit });
     
     let sql = `
-      SELECT a.*, t.team_name, t.team_color, g.group_name
+      SELECT a.*, t.team_name, t.team_color, g.group_name, tour.tournament_name
       FROM athletes a
       JOIN teams t ON a.team_id = t.team_id
+      JOIN tournaments tour ON a.tournament_id = tour.tournament_id
       LEFT JOIN team_groups g ON t.group_id = g.group_id
       WHERE 1=1
     `;
     const params = [];
+
+    // 按錦標賽篩選 (必需)
+    if (tournament_id) {
+      sql += ' AND a.tournament_id = ?';
+      params.push(tournament_id);
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: '錦標賽ID是必填參數'
+      });
+    }
 
     // 按隊伍篩選
     if (team_id) {
@@ -95,8 +110,8 @@ router.get('/', async (req, res) => {
     });
 
     // 獲取總數
-    let countSql = 'SELECT COUNT(*) as total FROM athletes a JOIN teams t ON a.team_id = t.team_id WHERE 1=1';
-    const countParams = [];
+    let countSql = 'SELECT COUNT(*) as total FROM athletes a JOIN teams t ON a.team_id = t.team_id WHERE a.tournament_id = ?';
+    const countParams = [tournament_id];
     
     if (team_id) {
       countSql += ' AND a.team_id = ?';
@@ -146,9 +161,10 @@ router.get('/:id', async (req, res) => {
     console.log('👤 獲取運動員詳情，ID:', athleteId);
 
     const athletes = await query(`
-      SELECT a.*, t.team_name, t.team_color, g.group_name
+      SELECT a.*, t.team_name, t.team_color, g.group_name, tour.tournament_name
       FROM athletes a
       JOIN teams t ON a.team_id = t.team_id
+      JOIN tournaments tour ON a.tournament_id = tour.tournament_id
       LEFT JOIN team_groups g ON t.group_id = g.group_id
       WHERE a.athlete_id = ?
     `, [athleteId]);
@@ -211,25 +227,38 @@ router.post('/', async (req, res) => {
     
     console.log('✅ 驗證通過，處理數據:', value);
 
-    const { team_id, name, jersey_number, position, age, is_active } = value;
+    const { tournament_id, team_id, name, jersey_number, position, age, is_active } = value;
 
-    // 檢查隊伍是否存在
+    // 檢查錦標賽是否存在
+    const tournaments = await query(
+      'SELECT tournament_id, tournament_name FROM tournaments WHERE tournament_id = ?',
+      [tournament_id]
+    );
+
+    if (tournaments.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: '指定的錦標賽不存在'
+      });
+    }
+
+    // 檢查隊伍是否存在且屬於該錦標賽
     const teams = await query(
-      'SELECT team_id, team_name FROM teams WHERE team_id = ?',
-      [team_id]
+      'SELECT team_id, team_name FROM teams WHERE team_id = ? AND tournament_id = ?',
+      [team_id, tournament_id]
     );
 
     if (teams.length === 0) {
       return res.status(404).json({
         success: false,
-        message: '指定的隊伍不存在'
+        message: '指定的隊伍不存在或不屬於該錦標賽'
       });
     }
 
-    // 檢查球衣號碼是否在該隊伍中已存在
+    // 檢查球衣號碼是否在該錦標賽的隊伍中已存在
     const existingAthletes = await query(
-      'SELECT athlete_id FROM athletes WHERE team_id = ? AND jersey_number = ?',
-      [team_id, jersey_number]
+      'SELECT athlete_id FROM athletes WHERE tournament_id = ? AND team_id = ? AND jersey_number = ?',
+      [tournament_id, team_id, jersey_number]
     );
 
     if (existingAthletes.length > 0) {
@@ -243,9 +272,9 @@ router.post('/', async (req, res) => {
     const positionCounts = await query(`
       SELECT position, COUNT(*) as count 
       FROM athletes 
-      WHERE team_id = ? AND is_active = 1 
+      WHERE tournament_id = ? AND team_id = ? AND is_active = 1 
       GROUP BY position
-    `, [team_id]);
+    `, [tournament_id, team_id]);
 
     const counts = {
       attacker: 0,
@@ -278,8 +307,8 @@ router.post('/', async (req, res) => {
     let result;
     try {
       result = await query(
-        'INSERT INTO athletes (team_id, name, jersey_number, position, age, is_active) VALUES (?, ?, ?, ?, ?, ?)',
-        [team_id, name, jersey_number, position, age, is_active]
+        'INSERT INTO athletes (tournament_id, team_id, name, jersey_number, position, age, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [tournament_id, team_id, name, jersey_number, position, age, is_active]
       );
     } catch (insertError) {
       if (insertError.code === 'ER_BAD_FIELD_ERROR' && insertError.message.includes('age')) {
@@ -291,8 +320,8 @@ router.post('/', async (req, res) => {
         
         // 重新嘗試插入
         result = await query(
-          'INSERT INTO athletes (team_id, name, jersey_number, position, age, is_active) VALUES (?, ?, ?, ?, ?, ?)',
-          [team_id, name, jersey_number, position, age, is_active]
+          'INSERT INTO athletes (tournament_id, team_id, name, jersey_number, position, age, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          [tournament_id, team_id, name, jersey_number, position, age, is_active]
         );
       } else {
         throw insertError; // 重新拋出其他錯誤
@@ -349,11 +378,11 @@ router.put('/:id', async (req, res) => {
       });
     }
 
-    const { team_id, name, jersey_number, position, age, is_active } = value;
+    const { tournament_id, team_id, name, jersey_number, position, age, is_active } = value;
 
     // 檢查運動員是否存在
     const existingAthletes = await query(
-      'SELECT athlete_id, team_id FROM athletes WHERE athlete_id = ?',
+      'SELECT athlete_id, team_id, tournament_id FROM athletes WHERE athlete_id = ?',
       [athleteId]
     );
 
@@ -364,23 +393,36 @@ router.put('/:id', async (req, res) => {
       });
     }
 
-    // 檢查隊伍是否存在
+    // 檢查錦標賽是否存在
+    const tournaments = await query(
+      'SELECT tournament_id FROM tournaments WHERE tournament_id = ?',
+      [tournament_id]
+    );
+
+    if (tournaments.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: '指定的錦標賽不存在'
+      });
+    }
+
+    // 檢查隊伍是否存在且屬於該錦標賽
     const teams = await query(
-      'SELECT team_id FROM teams WHERE team_id = ?',
-      [team_id]
+      'SELECT team_id FROM teams WHERE team_id = ? AND tournament_id = ?',
+      [team_id, tournament_id]
     );
 
     if (teams.length === 0) {
       return res.status(404).json({
         success: false,
-        message: '指定的隊伍不存在'
+        message: '指定的隊伍不存在或不屬於該錦標賽'
       });
     }
 
     // 檢查球衣號碼是否與其他運動員重複
     const duplicateAthletes = await query(
-      'SELECT athlete_id FROM athletes WHERE team_id = ? AND jersey_number = ? AND athlete_id != ?',
-      [team_id, jersey_number, athleteId]
+      'SELECT athlete_id FROM athletes WHERE tournament_id = ? AND team_id = ? AND jersey_number = ? AND athlete_id != ?',
+      [tournament_id, team_id, jersey_number, athleteId]
     );
 
     if (duplicateAthletes.length > 0) {
@@ -400,9 +442,9 @@ router.put('/:id', async (req, res) => {
       const positionCounts = await query(`
         SELECT position, COUNT(*) as count 
         FROM athletes 
-        WHERE team_id = ? AND is_active = 1 AND athlete_id != ?
+        WHERE tournament_id = ? AND team_id = ? AND is_active = 1 AND athlete_id != ?
         GROUP BY position
-      `, [team_id, athleteId]);
+      `, [tournament_id, team_id, athleteId]);
 
       const counts = {
         attacker: 0,
@@ -433,8 +475,8 @@ router.put('/:id', async (req, res) => {
     console.log('📝 準備更新運動員:', { athleteId, team_id, name, jersey_number, position, age, is_active });
     
     await query(
-      'UPDATE athletes SET team_id = ?, name = ?, jersey_number = ?, position = ?, age = ?, is_active = ? WHERE athlete_id = ?',
-      [team_id, name, jersey_number, position, age, is_active, athleteId]
+      'UPDATE athletes SET tournament_id = ?, team_id = ?, name = ?, jersey_number = ?, position = ?, age = ?, is_active = ? WHERE athlete_id = ?',
+      [tournament_id, team_id, name, jersey_number, position, age, is_active, athleteId]
     );
 
     console.log('✅ 運動員更新成功');

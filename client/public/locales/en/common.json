@@ -87,6 +87,14 @@
     "dataLoadFailed": "Failed to load data",
     "loadFailed": "Failed to load data"
   },
+  "common": {
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "error": "An error occurred",
+    "filter": "Filter",
+    "reset": "Reset",
+    "of": "of"
+  },
   "forms": {
     "required": "This field is required",
     "invalidFormat": "Invalid format",
