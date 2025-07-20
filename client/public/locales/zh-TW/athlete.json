@@ -125,9 +125,45 @@
     "athleteUpdated": "運動員更新成功",
     "athleteDeleted": "運動員刪除成功",
     "createFailed": "創建運動員失敗",
+    "updateFailed": "更新運動員失敗",
     "deleteConfirmation": "刪除運動員",
     "deleteWarning": "刪除後將無法恢復",
     "noStatistics": "暫無統計數據",
     "noEvents": "未找到比賽事件"
+  },
+  "buttons": {
+    "update": "更新運動員"
+  },
+  "validation": {
+    "nameRequired": "請輸入運動員姓名",
+    "nameMinLength": "姓名至少需要2個字符",
+    "nameMaxLength": "姓名不能超過100個字符",
+    "numberRequired": "請輸入球衣號碼",
+    "numberRange": "球衣號碼必須在1-99之間",
+    "ageRequired": "請輸入年齡",
+    "ageRange": "年齡必須在16-50歲之間",
+    "positionRequired": "請選擇位置",
+    "attackerLimit": "每支隊伍只能有1名進攻手",
+    "defenderLimit": "每支隊伍最多只能有5名防守員"
+  },
+  "form": {
+    "basicInfo": "基本資訊",
+    "basicInfoDescription": "輸入運動員的基本資訊和可選的隊伍分配",
+    "editDescription": "更新運動員的資訊和隊伍分配",
+    "teamComposition": "當前隊伍組成",
+    "currentTeamComposition": "當前隊伍組成（不包括此運動員）",
+    "currentInfo": "當前資訊",
+    "selectTeamFirst": "請先選擇隊伍以查看組成",
+    "noTeamSelected": "未選擇隊伍",
+    "noTeamDescription": "此運動員將在沒有隊伍分配的情況下創建。您可以稍後將其分配到隊伍。",
+    "optional": "可選",
+    "unlimited": "無限制",
+    "teamRules": "隊伍組成規則",
+    "rulesTitle": "無人機足球隊伍結構",
+    "rule1": "每支隊伍必須有1名進攻手",
+    "rule2": "每支隊伍可以有3-5名防守員",
+    "rule3": "允許無限數量的替補球員",
+    "rule4": "球衣號碼在隊伍內必須唯一",
+    "totalAthletes": "運動員總數"
   }
 }

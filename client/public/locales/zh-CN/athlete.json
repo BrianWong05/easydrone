@@ -125,9 +125,45 @@
     "athleteUpdated": "运动员更新成功",
     "athleteDeleted": "运动员删除成功",
     "createFailed": "创建运动员失败",
+    "updateFailed": "更新运动员失败",
     "deleteConfirmation": "删除运动员",
     "deleteWarning": "删除后将无法恢复",
     "noStatistics": "暂无统计数据",
     "noEvents": "未找到比赛事件"
+  },
+  "buttons": {
+    "update": "更新运动员"
+  },
+  "validation": {
+    "nameRequired": "请输入运动员姓名",
+    "nameMinLength": "姓名至少需要2个字符",
+    "nameMaxLength": "姓名不能超过100个字符",
+    "numberRequired": "请输入球衣号码",
+    "numberRange": "球衣号码必须在1-99之间",
+    "ageRequired": "请输入年龄",
+    "ageRange": "年龄必须在16-50岁之间",
+    "positionRequired": "请选择位置",
+    "attackerLimit": "每支队伍只能有1名进攻手",
+    "defenderLimit": "每支队伍最多只能有5名防守员"
+  },
+  "form": {
+    "basicInfo": "基本信息",
+    "basicInfoDescription": "输入运动员的基本信息和可选的队伍分配",
+    "editDescription": "更新运动员的信息和队伍分配",
+    "teamComposition": "当前队伍组成",
+    "currentTeamComposition": "当前队伍组成（不包括此运动员）",
+    "currentInfo": "当前信息",
+    "selectTeamFirst": "请先选择队伍以查看组成",
+    "noTeamSelected": "未选择队伍",
+    "noTeamDescription": "此运动员将在没有队伍分配的情况下创建。您可以稍后将其分配到队伍。",
+    "optional": "可选",
+    "unlimited": "无限制",
+    "teamRules": "队伍组成规则",
+    "rulesTitle": "无人机足球队伍结构",
+    "rule1": "每支队伍必须有1名进攻手",
+    "rule2": "每支队伍可以有3-5名防守员",
+    "rule3": "允许无限数量的替补球员",
+    "rule4": "球衣号码在队伍内必须唯一",
+    "totalAthletes": "运动员总数"
   }
 }

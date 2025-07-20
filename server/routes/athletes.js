@@ -435,77 +435,86 @@ router.put('/:id', async (req, res) => {
       });
     }
 
-    // 檢查隊伍是否存在且屬於該錦標賽
-    const teams = await query(
-      'SELECT team_id FROM teams WHERE team_id = ? AND tournament_id = ?',
-      [team_id, tournament_id]
-    );
+    // 只有當提供了 team_id 時才檢查隊伍是否存在且屬於該錦標賽
+    if (team_id) {
+      const teams = await query(
+        'SELECT team_id FROM teams WHERE team_id = ? AND tournament_id = ?',
+        [team_id, tournament_id]
+      );
 
-    if (teams.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: '指定的隊伍不存在或不屬於該錦標賽'
-      });
+      if (teams.length === 0) {
+        return res.status(404).json({
+          success: false,
+          message: '指定的隊伍不存在或不屬於該錦標賽'
+        });
+      }
     }
 
     // 檢查球衣號碼是否與其他運動員重複
-    const duplicateAthletes = await query(
-      'SELECT athlete_id FROM athletes WHERE tournament_id = ? AND team_id = ? AND jersey_number = ? AND athlete_id != ?',
-      [tournament_id, team_id, jersey_number, athleteId]
-    );
+    if (team_id) {
+      const duplicateAthletes = await query(
+        'SELECT athlete_id FROM athletes WHERE tournament_id = ? AND team_id = ? AND jersey_number = ? AND athlete_id != ?',
+        [tournament_id, team_id, jersey_number, athleteId]
+      );
 
-    if (duplicateAthletes.length > 0) {
-      return res.status(409).json({
-        success: false,
-        message: '該球衣號碼在隊伍中已存在'
-      });
-    }
-
-    // 如果改變了位置，檢查隊伍結構限制
-    const currentAthlete = await query(
-      'SELECT position FROM athletes WHERE athlete_id = ?',
-      [athleteId]
-    );
-
-    if (currentAthlete[0].position !== position) {
-      const positionCounts = await query(`
-        SELECT position, COUNT(*) as count 
-        FROM athletes 
-        WHERE tournament_id = ? AND team_id = ? AND is_active = 1 AND athlete_id != ?
-        GROUP BY position
-      `, [tournament_id, team_id, athleteId]);
-
-      const counts = {
-        attacker: 0,
-        defender: 0,
-        substitute: 0
-      };
-
-      positionCounts.forEach(pc => {
-        counts[pc.position] = pc.count;
-      });
-
-      if (position === 'attacker' && counts.attacker >= 1) {
-        return res.status(400).json({
+      if (duplicateAthletes.length > 0) {
+        return res.status(409).json({
           success: false,
-          message: '每支隊伍只能有1名進攻手'
+          message: '該球衣號碼在隊伍中已存在'
         });
       }
+    }
 
-      if (position === 'defender' && counts.defender >= 5) {
-        return res.status(400).json({
-          success: false,
-          message: '每支隊伍最多只能有5名防守員'
+    // 如果改變了位置且有隊伍，檢查隊伍結構限制
+    if (team_id) {
+      const currentAthlete = await query(
+        'SELECT position FROM athletes WHERE athlete_id = ?',
+        [athleteId]
+      );
+
+      if (currentAthlete[0].position !== position) {
+        const positionCounts = await query(`
+          SELECT position, COUNT(*) as count 
+          FROM athletes 
+          WHERE tournament_id = ? AND team_id = ? AND is_active = 1 AND athlete_id != ?
+          GROUP BY position
+        `, [tournament_id, team_id, athleteId]);
+
+        const counts = {
+          attacker: 0,
+          defender: 0,
+          substitute: 0
+        };
+
+        positionCounts.forEach(pc => {
+          counts[pc.position] = pc.count;
         });
+
+        if (position === 'attacker' && counts.attacker >= 1) {
+          return res.status(400).json({
+            success: false,
+            message: '每支隊伍只能有1名進攻手'
+          });
+        }
+
+        if (position === 'defender' && counts.defender >= 5) {
+          return res.status(400).json({
+            success: false,
+            message: '每支隊伍最多只能有5名防守員'
+          });
+        }
       }
     }
 
     // 更新運動員
     console.log('📝 準備更新運動員:', { athleteId, team_id, name, jersey_number, position, age, is_active });
     
+    // 確保 team_id 為 null 而不是 undefined
+    const finalTeamId = team_id === undefined ? null : team_id;
+    
     await query(
       'UPDATE athletes SET tournament_id = ?, team_id = ?, name = ?, jersey_number = ?, position = ?, age = ?, is_active = ? WHERE athlete_id = ?',
-      [tournament_id, team_id, name, jersey_number, position, age, is_active, athleteId]
+      [tournament_id, finalTeamId, name, jersey_number, position, age, is_active, athleteId]
     );
 
     console.log('✅ 運動員更新成功');

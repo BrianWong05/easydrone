@@ -125,9 +125,45 @@
     "athleteUpdated": "Athlete updated successfully",
     "athleteDeleted": "Athlete deleted successfully",
     "createFailed": "Failed to create athlete",
+    "updateFailed": "Failed to update athlete",
     "deleteConfirmation": "Delete Athlete",
     "deleteWarning": "This action cannot be undone",
     "noStatistics": "No statistics available",
     "noEvents": "No match events found"
+  },
+  "buttons": {
+    "update": "Update Athlete"
+  },
+  "validation": {
+    "nameRequired": "Please enter athlete name",
+    "nameMinLength": "Name must be at least 2 characters",
+    "nameMaxLength": "Name cannot exceed 100 characters",
+    "numberRequired": "Please enter jersey number",
+    "numberRange": "Jersey number must be between 1-99",
+    "ageRequired": "Please enter age",
+    "ageRange": "Age must be between 16-50",
+    "positionRequired": "Please select a position",
+    "attackerLimit": "Each team can only have 1 attacker",
+    "defenderLimit": "Each team can have maximum 5 defenders"
+  },
+  "form": {
+    "basicInfo": "Basic Information",
+    "basicInfoDescription": "Enter the athlete's basic information and optional team assignment",
+    "editDescription": "Update the athlete's information and team assignment",
+    "teamComposition": "Current Team Composition",
+    "currentTeamComposition": "Current team composition (excluding this athlete)",
+    "currentInfo": "Current Information",
+    "selectTeamFirst": "Please select a team to view composition",
+    "noTeamSelected": "No Team Selected",
+    "noTeamDescription": "This athlete will be created without team assignment. You can assign them to a team later.",
+    "optional": "Optional",
+    "unlimited": "Unlimited",
+    "teamRules": "Team Composition Rules",
+    "rulesTitle": "Drone Soccer Team Structure",
+    "rule1": "Each team must have exactly 1 attacker",
+    "rule2": "Each team can have 3-5 defenders",
+    "rule3": "Unlimited substitute players allowed",
+    "rule4": "Jersey numbers must be unique within the team",
+    "totalAthletes": "Total Athletes"
   }
 }

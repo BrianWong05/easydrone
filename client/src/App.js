@@ -43,6 +43,7 @@ import TournamentBestTeamsStats from "./pages/Stats/TournamentBestTeamsStats";
 import TournamentAthleteList from "./pages/Athletes/TournamentAthleteList";
 import TournamentAthleteCreate from "./pages/Athletes/TournamentAthleteCreate";
 import TournamentAthleteDetail from "./pages/Athletes/TournamentAthleteDetail";
+import TournamentAthleteEdit from "./pages/Athletes/TournamentAthleteEdit";
 
 const { Content } = Layout;
 
@@ -156,7 +157,7 @@ function App() {
                   <Route path="/athletes" element={<TournamentAthleteList />} />
                   <Route path="/athletes/create" element={<TournamentAthleteCreate />} />
                   <Route path="/athletes/:athleteId" element={<TournamentAthleteDetail />} />
-                  <Route path="/athletes/:athleteId/edit" element={<div>Edit Tournament Athlete</div>} />
+                  <Route path="/athletes/:athleteId/edit" element={<TournamentAthleteEdit />} />
 
                   {/* Leaderboard */}
                   <Route path="/leaderboard/groups" element={<GroupLeaderboard />} />
