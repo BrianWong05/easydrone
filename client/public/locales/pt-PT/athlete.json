@@ -99,5 +99,35 @@
     "ageRequired": "Por favor insira a idade",
     "ageRange": "Idade deve estar entre 16-50",
     "positionRequired": "Por favor selecione uma posição"
+  },
+  "info": {
+    "years": "anos",
+    "noTeam": "Sem Equipa",
+    "tournament": "Torneio"
+  },
+  "events": {
+    "title": "Eventos",
+    "history": "Histórico de Eventos de Jogo",
+    "type": "Tipo de Evento",
+    "time": "Tempo",
+    "total": "Total de Eventos",
+    "goal": "Golo",
+    "foul": "Falta",
+    "penalty": "Penalidade",
+    "substitution": "Substituição"
+  },
+  "messages": {
+    "noAthletes": "Sem atletas disponíveis",
+    "noAthleteData": "Sem dados de atletas disponíveis",
+    "loadingAthletes": "Falha ao carregar atletas",
+    "loadTeamsFailed": "Falha ao carregar equipas",
+    "athleteCreated": "Atleta criado com sucesso",
+    "athleteUpdated": "Atleta atualizado com sucesso",
+    "athleteDeleted": "Atleta eliminado com sucesso",
+    "createFailed": "Falha ao criar atleta",
+    "deleteConfirmation": "Eliminar Atleta",
+    "deleteWarning": "Esta ação não pode ser desfeita",
+    "noStatistics": "Sem estatísticas disponíveis",
+    "noEvents": "Nenhum evento de jogo encontrado"
   }
 }

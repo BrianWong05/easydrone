@@ -99,5 +99,35 @@
     "ageRequired": "Please enter age",
     "ageRange": "Age must be between 16-50",
     "positionRequired": "Please select a position"
+  },
+  "info": {
+    "years": "years old",
+    "noTeam": "No Team",
+    "tournament": "Tournament"
+  },
+  "events": {
+    "title": "Events",
+    "history": "Match Events History",
+    "type": "Event Type",
+    "time": "Time",
+    "total": "Total Events",
+    "goal": "Goal",
+    "foul": "Foul",
+    "penalty": "Penalty",
+    "substitution": "Substitution"
+  },
+  "messages": {
+    "noAthletes": "No athletes available",
+    "noAthleteData": "No athlete data available",
+    "loadingAthletes": "Failed to load athletes",
+    "loadTeamsFailed": "Failed to load teams",
+    "athleteCreated": "Athlete created successfully",
+    "athleteUpdated": "Athlete updated successfully",
+    "athleteDeleted": "Athlete deleted successfully",
+    "createFailed": "Failed to create athlete",
+    "deleteConfirmation": "Delete Athlete",
+    "deleteWarning": "This action cannot be undone",
+    "noStatistics": "No statistics available",
+    "noEvents": "No match events found"
   }
 }

@@ -99,5 +99,35 @@
     "ageRequired": "请输入年龄",
     "ageRange": "年龄必须在16-50岁之间",
     "positionRequired": "请选择位置"
+  },
+  "info": {
+    "years": "岁",
+    "noTeam": "无队伍",
+    "tournament": "锦标赛"
+  },
+  "events": {
+    "title": "事件",
+    "history": "比赛事件历史",
+    "type": "事件类型",
+    "time": "时间",
+    "total": "总事件数",
+    "goal": "进球",
+    "foul": "犯规",
+    "penalty": "点球",
+    "substitution": "换人"
+  },
+  "messages": {
+    "noAthletes": "暂无运动员",
+    "noAthleteData": "暂无运动员数据",
+    "loadingAthletes": "加载运动员失败",
+    "loadTeamsFailed": "加载队伍失败",
+    "athleteCreated": "运动员创建成功",
+    "athleteUpdated": "运动员更新成功",
+    "athleteDeleted": "运动员删除成功",
+    "createFailed": "创建运动员失败",
+    "deleteConfirmation": "删除运动员",
+    "deleteWarning": "删除后将无法恢复",
+    "noStatistics": "暂无统计数据",
+    "noEvents": "未找到比赛事件"
   }
 }

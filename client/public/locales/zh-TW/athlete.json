@@ -99,5 +99,35 @@
     "ageRequired": "請輸入年齡",
     "ageRange": "年齡必須在16-50歲之間",
     "positionRequired": "請選擇位置"
+  },
+  "info": {
+    "years": "歲",
+    "noTeam": "無隊伍",
+    "tournament": "錦標賽"
+  },
+  "events": {
+    "title": "事件",
+    "history": "比賽事件歷史",
+    "type": "事件類型",
+    "time": "時間",
+    "total": "總事件數",
+    "goal": "進球",
+    "foul": "犯規",
+    "penalty": "點球",
+    "substitution": "換人"
+  },
+  "messages": {
+    "noAthletes": "暫無運動員",
+    "noAthleteData": "暫無運動員數據",
+    "loadingAthletes": "載入運動員失敗",
+    "loadTeamsFailed": "載入隊伍失敗",
+    "athleteCreated": "運動員創建成功",
+    "athleteUpdated": "運動員更新成功",
+    "athleteDeleted": "運動員刪除成功",
+    "createFailed": "創建運動員失敗",
+    "deleteConfirmation": "刪除運動員",
+    "deleteWarning": "刪除後將無法恢復",
+    "noStatistics": "暫無統計數據",
+    "noEvents": "未找到比賽事件"
   }
 }
