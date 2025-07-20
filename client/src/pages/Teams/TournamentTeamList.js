@@ -314,7 +314,7 @@ const TournamentTeamList = () => {
               onChange={(e) => setSearchText(e.target.value)}
               className="w-64"
             />
-            <Select value={filterGroup} onChange={setFilterGroup} className="w-40">
+            <Select value={filterGroup} onChange={setFilterGroup} className="min-w-[150px] w-auto max-w-[250px]">
               <Option value="all">{t('team:list.allGroups')}</Option>
               <Option value="unassigned">{t('team:list.unassigned')}</Option>
               {Array.isArray(groups)
