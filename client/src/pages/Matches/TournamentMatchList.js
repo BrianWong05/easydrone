@@ -828,7 +828,7 @@ const TournamentMatchList = () => {
                   setFilterStatus(value);
                   handleFilterChange();
                 }}
-                className="w-28"
+                className="min-w-[120px] w-auto"
               >
                 <Option value="all">{t('common:filters.allStatus')}</Option>
                 <Option value="pending">{t('match:status.pending')}</Option>
@@ -843,7 +843,7 @@ const TournamentMatchList = () => {
                   setFilterType(value);
                   handleFilterChange();
                 }}
-                className="w-28"
+                className="min-w-[140px] w-auto"
               >
                 <Option value="all">{t('common:filters.allMatchTypes')}</Option>
                 <Option value="group">{t('match:types.groupStage')}</Option>
@@ -857,7 +857,7 @@ const TournamentMatchList = () => {
                   setFilterGroup(value);
                   handleFilterChange();
                 }}
-                className="w-28"
+                className="min-w-[120px] w-auto"
               >
                 <Option value="all">{t('common:filters.allGroups')}</Option>
                 {groups.map((group) => (
@@ -873,7 +873,7 @@ const TournamentMatchList = () => {
                   setFilterTeam(value);
                   handleFilterChange();
                 }}
-                className="w-36"
+                className="min-w-[120px] w-auto"
                 showSearch
                 optionFilterProp="children"
               >
