@@ -29,6 +29,12 @@
     "draw": "Draw",
     "overtime": "Overtime",
     "penalty": "Penalty Shootout",
+    "winConditions": {
+      "score": "Won by Score",
+      "fouls": "Won by Fewer Fouls",
+      "draw": "Draw",
+      "unknown": "Unknown"
+    },
     "recent": "Recent Matches",
     "upcoming": "Upcoming Matches",
     "live": "Live Match",

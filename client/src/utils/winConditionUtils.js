@@ -75,19 +75,20 @@ export const needsOvertime = (team1Score, team2Score, team1Fouls, team2Fouls) =>
 };
 
 /**
- * Get win condition description in Chinese
+ * Get win condition description using i18n
  * @param {string} reason - Win reason ('score', 'fouls', 'draw')
- * @returns {string} - Chinese description
+ * @param {function} t - Translation function from useTranslation
+ * @returns {string} - Localized description
  */
-export const getWinReasonText = (reason) => {
+export const getWinReasonText = (reason, t) => {
   switch (reason) {
     case 'score':
-      return '得分獲勝';
+      return t('match.winConditions.score');
     case 'fouls':
-      return '犯規較少獲勝';
+      return t('match.winConditions.fouls');
     case 'draw':
-      return '平局';
+      return t('match.winConditions.draw');
     default:
-      return '未知';
+      return t('match.winConditions.unknown');
   }
 };

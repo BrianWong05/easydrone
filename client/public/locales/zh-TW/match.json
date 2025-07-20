@@ -29,6 +29,12 @@
     "draw": "平局",
     "overtime": "延長賽",
     "penalty": "點球大戰",
+    "winConditions": {
+      "score": "得分獲勝",
+      "fouls": "犯規較少獲勝",
+      "draw": "平局",
+      "unknown": "未知"
+    },
     "recent": "最近比賽",
     "upcoming": "即將進行",
     "live": "實時比賽",

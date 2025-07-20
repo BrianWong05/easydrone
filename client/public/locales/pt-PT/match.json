@@ -29,6 +29,12 @@
     "draw": "Empate",
     "prolongamento": "Prolongamento",
     "penalty": "Desempate por Penáltis",
+    "winConditions": {
+      "score": "Venceu por Pontuação",
+      "fouls": "Venceu por Menos Faltas",
+      "draw": "Empate",
+      "unknown": "Desconhecido"
+    },
     "recent": "Recentes Jogoes",
     "upcoming": "Próximos Jogoes",
     "live": "ao Vivo Jogo",

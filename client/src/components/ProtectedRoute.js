@@ -1,8 +1,10 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../stores/authStore';
 
 const ProtectedRoute = ({ children }) => {
+  const { t } = useTranslation();
   const { isAuthenticated, isLoading } = useAuthStore();
 
   // 如果還在載入中，顯示載入畫面
@@ -10,7 +12,7 @@ const ProtectedRoute = ({ children }) => {
     return (
       <div className="app-loading">
         <div className="loading-spinner"></div>
-        <div className="loading-text">載入中...</div>
+        <div className="loading-text">{t('messages.loading')}</div>
       </div>
     );
   }

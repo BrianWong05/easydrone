@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Card, Form, InputNumber, Button, Space, Select, message, Spin, Row, Col, Statistic, Tag, Checkbox } from 'antd';
 import { ArrowLeftOutlined, SaveOutlined, TrophyOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import { determineWinner, getWinReasonText } from '../../utils/winConditionUtils';
 
 const { Option } = Select;
 
 const TournamentMatchResultEdit = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { id: tournamentId, matchId } = useParams();
   const [form] = Form.useForm();
@@ -234,7 +236,7 @@ const TournamentMatchResultEdit = () => {
                   )}
                 </div>
                 <div className="mt-1 text-xs text-gray-600">
-                  {getWinReasonText(winReason)}
+                  {getWinReasonText(winReason, t)}
                 </div>
               </div>
             </Col>

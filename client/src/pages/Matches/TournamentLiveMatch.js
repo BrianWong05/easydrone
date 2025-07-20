@@ -242,7 +242,7 @@ const TournamentLiveMatch = () => {
                   winnerId === matchData.team1_id
                     ? getDisplayTeamName(matchData.team1_name)
                     : getDisplayTeamName(matchData.team2_name);
-                const reasonText = getWinReasonText(reason);
+                const reasonText = getWinReasonText(reason, t);
                 message.success(`比賽結束！${winnerName} ${reasonText}！`);
                 console.log(`下半場結束，${winnerName} ${reasonText}`);
               }
@@ -622,7 +622,7 @@ const TournamentLiveMatch = () => {
             winnerId === matchData.team1_id
               ? getDisplayTeamName(matchData.team1_name)
               : getDisplayTeamName(matchData.team2_name);
-          const reasonText = getWinReasonText(reason);
+          const reasonText = getWinReasonText(reason, t);
           message.success(`比賽已結束！${winnerName} ${reasonText}！`);
         } else {
           message.success("比賽已結束！平局！");
@@ -1304,7 +1304,7 @@ const TournamentLiveMatch = () => {
                 winnerId === matchData.team1_id
                   ? getDisplayTeamName(matchData.team1_name)
                   : getDisplayTeamName(matchData.team2_name);
-              const reasonText = getWinReasonText(reason);
+              const reasonText = getWinReasonText(reason, t);
               return (
                 <p className="text-green-500 font-bold">
                   獲勝者：{winnerName} ({reasonText})
