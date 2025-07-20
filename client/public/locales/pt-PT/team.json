@@ -73,5 +73,41 @@
     "enterDescription": "Inserir descrição da equipa",
     "selectCaptain": "Selecionar capitão",
     "enterContactInfo": "Inserir informação de contacto"
+  },
+  "list": {
+    "title": "Lista de Equipas",
+    "subtitle": "Gestão de Equipas do Torneio",
+    "addTeam": "Adicionar Equipa",
+    "searchPlaceholder": "Pesquisar nome da equipa",
+    "allGroups": "Todos os Grupos",
+    "unassigned": "Sem Grupo",
+    "group": "Grupo",
+    "noTeams": "Sem equipas disponíveis",
+    "noTeamsDescription": "Ainda não foram criadas equipas para este torneio",
+    "showingTeams": "A mostrar {{count}} de {{total}} equipas",
+    "columns": {
+      "team": "Equipa",
+      "group": "Grupo",
+      "type": "Tipo",
+      "createdAt": "Data de Criação",
+      "actions": "Ações"
+    },
+    "teamType": {
+      "real": "Real",
+      "virtual": "Virtual"
+    },
+    "actions": {
+      "viewDetails": "Ver Detalhes",
+      "editTeam": "Editar Equipa",
+      "deleteTeam": "Eliminar Equipa",
+      "deleteConfirmation": "Tem a certeza que quer eliminar esta equipa?",
+      "deleteWarning": "Esta ação não pode ser desfeita"
+    },
+    "stats": {
+      "totalTeams": "Total de Equipas",
+      "grouped": "Com Grupo",
+      "ungrouped": "Sem Grupo",
+      "virtual": "Virtuais"
+    }
   }
 }
