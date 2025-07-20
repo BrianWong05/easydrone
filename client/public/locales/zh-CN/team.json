@@ -73,5 +73,69 @@
     "enterDescription": "请输入队伍描述",
     "selectCaptain": "请选择队长",
     "enterContactInfo": "请输入联络资讯"
+  },
+  "list": {
+    "title": "队伍列表",
+    "subtitle": "锦标赛队伍管理",
+    "addTeam": "添加队伍",
+    "searchPlaceholder": "搜索队伍名称",
+    "allGroups": "所有小组",
+    "unassigned": "未分组",
+    "group": "小组",
+    "noTeams": "暂无队伍",
+    "noTeamsDescription": "此锦标赛还没有创建队伍",
+    "showingTeams": "显示 {{count}} / {{total}} 支队伍",
+    "columns": {
+      "team": "队伍",
+      "group": "小组",
+      "type": "类型",
+      "createdAt": "创建日期",
+      "actions": "操作"
+    },
+    "teamType": {
+      "real": "真实",
+      "virtual": "虚拟"
+    },
+    "actions": {
+      "viewDetails": "查看详情",
+      "editTeam": "编辑队伍",
+      "deleteTeam": "删除队伍",
+      "deleteConfirmation": "确定要删除这个队伍吗？",
+      "deleteWarning": "此操作无法撤销"
+    },
+    "stats": {
+      "totalTeams": "总队伍数",
+      "grouped": "已分组",
+      "ungrouped": "未分组",
+      "virtual": "虚拟队伍"
+    }
+  },
+  "edit": {
+    "groupHelp": "可选择小组，或稍后在小组管理中分配",
+    "selectGroup": "请选择小组",
+    "loadingGroups": "载入锦标赛小组中...",
+    "noGroupsAvailable": "此锦标赛暂无可用小组",
+    "noGroupAssignment": "暂不分配小组",
+    "current": "当前",
+    "full": "已满",
+    "teamType": "队伍类型",
+    "recommendedColors": "推荐颜色",
+    "updateNotice": "更新提示",
+    "updateNoticeDescription": "更新队伍信息后，相关的运动员和比赛记录将保持不变。此队伍专属于锦标赛「{{tournamentName}}」。",
+    "saveChanges": "保存更改",
+    "validation": {
+      "nameMinLength": "队伍名称至少需要2个字符",
+      "nameMaxLength": "队伍名称不能超过50个字符",
+      "colorRequired": "请选择队伍颜色"
+    }
+  },
+  "create": {
+    "title": "新增队伍",
+    "subtitle": "为 {{tournamentName}} 创建新的参赛队伍",
+    "createNotice": "队伍创建说明",
+    "createNoticeDescription": "队伍名称在同一锦标赛中必须唯一。您可以选择将队伍分配到小组，或稍后再进行分配。系统支持锦标赛专属队伍，您可以在不同锦标赛中使用相同的队伍名称。",
+    "createTip": "创建提示",
+    "createTipDescription": "创建队伍后，您可以在队伍详情页面中添加运动员，或在小组管理中调整队伍分配。此队伍将专属于锦标赛「{{tournamentName}}」。",
+    "createTeam": "创建队伍"
   }
 }

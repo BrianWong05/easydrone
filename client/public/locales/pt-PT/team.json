@@ -109,5 +109,33 @@
       "ungrouped": "Sem Grupo",
       "virtual": "Virtuais"
     }
+  },
+  "edit": {
+    "groupHelp": "Pode escolher atribuir a um grupo, ou atribuir mais tarde na gestão de grupos",
+    "selectGroup": "Selecionar grupo",
+    "loadingGroups": "A carregar grupos do torneio...",
+    "noGroupsAvailable": "Nenhum grupo disponível neste torneio",
+    "noGroupAssignment": "Não atribuir a grupo",
+    "current": "Atual",
+    "full": "Cheio",
+    "teamType": "Tipo de Equipa",
+    "recommendedColors": "Cores Recomendadas",
+    "updateNotice": "Aviso de Atualização",
+    "updateNoticeDescription": "Após atualizar as informações da equipa, os registos relacionados de atletas e jogos permanecerão inalterados. Esta equipa pertence exclusivamente ao torneio \"{{tournamentName}}\".",
+    "saveChanges": "Guardar Alterações",
+    "validation": {
+      "nameMinLength": "O nome da equipa deve ter pelo menos 2 caracteres",
+      "nameMaxLength": "O nome da equipa não pode exceder 50 caracteres",
+      "colorRequired": "Selecione uma cor para a equipa"
+    }
+  },
+  "create": {
+    "title": "Adicionar Equipa",
+    "subtitle": "Criar uma nova equipa participante para {{tournamentName}}",
+    "createNotice": "Instruções de Criação de Equipa",
+    "createNoticeDescription": "Os nomes das equipas devem ser únicos dentro do mesmo torneio. Pode escolher atribuir a equipa a um grupo, ou atribuir mais tarde. O sistema suporta equipas específicas do torneio, permitindo usar o mesmo nome de equipa em diferentes torneios.",
+    "createTip": "Dica de Criação",
+    "createTipDescription": "Após criar a equipa, pode adicionar atletas na página de detalhes da equipa, ou ajustar as atribuições de equipas na gestão de grupos. Esta equipa pertencerá exclusivamente ao torneio \"{{tournamentName}}\".",
+    "createTeam": "Criar Equipa"
   }
 }
