@@ -31,6 +31,7 @@
     "assists": "Assistências",
     "saves": "Defesas",
     "fouls": "Faltas",
+    "penalties": "Penáltis",
     "yellowCards": "Cartões Amarelos",
     "redCards": "Cartões Vermelhos",
     "minutesPlayed": "Minutos Jogados",
@@ -165,5 +166,26 @@
     "rule3": "Número ilimitado de jogadores suplentes permitido",
     "rule4": "Números de camisola devem ser únicos dentro da equipa",
     "totalAthletes": "Total de Atletas"
+  },
+  "actions": {
+    "create": "Criar Atleta",
+    "edit": "Editar Atleta",
+    "delete": "Eliminar Atleta",
+    "view": "Ver Detalhes",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "back": "Voltar à Lista",
+    "addToTeam": "Adicionar à Equipa",
+    "removeFromTeam": "Remover da Equipa",
+    "activate": "Ativar",
+    "deactivate": "Desativar",
+    "batchActivate": "Ativação em Lote",
+    "batchDeactivate": "Desativação em Lote",
+    "uploadAvatar": "Carregar Avatar",
+    "changeAvatar": "Alterar Avatar",
+    "deleteAvatar": "Eliminar Avatar"
+  },
+  "labels": {
+    "avatarPreview": "Pré-visualização do Avatar"
   }
 }

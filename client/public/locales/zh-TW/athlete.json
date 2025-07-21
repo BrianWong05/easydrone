@@ -26,14 +26,15 @@
     "totalAthletes": "運動員總數"
   },
   "statistics": {
-    "matchesPlayed": "出賽場次",
-    "goals": "進球數",
-    "assists": "助攻數",
-    "saves": "撲救數",
-    "fouls": "犯規次數",
-    "yellowCards": "黃牌數",
-    "redCards": "紅牌數",
-    "minutesPlayed": "出場時間",
+    "matchesPlayed": "參賽場次",
+    "goals": "進球",
+    "assists": "助攻",
+    "saves": "撲救",
+    "fouls": "犯規",
+    "penalties": "點球",
+    "yellowCards": "黃牌",
+    "redCards": "紅牌",
+    "minutesPlayed": "上場時間",
     "averageRating": "平均評分",
     "winRate": "勝率"
   },
@@ -165,5 +166,26 @@
     "rule3": "允許無限數量的替補球員",
     "rule4": "球衣號碼在隊伍內必須唯一",
     "totalAthletes": "運動員總數"
+  },
+  "actions": {
+    "create": "創建運動員",
+    "edit": "編輯運動員",
+    "delete": "刪除運動員",
+    "view": "查看詳情",
+    "save": "保存",
+    "cancel": "取消",
+    "back": "返回列表",
+    "addToTeam": "加入隊伍",
+    "removeFromTeam": "移出隊伍",
+    "activate": "激活",
+    "deactivate": "停用",
+    "batchActivate": "批量激活",
+    "batchDeactivate": "批量停用",
+    "uploadAvatar": "上傳頭像",
+    "changeAvatar": "更換頭像",
+    "deleteAvatar": "刪除頭像"
+  },
+  "labels": {
+    "avatarPreview": "頭像預覽"
   }
 }

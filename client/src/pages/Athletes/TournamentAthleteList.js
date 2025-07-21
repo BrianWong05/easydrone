@@ -322,7 +322,7 @@ const TournamentAthleteList = () => {
       ]
     },
     {
-      title: t('common:buttons.title'),
+      title: t('common:actions.title'),
       key: 'actions',
       width: 150,
       render: (_, record) => (
