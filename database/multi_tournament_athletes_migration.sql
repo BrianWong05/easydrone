@@ -59,15 +59,15 @@ ON DUPLICATE KEY UPDATE
 -- Step 4: Migrate tournament participations
 INSERT INTO tournament_athletes (athlete_id, tournament_id, team_id, jersey_number, position, is_active, joined_at, updated_at)
 SELECT 
-    athlete_id,
-    tournament_id,
-    team_id,
-    jersey_number,
-    position,
-    is_active,
-    created_at,
-    updated_at
-FROM athletes
+    a.athlete_id,
+    a.tournament_id,
+    a.team_id,
+    a.jersey_number,
+    a.position,
+    a.is_active,
+    a.created_at,
+    a.updated_at
+FROM athletes a
 ON DUPLICATE KEY UPDATE
     team_id = VALUES(team_id),
     jersey_number = VALUES(jersey_number),
@@ -100,8 +100,12 @@ ALTER TABLE match_events
 ADD CONSTRAINT fk_match_events_participation 
 FOREIGN KEY (participation_id) REFERENCES tournament_athletes(participation_id) ON DELETE CASCADE;
 
--- Step 6: Create a view for backward compatibility
-CREATE OR REPLACE VIEW athletes AS
+-- Step 6: Rename existing athletes table and create a view for backward compatibility
+-- First, rename the old athletes table to athletes_old for backup
+RENAME TABLE athletes TO athletes_old;
+
+-- Create a view with the original athletes name for backward compatibility
+CREATE VIEW athletes AS
 SELECT 
     ta.participation_id as athlete_id,
     ga.name,
