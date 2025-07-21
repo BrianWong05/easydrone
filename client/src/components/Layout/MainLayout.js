@@ -27,64 +27,24 @@ const MainLayout = ({ children }) => {
   const { logout, user } = useAuthStore();
   const { t } = useTranslation();
 
-  // Check if current page is dashboard or any non-tournament page to hide sidebar
-  // const shouldHideSidebar = location.pathname === "/" || !location.pathname.startsWith("/tournaments");
-  const shouldHideSidebar = true; // Always show sidebar for admin layout
+  // Always show sidebar for admin layout
+  const shouldHideSidebar = false;
   // 移除認證相關功能
 
-  // Menu items with i18n
+  // Menu items with i18n - simplified to only tournaments and athletes
   const menuItems = [
     {
-      key: "/",
-      icon: <DashboardOutlined />,
-      label: <Link to="/">{t('navigation.dashboard')}</Link>,
-    },
-    {
-      key: "/teams",
-      icon: <TeamOutlined />,
-      label: t('navigation.teams'),
+      key: "/tournaments",
+      icon: <TrophyOutlined />,
+      label: t('navigation.tournaments'),
       children: [
         {
-          key: "/teams",
-          label: <Link to="/teams">{t('navigation.teamList')}</Link>,
+          key: "/",
+          label: <Link to="/">{t('navigation.tournamentList')}</Link>,
         },
         {
-          key: "/teams/create",
-          label: <Link to="/teams/create">{t('navigation.addTeam')}</Link>,
-        },
-      ],
-    },
-    {
-      key: "/groups",
-      icon: <GroupOutlined />,
-      label: t('navigation.groups'),
-      children: [
-        {
-          key: "/groups",
-          label: <Link to="/groups">{t('navigation.groupList')}</Link>,
-        },
-        {
-          key: "/groups/create",
-          label: <Link to="/groups/create">{t('navigation.addGroup')}</Link>,
-        },
-        {
-          key: "/groups/leaderboard",
-          label: <Link to="/groups/leaderboard">{t('navigation.groupStandings')}</Link>,
-        },
-      ],
-    },
-    {
-      key: "/matches",
-      icon: <CalendarOutlined />,
-      label: t('navigation.matches'),
-      children: [
-        {
-          key: "/matches",
-          label: <Link to="/matches">{t('navigation.matchList')}</Link>,
-        },
-        {
-          key: "/matches/create",
-          label: <Link to="/matches/create">{t('navigation.addMatch')}</Link>,
+          key: "/tournaments/create",
+          label: <Link to="/tournaments/create">{t('navigation.addTournament')}</Link>,
         },
       ],
     },
@@ -94,50 +54,8 @@ const MainLayout = ({ children }) => {
       label: t('navigation.athletes'),
       children: [
         {
-          key: "/athletes",
-          label: <Link to="/athletes">{t('navigation.athleteList')}</Link>,
-        },
-        {
-          key: "/athletes/create",
-          label: <Link to="/athletes/create">{t('navigation.addAthlete')}</Link>,
-        },
-      ],
-    },
-    {
-      key: "/tournaments",
-      icon: <TrophyOutlined />,
-      label: t('navigation.tournaments'),
-      children: [
-        {
-          key: "/tournaments",
-          label: <Link to="/tournaments">{t('navigation.tournamentList')}</Link>,
-        },
-        {
-          key: "/tournaments/create",
-          label: <Link to="/tournaments/create">{t('navigation.addTournament')}</Link>,
-        },
-      ],
-    },
-    {
-      key: "/stats",
-      icon: <BarChartOutlined />,
-      label: t('navigation.stats'),
-      children: [
-        {
-          key: "/stats",
-          label: <Link to="/stats">{t('navigation.statsOverview')}</Link>,
-        },
-        {
-          key: "/stats/group-standings",
-          label: <Link to="/stats/group-standings">{t('navigation.groupStandings')}</Link>,
-        },
-        {
-          key: "/stats/overall-leaderboard",
-          label: <Link to="/stats/overall-leaderboard">{t('navigation.overallLeaderboard')}</Link>,
-        },
-        {
-          key: "/stats/best-teams",
-          label: <Link to="/stats/best-teams">{t('navigation.bestTeamsStats')}</Link>,
+          key: "/global-athletes",
+          label: <Link to="/global-athletes">{t('navigation.globalAthletes')}</Link>,
         },
       ],
     },
@@ -148,20 +66,19 @@ const MainLayout = ({ children }) => {
   // 獲取當前選中的菜單項
   const getSelectedKeys = () => {
     const path = location.pathname;
+    
+    // Handle root path
     if (path === "/") return ["/"];
-
-    // 找到匹配的菜單項
-    for (const item of menuItems) {
-      if (item.children) {
-        for (const child of item.children) {
-          if (path.startsWith(child.key)) {
-            return [child.key];
-          }
-        }
-      } else if (path.startsWith(item.key)) {
-        return [item.key];
-      }
-    }
+    
+    // Handle global athletes
+    if (path.startsWith("/global-athletes")) return ["/global-athletes"];
+    
+    // Handle tournament creation
+    if (path.startsWith("/tournaments/create")) return ["/tournaments/create"];
+    
+    // Handle tournament detail pages (should highlight tournament list)
+    if (path.startsWith("/tournaments/") && path !== "/tournaments/create") return ["/"];
+    
     return [];
   };
 
@@ -170,16 +87,16 @@ const MainLayout = ({ children }) => {
     const path = location.pathname;
     const openKeys = [];
 
-    for (const item of menuItems) {
-      if (item.children) {
-        for (const child of item.children) {
-          if (path.startsWith(child.key)) {
-            openKeys.push(item.key);
-            break;
-          }
-        }
-      }
+    // Always expand tournaments section for tournament-related pages
+    if (path === "/" || path.startsWith("/tournaments")) {
+      openKeys.push("/tournaments");
     }
+    
+    // Always expand athletes section for athlete-related pages
+    if (path.startsWith("/global-athletes")) {
+      openKeys.push("/athletes");
+    }
+
     return openKeys;
   };
 
