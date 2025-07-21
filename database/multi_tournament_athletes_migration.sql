@@ -43,17 +43,17 @@ CREATE TABLE IF NOT EXISTS tournament_athletes (
 -- Step 3: Migrate existing data from athletes table to new structure
 INSERT INTO global_athletes (athlete_id, name, age, avatar_url, created_at, updated_at)
 SELECT 
-    athlete_id,
-    name,
-    age,
-    avatar_url,
-    created_at,
-    updated_at
-FROM athletes
+    a.athlete_id,
+    a.name,
+    a.age,
+    a.avatar_url,
+    a.created_at,
+    a.updated_at
+FROM athletes a
 ON DUPLICATE KEY UPDATE
     name = VALUES(name),
     age = VALUES(age),
-    avatar_url = COALESCE(VALUES(avatar_url), avatar_url),
+    avatar_url = COALESCE(VALUES(avatar_url), global_athletes.avatar_url),
     updated_at = VALUES(updated_at);
 
 -- Step 4: Migrate tournament participations
