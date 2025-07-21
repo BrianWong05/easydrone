@@ -407,7 +407,21 @@ const TournamentAthleteList = () => {
             <TeamOutlined style={{ color: record.team_color }} />
             <span className="text-gray-800">{displayName}</span>
             {record.group_name && (
-              <Tag color="blue" className="ml-2">{record.group_name}</Tag>
+              <Tag color="blue" className="ml-2">
+                {(() => {
+                  // Clean up group name display by removing tournament ID suffix
+                  let groupDisplayName = record.group_name;
+                  if (groupDisplayName && groupDisplayName.includes('_')) {
+                    const parts = groupDisplayName.split('_');
+                    const lastPart = parts[parts.length - 1];
+                    // Check if the last part is a number (tournament ID)
+                    if (/^\d+$/.test(lastPart)) {
+                      groupDisplayName = parts.slice(0, -1).join('_');
+                    }
+                  }
+                  return groupDisplayName;
+                })()}
+              </Tag>
             )}
           </Space>
         );
