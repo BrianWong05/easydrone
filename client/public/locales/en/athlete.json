@@ -162,6 +162,11 @@
   "labels": {
     "avatarPreview": "Avatar Preview"
   },
+  "matches": {
+    "title": "Team Matches",
+    "noMatches": "No matches found for this team",
+    "noTeamMatches": "This athlete is not assigned to a team"
+  },
   "buttons": {
     "update": "Update Athlete"
   },

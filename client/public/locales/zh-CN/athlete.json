@@ -187,5 +187,10 @@
   },
   "labels": {
     "avatarPreview": "头像预览"
+  },
+  "matches": {
+    "title": "队伍比赛",
+    "noMatches": "此队伍暂无比赛",
+    "noTeamMatches": "此运动员未分配到队伍"
   }
 }

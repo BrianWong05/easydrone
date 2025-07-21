@@ -28,14 +28,17 @@ import {
   UserSwitchOutlined,
   CalendarOutlined,
   FireOutlined,
-  ThunderboltOutlined
+  ThunderboltOutlined,
+  AimOutlined,
+  SafetyOutlined,
+  SwapOutlined
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 
 const { Title, Text } = Typography;
 
 const TournamentAthleteDetail = () => {
-  const { t } = useTranslation(['athlete', 'common']);
+  const { t } = useTranslation(['athlete', 'common', 'match']);
   const { id: tournamentId, athleteId } = useParams();
   const navigate = useNavigate();
   
@@ -43,6 +46,7 @@ const TournamentAthleteDetail = () => {
   const [athlete, setAthlete] = useState(null);
   const [statistics, setStatistics] = useState({});
   const [events, setEvents] = useState([]);
+  const [matches, setMatches] = useState([]);
 
   // Load athlete data
   const loadAthleteData = async () => {
@@ -72,6 +76,11 @@ const TournamentAthleteDetail = () => {
         });
         
         setStatistics(stats);
+        
+        // Load athlete's matches if they have a team
+        if (data.data.athlete.team_id) {
+          await loadAthleteMatches(data.data.athlete.team_id);
+        }
       } else {
         message.error(data.message || t('athlete:messages.noAthleteData'));
         navigate(`/tournaments/${tournamentId}/athletes`);
@@ -81,6 +90,32 @@ const TournamentAthleteDetail = () => {
       message.error(t('athlete:messages.loadingAthletes'));
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Load matches for the athlete's team
+  const loadAthleteMatches = async (teamId) => {
+    if (!teamId) {
+      setMatches([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/matches?tournament_id=${tournamentId}&team_id=${teamId}`);
+      const data = await response.json();
+
+      if (data.success) {
+        const matchesData = data.data?.matches || data.data || [];
+        // Sort matches by date (upcoming first, then completed)
+        const sortedMatches = matchesData.sort((a, b) => {
+          if (a.match_status === 'pending' && b.match_status !== 'pending') return -1;
+          if (a.match_status !== 'pending' && b.match_status === 'pending') return 1;
+          return new Date(a.match_date) - new Date(b.match_date);
+        });
+        setMatches(sortedMatches);
+      }
+    } catch (error) {
+      console.error('Error loading athlete matches:', error);
     }
   };
 
@@ -102,11 +137,11 @@ const TournamentAthleteDetail = () => {
 
   const getPositionIcon = (position) => {
     const icons = {
-      attacker: '⚽',
-      defender: '🛡️',
-      substitute: '🔄'
+      attacker: <AimOutlined />,
+      defender: <SafetyOutlined />,
+      substitute: <SwapOutlined />
     };
-    return icons[position] || '👤';
+    return icons[position] || <UserOutlined />;
   };
 
   const getStatusColor = (isActive) => {
@@ -148,6 +183,119 @@ const TournamentAthleteDetail = () => {
       title: t('athlete:athlete.team'),
       key: 'teams',
       render: (_, record) => `${record.team1_name} vs ${record.team2_name}`
+    }
+  ];
+
+  // Match table columns
+  const matchColumns = [
+    {
+      title: t('match:match.number'),
+      dataIndex: 'match_number',
+      key: 'match_number',
+      sorter: (a, b) => {
+        // Extract numeric part from match number for proper sorting
+        const getNumericPart = (matchNumber) => {
+          const match = matchNumber.match(/\d+/);
+          return match ? parseInt(match[0]) : 0;
+        };
+        return getNumericPart(a.match_number) - getNumericPart(b.match_number);
+      },
+      render: (text, record) => (
+        <Button 
+          type="link" 
+          className="p-0 h-auto font-bold"
+          onClick={() => navigate(`/tournaments/${tournamentId}/matches/${record.match_id}`)}
+        >
+          {text}
+        </Button>
+      )
+    },
+    {
+      title: t('match:match.teams'),
+      key: 'teams',
+      sorter: (a, b) => {
+        // Sort by first team name, then by second team name
+        const teamA = `${a.team1_name} vs ${a.team2_name}`;
+        const teamB = `${b.team1_name} vs ${b.team2_name}`;
+        return teamA.localeCompare(teamB);
+      },
+      render: (_, record) => (
+        <div className="flex items-center gap-2">
+          <Button 
+            type="link" 
+            className="p-0 h-auto"
+            onClick={() => navigate(`/tournaments/${tournamentId}/teams/${record.team1_id}`)}
+          >
+            {record.team1_name}
+          </Button>
+          <Text type="secondary">vs</Text>
+          <Button 
+            type="link" 
+            className="p-0 h-auto"
+            onClick={() => navigate(`/tournaments/${tournamentId}/teams/${record.team2_id}`)}
+          >
+            {record.team2_name}
+          </Button>
+        </div>
+      )
+    },
+    {
+      title: t('match:match.score'),
+      key: 'score',
+      sorter: (a, b) => {
+        // Sort by total goals scored (team1_score + team2_score)
+        const totalA = (a.team1_score || 0) + (a.team2_score || 0);
+        const totalB = (b.team1_score || 0) + (b.team2_score || 0);
+        return totalA - totalB;
+      },
+      render: (_, record) => {
+        if (record.match_status === 'completed') {
+          return (
+            <Text strong className="text-lg">
+              {record.team1_score} - {record.team2_score}
+            </Text>
+          );
+        }
+        return <Text type="secondary">-</Text>;
+      }
+    },
+    {
+      title: t('match:match.date'),
+      dataIndex: 'match_date',
+      key: 'match_date',
+      sorter: (a, b) => new Date(a.match_date) - new Date(b.match_date),
+      defaultSortOrder: 'descend',
+      render: (date) => new Date(date).toLocaleDateString()
+    },
+    {
+      title: t('match:match.status'),
+      dataIndex: 'match_status',
+      key: 'match_status',
+      sorter: (a, b) => {
+        // Custom sort order: pending -> active -> completed -> postponed
+        const statusOrder = { pending: 1, active: 2, completed: 3, postponed: 4 };
+        return (statusOrder[a.match_status] || 5) - (statusOrder[b.match_status] || 5);
+      },
+      filters: [
+        { text: t('common:status.pending'), value: 'pending' },
+        { text: t('common:status.active'), value: 'active' },
+        { text: t('common:status.completed'), value: 'completed' },
+        { text: t('common:status.postponed'), value: 'postponed' }
+      ],
+      onFilter: (value, record) => record.match_status === value,
+      render: (status) => {
+        const statusColors = {
+          pending: 'default',
+          active: 'processing',
+          completed: 'success',
+          postponed: 'warning'
+        };
+        return (
+          <Tag color={statusColors[status] || 'default'}>
+            {t(`common:status.${status}`)}
+          </Tag>
+        );
+      }
     }
   ];
 
@@ -226,10 +374,10 @@ const TournamentAthleteDetail = () => {
                 </Title>
                 <Tag 
                   color={getPositionColor(athlete.position)} 
-                  className="text-base px-3 py-1 flex items-center gap-2 w-fit mx-auto"
+                  className="text-base px-3 py-1"
+                  icon={getPositionIcon(athlete.position)}
                 >
-                  <span className="text-lg">{getPositionIcon(athlete.position)}</span>
-                  <span>{t(`athlete:positions.${athlete.position}`)}</span>
+                  {t(`athlete:positions.${athlete.position}`)}
                 </Tag>
               </div>
             </div>
@@ -379,6 +527,41 @@ const TournamentAthleteDetail = () => {
             />
           </Col>
         </Row>
+      </Card>
+
+      {/* Team Matches */}
+      <Card 
+        title={
+          <div className="flex items-center gap-2">
+            <TrophyOutlined className="text-blue-500" />
+            {t('athlete:matches.title')}
+          </div>
+        } 
+        className="mb-6 shadow-sm border-0"
+      >
+        {matches.length > 0 ? (
+          <Table
+            columns={matchColumns}
+            dataSource={matches}
+            rowKey="match_id"
+            pagination={{
+              pageSize: 10,
+              showSizeChanger: true,
+              showQuickJumper: true,
+              showTotal: (total, range) => 
+                t('common:pagination.total', {
+                  start: range[0],
+                  end: range[1],
+                  total: total
+                })
+            }}
+          />
+        ) : (
+          <Empty
+            description={athlete.team_name ? t('athlete:matches.noMatches') : t('athlete:matches.noTeamMatches')}
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+          />
+        )}
       </Card>
 
       {/* Events History */}

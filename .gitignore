@@ -97,7 +97,6 @@ temp/
 
 # Gatsby
 .cache/
-public/
 
 # Storybook
 .out/

@@ -187,5 +187,10 @@
   },
   "labels": {
     "avatarPreview": "Pré-visualização do Avatar"
+  },
+  "matches": {
+    "title": "Jogos da Equipa",
+    "noMatches": "Não foram encontrados jogos para esta equipa",
+    "noTeamMatches": "Este atleta não está atribuído a uma equipa"
   }
 }
