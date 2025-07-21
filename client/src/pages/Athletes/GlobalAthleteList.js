@@ -232,14 +232,6 @@ const GlobalAthleteList = () => {
               className="text-green-500 hover:text-green-700 p-1"
             />
           </Tooltip>
-          <Tooltip title={t('athlete:actions.addToTournament')}>
-            <Button
-              type="link"
-              icon={<TrophyOutlined />}
-              onClick={() => navigate(`/global-athletes/${record.athlete_id}/add-tournament`)}
-              className="text-orange-500 hover:text-orange-700 p-1"
-            />
-          </Tooltip>
           <Tooltip title={t('athlete:athlete.delete')}>
             <Button
               type="link"
