@@ -98,7 +98,6 @@
     "numberRequired": "请输入球衣号码",
     "numberRange": "球衣号码必须在1-99之间",
     "ageRequired": "请输入年龄",
-    "ageRange": "年龄必须在16-50岁之间",
     "positionRequired": "请选择位置"
   },
   "info": {
@@ -142,7 +141,6 @@
     "numberRequired": "请输入球衣号码",
     "numberRange": "球衣号码必须在1-99之间",
     "ageRequired": "请输入年龄",
-    "ageRange": "年龄必须在16-50岁之间",
     "positionRequired": "请选择位置",
     "attackerLimit": "每支队伍只能有1名进攻手",
     "defenderLimit": "每支队伍最多只能有5名防守员"

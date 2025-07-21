@@ -430,9 +430,7 @@ const TournamentAthleteEdit = () => {
                       { required: true, message: t('athlete:validation.ageRequired') },
                       { 
                         type: 'number', 
-                        min: 16, 
-                        max: 50, 
-                        message: t('athlete:validation.ageRange'),
+                        message: t('athlete:validation.ageRequired'),
                         transform: (value) => Number(value)
                       }
                     ]}
@@ -442,8 +440,6 @@ const TournamentAthleteEdit = () => {
                       prefix={<UserSwitchOutlined className="text-gray-400" />}
                       placeholder={t('athlete:placeholders.enterAge')}
                       className="h-10"
-                      min={16}
-                      max={50}
                     />
                   </Form.Item>
                 </Col>

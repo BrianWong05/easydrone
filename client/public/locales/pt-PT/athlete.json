@@ -97,9 +97,8 @@
     "nameMaxLength": "Nome não pode exceder 100 caracteres",
     "numberRequired": "Por favor insira o número da camisola",
     "numberRange": "Número da camisola deve estar entre 1-99",
-    "ageRequired": "Por favor insira a idade",
-    "ageRange": "Idade deve estar entre 16-50",
-    "positionRequired": "Por favor selecione uma posição"
+    "ageRequired": "Por favor, insira a idade",
+    "positionRequired": "Por favor, selecione uma posição"
   },
   "info": {
     "years": "anos",
@@ -142,7 +141,6 @@
     "numberRequired": "Por favor insira o número da camisola",
     "numberRange": "Número da camisola deve estar entre 1-99",
     "ageRequired": "Por favor insira a idade",
-    "ageRange": "Idade deve estar entre 16-50",
     "positionRequired": "Por favor selecione uma posição",
     "attackerLimit": "Cada equipa só pode ter 1 atacante",
     "defenderLimit": "Cada equipa pode ter no máximo 5 defesas"

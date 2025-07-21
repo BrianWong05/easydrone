@@ -31,9 +31,7 @@ const athleteSchema = Joi.object({
     'any.only': '位置必須是進攻手、防守員或替補',
     'any.required': '位置是必填項'
   }),
-  age: Joi.number().integer().min(16).max(50).required().messages({
-    'number.min': '年齡必須在16-50歲之間',
-    'number.max': '年齡必須在16-50歲之間',
+  age: Joi.number().integer().required().messages({
     'any.required': '年齡是必填項'
   }),
   is_active: Joi.boolean().default(true),

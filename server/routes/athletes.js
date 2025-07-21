@@ -13,9 +13,7 @@ const athleteCreateSchema = Joi.object({
     'string.max': '運動員姓名不能超過100個字符',
     'any.required': '運動員姓名是必填項'
   }),
-  age: Joi.number().integer().min(16).max(50).required().messages({
-    'number.min': '年齡必須在16-50歲之間',
-    'number.max': '年齡必須在16-50歲之間',
+  age: Joi.number().integer().required().messages({
     'any.required': '年齡是必填項'
   }),
   
@@ -50,9 +48,7 @@ const athleteUpdateSchema = Joi.object({
     'string.max': '運動員姓名不能超過100個字符',
     'any.required': '運動員姓名是必填項'
   }),
-  age: Joi.number().integer().min(16).max(50).required().messages({
-    'number.min': '年齡必須在16-50歲之間',
-    'number.max': '年齡必須在16-50歲之間',
+  age: Joi.number().integer().required().messages({
     'any.required': '年齡是必填項'
   }),
   

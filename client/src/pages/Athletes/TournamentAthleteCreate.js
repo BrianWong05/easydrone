@@ -443,13 +443,11 @@ const TournamentAthleteCreate = () => {
                     label={<span className="text-sm font-medium text-gray-700">{t("athlete:athlete.age")}</span>}
                     rules={[
                       { required: true, message: t("athlete:validation.ageRequired") },
-                      { type: "number", min: 16, max: 50, message: t("athlete:validation.ageRange") },
+                      { type: "number", message: t("athlete:validation.ageRequired") },
                     ]}
                   >
                     <InputNumber
                       placeholder={t("athlete:placeholders.enterAge")}
-                      min={16}
-                      max={50}
                       size="large"
                       className="w-full"
                     />

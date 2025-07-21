@@ -102,7 +102,6 @@
     "numberRequired": "Please enter jersey number",
     "numberRange": "Jersey number must be between 1-99",
     "ageRequired": "Please enter age",
-    "ageRange": "Age must be between 16-50",
     "positionRequired": "Please select a position"
   },
   "info": {
@@ -190,7 +189,6 @@
     "numberRequired": "Please enter jersey number",
     "numberRange": "Jersey number must be between 1-99",
     "ageRequired": "Please enter age",
-    "ageRange": "Age must be between 16-50",
     "positionRequired": "Please select a position",
     "teamRequired": "Please select a team",
     "jerseyRequired": "Please enter jersey number",

@@ -310,12 +310,10 @@ const GlobalAthleteEdit = () => {
                 label={t('athlete:athlete.age')}
                 rules={[
                   { required: true, message: t('athlete:validation.ageRequired') },
-                  { type: 'number', min: 16, max: 50, message: t('athlete:validation.ageRange') }
+                  { type: 'number', message: t('athlete:validation.ageRequired') }
                 ]}
               >
                 <InputNumber
-                  min={16}
-                  max={50}
                   placeholder={t('athlete:placeholders.enterAge')}
                   className="w-full h-10"
                 />
