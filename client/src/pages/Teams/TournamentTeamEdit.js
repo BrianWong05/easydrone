@@ -50,6 +50,28 @@ const TournamentTeamEdit = () => {
     }
   };
 
+  // Clean team name display (remove _{tournament_id} suffix only)
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    // Check if it ends with _{tournamentId}, if so remove it
+    const suffix = `_${tournamentId}`;
+    if (teamName.endsWith(suffix)) {
+      return teamName.slice(0, -suffix.length);
+    }
+    return teamName;
+  };
+
+  // Clean group name display (remove _{tournament_id} suffix only)
+  const getDisplayGroupName = (groupName) => {
+    if (!groupName) return '';
+    // Check if it ends with _{tournamentId}, if so remove it
+    const suffix = `_${tournamentId}`;
+    if (groupName.endsWith(suffix)) {
+      return groupName.slice(0, -suffix.length);
+    }
+    return groupName;
+  };
+
   const fetchTeam = async () => {
     try {
       setLoading(true);
@@ -59,9 +81,7 @@ const TournamentTeamEdit = () => {
         setTeam(teamData);
         
         // 設置表單初始值
-        const displayTeamName = teamData.team_name?.includes('_') 
-          ? teamData.team_name.split('_')[0] 
-          : teamData.team_name;
+        const displayTeamName = getDisplayTeamName(teamData.team_name);
           
         form.setFieldsValue({
           team_name: displayTeamName,
@@ -128,7 +148,7 @@ const TournamentTeamEdit = () => {
       
       // 使用錦標賽專屬的更新端點
       const response = await axios.put(`/api/tournaments/${tournamentId}/teams/${teamId}`, {
-        team_name: `${values.team_name}_${tournamentId}`, // Internal: 隊伍名_1, 隊伍名_2, etc.
+        team_name: values.team_name, // Use team name as entered by user
         group_id: values.group_id || null,
         team_color: typeof values.team_color === 'string' ? values.team_color : values.team_color.toHexString(),
         is_virtual: values.is_virtual || false,
@@ -203,9 +223,7 @@ const TournamentTeamEdit = () => {
     );
   }
 
-  const displayTeamName = team?.team_name?.includes('_') 
-    ? team.team_name.split('_')[0] 
-    : team?.team_name;
+  const displayTeamName = getDisplayTeamName(team?.team_name);
 
   const availableGroups = getAvailableGroups();
 
@@ -277,7 +295,7 @@ const TournamentTeamEdit = () => {
                   </span>
                 </Option>
                 {Array.isArray(availableGroups) ? availableGroups.map(group => {
-                  const displayName = group.group_name?.includes('_') ? group.group_name.split('_')[0] : group.group_name;
+                  const displayName = getDisplayGroupName(group.group_name);
                   const teamCount = group.team_count || 0;
                   const maxTeams = group.max_teams || 4;
                   const isCurrent = group.group_id === team?.group_id;

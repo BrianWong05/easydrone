@@ -44,6 +44,17 @@ const TournamentTeamCreate = () => {
     }
   };
 
+  // Clean group name display (remove _{tournament_id} suffix only)
+  const getDisplayGroupName = (groupName) => {
+    if (!groupName) return '';
+    // Check if it ends with _{tournamentId}, if so remove it
+    const suffix = `_${tournamentId}`;
+    if (groupName.endsWith(suffix)) {
+      return groupName.slice(0, -suffix.length);
+    }
+    return groupName;
+  };
+
   const fetchGroups = async () => {
     try {
       setGroupsLoading(true);
@@ -89,7 +100,7 @@ const TournamentTeamCreate = () => {
       
       // 使用錦標賽專屬的創建端點
       const response = await axios.post(`/api/tournaments/${tournamentId}/teams`, {
-        team_name: `${values.team_name}_${tournamentId}`, // Internal: 隊伍名_1, 隊伍名_2, etc.
+        team_name: values.team_name, // Use team name as entered by user
         group_id: values.group_id || null,
         team_color: typeof values.team_color === 'string' ? values.team_color : values.team_color.toHexString(),
         is_virtual: values.is_virtual || false,
@@ -213,7 +224,7 @@ const TournamentTeamCreate = () => {
                   </span>
                 </Option>
                 {Array.isArray(availableGroups) ? availableGroups.map(group => {
-                  const displayName = group.group_name?.includes('_') ? group.group_name.split('_')[0] : group.group_name;
+                  const displayName = getDisplayGroupName(group.group_name);
                   const teamCount = group.team_count || 0;
                   const maxTeams = group.max_teams || 4;
                   const isFull = teamCount >= maxTeams;
