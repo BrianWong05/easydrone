@@ -16,7 +16,9 @@ import {
   Tooltip,
   Badge,
   Divider,
-  Avatar
+  Avatar,
+  Form,
+  InputNumber
 } from 'antd';
 import { 
   PlusOutlined, 
@@ -26,7 +28,8 @@ import {
   UserOutlined,
   TeamOutlined,
   TrophyOutlined,
-  FilterOutlined
+  FilterOutlined,
+  GlobalOutlined
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 
@@ -63,6 +66,13 @@ const TournamentAthleteList = () => {
     defenders: 0,
     substitutes: 0
   });
+
+  // Add from global modal state
+  const [addFromGlobalModal, setAddFromGlobalModal] = useState(false);
+  const [globalAthletes, setGlobalAthletes] = useState([]);
+  const [globalAthletesLoading, setGlobalAthletesLoading] = useState(false);
+  const [selectedGlobalAthlete, setSelectedGlobalAthlete] = useState(null);
+  const [addAthleteForm] = Form.useForm();
 
   // Load athletes data
   const loadAthletes = async (page = 1, pageSize = 20) => {
@@ -238,6 +248,80 @@ const TournamentAthleteList = () => {
     navigate(`/tournaments/${tournamentId}/athletes/${athleteId}`);
   };
 
+  // Load global athletes for modal
+  const loadGlobalAthletes = async (search = '') => {
+    setGlobalAthletesLoading(true);
+    try {
+      const params = new URLSearchParams({
+        search,
+        limit: '50' // Load more for selection
+      });
+
+      const response = await fetch(`/api/global-athletes?${params}`);
+      const data = await response.json();
+
+      if (data.success) {
+        // Filter out athletes already in this tournament
+        const currentAthleteIds = athletes.map(a => a.athlete_id);
+        const availableAthletes = data.data.athletes.filter(
+          ga => !currentAthleteIds.includes(ga.athlete_id)
+        );
+        setGlobalAthletes(availableAthletes);
+      } else {
+        message.error(data.message || 'Failed to load global athletes');
+      }
+    } catch (error) {
+      console.error('Error loading global athletes:', error);
+      message.error('Failed to load global athletes');
+    } finally {
+      setGlobalAthletesLoading(false);
+    }
+  };
+
+  // Handle opening add from global modal
+  const handleOpenAddFromGlobal = () => {
+    setAddFromGlobalModal(true);
+    loadGlobalAthletes();
+    addAthleteForm.resetFields();
+    setSelectedGlobalAthlete(null);
+  };
+
+  // Handle adding athlete from global list
+  const handleAddFromGlobal = async (values) => {
+    if (!selectedGlobalAthlete) {
+      message.error('Please select an athlete');
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `/api/global-athletes/${selectedGlobalAthlete.athlete_id}/tournaments/${tournamentId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(values),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        message.success(t('athlete:messages.athleteAdded'));
+        setAddFromGlobalModal(false);
+        loadAthletes(pagination.current, pagination.pageSize);
+        addAthleteForm.resetFields();
+        setSelectedGlobalAthlete(null);
+      } else {
+        message.error(data.message);
+      }
+    } catch (error) {
+      console.error('Error adding athlete:', error);
+      message.error(t('common:common.error'));
+    }
+  };
+
   // Table columns
   const columns = [
     {
@@ -408,14 +492,24 @@ const TournamentAthleteList = () => {
             </h2>
           </Col>
           <Col>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => navigate(`/tournaments/${tournamentId}/athletes/create`)}
-              className="bg-blue-500 hover:bg-blue-600 border-blue-500 hover:border-blue-600 shadow-sm"
-            >
-              {t('athlete:athlete.create')}
-            </Button>
+            <Space>
+              <Button
+                type="default"
+                icon={<GlobalOutlined />}
+                onClick={handleOpenAddFromGlobal}
+                className="hover:bg-green-50 hover:border-green-300 border-gray-300"
+              >
+                {t('athlete:actions.addFromGlobal')}
+              </Button>
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => navigate(`/tournaments/${tournamentId}/athletes/create`)}
+                className="bg-blue-500 hover:bg-blue-600 border-blue-500 hover:border-blue-600 shadow-sm"
+              >
+                {t('athlete:athlete.create')}
+              </Button>
+            </Space>
           </Col>
         </Row>
       </div>
@@ -602,6 +696,236 @@ const TournamentAthleteList = () => {
           rowClassName="hover:bg-gray-50 transition-colors duration-150"
         />
       </Card>
+
+      {/* Add from Global Athletes Modal */}
+      <Modal
+        title={
+          <div className="flex items-center gap-2">
+            <GlobalOutlined className="text-green-500" />
+            <span>{t('athlete:actions.addFromGlobal')}</span>
+          </div>
+        }
+        open={addFromGlobalModal}
+        onCancel={() => {
+          setAddFromGlobalModal(false);
+          addAthleteForm.resetFields();
+          setSelectedGlobalAthlete(null);
+        }}
+        footer={null}
+        width={800}
+        className="add-global-athlete-modal"
+      >
+        <div className="space-y-4">
+          {/* Search Global Athletes */}
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-2">
+              {t('athlete:placeholders.searchAthlete')}
+            </label>
+            <Search
+              placeholder={t('athlete:placeholders.searchAthlete')}
+              onSearch={loadGlobalAthletes}
+              enterButton={<SearchOutlined />}
+              className="w-full"
+            />
+          </div>
+
+          {/* Global Athletes Selection */}
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-2">
+              {t('athlete:actions.selectAthlete')}
+            </label>
+            <div className="max-h-60 overflow-y-auto border border-gray-200 rounded-lg">
+              {globalAthletesLoading ? (
+                <div className="p-4 text-center text-gray-500">
+                  {t('common:common.loading')}...
+                </div>
+              ) : globalAthletes.length === 0 ? (
+                <div className="p-4 text-center text-gray-500">
+                  {t('athlete:messages.noAvailableAthletes')}
+                </div>
+              ) : (
+                <div className="space-y-1 p-2">
+                  {globalAthletes.map((athlete) => (
+                    <div
+                      key={athlete.athlete_id}
+                      className={`p-3 rounded-lg cursor-pointer transition-colors duration-200 ${
+                        selectedGlobalAthlete?.athlete_id === athlete.athlete_id
+                          ? 'bg-blue-100 border-blue-300 border'
+                          : 'hover:bg-gray-50 border border-transparent'
+                      }`}
+                      onClick={() => setSelectedGlobalAthlete(athlete)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Avatar
+                          size={40}
+                          src={athlete.avatar_url}
+                          icon={!athlete.avatar_url && <UserOutlined />}
+                          className="border-2 border-gray-200"
+                        />
+                        <div className="flex-1">
+                          <div className="font-medium text-gray-800">
+                            {athlete.name}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {t('athlete:athlete.age')}: {athlete.age} | 
+                            {athlete.tournaments_count > 0 && (
+                              <span className="ml-1">
+                                {athlete.tournaments_count} {t('athlete:tournament.participations')}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        {selectedGlobalAthlete?.athlete_id === athlete.athlete_id && (
+                          <div className="text-blue-500">
+                            <Badge status="processing" />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Tournament Participation Form */}
+          {selectedGlobalAthlete && (
+            <Card className="bg-blue-50 border-blue-200">
+              <div className="mb-4">
+                <h4 className="text-lg font-medium text-gray-800 flex items-center gap-2">
+                  <UserOutlined className="text-blue-500" />
+                  {t('athlete:actions.addingAthlete')}: {selectedGlobalAthlete.name}
+                </h4>
+              </div>
+              
+              <Form
+                form={addAthleteForm}
+                layout="vertical"
+                onFinish={handleAddFromGlobal}
+                className="space-y-4"
+                onValuesChange={(changedValues) => {
+                  // Optional: You can add logic here if needed
+                }}
+              >
+                <Row gutter={16}>
+                  <Col span={8}>
+                    <Form.Item
+                      name="team_id"
+                      label={
+                        <span>
+                          {t('athlete:athlete.team')} 
+                          <span className="text-gray-400 font-normal ml-1">({t('athlete:form.optional')})</span>
+                        </span>
+                      }
+                      rules={[{ required: false }]}
+                    >
+                      <Select
+                        placeholder={t('athlete:placeholders.selectTeam')}
+                        className="w-full"
+                        allowClear
+                      >
+                        {teams.map(team => (
+                          <Option key={team.team_id} value={team.team_id}>
+                            {team.display_name || team.team_name}
+                          </Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  
+                  <Col span={8}>
+                    <Form.Item
+                      name="jersey_number"
+                      label={t('athlete:athlete.number')}
+                      rules={[
+                        { 
+                          required: true,
+                          message: t('athlete:validation.jerseyRequired') 
+                        },
+                        { 
+                          type: 'number', 
+                          min: 1, 
+                          max: 99, 
+                          message: t('athlete:validation.jerseyRange') 
+                        }
+                      ]}
+                    >
+                      <InputNumber
+                        min={1}
+                        max={99}
+                        placeholder={t('athlete:placeholders.jerseyNumber')}
+                        className="w-full"
+                      />
+                    </Form.Item>
+                  </Col>
+                  
+                  <Col span={8}>
+                    <Form.Item
+                      name="position"
+                      label={t('athlete:athlete.position')}
+                      rules={[{ required: true, message: t('athlete:validation.positionRequired') }]}
+                    >
+                      <Select
+                        placeholder={t('athlete:placeholders.selectPosition')}
+                        className="w-full"
+                      >
+                        <Option value="attacker">{t('athlete:positions.attacker')}</Option>
+                        <Option value="defender">{t('athlete:positions.defender')}</Option>
+                        <Option value="substitute">{t('athlete:positions.substitute')}</Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item
+                      name="is_active"
+                      label={t('athlete:athlete.status')}
+                      initialValue={true}
+                    >
+                      <Select className="w-full">
+                        <Option value={true}>{t('athlete:status.active')}</Option>
+                        <Option value={false}>{t('athlete:status.inactive')}</Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                {/* Help text */}
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
+                  <div className="text-sm text-blue-700">
+                    <strong>{t('athlete:form.teamAssignmentNote')}:</strong>
+                    <ul className="mt-1 ml-4 list-disc">
+                      <li>{t('athlete:form.teamOptionalExplanation')}</li>
+                      <li>{t('athlete:form.jerseyRequiredExplanation')}</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2 pt-4 border-t border-gray-200">
+                  <Button
+                    onClick={() => {
+                      setAddFromGlobalModal(false);
+                      addAthleteForm.resetFields();
+                      setSelectedGlobalAthlete(null);
+                    }}
+                  >
+                    {t('common:common.cancel')}
+                  </Button>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    className="bg-blue-500 hover:bg-blue-600"
+                  >
+                    {t('athlete:actions.addAthlete')}
+                  </Button>
+                </div>
+              </Form>
+            </Card>
+          )}
+        </div>
+      </Modal>
     </div>
   );
 };

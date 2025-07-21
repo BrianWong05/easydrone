@@ -73,7 +73,8 @@
     "enterNumber": "Enter number",
     "enterAge": "Enter age",
     "enterHeight": "Enter height",
-    "enterWeight": "Enter weight"
+    "enterWeight": "Enter weight",
+    "jerseyNumber": "Enter jersey number"
   },
   "form": {
     "basicInfo": "Basic Information",
@@ -125,12 +126,14 @@
     "athleteCreated": "Athlete created successfully",
     "athleteUpdated": "Athlete updated successfully",
     "athleteDeleted": "Athlete deleted successfully",
+    "athleteAdded": "Athlete added to tournament successfully",
     "createFailed": "Failed to create athlete",
     "updateFailed": "Failed to update athlete",
     "deleteConfirmation": "Delete Athlete",
     "deleteWarning": "This action cannot be undone",
     "noStatistics": "No statistics available",
     "noEvents": "No match events found",
+    "noAvailableAthletes": "No available athletes found",
     "athleteIdRequired": "Athlete ID is required",
     "onlyImageFiles": "Only image files are allowed",
     "imageTooLarge": "Image size must be less than 5MB",
@@ -160,7 +163,11 @@
     "selectAvatar": "Select Avatar",
     "deleteAvatar": "Delete Avatar",
     "viewDetails": "View Details",
-    "addToTournament": "Add to Tournament"
+    "addToTournament": "Add to Tournament",
+    "addFromGlobal": "Add from Global",
+    "selectAthlete": "Select Athlete",
+    "addingAthlete": "Adding Athlete",
+    "addAthlete": "Add Athlete"
   },
   "labels": {
     "avatarPreview": "Avatar Preview"
@@ -182,6 +189,9 @@
     "ageRequired": "Please enter age",
     "ageRange": "Age must be between 16-50",
     "positionRequired": "Please select a position",
+    "teamRequired": "Please select a team",
+    "jerseyRequired": "Please enter jersey number",
+    "jerseyRange": "Jersey number must be between 1-99",
     "attackerLimit": "Each team can only have 1 attacker",
     "defenderLimit": "Each team can have maximum 5 defenders"
   },
@@ -206,7 +216,10 @@
     "totalAthletes": "Total Athletes",
     "avatarAfterCreation": "Avatar upload will be available after creating the athlete",
     "avatarWillUploadAfterCreation": "Avatar will be uploaded after athlete creation",
-    "nowUploadAvatar": "You can now upload an avatar for this athlete."
+    "nowUploadAvatar": "You can now upload an avatar for this athlete.",
+    "teamAssignmentNote": "Team Assignment",
+    "teamOptionalExplanation": "Team assignment is optional - athletes can be added to teams later",
+    "jerseyRequiredExplanation": "Jersey number is required for player identification"
   },
   "global": {
     "management": "Global Athlete Management",
@@ -221,5 +234,8 @@
     "tournaments": "Tournaments",
     "tournamentList": "Tournament List",
     "noTournaments": "No tournaments"
+  },
+  "tournament": {
+    "participations": "tournament participations"
   }
 }

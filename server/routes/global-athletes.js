@@ -261,6 +261,9 @@ router.post('/:id/tournaments/:tournamentId', async (req, res) => {
 
     const { team_id, jersey_number, position, is_active } = value;
 
+    // Convert undefined team_id to null for database
+    const teamIdForDb = team_id === undefined ? null : team_id;
+
     // Check if athlete already participates in this tournament
     const existing = await query(
       'SELECT participation_id FROM tournament_athletes WHERE athlete_id = ? AND tournament_id = ?',
@@ -275,10 +278,10 @@ router.post('/:id/tournaments/:tournamentId', async (req, res) => {
     }
 
     // Check jersey number uniqueness within team
-    if (team_id) {
+    if (teamIdForDb) {
       const jerseyCheck = await query(
         'SELECT participation_id FROM tournament_athletes WHERE tournament_id = ? AND team_id = ? AND jersey_number = ?',
-        [tournamentId, team_id, jersey_number]
+        [tournamentId, teamIdForDb, jersey_number]
       );
 
       if (jerseyCheck.length > 0) {
@@ -294,7 +297,7 @@ router.post('/:id/tournaments/:tournamentId', async (req, res) => {
         FROM tournament_athletes 
         WHERE tournament_id = ? AND team_id = ? AND is_active = 1 
         GROUP BY position
-      `, [tournamentId, team_id]);
+      `, [tournamentId, teamIdForDb]);
 
       const counts = { attacker: 0, defender: 0, substitute: 0 };
       positionCounts.forEach(pc => {
@@ -318,7 +321,7 @@ router.post('/:id/tournaments/:tournamentId', async (req, res) => {
 
     const result = await query(
       'INSERT INTO tournament_athletes (athlete_id, tournament_id, team_id, jersey_number, position, is_active) VALUES (?, ?, ?, ?, ?, ?)',
-      [athleteId, tournamentId, team_id, jersey_number, position, is_active]
+      [athleteId, tournamentId, teamIdForDb, jersey_number, position, is_active]
     );
 
     res.status(201).json({
