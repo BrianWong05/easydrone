@@ -23,7 +23,9 @@
     "contact": "Contact",
     "biography": "Biography",
     "achievements": "Achievements",
-    "totalAthletes": "Total Athletes"
+    "totalAthletes": "Total Athletes",
+    "avatar": "Avatar",
+    "created": "Created Date"
   },
   "statistics": {
     "matchesPlayed": "Matches Played",
@@ -74,7 +76,8 @@
     "enterAge": "Enter age",
     "enterHeight": "Enter height",
     "enterWeight": "Enter weight",
-    "jerseyNumber": "Enter jersey number"
+    "jerseyNumber": "Enter jersey number",
+    "enterAvatarUrl": "Enter avatar image URL"
   },
   "form": {
     "basicInfo": "Basic Information",
@@ -193,7 +196,8 @@
     "jerseyRequired": "Please enter jersey number",
     "jerseyRange": "Jersey number must be between 1-99",
     "attackerLimit": "Each team can only have 1 attacker",
-    "defenderLimit": "Each team can have maximum 5 defenders"
+    "defenderLimit": "Each team can have maximum 5 defenders",
+    "invalidUrl": "Please enter a valid URL"
   },
   "form": {
     "basicInfo": "Basic Information",
@@ -219,7 +223,8 @@
     "nowUploadAvatar": "You can now upload an avatar for this athlete.",
     "teamAssignmentNote": "Team Assignment",
     "teamOptionalExplanation": "Team assignment is optional - athletes can be added to teams later",
-    "jerseyRequiredExplanation": "Jersey number is required for player identification"
+    "jerseyRequiredExplanation": "Jersey number is required for player identification",
+    "avatarUploadHint": "JPG, PNG, GIF up to 5MB"
   },
   "global": {
     "management": "Global Athlete Management",
@@ -228,12 +233,29 @@
     "list": "Global Athletes",
     "totalAthletes": "Total Athletes",
     "totalParticipations": "Total Participations",
-    "averageParticipations": "Avg. Participations"
+    "averageParticipations": "Avg. Participations",
+    "totalTournaments": "Total Tournaments",
+    "totalTeams": "Total Teams",
+    "activeParticipations": "Active Participations",
+    "tournamentParticipations": "Tournament Participations",
+    "positionDistribution": "Position Distribution",
+    "noParticipations": "This athlete has not participated in any tournaments yet",
+    "participations": "participations",
+    "createDescription1": "Create a master athlete profile that can be used across multiple tournaments",
+    "createDescription2": "Once created, this athlete can be added to any tournament with specific team assignments",
+    "createDescription3": "Avatar image can be uploaded during creation",
+    "formDescription": "Enter the athlete's basic information. This will create a global profile.",
+    "helpTitle": "Global Athlete Information",
+    "helpPoint1": "This creates a master athlete record that can participate in multiple tournaments",
+    "helpPoint2": "Team assignments and jersey numbers are set when adding to specific tournaments",
+    "helpPoint3": "Avatar images are automatically resized and optimized",
+    "helpPoint4": "Supported formats: JPG, PNG, GIF (max 5MB)"
   },
   "info": {
     "tournaments": "Tournaments",
     "tournamentList": "Tournament List",
-    "noTournaments": "No tournaments"
+    "noTournaments": "No tournaments",
+    "tournament": "Tournament"
   },
   "tournament": {
     "participations": "tournament participations"

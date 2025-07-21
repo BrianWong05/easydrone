@@ -170,9 +170,12 @@ router.post('/', async (req, res) => {
 
     const { name, age, avatar_url } = value;
 
+    // Convert undefined avatar_url to null for database
+    const avatarUrlForDb = avatar_url === undefined ? null : avatar_url;
+
     const result = await query(
       'INSERT INTO global_athletes (name, age, avatar_url) VALUES (?, ?, ?)',
-      [name, age, avatar_url]
+      [name, age, avatarUrlForDb]
     );
 
     res.status(201).json({
@@ -207,6 +210,9 @@ router.put('/:id', async (req, res) => {
 
     const { name, age, avatar_url } = value;
 
+    // Convert undefined avatar_url to null for database
+    const avatarUrlForDb = avatar_url === undefined ? null : avatar_url;
+
     // Check if athlete exists
     const existing = await query(
       'SELECT athlete_id FROM global_athletes WHERE athlete_id = ?',
@@ -222,7 +228,7 @@ router.put('/:id', async (req, res) => {
 
     await query(
       'UPDATE global_athletes SET name = ?, age = ?, avatar_url = ? WHERE athlete_id = ?',
-      [name, age, avatar_url, athleteId]
+      [name, age, avatarUrlForDb, athleteId]
     );
 
     res.json({
@@ -462,7 +468,7 @@ router.delete('/:id/tournaments/:tournamentId', async (req, res) => {
 });
 
 // Upload avatar for global athlete
-router.post('/:id/avatar', authenticateToken, (req, res) => {
+router.post('/:id/avatar', (req, res) => {
   if (!isMulterAvailable()) {
     return res.status(503).json({
       success: false,
