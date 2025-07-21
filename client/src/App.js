@@ -47,6 +47,7 @@ import TournamentAthleteEdit from "./pages/Athletes/TournamentAthleteEdit";
 import GlobalAthleteList from "./pages/Athletes/GlobalAthleteList";
 import GlobalAthleteCreate from "./pages/Athletes/GlobalAthleteCreate";
 import GlobalAthleteDetail from "./pages/Athletes/GlobalAthleteDetail";
+import GlobalAthleteEdit from "./pages/Athletes/GlobalAthleteEdit";
 
 const { Content } = Layout;
 
@@ -104,6 +105,7 @@ function App() {
 
                     <Route path="/global-athletes" element={<GlobalAthleteList />} />
                     <Route path="/global-athletes/create" element={<GlobalAthleteCreate />} />
+                    <Route path="/global-athletes/:id/edit" element={<GlobalAthleteEdit />} />
                     <Route path="/global-athletes/:id" element={<GlobalAthleteDetail />} />
 
                     {/* 404 頁面 */}

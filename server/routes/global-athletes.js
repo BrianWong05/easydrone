@@ -210,12 +210,9 @@ router.put('/:id', async (req, res) => {
 
     const { name, age, avatar_url } = value;
 
-    // Convert undefined avatar_url to null for database
-    const avatarUrlForDb = avatar_url === undefined ? null : avatar_url;
-
-    // Check if athlete exists
+    // Check if athlete exists and get current data
     const existing = await query(
-      'SELECT athlete_id FROM global_athletes WHERE athlete_id = ?',
+      'SELECT athlete_id, avatar_url FROM global_athletes WHERE athlete_id = ?',
       [athleteId]
     );
 
@@ -225,6 +222,9 @@ router.put('/:id', async (req, res) => {
         message: '運動員不存在'
       });
     }
+
+    // Preserve existing avatar_url if no new one is provided
+    const avatarUrlForDb = avatar_url === undefined ? existing[0].avatar_url : avatar_url;
 
     await query(
       'UPDATE global_athletes SET name = ?, age = ?, avatar_url = ? WHERE athlete_id = ?',
@@ -542,6 +542,52 @@ router.post('/:id/avatar', (req, res) => {
       });
     }
   });
+});
+
+// Delete avatar for global athlete
+router.delete('/:id/avatar', async (req, res) => {
+  try {
+    const athleteId = req.params.id;
+
+    // Check if athlete exists and get current avatar
+    const athlete = await query(
+      'SELECT athlete_id, avatar_url FROM global_athletes WHERE athlete_id = ?',
+      [athleteId]
+    );
+
+    if (athlete.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: '運動員不存在'
+      });
+    }
+
+    // Delete avatar file if exists
+    if (athlete[0].avatar_url) {
+      const avatarPath = path.join(__dirname, '../uploads/avatars', path.basename(athlete[0].avatar_url));
+      if (fs.existsSync(avatarPath)) {
+        fs.unlinkSync(avatarPath);
+      }
+    }
+
+    // Update database to remove avatar URL
+    await query(
+      'UPDATE global_athletes SET avatar_url = NULL WHERE athlete_id = ?',
+      [athleteId]
+    );
+
+    res.json({
+      success: true,
+      message: '頭像刪除成功'
+    });
+
+  } catch (error) {
+    console.error('刪除頭像錯誤:', error);
+    res.status(500).json({
+      success: false,
+      message: '刪除頭像失敗'
+    });
+  }
 });
 
 module.exports = router;

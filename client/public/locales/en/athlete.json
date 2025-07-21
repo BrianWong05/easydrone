@@ -203,6 +203,7 @@
     "basicInfo": "Basic Information",
     "basicInfoDescription": "Enter the athlete's basic information and optional team assignment",
     "editDescription": "Update the athlete's information and team assignment",
+    "currentInfo": "Current Information",
     "teamComposition": "Current Team Composition",
     "currentTeamComposition": "Current team composition (excluding this athlete)",
     "currentInfo": "Current Information",
