@@ -183,7 +183,8 @@
     "batchDeactivate": "Desativação em Lote",
     "uploadAvatar": "Carregar Avatar",
     "changeAvatar": "Alterar Avatar",
-    "deleteAvatar": "Eliminar Avatar"
+    "deleteAvatar": "Eliminar Avatar",
+    "viewDetails": "Ver Detalhes"
   },
   "labels": {
     "avatarPreview": "Pré-visualização do Avatar"

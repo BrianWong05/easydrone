@@ -15,7 +15,8 @@ import {
   Modal, 
   Tooltip,
   Badge,
-  Divider
+  Divider,
+  Avatar
 } from 'antd';
 import { 
   PlusOutlined, 
@@ -232,6 +233,11 @@ const TournamentAthleteList = () => {
     return icons[position] || '👤';
   };
 
+  // Handle athlete click (navigate to detail page)
+  const handleAthleteClick = (athleteId) => {
+    navigate(`/tournaments/${tournamentId}/athletes/${athleteId}`);
+  };
+
   // Table columns
   const columns = [
     {
@@ -239,8 +245,14 @@ const TournamentAthleteList = () => {
       dataIndex: 'jersey_number',
       key: 'jersey_number',
       width: 80,
-      render: (number) => (
-        <Badge count={number} className="bg-blue-500" />
+      render: (number, record) => (
+        <Tooltip title={t('athlete:actions.viewDetails')}>
+          <Badge 
+            count={number} 
+            className="bg-blue-500 cursor-pointer hover:bg-blue-600 transition-colors duration-200" 
+            onClick={() => handleAthleteClick(record.athlete_id)}
+          />
+        </Tooltip>
       ),
       sorter: (a, b) => a.jersey_number - b.jersey_number
     },
@@ -249,11 +261,29 @@ const TournamentAthleteList = () => {
       dataIndex: 'name',
       key: 'name',
       render: (name, record) => (
-        <Space className="items-center">
-          <UserOutlined className="text-gray-500" />
-          <span className="font-medium text-gray-800">{name}</span>
-          {!record.is_active && <Tag color="red">{t('athlete:status.inactive')}</Tag>}
-        </Space>
+        <Tooltip title={t('athlete:actions.viewDetails')}>
+          <Space 
+            className="items-center cursor-pointer hover:bg-blue-50 p-2 rounded-lg transition-colors duration-200"
+            onClick={() => handleAthleteClick(record.athlete_id)}
+          >
+            <Avatar
+              size={40}
+              src={record.avatar_url}
+              icon={!record.avatar_url && <UserOutlined />}
+              className="border-2 border-gray-200 hover:border-blue-300 transition-colors duration-200 shadow-sm"
+            />
+            <div className="flex flex-col">
+              <span className="font-medium text-gray-800 hover:text-blue-600 transition-colors duration-200">
+                {name}
+              </span>
+              {!record.is_active && (
+                <Tag color="red" size="small" className="mt-1 w-fit">
+                  {t('athlete:status.inactive')}
+                </Tag>
+              )}
+            </div>
+          </Space>
+        </Tooltip>
       )
     },
     {

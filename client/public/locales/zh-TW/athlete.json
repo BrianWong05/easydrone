@@ -183,7 +183,8 @@
     "batchDeactivate": "批量停用",
     "uploadAvatar": "上傳頭像",
     "changeAvatar": "更換頭像",
-    "deleteAvatar": "刪除頭像"
+    "deleteAvatar": "刪除頭像",
+    "viewDetails": "查看詳情"
   },
   "labels": {
     "avatarPreview": "頭像預覽"

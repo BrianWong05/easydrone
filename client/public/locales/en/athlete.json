@@ -157,7 +157,9 @@
     "batchDeactivate": "Batch Deactivate",
     "uploadAvatar": "Upload Avatar",
     "changeAvatar": "Change Avatar",
-    "deleteAvatar": "Delete Avatar"
+    "selectAvatar": "Select Avatar",
+    "deleteAvatar": "Delete Avatar",
+    "viewDetails": "View Details"
   },
   "labels": {
     "avatarPreview": "Avatar Preview"
@@ -200,6 +202,9 @@
     "rule2": "Each team can have 3-5 defenders",
     "rule3": "Unlimited substitute players allowed",
     "rule4": "Jersey numbers must be unique within the team",
-    "totalAthletes": "Total Athletes"
+    "totalAthletes": "Total Athletes",
+    "avatarAfterCreation": "Avatar upload will be available after creating the athlete",
+    "avatarWillUploadAfterCreation": "Avatar will be uploaded after athlete creation",
+    "nowUploadAvatar": "You can now upload an avatar for this athlete."
   }
 }
