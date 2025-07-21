@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Upload, Avatar, Button, message, Modal } from 'antd';
 import { UserOutlined, UploadOutlined, DeleteOutlined, CameraOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
+import { useAuthStore } from '../stores/authStore';
 
 const AvatarUpload = ({ 
   athleteId, 
@@ -12,6 +13,7 @@ const AvatarUpload = ({
   disabled = false 
 }) => {
   const { t } = useTranslation(['athlete', 'common']);
+  const { token, isAuthenticated } = useAuthStore();
   const [loading, setLoading] = useState(false);
   const [previewVisible, setPreviewVisible] = useState(false);
 
@@ -41,10 +43,15 @@ const AvatarUpload = ({
       const formData = new FormData();
       formData.append('avatar', file);
 
+      if (!isAuthenticated || !token) {
+        message.error(t('common:auth.loginRequired'));
+        return false;
+      }
+
       const response = await fetch(`/api/athletes/${athleteId}/avatar`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Authorization': `Bearer ${token}`
         },
         body: formData
       });
@@ -81,10 +88,15 @@ const AvatarUpload = ({
       onOk: async () => {
         setLoading(true);
         try {
+          if (!isAuthenticated || !token) {
+            message.error(t('common:auth.loginRequired'));
+            return;
+          }
+
           const response = await fetch(`/api/athletes/${athleteId}/avatar`, {
             method: 'DELETE',
             headers: {
-              'Authorization': `Bearer ${localStorage.getItem('token')}`,
+              'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             }
           });

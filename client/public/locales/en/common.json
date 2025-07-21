@@ -118,6 +118,11 @@
     "logout": "Logout",
     "admin": "Admin"
   },
+  "auth": {
+    "loginRequired": "Please login to continue",
+    "tokenExpired": "Session expired, please login again",
+    "unauthorized": "Unauthorized access"
+  },
   "pagination": {
     "total": "{{start}}-{{end}} of {{total}} items",
     "showTotal": "{{start}}-{{end}} of {{total}} matches",
