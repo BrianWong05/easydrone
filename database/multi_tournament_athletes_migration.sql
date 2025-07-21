@@ -1,5 +1,6 @@
 -- Migration: Allow athletes to participate in multiple tournaments
 -- Each athlete can join multiple tournaments but only one team per tournament
+USE drone_soccer;
 
 -- Step 1: Create a new global athletes table (master athlete records)
 CREATE TABLE IF NOT EXISTS global_athletes (
