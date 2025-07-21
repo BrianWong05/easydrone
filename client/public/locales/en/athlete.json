@@ -107,7 +107,10 @@
   "info": {
     "years": "years old",
     "noTeam": "No Team",
-    "tournament": "Tournament"
+    "tournament": "Tournament",
+    "tournaments": "Tournaments",
+    "tournamentList": "Tournament List",
+    "noTournaments": "No tournaments"
   },
   "events": {
     "title": "Events",
@@ -249,12 +252,6 @@
     "helpPoint2": "Team assignments and jersey numbers are set when adding to specific tournaments",
     "helpPoint3": "Avatar images are automatically resized and optimized",
     "helpPoint4": "Supported formats: JPG, PNG, GIF (max 5MB)"
-  },
-  "info": {
-    "tournaments": "Tournaments",
-    "tournamentList": "Tournament List",
-    "noTournaments": "No tournaments",
-    "tournament": "Tournament"
   },
   "tournament": {
     "participations": "tournament participations"

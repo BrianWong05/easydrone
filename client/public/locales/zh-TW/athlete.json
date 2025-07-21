@@ -23,7 +23,12 @@
     "contact": "聯絡方式",
     "biography": "個人簡介",
     "achievements": "成就",
-    "totalAthletes": "運動員總數"
+    "totalAthletes": "運動員總數",
+    "avatar": "頭像",
+    "created": "創建日期",
+    "profile": "運動員檔案",
+    "tournament": "錦標賽",
+    "joinDate": "加入日期"
   },
   "statistics": {
     "matchesPlayed": "參賽場次",
@@ -63,7 +68,10 @@
     "createFailed": "創建運動員失敗",
     "deleteConfirmation": "刪除運動員",
     "deleteWarning": "刪除後將無法恢復",
-    "noStatistics": "暫無統計數據"
+    "noStatistics": "暫無統計數據",
+    "onlyImageFiles": "只能上傳圖片檔案",
+    "imageTooLarge": "圖片大小不能超過5MB",
+    "avatarUploadFailed": "頭像上傳失敗"
   },
   "placeholders": {
     "searchAthlete": "搜索運動員姓名",
@@ -73,7 +81,8 @@
     "enterNumber": "請輸入號碼",
     "enterAge": "請輸入年齡",
     "enterHeight": "請輸入身高",
-    "enterWeight": "請輸入體重"
+    "enterWeight": "請輸入體重",
+    "jerseyNumber": "請輸入球衣號碼"
   },
   "form": {
     "basicInfo": "基本資訊",
@@ -103,7 +112,10 @@
   "info": {
     "years": "歲",
     "noTeam": "無隊伍",
-    "tournament": "錦標賽"
+    "tournament": "錦標賽",
+    "tournaments": "錦標賽",
+    "tournamentList": "錦標賽列表",
+    "noTournaments": "無錦標賽"
   },
   "events": {
     "title": "事件",
@@ -129,7 +141,16 @@
     "deleteConfirmation": "刪除運動員",
     "deleteWarning": "刪除後將無法恢復",
     "noStatistics": "暫無統計數據",
-    "noEvents": "未找到比賽事件"
+    "noEvents": "未找到比賽事件",
+    "onlyImageFiles": "只能上傳圖片檔案",
+    "imageTooLarge": "圖片大小不能超過5MB",
+    "avatarUploadSuccess": "頭像上傳成功",
+    "avatarUploadFailed": "頭像上傳失敗",
+    "avatarDeleteSuccess": "頭像刪除成功",
+    "avatarDeleteFailed": "頭像刪除失敗",
+    "confirmDeleteAvatar": "刪除頭像",
+    "deleteAvatarWarning": "確定要刪除此頭像嗎？",
+    "noAvailableAthletes": "未找到可用的運動員"
   },
   "buttons": {
     "update": "更新運動員"
@@ -143,7 +164,9 @@
     "ageRequired": "請輸入年齡",
     "positionRequired": "請選擇位置",
     "attackerLimit": "每支隊伍只能有1名進攻手",
-    "defenderLimit": "每支隊伍最多只能有5名防守員"
+    "defenderLimit": "每支隊伍最多只能有5名防守員",
+    "jerseyRequired": "請輸入球衣號碼",
+    "jerseyRange": "球衣號碼必須在1-99之間"
   },
   "form": {
     "basicInfo": "基本資訊",
@@ -163,7 +186,12 @@
     "rule2": "每支隊伍可以有3-5名防守員",
     "rule3": "允許無限數量的替補球員",
     "rule4": "球衣號碼在隊伍內必須唯一",
-    "totalAthletes": "運動員總數"
+    "totalAthletes": "運動員總數",
+    "avatarWillUploadAfterCreation": "頭像將在創建後上傳",
+    "avatarUploadHint": "支持JPG、PNG、GIF格式，最大5MB",
+    "teamAssignmentNote": "隊伍分配",
+    "teamOptionalExplanation": "隊伍分配是可選的 - 運動員可以稍後添加到隊伍",
+    "jerseyRequiredExplanation": "球衣號碼是球員識別所必需的"
   },
   "actions": {
     "create": "創建運動員",
@@ -182,7 +210,13 @@
     "uploadAvatar": "上傳頭像",
     "changeAvatar": "更換頭像",
     "deleteAvatar": "刪除頭像",
-    "viewDetails": "查看詳情"
+    "viewDetails": "查看詳情",
+    "addFromGlobal": "從全局添加",
+    "selectAvatar": "選擇頭像",
+    "addToTournament": "添加到錦標賽",
+    "selectAthlete": "選擇運動員",
+    "addingAthlete": "正在添加運動員",
+    "addAthlete": "添加運動員"
   },
   "labels": {
     "avatarPreview": "頭像預覽"
@@ -191,5 +225,33 @@
     "title": "隊伍比賽",
     "noMatches": "此隊伍暫無比賽",
     "noTeamMatches": "此運動員未分配到隊伍"
+  },
+  "global": {
+    "management": "全局運動員管理",
+    "description": "管理所有錦標賽的運動員。運動員可以參加多個錦標賽。",
+    "create": "創建新運動員",
+    "list": "全局運動員",
+    "totalAthletes": "運動員總數",
+    "totalParticipations": "參賽總數",
+    "averageParticipations": "平均參賽數",
+    "totalTournaments": "錦標賽總數",
+    "totalTeams": "隊伍總數",
+    "activeParticipations": "活躍參賽",
+    "tournamentParticipations": "錦標賽參賽",
+    "positionDistribution": "位置分布",
+    "noParticipations": "此運動員尚未參加任何錦標賽",
+    "participations": "參賽",
+    "createDescription1": "創建可在多個錦標賽中使用的主運動員檔案",
+    "createDescription2": "創建後，此運動員可以添加到任何錦標賽並分配特定隊伍",
+    "createDescription3": "可在創建期間上傳頭像圖片",
+    "formDescription": "輸入運動員的基本資訊。這將創建一個全局檔案。",
+    "helpTitle": "全局運動員資訊",
+    "helpPoint1": "這將創建可參加多個錦標賽的主運動員記錄",
+    "helpPoint2": "隊伍分配和球衣號碼在添加到特定錦標賽時設置",
+    "helpPoint3": "頭像圖片會自動調整大小和優化",
+    "helpPoint4": "支持格式：JPG、PNG、GIF（最大5MB）"
+  },
+  "tournament": {
+    "participations": "錦標賽參賽"
   }
 }

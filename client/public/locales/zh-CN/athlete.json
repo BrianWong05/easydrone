@@ -23,7 +23,12 @@
     "contact": "联络方式",
     "biography": "个人简介",
     "achievements": "成就",
-    "totalAthletes": "运动员总数"
+    "totalAthletes": "运动员总数",
+    "avatar": "头像",
+    "created": "创建日期",
+    "profile": "运动员档案",
+    "tournament": "锦标赛",
+    "joinDate": "加入日期"
   },
   "statistics": {
     "matchesPlayed": "参赛场次",
@@ -63,7 +68,15 @@
     "createFailed": "创建运动员失败",
     "deleteConfirmation": "删除运动员",
     "deleteWarning": "删除后将无法恢复",
-    "noStatistics": "暂无统计数据"
+    "noStatistics": "暂无统计数据",
+    "onlyImageFiles": "只能上传图片文件",
+    "imageTooLarge": "图片大小不能超过5MB",
+    "avatarUploadSuccess": "头像上传成功",
+    "avatarUploadFailed": "头像上传失败",
+    "avatarDeleteSuccess": "头像删除成功",
+    "avatarDeleteFailed": "头像删除失败",
+    "confirmDeleteAvatar": "删除头像",
+    "deleteAvatarWarning": "确定要删除此头像吗？"
   },
   "placeholders": {
     "searchAthlete": "搜索运动员姓名",
@@ -73,7 +86,8 @@
     "enterNumber": "请输入号码",
     "enterAge": "请输入年龄",
     "enterHeight": "请输入身高",
-    "enterWeight": "请输入体重"
+    "enterWeight": "请输入体重",
+    "jerseyNumber": "请输入球衣号码"
   },
   "form": {
     "basicInfo": "基本信息",
@@ -103,7 +117,10 @@
   "info": {
     "years": "岁",
     "noTeam": "无队伍",
-    "tournament": "锦标赛"
+    "tournament": "锦标赛",
+    "tournaments": "锦标赛",
+    "tournamentList": "锦标赛列表",
+    "noTournaments": "无锦标赛"
   },
   "events": {
     "title": "事件",
@@ -129,7 +146,8 @@
     "deleteConfirmation": "删除运动员",
     "deleteWarning": "删除后将无法恢复",
     "noStatistics": "暂无统计数据",
-    "noEvents": "未找到比赛事件"
+    "noEvents": "未找到比赛事件",
+    "noAvailableAthletes": "未找到可用的运动员"
   },
   "buttons": {
     "update": "更新运动员"
@@ -143,7 +161,9 @@
     "ageRequired": "请输入年龄",
     "positionRequired": "请选择位置",
     "attackerLimit": "每支队伍只能有1名进攻手",
-    "defenderLimit": "每支队伍最多只能有5名防守员"
+    "defenderLimit": "每支队伍最多只能有5名防守员",
+    "jerseyRequired": "请输入球衣号码",
+    "jerseyRange": "球衣号码必须在1-99之间"
   },
   "form": {
     "basicInfo": "基本信息",
@@ -163,7 +183,12 @@
     "rule2": "每支队伍可以有3-5名防守员",
     "rule3": "允许无限数量的替补球员",
     "rule4": "球衣号码在队伍内必须唯一",
-    "totalAthletes": "运动员总数"
+    "totalAthletes": "运动员总数",
+    "avatarWillUploadAfterCreation": "头像将在创建后上传",
+    "avatarUploadHint": "支持JPG、PNG、GIF格式，最大5MB",
+    "teamAssignmentNote": "队伍分配",
+    "teamOptionalExplanation": "队伍分配是可选的 - 运动员可以稍后添加到队伍",
+    "jerseyRequiredExplanation": "球衣号码是球员识别所必需的"
   },
   "actions": {
     "create": "创建运动员",
@@ -182,7 +207,13 @@
     "uploadAvatar": "上传头像",
     "changeAvatar": "更换头像",
     "deleteAvatar": "删除头像",
-    "viewDetails": "查看详情"
+    "viewDetails": "查看详情",
+    "addFromGlobal": "从全局添加",
+    "selectAvatar": "选择头像",
+    "addToTournament": "添加到锦标赛",
+    "selectAthlete": "选择运动员",
+    "addingAthlete": "正在添加运动员",
+    "addAthlete": "添加运动员"
   },
   "labels": {
     "avatarPreview": "头像预览"
@@ -191,5 +222,33 @@
     "title": "队伍比赛",
     "noMatches": "此队伍暂无比赛",
     "noTeamMatches": "此运动员未分配到队伍"
+  },
+  "global": {
+    "management": "全局运动员管理",
+    "description": "管理所有锦标赛的运动员。运动员可以参加多个锦标赛。",
+    "create": "创建新运动员",
+    "list": "全局运动员",
+    "totalAthletes": "运动员总数",
+    "totalParticipations": "参赛总数",
+    "averageParticipations": "平均参赛数",
+    "totalTournaments": "锦标赛总数",
+    "totalTeams": "队伍总数",
+    "activeParticipations": "活跃参赛",
+    "tournamentParticipations": "锦标赛参赛",
+    "positionDistribution": "位置分布",
+    "noParticipations": "此运动员尚未参加任何锦标赛",
+    "participations": "参赛",
+    "createDescription1": "创建可在多个锦标赛中使用的主运动员档案",
+    "createDescription2": "创建后，此运动员可以添加到任何锦标赛并分配特定队伍",
+    "createDescription3": "可在创建期间上传头像图片",
+    "formDescription": "输入运动员的基本信息。这将创建一个全局档案。",
+    "helpTitle": "全局运动员信息",
+    "helpPoint1": "这将创建可参加多个锦标赛的主运动员记录",
+    "helpPoint2": "队伍分配和球衣号码在添加到特定锦标赛时设置",
+    "helpPoint3": "头像图片会自动调整大小和优化",
+    "helpPoint4": "支持格式：JPG、PNG、GIF（最大5MB）"
+  },
+  "tournament": {
+    "participations": "锦标赛参赛"
   }
 }

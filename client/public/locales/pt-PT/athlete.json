@@ -23,7 +23,12 @@
     "contact": "Contacto",
     "biography": "Biografia",
     "achievements": "Conquistas",
-    "totalAthletes": "Total de Atletas"
+    "totalAthletes": "Total de Atletas",
+    "avatar": "Avatar",
+    "created": "Data de Criação",
+    "profile": "Perfil do Atleta",
+    "tournament": "Torneio",
+    "joinDate": "Data de Entrada"
   },
   "statistics": {
     "matchesPlayed": "Jogos Disputados",
@@ -63,7 +68,15 @@
     "createFailed": "Falha ao criar atleta",
     "deleteConfirmation": "Eliminar Atleta",
     "deleteWarning": "Esta ação não pode ser desfeita",
-    "noStatistics": "Sem estatísticas disponíveis"
+    "noStatistics": "Sem estatísticas disponíveis",
+    "onlyImageFiles": "Apenas ficheiros de imagem são permitidos",
+    "imageTooLarge": "O tamanho da imagem deve ser inferior a 5MB",
+    "avatarUploadSuccess": "Avatar carregado com sucesso",
+    "avatarUploadFailed": "Falha ao carregar avatar",
+    "avatarDeleteSuccess": "Avatar eliminado com sucesso",
+    "avatarDeleteFailed": "Falha ao eliminar avatar",
+    "confirmDeleteAvatar": "Eliminar Avatar",
+    "deleteAvatarWarning": "Tem a certeza de que quer eliminar este avatar?"
   },
   "placeholders": {
     "searchAthlete": "Pesquisar nome do atleta",
@@ -73,7 +86,8 @@
     "enterNumber": "Inserir número",
     "enterAge": "Inserir idade",
     "enterHeight": "Inserir altura",
-    "enterWeight": "Inserir peso"
+    "enterWeight": "Inserir peso",
+    "jerseyNumber": "Inserir número da camisola"
   },
   "form": {
     "basicInfo": "Informações Básicas",
@@ -103,7 +117,10 @@
   "info": {
     "years": "anos",
     "noTeam": "Sem Equipa",
-    "tournament": "Torneio"
+    "tournament": "Torneio",
+    "tournaments": "Torneios",
+    "tournamentList": "Lista de Torneios",
+    "noTournaments": "Sem torneios"
   },
   "events": {
     "title": "Eventos",
@@ -129,7 +146,8 @@
     "deleteConfirmation": "Eliminar Atleta",
     "deleteWarning": "Esta ação não pode ser desfeita",
     "noStatistics": "Sem estatísticas disponíveis",
-    "noEvents": "Nenhum evento de jogo encontrado"
+    "noEvents": "Nenhum evento de jogo encontrado",
+    "noAvailableAthletes": "Nenhum atleta disponível encontrado"
   },
   "buttons": {
     "update": "Atualizar Atleta"
@@ -143,7 +161,9 @@
     "ageRequired": "Por favor insira a idade",
     "positionRequired": "Por favor selecione uma posição",
     "attackerLimit": "Cada equipa só pode ter 1 atacante",
-    "defenderLimit": "Cada equipa pode ter no máximo 5 defesas"
+    "defenderLimit": "Cada equipa pode ter no máximo 5 defesas",
+    "jerseyRequired": "Por favor insira o número da camisola",
+    "jerseyRange": "Número da camisola deve estar entre 1-99"
   },
   "form": {
     "basicInfo": "Informações Básicas",
@@ -163,7 +183,12 @@
     "rule2": "Cada equipa pode ter 3-5 defesas",
     "rule3": "Número ilimitado de jogadores suplentes permitido",
     "rule4": "Números de camisola devem ser únicos dentro da equipa",
-    "totalAthletes": "Total de Atletas"
+    "totalAthletes": "Total de Atletas",
+    "avatarWillUploadAfterCreation": "Avatar será carregado após a criação do atleta",
+    "avatarUploadHint": "JPG, PNG, GIF até 5MB",
+    "teamAssignmentNote": "Atribuição de Equipa",
+    "teamOptionalExplanation": "A atribuição de equipa é opcional - os atletas podem ser adicionados às equipas mais tarde",
+    "jerseyRequiredExplanation": "O número da camisola é necessário para identificação do jogador"
   },
   "actions": {
     "create": "Criar Atleta",
@@ -182,7 +207,13 @@
     "uploadAvatar": "Carregar Avatar",
     "changeAvatar": "Alterar Avatar",
     "deleteAvatar": "Eliminar Avatar",
-    "viewDetails": "Ver Detalhes"
+    "viewDetails": "Ver Detalhes",
+    "addFromGlobal": "Adicionar do Global",
+    "selectAvatar": "Selecionar Avatar",
+    "addToTournament": "Adicionar ao Torneio",
+    "selectAthlete": "Selecionar Atleta",
+    "addingAthlete": "Adicionando Atleta",
+    "addAthlete": "Adicionar Atleta"
   },
   "labels": {
     "avatarPreview": "Pré-visualização do Avatar"
@@ -191,5 +222,33 @@
     "title": "Jogos da Equipa",
     "noMatches": "Não foram encontrados jogos para esta equipa",
     "noTeamMatches": "Este atleta não está atribuído a uma equipa"
+  },
+  "global": {
+    "management": "Gestão Global de Atletas",
+    "description": "Gerir atletas em todos os torneios. Os atletas podem participar em múltiplos torneios.",
+    "create": "Criar Novo Atleta",
+    "list": "Atletas Globais",
+    "totalAthletes": "Total de Atletas",
+    "totalParticipations": "Total de Participações",
+    "averageParticipations": "Participações Médias",
+    "totalTournaments": "Total de Torneios",
+    "totalTeams": "Total de Equipas",
+    "activeParticipations": "Participações Ativas",
+    "tournamentParticipations": "Participações em Torneios",
+    "positionDistribution": "Distribuição de Posições",
+    "noParticipations": "Este atleta ainda não participou em nenhum torneio",
+    "participations": "participações",
+    "createDescription1": "Criar um perfil mestre de atleta que pode ser usado em múltiplos torneios",
+    "createDescription2": "Uma vez criado, este atleta pode ser adicionado a qualquer torneio com atribuições específicas de equipa",
+    "createDescription3": "A imagem do avatar pode ser carregada durante a criação",
+    "formDescription": "Inserir as informações básicas do atleta. Isto criará um perfil global.",
+    "helpTitle": "Informações do Atleta Global",
+    "helpPoint1": "Isto cria um registo mestre de atleta que pode participar em múltiplos torneios",
+    "helpPoint2": "As atribuições de equipa e números de camisola são definidos ao adicionar a torneios específicos",
+    "helpPoint3": "As imagens de avatar são automaticamente redimensionadas e otimizadas",
+    "helpPoint4": "Formatos suportados: JPG, PNG, GIF (máx. 5MB)"
+  },
+  "tournament": {
+    "participations": "participações em torneios"
   }
 }
