@@ -152,6 +152,18 @@ router.get('/', async (req, res) => {
     const athletes = await query(sql, params);
     console.log('👥 獲取到的運動員數據:', athletes.length);
 
+    // Clean up team names by removing tournament ID suffix
+    athletes.forEach(athlete => {
+      if (athlete.team_name) {
+        // Remove tournament ID suffix: "TeamName_123" -> "TeamName"
+        // Only remove if the suffix matches the current tournament ID
+        const suffix = `_${tournament_id}`;
+        if (athlete.team_name.endsWith(suffix)) {
+          athlete.team_name = athlete.team_name.slice(0, -suffix.length);
+        }
+      }
+    });
+
     // Get total count
     let countSql = `
       SELECT COUNT(*) as total 
@@ -243,7 +255,18 @@ router.get('/:id', async (req, res) => {
       });
     }
 
-    console.log('✅ 找到運動員:', athletes[0].name);
+    // Clean up team name by removing tournament ID suffix
+    const athlete = athletes[0];
+    if (athlete.team_name) {
+      // Remove tournament ID suffix: "TeamName_123" -> "TeamName"
+      // Only remove if the suffix matches the current tournament ID
+      const suffix = `_${athlete.tournament_id}`;
+      if (athlete.team_name.endsWith(suffix)) {
+        athlete.team_name = athlete.team_name.slice(0, -suffix.length);
+      }
+    }
+
+    console.log('✅ 找到運動員:', athlete.name);
 
     // Get match events for this participation
     const events = await query(`
@@ -257,12 +280,28 @@ router.get('/:id', async (req, res) => {
       ORDER BY m.match_date DESC, me.event_time DESC
     `, [participationId]);
 
+    // Clean up team names in events
+    events.forEach(event => {
+      if (event.team1_name) {
+        const suffix = `_${athlete.tournament_id}`;
+        if (event.team1_name.endsWith(suffix)) {
+          event.team1_name = event.team1_name.slice(0, -suffix.length);
+        }
+      }
+      if (event.team2_name) {
+        const suffix = `_${athlete.tournament_id}`;
+        if (event.team2_name.endsWith(suffix)) {
+          event.team2_name = event.team2_name.slice(0, -suffix.length);
+        }
+      }
+    });
+
     console.log('📊 找到比賽事件數量:', events.length);
 
     res.json({
       success: true,
       data: {
-        athlete: athletes[0],
+        athlete: athlete,
         events
       }
     });

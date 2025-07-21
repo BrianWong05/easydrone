@@ -226,6 +226,50 @@ router.get('/', async (req, res) => {
     console.log('⚽ 獲取到的原始比賽數據:', matches);
     console.log('⚽ 比賽數量:', matches.length);
 
+    // Clean up team names by removing tournament ID suffix
+    matches.forEach(match => {
+      // Extract tournament ID from the first team (both teams should be from same tournament)
+      if (match.team1_name || match.team2_name) {
+        // Try to get tournament ID from the match context or team names
+        let tournamentId = null;
+        
+        // Extract tournament ID from team1_name if it has suffix
+        if (match.team1_name && match.team1_name.includes('_')) {
+          const parts = match.team1_name.split('_');
+          const lastPart = parts[parts.length - 1];
+          if (/^\d+$/.test(lastPart)) {
+            tournamentId = lastPart;
+          }
+        }
+        
+        // If not found, try team2_name
+        if (!tournamentId && match.team2_name && match.team2_name.includes('_')) {
+          const parts = match.team2_name.split('_');
+          const lastPart = parts[parts.length - 1];
+          if (/^\d+$/.test(lastPart)) {
+            tournamentId = lastPart;
+          }
+        }
+        
+        // Clean team names if tournament ID found
+        if (tournamentId) {
+          const suffix = `_${tournamentId}`;
+          
+          if (match.team1_name && match.team1_name.endsWith(suffix)) {
+            match.team1_name = match.team1_name.slice(0, -suffix.length);
+          }
+          
+          if (match.team2_name && match.team2_name.endsWith(suffix)) {
+            match.team2_name = match.team2_name.slice(0, -suffix.length);
+          }
+          
+          if (match.winner_name && match.winner_name.endsWith(suffix)) {
+            match.winner_name = match.winner_name.slice(0, -suffix.length);
+          }
+        }
+      }
+    });
+
     // 獲取總數
     let countSql = 'SELECT COUNT(*) as total FROM matches m WHERE 1=1';
     const countParams = [];
@@ -305,6 +349,45 @@ router.get('/:id', async (req, res) => {
       });
     }
 
+    const match = matches[0];
+    
+    // Clean up team names in match details
+    let tournamentId = null;
+    
+    // Extract tournament ID from team names
+    if (match.team1_name && match.team1_name.includes('_')) {
+      const parts = match.team1_name.split('_');
+      const lastPart = parts[parts.length - 1];
+      if (/^\d+$/.test(lastPart)) {
+        tournamentId = lastPart;
+      }
+    }
+    
+    if (!tournamentId && match.team2_name && match.team2_name.includes('_')) {
+      const parts = match.team2_name.split('_');
+      const lastPart = parts[parts.length - 1];
+      if (/^\d+$/.test(lastPart)) {
+        tournamentId = lastPart;
+      }
+    }
+    
+    // Clean team names if tournament ID found
+    if (tournamentId) {
+      const suffix = `_${tournamentId}`;
+      
+      if (match.team1_name && match.team1_name.endsWith(suffix)) {
+        match.team1_name = match.team1_name.slice(0, -suffix.length);
+      }
+      
+      if (match.team2_name && match.team2_name.endsWith(suffix)) {
+        match.team2_name = match.team2_name.slice(0, -suffix.length);
+      }
+      
+      if (match.winner_name && match.winner_name.endsWith(suffix)) {
+        match.winner_name = match.winner_name.slice(0, -suffix.length);
+      }
+    }
+
     // 獲取比賽事件
     const events = await query(`
       SELECT me.*, t.team_name, a.name as athlete_name
@@ -314,11 +397,21 @@ router.get('/:id', async (req, res) => {
       WHERE me.match_id = ?
       ORDER BY me.event_time, me.created_at
     `, [matchId]);
+    
+    // Clean team names in events
+    if (tournamentId) {
+      const suffix = `_${tournamentId}`;
+      events.forEach(event => {
+        if (event.team_name && event.team_name.endsWith(suffix)) {
+          event.team_name = event.team_name.slice(0, -suffix.length);
+        }
+      });
+    }
 
     res.json({
       success: true,
       data: {
-        match: matches[0],
+        match: match,
         events
       }
     });
