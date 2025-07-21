@@ -47,6 +47,16 @@ const TournamentAthleteDetail = () => {
   const [statistics, setStatistics] = useState({});
   const [events, setEvents] = useState([]);
   const [matches, setMatches] = useState([]);
+  const [matchesPagination, setMatchesPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0
+  });
+  const [eventsPagination, setEventsPagination] = useState({
+    current: 1,
+    pageSize: 10,
+    total: 0
+  });
 
   // Load athlete data
   const loadAthleteData = async () => {
@@ -76,6 +86,10 @@ const TournamentAthleteDetail = () => {
         });
         
         setStatistics(stats);
+        setEventsPagination(prev => ({
+          ...prev,
+          total: data.data.events.length
+        }));
         
         // Load athlete's matches if they have a team
         if (data.data.athlete.team_id) {
@@ -113,6 +127,10 @@ const TournamentAthleteDetail = () => {
           return new Date(a.match_date) - new Date(b.match_date);
         });
         setMatches(sortedMatches);
+        setMatchesPagination(prev => ({
+          ...prev,
+          total: sortedMatches.length
+        }));
       }
     } catch (error) {
       console.error('Error loading athlete matches:', error);
@@ -545,16 +563,35 @@ const TournamentAthleteDetail = () => {
             dataSource={matches}
             rowKey="match_id"
             pagination={{
-              pageSize: 10,
+              current: matchesPagination.current,
+              pageSize: matchesPagination.pageSize,
+              total: matchesPagination.total,
               showSizeChanger: true,
               showQuickJumper: true,
+              pageSizeOptions: ['5', '10', '20', '50'],
               showTotal: (total, range) => 
                 t('common:pagination.total', {
                   start: range[0],
                   end: range[1],
                   total: total
-                })
+                }),
+              onChange: (page, pageSize) => {
+                setMatchesPagination(prev => ({
+                  ...prev,
+                  current: page,
+                  pageSize: pageSize
+                }));
+              },
+              onShowSizeChange: (current, size) => {
+                setMatchesPagination(prev => ({
+                  ...prev,
+                  current: 1,
+                  pageSize: size
+                }));
+              },
+              size: 'default'
             }}
+            scroll={{ x: 'max-content' }}
           />
         ) : (
           <Empty
@@ -575,15 +612,33 @@ const TournamentAthleteDetail = () => {
             dataSource={events}
             rowKey="event_id"
             pagination={{
-              pageSize: 10,
+              current: eventsPagination.current,
+              pageSize: eventsPagination.pageSize,
+              total: eventsPagination.total,
               showSizeChanger: true,
               showQuickJumper: true,
+              pageSizeOptions: ['5', '10', '20', '50'],
               showTotal: (total, range) => 
                 t('common:pagination.total', {
                   start: range[0],
                   end: range[1],
                   total: total
-                })
+                }),
+              onChange: (page, pageSize) => {
+                setEventsPagination(prev => ({
+                  ...prev,
+                  current: page,
+                  pageSize: pageSize
+                }));
+              },
+              onShowSizeChange: (current, size) => {
+                setEventsPagination(prev => ({
+                  ...prev,
+                  current: 1,
+                  pageSize: size
+                }));
+              },
+              size: 'default'
             }}
           />
         ) : (
