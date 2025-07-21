@@ -325,7 +325,7 @@ const GlobalAthleteList = () => {
         <div className="mb-4">
           <h3 className="text-lg font-semibold text-gray-700 flex items-center gap-2 mb-0">
             <SearchOutlined className="text-gray-500" />
-            {t('common:common.search')}
+            {t('common:buttons.search')}
           </h3>
         </div>
         <Row gutter={16} align="middle">

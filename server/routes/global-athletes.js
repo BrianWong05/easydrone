@@ -243,6 +243,65 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+// Delete global athlete
+router.delete('/:id', async (req, res) => {
+  try {
+    const athleteId = req.params.id;
+
+    // Check if athlete exists and get current data
+    const athlete = await query(
+      'SELECT athlete_id, avatar_url FROM global_athletes WHERE athlete_id = ?',
+      [athleteId]
+    );
+
+    if (athlete.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: '運動員不存在'
+      });
+    }
+
+    // Check if athlete has tournament participations
+    const participations = await query(
+      'SELECT participation_id FROM tournament_athletes WHERE athlete_id = ?',
+      [athleteId]
+    );
+
+    if (participations.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: '無法刪除運動員，該運動員已參與錦標賽。請先從所有錦標賽中移除該運動員。'
+      });
+    }
+
+    // Delete avatar file if exists
+    if (athlete[0].avatar_url) {
+      const avatarPath = path.join(__dirname, '../uploads/avatars', path.basename(athlete[0].avatar_url));
+      if (fs.existsSync(avatarPath)) {
+        fs.unlinkSync(avatarPath);
+      }
+    }
+
+    // Delete the athlete record
+    await query(
+      'DELETE FROM global_athletes WHERE athlete_id = ?',
+      [athleteId]
+    );
+
+    res.json({
+      success: true,
+      message: '運動員刪除成功'
+    });
+
+  } catch (error) {
+    console.error('刪除運動員錯誤:', error);
+    res.status(500).json({
+      success: false,
+      message: '刪除運動員失敗'
+    });
+  }
+});
+
 // Add athlete to tournament (create participation)
 router.post('/:id/tournaments/:tournamentId', async (req, res) => {
   try {
