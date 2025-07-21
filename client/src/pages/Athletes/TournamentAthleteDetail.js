@@ -41,6 +41,17 @@ const TournamentAthleteDetail = () => {
   const { t } = useTranslation(['athlete', 'common', 'match']);
   const { id: tournamentId, athleteId } = useParams();
   const navigate = useNavigate();
+
+  // Clean team name display (remove _{tournament_id} suffix only)
+  const getDisplayTeamName = (teamName) => {
+    if (!teamName) return '';
+    // Check if it ends with _{tournamentId}, if so remove it
+    const suffix = `_${tournamentId}`;
+    if (teamName.endsWith(suffix)) {
+      return teamName.slice(0, -suffix.length);
+    }
+    return teamName;
+  };
   
   const [loading, setLoading] = useState(true);
   const [athlete, setAthlete] = useState(null);
@@ -200,7 +211,7 @@ const TournamentAthleteDetail = () => {
     {
       title: t('athlete:athlete.team'),
       key: 'teams',
-      render: (_, record) => `${record.team1_name} vs ${record.team2_name}`
+      render: (_, record) => `${getDisplayTeamName(record.team1_name)} vs ${getDisplayTeamName(record.team2_name)}`
     }
   ];
 
@@ -244,7 +255,7 @@ const TournamentAthleteDetail = () => {
             className="p-0 h-auto"
             onClick={() => navigate(`/tournaments/${tournamentId}/teams/${record.team1_id}`)}
           >
-            {record.team1_name}
+            {getDisplayTeamName(record.team1_name)}
           </Button>
           <Text type="secondary">vs</Text>
           <Button 
@@ -252,7 +263,7 @@ const TournamentAthleteDetail = () => {
             className="p-0 h-auto"
             onClick={() => navigate(`/tournaments/${tournamentId}/teams/${record.team2_id}`)}
           >
-            {record.team2_name}
+            {getDisplayTeamName(record.team2_name)}
           </Button>
         </div>
       )
