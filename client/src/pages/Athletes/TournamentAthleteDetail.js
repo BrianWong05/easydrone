@@ -24,71 +24,73 @@ import {
   ArrowLeftOutlined,
   TeamOutlined,
   TrophyOutlined,
-  CalendarOutlined,
   NumberOutlined,
   UserSwitchOutlined,
-  PlayCircleOutlined,
+  CalendarOutlined,
   FireOutlined,
-  ExclamationCircleOutlined,
-  ClockCircleOutlined
+  ThunderboltOutlined
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 
 const { Title, Text } = Typography;
 
 const TournamentAthleteDetail = () => {
-  const { t } = useTranslation(['athlete', 'common', 'match']);
+  const { t } = useTranslation(['athlete', 'common']);
   const { id: tournamentId, athleteId } = useParams();
   const navigate = useNavigate();
   
-  const [athlete, setAthlete] = useState(null);
-  const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [statistics, setStatistics] = useState({
-    totalEvents: 0,
-    goals: 0,
-    fouls: 0,
-    penalties: 0,
-    matchesPlayed: 0
-  });
+  const [athlete, setAthlete] = useState(null);
+  const [statistics, setStatistics] = useState({});
+  const [events, setEvents] = useState([]);
 
   // Load athlete data
   const loadAthleteData = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       const response = await fetch(`/api/athletes/${athleteId}`);
       const data = await response.json();
 
       if (data.success) {
         setAthlete(data.data.athlete);
         setEvents(data.data.events || []);
-        calculateStatistics(data.data.events || []);
+        
+        // Calculate basic statistics from events
+        const stats = {
+          matchesPlayed: 0,
+          goals: 0,
+          fouls: 0,
+          penalties: 0,
+          substitutions: 0
+        };
+        
+        data.data.events.forEach(event => {
+          if (event.event_type === 'goal') stats.goals++;
+          if (event.event_type === 'foul') stats.fouls++;
+          if (event.event_type === 'penalty') stats.penalties++;
+          if (event.event_type === 'substitution') stats.substitutions++;
+        });
+        
+        setStatistics(stats);
       } else {
         message.error(data.message || t('athlete:messages.noAthleteData'));
         navigate(`/tournaments/${tournamentId}/athletes`);
       }
     } catch (error) {
       console.error('Error loading athlete data:', error);
-      message.error(t('athlete:messages.noAthleteData'));
-      navigate(`/tournaments/${tournamentId}/athletes`);
+      message.error(t('athlete:messages.loadingAthletes'));
     } finally {
       setLoading(false);
     }
   };
 
-  // Calculate statistics from events
-  const calculateStatistics = (eventsList) => {
-    const stats = {
-      totalEvents: eventsList.length,
-      goals: eventsList.filter(e => e.event_type === 'goal').length,
-      fouls: eventsList.filter(e => e.event_type === 'foul').length,
-      penalties: eventsList.filter(e => e.event_type === 'penalty').length,
-      matchesPlayed: new Set(eventsList.map(e => e.match_id)).size
-    };
-    setStatistics(stats);
-  };
+  useEffect(() => {
+    if (athleteId) {
+      loadAthleteData();
+    }
+  }, [athleteId]);
 
-  // Get position color
+  // Helper functions
   const getPositionColor = (position) => {
     const colors = {
       attacker: 'red',
@@ -98,7 +100,6 @@ const TournamentAthleteDetail = () => {
     return colors[position] || 'default';
   };
 
-  // Get position icon
   const getPositionIcon = (position) => {
     const icons = {
       attacker: '⚽',
@@ -108,88 +109,47 @@ const TournamentAthleteDetail = () => {
     return icons[position] || '👤';
   };
 
-  // Get event type color
-  const getEventTypeColor = (eventType) => {
-    const colors = {
-      goal: 'green',
-      foul: 'orange',
-      penalty: 'red',
-      substitution: 'blue'
-    };
-    return colors[eventType] || 'default';
+  const getStatusColor = (isActive) => {
+    return isActive ? 'success' : 'default';
   };
 
-  // Get event type icon
-  const getEventTypeIcon = (eventType) => {
-    const icons = {
-      goal: <TrophyOutlined />,
-      foul: <ExclamationCircleOutlined />,
-      penalty: <FireOutlined />,
-      substitution: <PlayCircleOutlined />
-    };
-    return icons[eventType] || <ClockCircleOutlined />;
-  };
-
-  // Events table columns
-  const eventsColumns = [
-    {
-      title: t('match:match.number'),
-      dataIndex: 'match_number',
-      key: 'match_number',
-      width: 100,
-      render: (matchNumber) => (
-        <Badge count={matchNumber} className="bg-blue-500" />
-      )
-    },
-    {
-      title: t('match:match.teams'),
-      key: 'teams',
-      render: (_, record) => (
-        <div className="text-sm">
-          <div className="font-medium text-gray-800">
-            {record.team1_name} vs {record.team2_name}
-          </div>
-        </div>
-      )
-    },
+  // Event table columns
+  const eventColumns = [
     {
       title: t('athlete:events.type'),
       dataIndex: 'event_type',
       key: 'event_type',
-      width: 120,
-      render: (eventType) => (
-        <Tag color={getEventTypeColor(eventType)} className="flex items-center gap-1 w-fit">
-          {getEventTypeIcon(eventType)}
-          <span>{t(`athlete:events.${eventType}`)}</span>
-        </Tag>
-      )
+      render: (type) => {
+        const typeColors = {
+          goal: 'success',
+          foul: 'warning',
+          penalty: 'error',
+          substitution: 'processing'
+        };
+        return (
+          <Tag color={typeColors[type] || 'default'}>
+            {t(`athlete:events.${type}`)}
+          </Tag>
+        );
+      }
     },
     {
       title: t('athlete:events.time'),
       dataIndex: 'event_time',
-      key: 'event_time',
-      width: 100,
-      render: (eventTime) => (
-        <span className="text-gray-600">{eventTime}'</span>
-      )
+      key: 'event_time'
     },
     {
-      title: t('match:match.date'),
+      title: t('common:date.startDate'),
       dataIndex: 'match_date',
       key: 'match_date',
-      render: (matchDate) => (
-        <span className="text-gray-600">
-          {new Date(matchDate).toLocaleDateString()}
-        </span>
-      )
+      render: (date) => new Date(date).toLocaleDateString()
+    },
+    {
+      title: t('athlete:athlete.team'),
+      key: 'teams',
+      render: (_, record) => `${record.team1_name} vs ${record.team2_name}`
     }
   ];
-
-  useEffect(() => {
-    if (athleteId) {
-      loadAthleteData();
-    }
-  }, [athleteId]);
 
   if (loading) {
     return (
@@ -202,7 +162,10 @@ const TournamentAthleteDetail = () => {
   if (!athlete) {
     return (
       <div className="p-6">
-        <Empty description={t('athlete:messages.noAthleteData')} />
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description={t('athlete:messages.noAthleteData')}
+        />
       </div>
     );
   }
@@ -213,11 +176,11 @@ const TournamentAthleteDetail = () => {
       <div className="mb-6">
         <Row justify="space-between" align="middle">
           <Col>
-            <Space className="items-center">
+            <Space>
               <Button
                 icon={<ArrowLeftOutlined />}
                 onClick={() => navigate(`/tournaments/${tournamentId}/athletes`)}
-                className="hover:bg-gray-100 border-gray-300"
+                className="hover:bg-gray-100"
               >
                 {t('common:buttons.back')}
               </Button>
@@ -231,7 +194,6 @@ const TournamentAthleteDetail = () => {
               type="primary"
               icon={<EditOutlined />}
               onClick={() => navigate(`/tournaments/${tournamentId}/athletes/${athleteId}/edit`)}
-              className="bg-blue-500 hover:bg-blue-600 border-blue-500 hover:border-blue-600"
             >
               {t('athlete:athlete.edit')}
             </Button>
@@ -246,8 +208,17 @@ const TournamentAthleteDetail = () => {
             <div className="text-center">
               <Avatar 
                 size={120} 
-                icon={<UserOutlined />} 
-                className="bg-blue-500 mb-4"
+                src={athlete.avatar_url ? `${athlete.avatar_url}?t=${Date.now()}` : null}
+                icon={!athlete.avatar_url && <UserOutlined />} 
+                className="bg-blue-500 mb-4 border-4 border-white shadow-lg"
+                style={{
+                  cursor: athlete.avatar_url ? 'pointer' : 'default'
+                }}
+                onClick={() => {
+                  if (athlete.avatar_url) {
+                    window.open(athlete.avatar_url, '_blank');
+                  }
+                }}
               />
               <div>
                 <Title level={3} className="mb-2 text-gray-800">
@@ -306,23 +277,13 @@ const TournamentAthleteDetail = () => {
                         {t('athlete:athlete.team')}
                       </span>
                     }
-                    value={athlete.team_name ? (
-                      athlete.team_name.includes('_') ? 
-                        athlete.team_name.split('_').slice(0, -1).join('_') : 
-                        athlete.team_name
-                    ) : t('athlete:info.noTeam')}
+                    value={athlete.team_name || t('athlete:info.noTeam')}
                     valueStyle={{ 
                       color: '#7c3aed', 
-                      fontSize: '16px', 
-                      fontWeight: 'bold',
-                      wordBreak: 'break-word'
+                      fontSize: athlete.team_name ? '18px' : '16px', 
+                      fontWeight: 'bold' 
                     }}
                   />
-                  {athlete.group_name && (
-                    <div className="mt-2">
-                      <Tag color="blue">{athlete.group_name}</Tag>
-                    </div>
-                  )}
                 </Card>
               </Col>
             </Row>
@@ -330,42 +291,35 @@ const TournamentAthleteDetail = () => {
             <Divider />
 
             <Row gutter={16}>
-              <Col span={6}>
-                <div className="text-center">
-                  <Text className="text-gray-500 block">{t('athlete:athlete.status')}</Text>
-                  <Tag 
-                    color={athlete.is_active ? 'green' : 'red'} 
-                    className="mt-1 text-base px-3 py-1"
-                  >
-                    {athlete.is_active ? t('athlete:status.active') : t('athlete:status.inactive')}
-                  </Tag>
+              <Col span={12}>
+                <div className="flex items-center gap-3">
+                  <TrophyOutlined className="text-yellow-500 text-xl" />
+                  <div>
+                    <Text strong className="text-gray-700">
+                      {t('athlete:info.tournament')}:
+                    </Text>
+                    <br />
+                    <Text className="text-gray-600">
+                      {athlete.tournament_name}
+                    </Text>
+                  </div>
                 </div>
               </Col>
-              
-              <Col span={6}>
-                <div className="text-center">
-                  <Text className="text-gray-500 block">{t('athlete:info.tournament')}</Text>
-                  <Text className="font-medium text-gray-800 mt-1 block">
-                    {athlete.tournament_name}
-                  </Text>
-                </div>
-              </Col>
-              
-              <Col span={6}>
-                <div className="text-center">
-                  <Text className="text-gray-500 block">{t('athlete:statistics.matchesPlayed')}</Text>
-                  <Text className="font-bold text-blue-600 text-xl mt-1 block">
-                    {statistics.matchesPlayed}
-                  </Text>
-                </div>
-              </Col>
-              
-              <Col span={6}>
-                <div className="text-center">
-                  <Text className="text-gray-500 block">{t('athlete:events.total')}</Text>
-                  <Text className="font-bold text-purple-600 text-xl mt-1 block">
-                    {statistics.totalEvents}
-                  </Text>
+              <Col span={12}>
+                <div className="flex items-center gap-3">
+                  <Badge 
+                    status={getStatusColor(athlete.is_active)} 
+                    className="text-lg"
+                  />
+                  <div>
+                    <Text strong className="text-gray-700">
+                      {t('athlete:athlete.status')}:
+                    </Text>
+                    <br />
+                    <Text className="text-gray-600">
+                      {athlete.is_active ? t('athlete:status.active') : t('athlete:status.inactive')}
+                    </Text>
+                  </div>
                 </div>
               </Col>
             </Row>
@@ -373,96 +327,84 @@ const TournamentAthleteDetail = () => {
         </Row>
       </Card>
 
-      {/* Statistics Cards */}
-      <Row gutter={16} className="mb-6">
-        <Col span={6}>
-          <Card className="shadow-sm hover:shadow-md transition-shadow duration-200 border-0 bg-green-50 border-green-200">
+      {/* Statistics Card */}
+      <Card title={t('athlete:athlete.statistics')} className="mb-6 shadow-sm border-0">
+        <Row gutter={[24, 16]}>
+          <Col span={6}>
             <Statistic
               title={
-                <span className="text-green-700 font-medium flex items-center gap-2">
-                  <TrophyOutlined />
+                <span className="flex items-center gap-2">
+                  <FireOutlined className="text-red-500" />
                   {t('athlete:statistics.goals')}
                 </span>
               }
               value={statistics.goals}
-              valueStyle={{ color: '#059669', fontSize: '32px', fontWeight: 'bold' }}
+              valueStyle={{ color: '#dc2626' }}
             />
-          </Card>
-        </Col>
-        
-        <Col span={6}>
-          <Card className="shadow-sm hover:shadow-md transition-shadow duration-200 border-0 bg-orange-50 border-orange-200">
+          </Col>
+          <Col span={6}>
             <Statistic
               title={
-                <span className="text-orange-700 font-medium flex items-center gap-2">
-                  <ExclamationCircleOutlined />
+                <span className="flex items-center gap-2">
+                  <ThunderboltOutlined className="text-yellow-500" />
                   {t('athlete:statistics.fouls')}
                 </span>
               }
               value={statistics.fouls}
-              valueStyle={{ color: '#ea580c', fontSize: '32px', fontWeight: 'bold' }}
+              valueStyle={{ color: '#d97706' }}
             />
-          </Card>
-        </Col>
-        
-        <Col span={6}>
-          <Card className="shadow-sm hover:shadow-md transition-shadow duration-200 border-0 bg-red-50 border-red-200">
+          </Col>
+          <Col span={6}>
             <Statistic
               title={
-                <span className="text-red-700 font-medium flex items-center gap-2">
-                  <FireOutlined />
+                <span className="flex items-center gap-2">
+                  <TrophyOutlined className="text-blue-500" />
                   {t('athlete:statistics.penalties')}
                 </span>
               }
               value={statistics.penalties}
-              valueStyle={{ color: '#dc2626', fontSize: '32px', fontWeight: 'bold' }}
+              valueStyle={{ color: '#2563eb' }}
             />
-          </Card>
-        </Col>
-        
-        <Col span={6}>
-          <Card className="shadow-sm hover:shadow-md transition-shadow duration-200 border-0 bg-blue-50 border-blue-200">
+          </Col>
+          <Col span={6}>
             <Statistic
               title={
-                <span className="text-blue-700 font-medium flex items-center gap-2">
-                  <PlayCircleOutlined />
-                  {t('athlete:events.total')}
+                <span className="flex items-center gap-2">
+                  <UserSwitchOutlined className="text-green-500" />
+                  {t('athlete:events.substitution')}
                 </span>
               }
-              value={statistics.totalEvents}
-              valueStyle={{ color: '#2563eb', fontSize: '32px', fontWeight: 'bold' }}
+              value={statistics.substitutions}
+              valueStyle={{ color: '#059669' }}
             />
-          </Card>
-        </Col>
-      </Row>
+          </Col>
+        </Row>
+      </Card>
 
-      {/* Match Events */}
-      <Card className="shadow-sm border-0">
-        <div className="mb-4">
-          <Title level={3} className="text-gray-700 flex items-center gap-2 mb-0">
-            <CalendarOutlined className="text-gray-500" />
-            {t('athlete:events.history')}
-          </Title>
-        </div>
-        
+      {/* Events History */}
+      <Card 
+        title={t('athlete:events.history')} 
+        className="shadow-sm border-0"
+      >
         {events.length > 0 ? (
           <Table
-            columns={eventsColumns}
+            columns={eventColumns}
             dataSource={events}
             rowKey="event_id"
             pagination={{
               pageSize: 10,
               showSizeChanger: true,
               showQuickJumper: true,
-              showTotal: (total, range) =>
-                `${range[0]}-${range[1]} ${t('common:common.of')} ${total} ${t('athlete:events.title')}`,
+              showTotal: (total, range) => 
+                t('common:pagination.total', {
+                  start: range[0],
+                  end: range[1],
+                  total: total
+                })
             }}
-            scroll={{ x: 800 }}
-            className="overflow-hidden"
-            rowClassName="hover:bg-gray-50 transition-colors duration-150"
           />
         ) : (
-          <Empty 
+          <Empty
             description={t('athlete:messages.noEvents')}
             image={Empty.PRESENTED_IMAGE_SIMPLE}
           />
