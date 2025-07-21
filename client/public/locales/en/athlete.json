@@ -159,7 +159,8 @@
     "changeAvatar": "Change Avatar",
     "selectAvatar": "Select Avatar",
     "deleteAvatar": "Delete Avatar",
-    "viewDetails": "View Details"
+    "viewDetails": "View Details",
+    "addToTournament": "Add to Tournament"
   },
   "labels": {
     "avatarPreview": "Avatar Preview"
@@ -206,5 +207,19 @@
     "avatarAfterCreation": "Avatar upload will be available after creating the athlete",
     "avatarWillUploadAfterCreation": "Avatar will be uploaded after athlete creation",
     "nowUploadAvatar": "You can now upload an avatar for this athlete."
+  },
+  "global": {
+    "management": "Global Athlete Management",
+    "description": "Manage athletes across all tournaments. Athletes can participate in multiple tournaments.",
+    "create": "Create New Athlete",
+    "list": "Global Athletes",
+    "totalAthletes": "Total Athletes",
+    "totalParticipations": "Total Participations",
+    "averageParticipations": "Avg. Participations"
+  },
+  "info": {
+    "tournaments": "Tournaments",
+    "tournamentList": "Tournament List",
+    "noTournaments": "No tournaments"
   }
 }

@@ -57,24 +57,67 @@ CREATE TABLE IF NOT EXISTS teams (
 ) COMMENT = '隊伍表 - 包含隊伍基本信息和描述';
 
 -- 運動員表 - 無人機足球隊伍結構：1名進攻手，3-5名防守人員 (錦標賽範圍)
-CREATE TABLE IF NOT EXISTS athletes (
+-- 全局運動員表 (主運動員記錄)
+CREATE TABLE IF NOT EXISTS global_athletes (
     athlete_id INT AUTO_INCREMENT PRIMARY KEY,
-    team_id INT NULL,
-    tournament_id INT NOT NULL,
     name VARCHAR(100) NOT NULL,
-    jersey_number INT NOT NULL,
-    position ENUM('attacker', 'defender', 'substitute') NOT NULL,
     age INT NOT NULL,
-    is_active BOOLEAN DEFAULT TRUE,
     avatar_url VARCHAR(500) NULL COMMENT '運動員頭像URL',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (team_id) REFERENCES teams(team_id) ON DELETE CASCADE,
+    INDEX idx_global_athletes_name (name)
+) COMMENT = '全局運動員表 - 跨錦標賽的運動員主記錄';
+
+-- 錦標賽運動員參與表 (運動員在特定錦標賽中的參與記錄)
+CREATE TABLE IF NOT EXISTS tournament_athletes (
+    participation_id INT AUTO_INCREMENT PRIMARY KEY,
+    athlete_id INT NOT NULL COMMENT '全局運動員ID',
+    tournament_id INT NOT NULL COMMENT '錦標賽ID',
+    team_id INT NULL COMMENT '隊伍ID，允許為空以支持無隊伍運動員',
+    jersey_number INT NOT NULL COMMENT '在此錦標賽中的球衣號碼',
+    position ENUM('attacker', 'defender', 'substitute') NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE COMMENT '在此錦標賽中的活躍狀態',
+    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    -- 外鍵約束
+    FOREIGN KEY (athlete_id) REFERENCES global_athletes(athlete_id) ON DELETE CASCADE,
     FOREIGN KEY (tournament_id) REFERENCES tournaments(tournament_id) ON DELETE CASCADE,
-    UNIQUE KEY unique_tournament_jersey_when_no_team (tournament_id, jersey_number, team_id),
-    INDEX idx_athletes_tournament_id (tournament_id),
-    INDEX idx_athletes_team_id (team_id)
-) COMMENT = '運動員表 - 包含錦標賽範圍的運動員信息，支持無隊伍運動員和頭像';
+    FOREIGN KEY (team_id) REFERENCES teams(team_id) ON DELETE SET NULL,
+    
+    -- 唯一性約束
+    UNIQUE KEY unique_athlete_tournament (athlete_id, tournament_id) COMMENT '每個運動員在每個錦標賽中只能參與一次',
+    UNIQUE KEY unique_tournament_team_jersey (tournament_id, team_id, jersey_number) COMMENT '每個錦標賽每個隊伍中球衣號碼唯一',
+    
+    -- 索引
+    INDEX idx_tournament_athletes_athlete_id (athlete_id),
+    INDEX idx_tournament_athletes_tournament_id (tournament_id),
+    INDEX idx_tournament_athletes_team_id (team_id)
+) COMMENT = '錦標賽運動員參與表 - 追蹤運動員在特定錦標賽中的參與情況';
+
+-- 向後兼容視圖 (保持現有API兼容性)
+CREATE OR REPLACE VIEW athletes AS
+SELECT 
+    ta.participation_id as athlete_id,
+    ga.name,
+    ta.jersey_number,
+    ta.position,
+    ga.age,
+    ta.is_active,
+    ga.avatar_url,
+    ta.tournament_id,
+    ta.team_id,
+    t.team_name,
+    t.team_color,
+    tg.group_name,
+    tour.tournament_name,
+    ta.joined_at as created_at,
+    ta.updated_at
+FROM tournament_athletes ta
+JOIN global_athletes ga ON ta.athlete_id = ga.athlete_id
+JOIN tournaments tour ON ta.tournament_id = tour.tournament_id
+LEFT JOIN teams t ON ta.team_id = t.team_id
+LEFT JOIN team_groups tg ON t.group_id = tg.group_id;
 
 -- 比賽表
 CREATE TABLE IF NOT EXISTS matches (
@@ -115,7 +158,8 @@ CREATE TABLE IF NOT EXISTS match_events (
     event_id INT AUTO_INCREMENT PRIMARY KEY,
     match_id INT NOT NULL,
     team_id INT NOT NULL,
-    athlete_id INT NULL,
+    athlete_id INT NULL COMMENT '舊版兼容字段，保留用於數據遷移',
+    participation_id INT NULL COMMENT '錦標賽運動員參與ID',
     event_type ENUM('goal', 'foul', 'timeout', 'penalty', 'substitution', 'other') NOT NULL,
     event_time TIME NOT NULL,
     period INT NOT NULL,
@@ -123,8 +167,12 @@ CREATE TABLE IF NOT EXISTS match_events (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (match_id) REFERENCES matches(match_id) ON DELETE CASCADE,
     FOREIGN KEY (team_id) REFERENCES teams(team_id) ON DELETE CASCADE,
-    FOREIGN KEY (athlete_id) REFERENCES athletes(athlete_id) ON DELETE SET NULL
-);
+    FOREIGN KEY (athlete_id) REFERENCES athletes(athlete_id) ON DELETE SET NULL,
+    FOREIGN KEY (participation_id) REFERENCES tournament_athletes(participation_id) ON DELETE CASCADE,
+    INDEX idx_match_events_match_id (match_id),
+    INDEX idx_match_events_athlete_id (athlete_id),
+    INDEX idx_match_events_participation_id (participation_id)
+) COMMENT = '比賽事件表 - 支持多錦標賽運動員參與';
 
 -- 小組積分表 (錦標賽範圍)
 CREATE TABLE IF NOT EXISTS group_standings (

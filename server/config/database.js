@@ -144,8 +144,15 @@ const query = async (sql, params = []) => {
 
 // 執行事務的輔助函數
 const transaction = async (callback) => {
+  if (typeof callback !== 'function') {
+    throw new Error('Transaction requires a callback function');
+  }
+  
   const connection = await pool.getConnection();
   try {
+    // 確保每個連接都使用正確的字符集
+    await connection.execute('SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci');
+    
     await connection.beginTransaction();
     const result = await callback(connection);
     await connection.commit();

@@ -44,6 +44,7 @@ import TournamentAthleteList from "./pages/Athletes/TournamentAthleteList";
 import TournamentAthleteCreate from "./pages/Athletes/TournamentAthleteCreate";
 import TournamentAthleteDetail from "./pages/Athletes/TournamentAthleteDetail";
 import TournamentAthleteEdit from "./pages/Athletes/TournamentAthleteEdit";
+import GlobalAthleteList from "./pages/Athletes/GlobalAthleteList";
 
 const { Content } = Layout;
 
@@ -98,6 +99,8 @@ function App() {
                   <Routes>
                     {/* 儀表板 */}
                     <Route path="/" element={<TournamentList />} />
+
+                    <Route path="/global-athletes" element={<GlobalAthleteList />} />
 
                     {/* 404 頁面 */}
                     <Route path="*" element={<NotFound />} />

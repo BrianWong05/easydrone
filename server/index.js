@@ -13,6 +13,7 @@ const teamRoutes = require('./routes/teams');
 const groupRoutes = require('./routes/groups');
 const matchRoutes = require('./routes/matches');
 const athleteRoutes = require('./routes/athletes');
+const globalAthleteRoutes = require('./routes/global-athletes');
 const tournamentRoutes = require('./routes/tournaments');
 const statsRoutes = require('./routes/stats');
 // Migration routes removed for clean deployment
@@ -120,6 +121,7 @@ app.use('/api/teams', teamRoutes);
 app.use('/api/groups', groupRoutes);
 app.use('/api/matches', matchRoutes);
 app.use('/api/athletes', athleteRoutes);
+app.use('/api/global-athletes', globalAthleteRoutes);
 app.use('/api/stats', statsRoutes);
 // Migration routes removed for clean deployment
 

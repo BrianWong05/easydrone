@@ -1,26 +1,30 @@
 const express = require('express');
 const Joi = require('joi');
-const path = require('path');
-const fs = require('fs');
 const { query, transaction } = require('../config/database');
-const { authenticateToken } = require('../middleware/auth');
-const { uploadAvatar, handleUploadError, isMulterAvailable } = require('../middleware/upload');
 
 const router = express.Router();
 
-// 創建運動員驗證模式
-const athleteSchema = Joi.object({
-  tournament_id: Joi.number().integer().required().messages({
-    'any.required': '錦標賽ID是必填項'
-  }),
-  team_id: Joi.number().integer().optional().allow(null).messages({
-    'number.base': '隊伍ID必須是數字'
-  }),
+// Combined athlete creation schema (creates both global athlete and tournament participation)
+const athleteCreateSchema = Joi.object({
+  // Global athlete fields
   name: Joi.string().min(2).max(100).required().messages({
     'string.empty': '運動員姓名不能為空',
     'string.min': '運動員姓名至少需要2個字符',
     'string.max': '運動員姓名不能超過100個字符',
     'any.required': '運動員姓名是必填項'
+  }),
+  age: Joi.number().integer().min(16).max(50).required().messages({
+    'number.min': '年齡必須在16-50歲之間',
+    'number.max': '年齡必須在16-50歲之間',
+    'any.required': '年齡是必填項'
+  }),
+  
+  // Tournament participation fields
+  tournament_id: Joi.number().integer().required().messages({
+    'any.required': '錦標賽ID是必填項'
+  }),
+  team_id: Joi.number().integer().optional().allow(null).messages({
+    'number.base': '隊伍ID必須是數字'
   }),
   jersey_number: Joi.number().integer().min(1).max(99).required().messages({
     'number.min': '球衣號碼必須在1-99之間',
@@ -31,107 +35,147 @@ const athleteSchema = Joi.object({
     'any.only': '位置必須是進攻手、防守員或替補',
     'any.required': '位置是必填項'
   }),
+  is_active: Joi.boolean().default(true),
+  
+  // Optional: existing athlete ID (for adding existing athlete to new tournament)
+  existing_athlete_id: Joi.number().integer().optional()
+});
+
+// Athlete update schema (allows additional fields from frontend)
+const athleteUpdateSchema = Joi.object({
+  // Global athlete fields
+  name: Joi.string().min(2).max(100).required().messages({
+    'string.empty': '運動員姓名不能為空',
+    'string.min': '運動員姓名至少需要2個字符',
+    'string.max': '運動員姓名不能超過100個字符',
+    'any.required': '運動員姓名是必填項'
+  }),
   age: Joi.number().integer().min(16).max(50).required().messages({
     'number.min': '年齡必須在16-50歲之間',
     'number.max': '年齡必須在16-50歲之間',
     'any.required': '年齡是必填項'
   }),
+  
+  // Tournament participation fields
+  tournament_id: Joi.number().integer().optional(), // Optional for updates
+  team_id: Joi.number().integer().optional().allow(null).messages({
+    'number.base': '隊伍ID必須是數字'
+  }),
+  jersey_number: Joi.number().integer().min(1).max(99).required().messages({
+    'number.min': '球衣號碼必須在1-99之間',
+    'number.max': '球衣號碼必須在1-99之間',
+    'any.required': '球衣號碼是必填項'
+  }),
+  position: Joi.string().valid('attacker', 'defender', 'substitute').required().messages({
+    'any.only': '位置必須是進攻手、防守員或替補',
+    'any.required': '位置是必填項'
+  }),
   is_active: Joi.boolean().default(true),
-  avatar_url: Joi.string().uri().optional().allow(null, '')
+  
+  // Frontend compatibility fields (ignored but allowed)
+  athlete_id: Joi.number().integer().optional(), // Allow but ignore
+  global_athlete_id: Joi.number().integer().optional(), // Allow but ignore
+  participation_id: Joi.number().integer().optional(), // Allow but ignore
+  avatar_url: Joi.string().optional().allow(null, ''), // Allow but ignore
+  created_at: Joi.date().optional(), // Allow but ignore
+  updated_at: Joi.date().optional() // Allow but ignore
 });
 
-// 獲取所有運動員
+// Get athletes for a specific tournament (backward compatible)
 router.get('/', async (req, res) => {
   try {
     console.log('👥 開始獲取運動員列表...');
     const { tournament_id, team_id, position, is_active, search, page = 1, limit = 20 } = req.query;
     console.log('👥 查詢參數:', { tournament_id, team_id, position, is_active, search, page, limit });
     
-    let sql = `
-      SELECT a.*, t.team_name, t.team_color, g.group_name, tour.tournament_name
-      FROM athletes a
-      LEFT JOIN teams t ON a.team_id = t.team_id
-      JOIN tournaments tour ON a.tournament_id = tour.tournament_id
-      LEFT JOIN team_groups g ON t.group_id = g.group_id
-      WHERE 1=1
-    `;
-    const params = [];
-
-    // 按錦標賽篩選 (必需)
-    if (tournament_id) {
-      sql += ' AND a.tournament_id = ?';
-      params.push(tournament_id);
-    } else {
+    if (!tournament_id) {
       return res.status(400).json({
         success: false,
         message: '錦標賽ID是必填參數'
       });
     }
 
-    // 按隊伍篩選
+    let sql = `
+      SELECT 
+        ta.participation_id as athlete_id,
+        ga.name,
+        ta.jersey_number,
+        ta.position,
+        ga.age,
+        ta.is_active,
+        ga.avatar_url,
+        ta.tournament_id,
+        ta.team_id,
+        t.team_name,
+        t.team_color,
+        tg.group_name,
+        tour.tournament_name,
+        ta.joined_at as created_at,
+        ta.updated_at
+      FROM tournament_athletes ta
+      JOIN global_athletes ga ON ta.athlete_id = ga.athlete_id
+      JOIN tournaments tour ON ta.tournament_id = tour.tournament_id
+      LEFT JOIN teams t ON ta.team_id = t.team_id
+      LEFT JOIN team_groups tg ON t.group_id = tg.group_id
+      WHERE ta.tournament_id = ?
+    `;
+    const params = [tournament_id];
+
+    // Apply filters
     if (team_id) {
-      sql += ' AND a.team_id = ?';
+      sql += ' AND ta.team_id = ?';
       params.push(team_id);
     }
 
-    // 按位置篩選
     if (position) {
-      sql += ' AND a.position = ?';
+      sql += ' AND ta.position = ?';
       params.push(position);
     }
 
-    // 按狀態篩選
     if (is_active !== undefined) {
-      sql += ' AND a.is_active = ?';
+      sql += ' AND ta.is_active = ?';
       params.push(is_active === 'true' ? 1 : 0);
     }
 
-    // 搜索運動員姓名
     if (search) {
-      sql += ' AND a.name LIKE ?';
+      sql += ' AND ga.name LIKE ?';
       params.push(`%${search}%`);
     }
 
-    sql += ' ORDER BY COALESCE(t.team_name, "無隊伍") ASC, a.jersey_number ASC';
+    sql += ' ORDER BY COALESCE(t.team_name, "無隊伍") ASC, ta.jersey_number ASC';
 
-    // 分頁
+    // Pagination
     const offset = (page - 1) * limit;
     sql += ' LIMIT ? OFFSET ?';
     params.push(parseInt(limit), parseInt(offset));
 
     const athletes = await query(sql, params);
-    console.log('👥 獲取到的原始運動員數據:', athletes);
-    console.log('👥 運動員數量:', athletes.length);
-    
-    // 按隊伍分組顯示
-    const teamGroups = {};
-    athletes.forEach(athlete => {
-      const teamName = athlete.team_name || '無隊伍';
-      if (!teamGroups[teamName]) {
-        teamGroups[teamName] = [];
-      }
-      teamGroups[teamName].push(athlete);
-      console.log(`👥 ${teamName} - ${athlete.name} (#${athlete.jersey_number}, ${athlete.position})`);
-    });
+    console.log('👥 獲取到的運動員數據:', athletes.length);
 
-    // 獲取總數
-    let countSql = 'SELECT COUNT(*) as total FROM athletes a LEFT JOIN teams t ON a.team_id = t.team_id WHERE a.tournament_id = ?';
+    // Get total count
+    let countSql = `
+      SELECT COUNT(*) as total 
+      FROM tournament_athletes ta 
+      JOIN global_athletes ga ON ta.athlete_id = ga.athlete_id
+      LEFT JOIN teams t ON ta.team_id = t.team_id 
+      WHERE ta.tournament_id = ?
+    `;
     const countParams = [tournament_id];
     
     if (team_id) {
-      countSql += ' AND a.team_id = ?';
+      countSql += ' AND ta.team_id = ?';
       countParams.push(team_id);
     }
     if (position) {
-      countSql += ' AND a.position = ?';
+      countSql += ' AND ta.position = ?';
       countParams.push(position);
     }
     if (is_active !== undefined) {
-      countSql += ' AND a.is_active = ?';
+      countSql += ' AND ta.is_active = ?';
       countParams.push(is_active === 'true' ? 1 : 0);
     }
     if (search) {
-      countSql += ' AND a.name LIKE ?';
+      countSql += ' AND ga.name LIKE ?';
       countParams.push(`%${search}%`);
     }
 
@@ -159,23 +203,40 @@ router.get('/', async (req, res) => {
   }
 });
 
-// 獲取單個運動員詳情
+// Get single athlete details (by participation_id for backward compatibility)
 router.get('/:id', async (req, res) => {
   try {
-    const athleteId = req.params.id;
-    console.log('👤 獲取運動員詳情，ID:', athleteId);
+    const participationId = req.params.id;
+    console.log('👤 獲取運動員詳情，參與ID:', participationId);
 
     const athletes = await query(`
-      SELECT a.*, t.team_name, t.team_color, g.group_name, tour.tournament_name
-      FROM athletes a
-      LEFT JOIN teams t ON a.team_id = t.team_id
-      JOIN tournaments tour ON a.tournament_id = tour.tournament_id
-      LEFT JOIN team_groups g ON t.group_id = g.group_id
-      WHERE a.athlete_id = ?
-    `, [athleteId]);
+      SELECT 
+        ta.participation_id as athlete_id,
+        ga.athlete_id as global_athlete_id,
+        ga.name,
+        ta.jersey_number,
+        ta.position,
+        ga.age,
+        ta.is_active,
+        ga.avatar_url,
+        ta.tournament_id,
+        ta.team_id,
+        t.team_name,
+        t.team_color,
+        tg.group_name,
+        tour.tournament_name,
+        ta.joined_at as created_at,
+        ta.updated_at
+      FROM tournament_athletes ta
+      JOIN global_athletes ga ON ta.athlete_id = ga.athlete_id
+      JOIN tournaments tour ON ta.tournament_id = tour.tournament_id
+      LEFT JOIN teams t ON ta.team_id = t.team_id
+      LEFT JOIN team_groups tg ON t.group_id = tg.group_id
+      WHERE ta.participation_id = ?
+    `, [participationId]);
 
     if (athletes.length === 0) {
-      console.log('❌ 運動員不存在，ID:', athleteId);
+      console.log('❌ 運動員不存在，參與ID:', participationId);
       return res.status(404).json({
         success: false,
         message: '運動員不存在'
@@ -184,7 +245,7 @@ router.get('/:id', async (req, res) => {
 
     console.log('✅ 找到運動員:', athletes[0].name);
 
-    // 獲取運動員參與的比賽事件
+    // Get match events for this participation
     const events = await query(`
       SELECT me.*, m.match_number, m.match_date,
              t1.team_name as team1_name, t2.team_name as team2_name
@@ -192,9 +253,9 @@ router.get('/:id', async (req, res) => {
       JOIN matches m ON me.match_id = m.match_id
       JOIN teams t1 ON m.team1_id = t1.team_id
       JOIN teams t2 ON m.team2_id = t2.team_id
-      WHERE me.athlete_id = ?
+      WHERE me.participation_id = ?
       ORDER BY m.match_date DESC, me.event_time DESC
-    `, [athleteId]);
+    `, [participationId]);
 
     console.log('📊 找到比賽事件數量:', events.length);
 
@@ -215,13 +276,12 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// 創建運動員
+// Create athlete (can create new global athlete or add existing to tournament)
 router.post('/', async (req, res) => {
   try {
     console.log('👤 收到創建運動員請求:', req.body);
     
-    // 驗證輸入數據
-    const { error, value } = athleteSchema.validate(req.body);
+    const { error, value } = athleteCreateSchema.validate(req.body);
     if (error) {
       console.log('❌ 驗證失敗:', error.details[0].message);
       return res.status(400).json({
@@ -232,164 +292,140 @@ router.post('/', async (req, res) => {
     
     console.log('✅ 驗證通過，處理數據:', value);
 
-    const { tournament_id, team_id, name, jersey_number, position, age, is_active } = value;
+    const { 
+      name, age, tournament_id, team_id, jersey_number, 
+      position, is_active, existing_athlete_id 
+    } = value;
 
-    // 檢查錦標賽是否存在
-    const tournaments = await query(
-      'SELECT tournament_id, tournament_name FROM tournaments WHERE tournament_id = ?',
-      [tournament_id]
-    );
+    // Start transaction
+    const result = await transaction(async (conn) => {
+      let athleteId;
 
-    if (tournaments.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: '指定的錦標賽不存在'
-      });
-    }
-
-    // 如果指定了隊伍，進行隊伍相關驗證
-    if (team_id) {
-      // 檢查隊伍是否存在且屬於該錦標賽
-      const teams = await query(
-        'SELECT team_id, team_name FROM teams WHERE team_id = ? AND tournament_id = ?',
-        [team_id, tournament_id]
-      );
-
-      if (teams.length === 0) {
-        return res.status(404).json({
-          success: false,
-          message: '指定的隊伍不存在或不屬於該錦標賽'
-        });
-      }
-
-      // 檢查球衣號碼是否在該錦標賽的隊伍中已存在
-      const existingAthletes = await query(
-        'SELECT athlete_id FROM athletes WHERE tournament_id = ? AND team_id = ? AND jersey_number = ?',
-        [tournament_id, team_id, jersey_number]
-      );
-
-      if (existingAthletes.length > 0) {
-        return res.status(409).json({
-          success: false,
-          message: '該球衣號碼在隊伍中已存在'
-        });
-      }
-
-      // 檢查隊伍結構限制（1名進攻手，最多5名防守員）
-      const positionCounts = await query(`
-        SELECT position, COUNT(*) as count 
-        FROM athletes 
-        WHERE tournament_id = ? AND team_id = ? AND is_active = 1 
-        GROUP BY position
-      `, [tournament_id, team_id]);
-
-      const counts = {
-        attacker: 0,
-        defender: 0,
-        substitute: 0
-      };
-
-      positionCounts.forEach(pc => {
-        counts[pc.position] = pc.count;
-      });
-
-      if (position === 'attacker' && counts.attacker >= 1) {
-        return res.status(400).json({
-          success: false,
-          message: '每支隊伍只能有1名進攻手'
-        });
-      }
-
-      if (position === 'defender' && counts.defender >= 5) {
-        return res.status(400).json({
-          success: false,
-          message: '每支隊伍最多只能有5名防守員'
-        });
-      }
-    } else {
-      // 沒有指定隊伍時，檢查球衣號碼在整個錦標賽中是否唯一（可選邏輯）
-      const existingAthletes = await query(
-        'SELECT athlete_id FROM athletes WHERE tournament_id = ? AND jersey_number = ? AND team_id IS NOT NULL',
-        [tournament_id, jersey_number]
-      );
-
-      if (existingAthletes.length > 0) {
-        console.log('⚠️ 警告：球衣號碼在錦標賽中已被其他隊伍使用，但允許創建無隊伍運動員');
-      }
-    }
-
-
-    // 創建運動員
-    console.log('📝 準備插入數據庫:', { team_id, name, jersey_number, position, age, is_active });
-    
-    // 嘗試插入，如果age字段不存在則添加它
-    let result;
-    try {
-      if (team_id) {
-        result = await query(
-          'INSERT INTO athletes (tournament_id, team_id, name, jersey_number, position, age, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)',
-          [tournament_id, team_id, name, jersey_number, position, age, is_active]
-        );
-      } else {
-        result = await query(
-          'INSERT INTO athletes (tournament_id, name, jersey_number, position, age, is_active) VALUES (?, ?, ?, ?, ?, ?)',
-          [tournament_id, name, jersey_number, position, age, is_active]
-        );
-      }
-    } catch (insertError) {
-      if (insertError.code === 'ER_BAD_FIELD_ERROR' && insertError.message.includes('age')) {
-        console.log('🔧 age字段不存在，正在添加...');
+      if (existing_athlete_id) {
+        // Adding existing athlete to new tournament
+        athleteId = existing_athlete_id;
         
-        // 添加age字段
-        await query('ALTER TABLE athletes ADD COLUMN age INT NOT NULL DEFAULT 25');
-        console.log('✅ age字段已添加，重新嘗試插入...');
+        // Verify athlete exists
+        const [existingAthlete] = await conn.execute(
+          'SELECT athlete_id FROM global_athletes WHERE athlete_id = ?',
+          [athleteId]
+        );
         
-        // 重新嘗試插入
-        if (team_id) {
-          result = await query(
-            'INSERT INTO athletes (tournament_id, team_id, name, jersey_number, position, age, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [tournament_id, team_id, name, jersey_number, position, age, is_active]
-          );
-        } else {
-          result = await query(
-            'INSERT INTO athletes (tournament_id, name, jersey_number, position, age, is_active) VALUES (?, ?, ?, ?, ?, ?)',
-            [tournament_id, name, jersey_number, position, age, is_active]
-          );
+        if (existingAthlete.length === 0) {
+          throw new Error('指定的運動員不存在');
         }
       } else {
-        throw insertError; // 重新拋出其他錯誤
+        // Create new global athlete
+        const [athleteResult] = await conn.execute(
+          'INSERT INTO global_athletes (name, age) VALUES (?, ?)',
+          [name, age]
+        );
+        athleteId = athleteResult.insertId;
+        console.log('✅ 創建全局運動員成功，ID:', athleteId);
       }
-    }
 
-    console.log('✅ 運動員創建成功，ID:', result.insertId);
+      // Check if athlete already participates in this tournament
+      const [existingParticipation] = await conn.execute(
+        'SELECT participation_id FROM tournament_athletes WHERE athlete_id = ? AND tournament_id = ?',
+        [athleteId, tournament_id]
+      );
+
+      if (existingParticipation.length > 0) {
+        throw new Error('運動員已參與此錦標賽');
+      }
+
+      // Validate tournament and team constraints
+      if (team_id) {
+        // Check team exists and belongs to tournament
+        const [teams] = await conn.execute(
+          'SELECT team_id FROM teams WHERE team_id = ? AND tournament_id = ?',
+          [team_id, tournament_id]
+        );
+
+        if (teams.length === 0) {
+          throw new Error('指定的隊伍不存在或不屬於該錦標賽');
+        }
+
+        // Check jersey number uniqueness
+        const [jerseyCheck] = await conn.execute(
+          'SELECT participation_id FROM tournament_athletes WHERE tournament_id = ? AND team_id = ? AND jersey_number = ?',
+          [tournament_id, team_id, jersey_number]
+        );
+
+        if (jerseyCheck.length > 0) {
+          throw new Error('該球衣號碼在隊伍中已存在');
+        }
+
+        // Check team composition limits
+        const [positionCounts] = await conn.execute(`
+          SELECT position, COUNT(*) as count 
+          FROM tournament_athletes 
+          WHERE tournament_id = ? AND team_id = ? AND is_active = 1 
+          GROUP BY position
+        `, [tournament_id, team_id]);
+
+        const counts = { attacker: 0, defender: 0, substitute: 0 };
+        positionCounts.forEach(pc => {
+          counts[pc.position] = pc.count;
+        });
+
+        if (position === 'attacker' && counts.attacker >= 1) {
+          throw new Error('每支隊伍只能有1名進攻手');
+        }
+
+        if (position === 'defender' && counts.defender >= 5) {
+          throw new Error('每支隊伍最多只能有5名防守員');
+        }
+      }
+
+      // Create tournament participation
+      const [participationResult] = await conn.execute(
+        'INSERT INTO tournament_athletes (athlete_id, tournament_id, team_id, jersey_number, position, is_active) VALUES (?, ?, ?, ?, ?, ?)',
+        [athleteId, tournament_id, team_id || null, jersey_number, position, is_active]
+      );
+
+      console.log('✅ 運動員創建/加入錦標賽成功，參與ID:', participationResult.insertId);
+
+      return {
+        athlete_id: participationResult.insertId, // Return participation_id for backward compatibility
+        global_athlete_id: athleteId,
+        participation_id: participationResult.insertId
+      };
+    });
 
     res.status(201).json({
       success: true,
-      message: '運動員創建成功',
-      data: {
-        athlete_id: result.insertId
-      }
+      message: existing_athlete_id ? '運動員成功加入錦標賽' : '運動員創建成功',
+      data: result
     });
 
   } catch (error) {
     console.error('❌ 創建運動員錯誤:', error);
-    console.error('❌ 錯誤詳情:', error.message);
-    console.error('❌ SQL錯誤代碼:', error.code);
     
-    // 根據不同的錯誤類型返回不同的錯誤信息
     let errorMessage = '創建運動員失敗';
+    let statusCode = 500;
     
-    if (error.code === 'ER_NO_SUCH_TABLE') {
-      errorMessage = '數據庫表不存在，請檢查數據庫初始化';
-    } else if (error.code === 'ER_BAD_FIELD_ERROR') {
-      errorMessage = '數據庫字段錯誤，請檢查數據庫結構';
+    if (error.message === '指定的運動員不存在') {
+      errorMessage = error.message;
+      statusCode = 404;
+    } else if (error.message === '運動員已參與此錦標賽') {
+      errorMessage = error.message;
+      statusCode = 409;
+    } else if (error.message === '指定的隊伍不存在或不屬於該錦標賽') {
+      errorMessage = error.message;
+      statusCode = 404;
+    } else if (error.message === '該球衣號碼在隊伍中已存在') {
+      errorMessage = error.message;
+      statusCode = 409;
+    } else if (error.message === '每支隊伍只能有1名進攻手' || error.message === '每支隊伍最多只能有5名防守員') {
+      errorMessage = error.message;
+      statusCode = 400;
     } else if (error.code === 'ER_DUP_ENTRY') {
       errorMessage = '該球衣號碼在隊伍中已存在';
-    } else if (error.code === 'ER_NO_REFERENCED_ROW_2') {
-      errorMessage = '指定的隊伍不存在';
+      statusCode = 409;
     }
     
-    res.status(500).json({
+    res.status(statusCode).json({
       success: false,
       message: errorMessage,
       error: process.env.NODE_ENV === 'development' ? error.message : undefined
@@ -397,13 +433,28 @@ router.post('/', async (req, res) => {
   }
 });
 
-// 更新運動員
+// Update athlete participation
 router.put('/:id', async (req, res) => {
   try {
-    const athleteId = req.params.id;
+    const participationId = req.params.id;
     
-    // 驗證輸入數據
-    const { error, value } = athleteSchema.validate(req.body);
+    // Get current participation info
+    const currentParticipation = await query(
+      'SELECT * FROM tournament_athletes WHERE participation_id = ?',
+      [participationId]
+    );
+
+    if (currentParticipation.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: '運動員參與記錄不存在'
+      });
+    }
+
+    const current = currentParticipation[0];
+    
+    // Validate update data
+    const { error, value } = athleteUpdateSchema.validate(req.body);
     if (error) {
       return res.status(400).json({
         success: false,
@@ -411,117 +462,36 @@ router.put('/:id', async (req, res) => {
       });
     }
 
-    const { tournament_id, team_id, name, jersey_number, position, age, is_active } = value;
+    const { name, age, team_id, jersey_number, position, is_active } = value;
 
-    // 檢查運動員是否存在
-    const existingAthletes = await query(
-      'SELECT athlete_id, team_id, tournament_id FROM athletes WHERE athlete_id = ?',
-      [athleteId]
-    );
-
-    if (existingAthletes.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: '運動員不存在'
-      });
-    }
-
-    // 檢查錦標賽是否存在
-    const tournaments = await query(
-      'SELECT tournament_id FROM tournaments WHERE tournament_id = ?',
-      [tournament_id]
-    );
-
-    if (tournaments.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: '指定的錦標賽不存在'
-      });
-    }
-
-    // 只有當提供了 team_id 時才檢查隊伍是否存在且屬於該錦標賽
-    if (team_id) {
-      const teams = await query(
-        'SELECT team_id FROM teams WHERE team_id = ? AND tournament_id = ?',
-        [team_id, tournament_id]
+    // Start transaction
+    await transaction(async (conn) => {
+      // Update global athlete info
+      await conn.execute(
+        'UPDATE global_athletes SET name = ?, age = ? WHERE athlete_id = ?',
+        [name, age, current.athlete_id]
       );
 
-      if (teams.length === 0) {
-        return res.status(404).json({
-          success: false,
-          message: '指定的隊伍不存在或不屬於該錦標賽'
-        });
-      }
-    }
+      // Validate team and jersey constraints
+      if (team_id) {
+        const [jerseyCheck] = await conn.execute(
+          'SELECT participation_id FROM tournament_athletes WHERE tournament_id = ? AND team_id = ? AND jersey_number = ? AND participation_id != ?',
+          [current.tournament_id, team_id, jersey_number, participationId]
+        );
 
-    // 檢查球衣號碼是否與其他運動員重複
-    if (team_id) {
-      const duplicateAthletes = await query(
-        'SELECT athlete_id FROM athletes WHERE tournament_id = ? AND team_id = ? AND jersey_number = ? AND athlete_id != ?',
-        [tournament_id, team_id, jersey_number, athleteId]
-      );
-
-      if (duplicateAthletes.length > 0) {
-        return res.status(409).json({
-          success: false,
-          message: '該球衣號碼在隊伍中已存在'
-        });
-      }
-    }
-
-    // 如果改變了位置且有隊伍，檢查隊伍結構限制
-    if (team_id) {
-      const currentAthlete = await query(
-        'SELECT position FROM athletes WHERE athlete_id = ?',
-        [athleteId]
-      );
-
-      if (currentAthlete[0].position !== position) {
-        const positionCounts = await query(`
-          SELECT position, COUNT(*) as count 
-          FROM athletes 
-          WHERE tournament_id = ? AND team_id = ? AND is_active = 1 AND athlete_id != ?
-          GROUP BY position
-        `, [tournament_id, team_id, athleteId]);
-
-        const counts = {
-          attacker: 0,
-          defender: 0,
-          substitute: 0
-        };
-
-        positionCounts.forEach(pc => {
-          counts[pc.position] = pc.count;
-        });
-
-        if (position === 'attacker' && counts.attacker >= 1) {
-          return res.status(400).json({
-            success: false,
-            message: '每支隊伍只能有1名進攻手'
-          });
-        }
-
-        if (position === 'defender' && counts.defender >= 5) {
-          return res.status(400).json({
-            success: false,
-            message: '每支隊伍最多只能有5名防守員'
-          });
+        if (jerseyCheck.length > 0) {
+          throw new Error('該球衣號碼在隊伍中已存在');
         }
       }
-    }
 
-    // 更新運動員
-    console.log('📝 準備更新運動員:', { athleteId, team_id, name, jersey_number, position, age, is_active });
-    
-    // 確保 team_id 為 null 而不是 undefined
-    const finalTeamId = team_id === undefined ? null : team_id;
-    
-    await query(
-      'UPDATE athletes SET tournament_id = ?, team_id = ?, name = ?, jersey_number = ?, position = ?, age = ?, is_active = ? WHERE athlete_id = ?',
-      [tournament_id, finalTeamId, name, jersey_number, position, age, is_active, athleteId]
-    );
+      // Update tournament participation
+      await conn.execute(
+        'UPDATE tournament_athletes SET team_id = ?, jersey_number = ?, position = ?, is_active = ? WHERE participation_id = ?',
+        [team_id || null, jersey_number, position, is_active, participationId]
+      );
 
-    console.log('✅ 運動員更新成功');
+      console.log('✅ 運動員更新成功');
+    });
 
     res.json({
       success: true,
@@ -529,49 +499,36 @@ router.put('/:id', async (req, res) => {
     });
 
   } catch (error) {
-    // 根據不同的錯誤類型返回不同的錯誤信息
-    let errorMessage = '更新運動員失敗';
-    
-    if (error.code === 'ER_BAD_FIELD_ERROR') {
-      errorMessage = '數據庫字段錯誤，請檢查數據庫結構';
-    } else if (error.code === 'ER_DUP_ENTRY') {
-      errorMessage = '該球衣號碼在隊伍中已存在';
-    } else if (error.code === 'ER_NO_REFERENCED_ROW_2') {
-      errorMessage = '指定的隊伍不存在';
-    } else if (error.code === 'ER_DATA_TOO_LONG') {
-      errorMessage = '輸入的數據過長';
-    }
-    
+    console.error('更新運動員錯誤:', error);
     res.status(500).json({
       success: false,
-      message: errorMessage,
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      message: '更新運動員失敗'
     });
   }
 });
 
-// 刪除運動員
+// Delete athlete participation (remove from tournament)
 router.delete('/:id', async (req, res) => {
   try {
-    const athleteId = req.params.id;
+    const participationId = req.params.id;
 
-    // 檢查運動員是否存在
-    const athletes = await query(
-      'SELECT athlete_id FROM athletes WHERE athlete_id = ?',
-      [athleteId]
+    // Check if participation exists
+    const participation = await query(
+      'SELECT * FROM tournament_athletes WHERE participation_id = ?',
+      [participationId]
     );
 
-    if (athletes.length === 0) {
+    if (participation.length === 0) {
       return res.status(404).json({
         success: false,
-        message: '運動員不存在'
+        message: '運動員參與記錄不存在'
       });
     }
 
-    // 檢查是否有相關的比賽事件
+    // Check for match events
     const events = await query(
-      'SELECT event_id FROM match_events WHERE athlete_id = ?',
-      [athleteId]
+      'SELECT event_id FROM match_events WHERE participation_id = ?',
+      [participationId]
     );
 
     if (events.length > 0) {
@@ -581,15 +538,15 @@ router.delete('/:id', async (req, res) => {
       });
     }
 
-    // 刪除運動員
+    // Delete participation
     await query(
-      'DELETE FROM athletes WHERE athlete_id = ?',
-      [athleteId]
+      'DELETE FROM tournament_athletes WHERE participation_id = ?',
+      [participationId]
     );
 
     res.json({
       success: true,
-      message: '運動員刪除成功'
+      message: '運動員已從錦標賽中移除'
     });
 
   } catch (error) {
@@ -601,12 +558,11 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// 獲取隊伍的運動員統計
+// Get team athlete stats (backward compatible)
 router.get('/team/:teamId/stats', async (req, res) => {
   try {
     const teamId = req.params.teamId;
 
-    // 檢查隊伍是否存在
     const teams = await query(
       'SELECT team_id, team_name FROM teams WHERE team_id = ?',
       [teamId]
@@ -619,31 +575,32 @@ router.get('/team/:teamId/stats', async (req, res) => {
       });
     }
 
-    // 獲取運動員統計
+    // Get athlete stats using new structure
     const stats = await query(`
       SELECT 
-        a.athlete_id,
-        a.name,
-        a.jersey_number,
-        a.position,
+        ta.participation_id as athlete_id,
+        ga.name,
+        ta.jersey_number,
+        ta.position,
         COUNT(CASE WHEN me.event_type = 'goal' THEN 1 END) as goals,
         COUNT(CASE WHEN me.event_type = 'foul' THEN 1 END) as fouls,
         COUNT(CASE WHEN me.event_type = 'penalty' THEN 1 END) as penalties,
         COUNT(me.event_id) as total_events
-      FROM athletes a
-      LEFT JOIN match_events me ON a.athlete_id = me.athlete_id
-      WHERE a.team_id = ?
-      GROUP BY a.athlete_id
-      ORDER BY goals DESC, a.jersey_number
+      FROM tournament_athletes ta
+      JOIN global_athletes ga ON ta.athlete_id = ga.athlete_id
+      LEFT JOIN match_events me ON ta.participation_id = me.participation_id
+      WHERE ta.team_id = ?
+      GROUP BY ta.participation_id
+      ORDER BY goals DESC, ta.jersey_number
     `, [teamId]);
 
-    // 獲取位置統計
+    // Get position stats
     const positionStats = await query(`
       SELECT 
         position,
         COUNT(*) as count,
         COUNT(CASE WHEN is_active = 1 THEN 1 END) as active_count
-      FROM athletes 
+      FROM tournament_athletes 
       WHERE team_id = ?
       GROUP BY position
     `, [teamId]);
@@ -662,174 +619,6 @@ router.get('/team/:teamId/stats', async (req, res) => {
     res.status(500).json({
       success: false,
       message: '獲取隊伍運動員統計失敗'
-    });
-  }
-});
-
-// 批量更新運動員狀態
-router.patch('/batch/status', async (req, res) => {
-  try {
-    const { athlete_ids, is_active } = req.body;
-
-    if (!Array.isArray(athlete_ids) || athlete_ids.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: '運動員ID列表不能為空'
-      });
-    }
-
-    if (typeof is_active !== 'boolean') {
-      return res.status(400).json({
-        success: false,
-        message: '狀態值必須是布爾類型'
-      });
-    }
-
-    // 批量更新狀態
-    const placeholders = athlete_ids.map(() => '?').join(',');
-    await query(
-      `UPDATE athletes SET is_active = ? WHERE athlete_id IN (${placeholders})`,
-      [is_active, ...athlete_ids]
-    );
-
-    res.json({
-      success: true,
-      message: `成功更新${athlete_ids.length}名運動員的狀態`
-    });
-
-  } catch (error) {
-    console.error('批量更新運動員狀態錯誤:', error);
-    res.status(500).json({
-      success: false,
-      message: '批量更新運動員狀態失敗'
-    });
-  }
-});
-
-// Upload avatar for athlete
-router.post('/:id/avatar', authenticateToken, (req, res) => {
-  // Check if multer is available
-  if (!isMulterAvailable()) {
-    return res.status(503).json({
-      success: false,
-      message: '文件上傳服務暫時不可用，請稍後再試'
-    });
-  }
-
-  uploadAvatar(req, res, async (err) => {
-    if (err) {
-      return handleUploadError(err, req, res);
-    }
-
-    try {
-      const athleteId = req.params.id;
-      
-      if (!req.file) {
-        return res.status(400).json({
-          success: false,
-          message: '請選擇要上傳的圖片文件'
-        });
-      }
-
-      // Check if athlete exists
-      const athlete = await query(
-        'SELECT athlete_id, avatar_url FROM athletes WHERE athlete_id = ?',
-        [athleteId]
-      );
-
-      if (athlete.length === 0) {
-        // Delete uploaded file if athlete doesn't exist
-        if (fs.existsSync(req.file.path)) {
-          fs.unlinkSync(req.file.path);
-        }
-        return res.status(404).json({
-          success: false,
-          message: '運動員不存在'
-        });
-      }
-
-      // Delete old avatar file if exists
-      if (athlete[0].avatar_url) {
-        const oldAvatarPath = path.join(__dirname, '../uploads/avatars', path.basename(athlete[0].avatar_url));
-        if (fs.existsSync(oldAvatarPath)) {
-          fs.unlinkSync(oldAvatarPath);
-        }
-      }
-
-      // Generate avatar URL
-      const avatarUrl = `/api/uploads/avatars/${req.file.filename}`;
-
-      // Update athlete with new avatar URL
-      await query(
-        'UPDATE athletes SET avatar_url = ? WHERE athlete_id = ?',
-        [avatarUrl, athleteId]
-      );
-
-      res.json({
-        success: true,
-        message: '頭像上傳成功',
-        data: {
-          avatar_url: avatarUrl,
-          filename: req.file.filename
-        }
-      });
-
-    } catch (error) {
-      console.error('上傳頭像錯誤:', error);
-      // Delete uploaded file on error
-      if (req.file && fs.existsSync(req.file.path)) {
-        fs.unlinkSync(req.file.path);
-      }
-      res.status(500).json({
-        success: false,
-        message: '頭像上傳失敗'
-      });
-    }
-  });
-});
-
-// Delete athlete avatar
-router.delete('/:id/avatar', authenticateToken, async (req, res) => {
-  try {
-    const athleteId = req.params.id;
-
-    // Get current avatar
-    const athlete = await query(
-      'SELECT avatar_url FROM athletes WHERE athlete_id = ?',
-      [athleteId]
-    );
-
-    if (athlete.length === 0) {
-      return res.status(404).json({
-        success: false,
-        message: '運動員不存在'
-      });
-    }
-
-    // Delete avatar file if exists
-    if (athlete[0].avatar_url) {
-      const avatarPath = path.join(__dirname, '../uploads/avatars', path.basename(athlete[0].avatar_url));
-      if (fs.existsSync(avatarPath)) {
-        fs.unlinkSync(avatarPath);
-      }
-    }
-
-    // Remove avatar URL from database
-    await query(
-      'UPDATE athletes SET avatar_url = NULL WHERE athlete_id = ?',
-      [athleteId]
-    );
-
-    res.json({
-      success: true,
-      message: '頭像刪除成功'
-    });
-
-  } catch (error) {
-    console.error('刪除頭像錯誤:', error);
-    res.status(500).json({
-      success: false,
-      message: '頭像刪除失敗'
     });
   }
 });
