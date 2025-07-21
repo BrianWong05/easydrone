@@ -66,6 +66,7 @@ CREATE TABLE IF NOT EXISTS athletes (
     position ENUM('attacker', 'defender', 'substitute') NOT NULL,
     age INT NOT NULL,
     is_active BOOLEAN DEFAULT TRUE,
+    avatar_url VARCHAR(500) NULL COMMENT '運動員頭像URL',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (team_id) REFERENCES teams(team_id) ON DELETE CASCADE,
@@ -73,7 +74,7 @@ CREATE TABLE IF NOT EXISTS athletes (
     UNIQUE KEY unique_tournament_jersey_when_no_team (tournament_id, jersey_number, team_id),
     INDEX idx_athletes_tournament_id (tournament_id),
     INDEX idx_athletes_team_id (team_id)
-) COMMENT = '運動員表 - 包含錦標賽範圍的運動員信息，支持無隊伍運動員';
+) COMMENT = '運動員表 - 包含錦標賽範圍的運動員信息，支持無隊伍運動員和頭像';
 
 -- 比賽表
 CREATE TABLE IF NOT EXISTS matches (

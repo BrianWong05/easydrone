@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -76,6 +77,9 @@ app.use((req, res, next) => {
   
   next();
 });
+
+// Static file serving for uploads
+app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // 設置字符編碼
 app.use((req, res, next) => {

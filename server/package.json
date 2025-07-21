@@ -9,23 +9,29 @@
     "test": "jest"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "mysql2": "^3.6.5",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2",
-    "socket.io": "^4.7.4",
-    "helmet": "^7.1.0",
+    "express": "^4.18.2",
     "express-rate-limit": "^7.1.5",
+    "helmet": "^7.1.0",
     "joi": "^17.11.0",
-    "moment": "^2.29.4"
+    "jsonwebtoken": "^9.0.2",
+    "moment": "^2.29.4",
+    "multer": "^2.0.1",
+    "mysql2": "^3.6.5",
+    "socket.io": "^4.7.4"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2",
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.2"
   },
-  "keywords": ["drone", "soccer", "api", "nodejs"],
+  "keywords": [
+    "drone",
+    "soccer",
+    "api",
+    "nodejs"
+  ],
   "author": "Drone Soccer System",
   "license": "MIT"
 }

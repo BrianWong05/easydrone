@@ -27,6 +27,7 @@ import {
   UserSwitchOutlined,
   TrophyOutlined
 } from '@ant-design/icons';
+import AvatarUpload from '../../components/AvatarUpload';
 import { useTranslation } from 'react-i18next';
 
 const { Title, Text } = Typography;
@@ -49,6 +50,7 @@ const TournamentAthleteEdit = () => {
     substitute: 0,
     total: 0
   });
+  const [avatarUrl, setAvatarUrl] = useState(null);
 
   // Load athlete data
   const loadAthleteData = async () => {
@@ -60,6 +62,7 @@ const TournamentAthleteEdit = () => {
         const athleteData = data.data.athlete;
         setAthlete(athleteData);
         setSelectedTeam(athleteData.team_id);
+        setAvatarUrl(athleteData.avatar_url);
         
         // Set form values
         form.setFieldsValue({
@@ -300,6 +303,19 @@ const TournamentAthleteEdit = () => {
               <Text className="text-gray-500">
                 {t('athlete:form.editDescription')}
               </Text>
+            </div>
+
+            {/* Avatar Upload Section */}
+            <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <h4 className="text-md font-semibold text-blue-700 mb-3">
+                {t('athlete:actions.uploadAvatar')}
+              </h4>
+              <AvatarUpload
+                athleteId={athleteId}
+                currentAvatar={avatarUrl}
+                onAvatarChange={setAvatarUrl}
+                size={80}
+              />
             </div>
 
             <Form

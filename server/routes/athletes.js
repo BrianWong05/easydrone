@@ -1,7 +1,10 @@
 const express = require('express');
 const Joi = require('joi');
+const path = require('path');
+const fs = require('fs');
 const { query, transaction } = require('../config/database');
 const { authenticateToken } = require('../middleware/auth');
+const { uploadAvatar, handleUploadError, isMulterAvailable } = require('../middleware/upload');
 
 const router = express.Router();
 
@@ -33,7 +36,8 @@ const athleteSchema = Joi.object({
     'number.max': '年齡必須在16-50歲之間',
     'any.required': '年齡是必填項'
   }),
-  is_active: Joi.boolean().default(true)
+  is_active: Joi.boolean().default(true),
+  avatar_url: Joi.string().uri().optional().allow(null, '')
 });
 
 // 獲取所有運動員
@@ -698,6 +702,134 @@ router.patch('/batch/status', async (req, res) => {
     res.status(500).json({
       success: false,
       message: '批量更新運動員狀態失敗'
+    });
+  }
+});
+
+// Upload avatar for athlete
+router.post('/:id/avatar', authenticateToken, (req, res) => {
+  // Check if multer is available
+  if (!isMulterAvailable()) {
+    return res.status(503).json({
+      success: false,
+      message: '文件上傳服務暫時不可用，請稍後再試'
+    });
+  }
+
+  uploadAvatar(req, res, async (err) => {
+    if (err) {
+      return handleUploadError(err, req, res);
+    }
+
+    try {
+      const athleteId = req.params.id;
+      
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          message: '請選擇要上傳的圖片文件'
+        });
+      }
+
+      // Check if athlete exists
+      const athlete = await query(
+        'SELECT athlete_id, avatar_url FROM athletes WHERE athlete_id = ?',
+        [athleteId]
+      );
+
+      if (athlete.length === 0) {
+        // Delete uploaded file if athlete doesn't exist
+        if (fs.existsSync(req.file.path)) {
+          fs.unlinkSync(req.file.path);
+        }
+        return res.status(404).json({
+          success: false,
+          message: '運動員不存在'
+        });
+      }
+
+      // Delete old avatar file if exists
+      if (athlete[0].avatar_url) {
+        const oldAvatarPath = path.join(__dirname, '../uploads/avatars', path.basename(athlete[0].avatar_url));
+        if (fs.existsSync(oldAvatarPath)) {
+          fs.unlinkSync(oldAvatarPath);
+        }
+      }
+
+      // Generate avatar URL
+      const avatarUrl = `/api/uploads/avatars/${req.file.filename}`;
+
+      // Update athlete with new avatar URL
+      await query(
+        'UPDATE athletes SET avatar_url = ? WHERE athlete_id = ?',
+        [avatarUrl, athleteId]
+      );
+
+      res.json({
+        success: true,
+        message: '頭像上傳成功',
+        data: {
+          avatar_url: avatarUrl,
+          filename: req.file.filename
+        }
+      });
+
+    } catch (error) {
+      console.error('上傳頭像錯誤:', error);
+      // Delete uploaded file on error
+      if (req.file && fs.existsSync(req.file.path)) {
+        fs.unlinkSync(req.file.path);
+      }
+      res.status(500).json({
+        success: false,
+        message: '頭像上傳失敗'
+      });
+    }
+  });
+});
+
+// Delete athlete avatar
+router.delete('/:id/avatar', authenticateToken, async (req, res) => {
+  try {
+    const athleteId = req.params.id;
+
+    // Get current avatar
+    const athlete = await query(
+      'SELECT avatar_url FROM athletes WHERE athlete_id = ?',
+      [athleteId]
+    );
+
+    if (athlete.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: '運動員不存在'
+      });
+    }
+
+    // Delete avatar file if exists
+    if (athlete[0].avatar_url) {
+      const avatarPath = path.join(__dirname, '../uploads/avatars', path.basename(athlete[0].avatar_url));
+      if (fs.existsSync(avatarPath)) {
+        fs.unlinkSync(avatarPath);
+      }
+    }
+
+    // Remove avatar URL from database
+    await query(
+      'UPDATE athletes SET avatar_url = NULL WHERE athlete_id = ?',
+      [athleteId]
+    );
+
+    res.json({
+      success: true,
+      message: '頭像刪除成功'
+    });
+
+  } catch (error) {
+    console.error('刪除頭像錯誤:', error);
+    res.status(500).json({
+      success: false,
+      message: '頭像刪除失敗'
     });
   }
 });

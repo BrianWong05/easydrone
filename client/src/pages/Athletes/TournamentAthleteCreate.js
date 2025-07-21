@@ -24,6 +24,7 @@ import {
   ArrowLeftOutlined,
   InfoCircleOutlined
 } from '@ant-design/icons';
+import AvatarUpload from '../../components/AvatarUpload';
 import { useTranslation } from 'react-i18next';
 
 const { Option } = Select;
@@ -43,6 +44,8 @@ const TournamentAthleteCreate = () => {
     substitutes: 0,
     total: 0
   });
+  const [createdAthleteId, setCreatedAthleteId] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState(null);
 
   // Load teams for the tournament
   const loadTeams = async () => {
@@ -158,7 +161,11 @@ const TournamentAthleteCreate = () => {
 
       if (data.success) {
         message.success(t('athlete:messages.athleteCreated'));
-        navigate(`/tournaments/${tournamentId}/athletes`);
+        setCreatedAthleteId(data.data.athlete_id);
+        // Don't navigate immediately if we want to allow avatar upload
+        setTimeout(() => {
+          navigate(`/tournaments/${tournamentId}/athletes`);
+        }, 2000);
       } else {
         message.error(data.message || t('athlete:messages.createFailed'));
       }
@@ -238,6 +245,21 @@ const TournamentAthleteCreate = () => {
               </h3>
               <p className="text-gray-500 text-sm">{t('athlete:form.basicInfoDescription')}</p>
             </div>
+
+            {/* Avatar Upload Section */}
+            {createdAthleteId && (
+              <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <h4 className="text-md font-semibold text-green-700 mb-3">
+                  {t('athlete:actions.uploadAvatar')}
+                </h4>
+                <AvatarUpload
+                  athleteId={createdAthleteId}
+                  currentAvatar={avatarUrl}
+                  onAvatarChange={setAvatarUrl}
+                  size={80}
+                />
+              </div>
+            )}
 
             <Form
               form={form}

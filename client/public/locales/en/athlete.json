@@ -129,7 +129,37 @@
     "deleteConfirmation": "Delete Athlete",
     "deleteWarning": "This action cannot be undone",
     "noStatistics": "No statistics available",
-    "noEvents": "No match events found"
+    "noEvents": "No match events found",
+    "athleteIdRequired": "Athlete ID is required",
+    "onlyImageFiles": "Only image files are allowed",
+    "imageTooLarge": "Image size must be less than 5MB",
+    "avatarUploadSuccess": "Avatar uploaded successfully",
+    "avatarUploadFailed": "Failed to upload avatar",
+    "avatarDeleteSuccess": "Avatar deleted successfully",
+    "avatarDeleteFailed": "Failed to delete avatar",
+    "confirmDeleteAvatar": "Delete Avatar",
+    "deleteAvatarWarning": "Are you sure you want to delete this avatar?"
+  },
+  "actions": {
+    "create": "Create Athlete",
+    "edit": "Edit Athlete",
+    "delete": "Delete Athlete",
+    "view": "View Details",
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back to List",
+    "addToTeam": "Add to Team",
+    "removeFromTeam": "Remove from Team",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "batchActivate": "Batch Activate",
+    "batchDeactivate": "Batch Deactivate",
+    "uploadAvatar": "Upload Avatar",
+    "changeAvatar": "Change Avatar",
+    "deleteAvatar": "Delete Avatar"
+  },
+  "labels": {
+    "avatarPreview": "Avatar Preview"
   },
   "buttons": {
     "update": "Update Athlete"
