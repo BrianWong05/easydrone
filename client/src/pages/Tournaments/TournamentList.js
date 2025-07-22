@@ -40,8 +40,8 @@ const TournamentList = () => {
     total: 0
   });
   const [filters, setFilters] = useState({
-    status: '',
-    type: '',
+    status: undefined,
+    type: undefined,
     search: ''
   });
 
@@ -392,7 +392,7 @@ const TournamentList = () => {
             
             <Select
               placeholder={t('tournament:list.selectStatus')}
-              className="w-30"
+              style={{ minWidth: 120 }}
               value={filters.status}
               onChange={(value) => setFilters({ ...filters, status: value })}
               allowClear
@@ -404,7 +404,7 @@ const TournamentList = () => {
             
             <Select
               placeholder={t('tournament:list.selectType')}
-              className="w-30"
+              style={{ minWidth: 120 }}
               value={filters.type}
               onChange={(value) => setFilters({ ...filters, type: value })}
               allowClear
