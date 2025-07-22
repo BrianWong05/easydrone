@@ -57,6 +57,10 @@ const MainLayout = ({ children }) => {
           key: "/global-athletes",
           label: <Link to="/global-athletes">{t('navigation.globalAthletes')}</Link>,
         },
+        {
+          key: "/global-athletes/create",
+          label: <Link to="/global-athletes/create">{t('navigation.addAthlete')}</Link>,
+        },
       ],
     },
   ];
@@ -70,7 +74,10 @@ const MainLayout = ({ children }) => {
     // Handle root path
     if (path === "/") return ["/"];
     
-    // Handle global athletes
+    // Handle global athletes create page
+    if (path === "/global-athletes/create") return ["/global-athletes/create"];
+    
+    // Handle global athletes list
     if (path.startsWith("/global-athletes")) return ["/global-athletes"];
     
     // Handle tournament creation
@@ -107,6 +114,7 @@ const MainLayout = ({ children }) => {
           trigger={null}
           collapsible
           collapsed={collapsed}
+          width={250}
           className="overflow-auto h-screen fixed left-0 top-0 bottom-0 z-[2]"
         >
           <div
@@ -127,7 +135,7 @@ const MainLayout = ({ children }) => {
       )}
       <Layout 
         className="min-h-screen"
-        style={{ marginLeft: shouldHideSidebar ? 0 : collapsed ? 80 : 200 }}
+        style={{ marginLeft: shouldHideSidebar ? 0 : collapsed ? 80 : 250 }}
       >
         <Header className="px-6 bg-white flex items-center justify-between shadow-sm sticky top-0 z-[1000]">
           {!shouldHideSidebar && (
