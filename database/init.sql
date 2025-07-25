@@ -167,7 +167,7 @@ CREATE TABLE IF NOT EXISTS match_events (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (match_id) REFERENCES matches(match_id) ON DELETE CASCADE,
     FOREIGN KEY (team_id) REFERENCES teams(team_id) ON DELETE CASCADE,
-    FOREIGN KEY (athlete_id) REFERENCES athletes(athlete_id) ON DELETE SET NULL,
+    FOREIGN KEY (athlete_id) REFERENCES global_athletes(athlete_id) ON DELETE SET NULL,
     FOREIGN KEY (participation_id) REFERENCES tournament_athletes(participation_id) ON DELETE CASCADE,
     INDEX idx_match_events_match_id (match_id),
     INDEX idx_match_events_athlete_id (athlete_id),
@@ -211,9 +211,22 @@ CREATE TABLE IF NOT EXISTS knockout_brackets (
     FOREIGN KEY (next_match_id) REFERENCES matches(match_id) ON DELETE SET NULL
 );
 
+-- Create best_teams_cache table for storing calculated stats for public display
+CREATE TABLE IF NOT EXISTS best_teams_cache (
+  cache_id INT AUTO_INCREMENT PRIMARY KEY,
+  tournament_id INT,
+  stats_data JSON NOT NULL,
+  is_public TINYINT(1) DEFAULT 1 COMMENT 'Whether the stats are visible to public clients (1=visible, 0=hidden)',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_created_at (created_at),
+  INDEX idx_tournament_id (tournament_id),
+  INDEX idx_is_public (is_public),
+  FOREIGN KEY (tournament_id) REFERENCES tournaments(tournament_id) ON DELETE CASCADE
+);
+
 -- 插入默認管理員賬號 (密碼: admin123)
 INSERT IGNORE INTO admins (username, password, email) VALUES 
-('admin', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'admin@dronesoccer.com');
+('admin', '$2a$10$QW4/9wfNnqSUTqWTUNNHg.Y4j1TfX657EJ17H3gTxQL8GECSGjdKq', 'admin@dronesoccer.com');
 
 -- 初始化小組積分表 (錦標賽範圍)
 INSERT INTO group_standings (group_id, team_id, tournament_id) 
@@ -321,18 +334,6 @@ END$$
 
 DELIMITER ;
 
--- Create best_teams_cache table for storing calculated stats for public display
-CREATE TABLE IF NOT EXISTS best_teams_cache (
-  cache_id INT AUTO_INCREMENT PRIMARY KEY,
-  tournament_id INT,
-  stats_data JSON NOT NULL,
-  is_public TINYINT(1) DEFAULT 1 COMMENT 'Whether the stats are visible to public clients (1=visible, 0=hidden)',
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  INDEX idx_created_at (created_at),
-  INDEX idx_tournament_id (tournament_id),
-  INDEX idx_is_public (is_public),
-  FOREIGN KEY (tournament_id) REFERENCES tournaments(tournament_id) ON DELETE CASCADE
-);
 
 -- Add some sample data or leave empty for first calculation
 -- The table will be populated when admin calculates stats
